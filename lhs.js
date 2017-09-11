@@ -15,6 +15,7 @@ function dom(selector) {
     return new DomLhs(selector);
 }
 
+
 /**
  * Rules and the LHSs and RHSs that comprise them have no mutable state. This
  * lets us make BoundRulesets from Rulesets without duplicating the rules. It
@@ -30,6 +31,10 @@ function dom(selector) {
  * Lhs and its subclasses are private to the Fathom framework.
  */
 class Lhs {
+    constructor() {
+        this._predicate = () => true;
+    }
+
     /** Return a new Lhs of the appropriate kind, given its first call. */
     static fromFirstCall(firstCall) {
         // firstCall is never 'dom', because dom() directly returns a DomLhs.
@@ -40,6 +45,29 @@ class Lhs {
         } else {
             throw new Error('The left-hand side of a rule() must start with dom(), type(), or and().');
         }
+    }
+
+    /**
+     * Further specify type of node you'd like to select.
+     *
+     * Can be chained with :func:`type` or :func:`dom`.
+     *
+     * Example usage: ``dom('p').when(fnode => fnode.element.id === 'foo')``
+     * @arg {function} predicate accepts an fnode and returns a boolean.
+     */
+    when(predicate) {
+        let lhs = this.clone();
+        lhs._predicate = predicate;
+        return lhs;
+    }
+
+    /**
+     * Of all the dom nodes selected by type() or dom(), return only
+     * the fnodes that satisfy all the predicates imposed by calls to
+     * when()
+     */
+    fnodesSatisfyingWhen(fnodes) {
+        return Array.from(fnodes).filter(this._predicate);
     }
 
     /**
@@ -116,14 +144,17 @@ class DomLhs extends Lhs {
         this.selector = selector;
     }
 
+    clone() {
+        return new this.constructor(this.selector);
+    }
+
     fnodes(ruleset) {
-        const matches = ruleset.doc.querySelectorAll(this.selector);
         const ret = [];
-        for (let i = 0; i < matches.length; i++) {  // matches is a NodeList, which doesn't conform to iterator protocol
-            const element = matches[i];
-            ret.push(ruleset.fnodeForElement(element));
+        const matches = ruleset.doc.querySelectorAll(this.selector);
+        for (let i = 0; i < matches.length; i++) {
+            ret.push(ruleset.fnodeForElement(matches[i]));
         }
-        return ret;
+        return super.fnodesSatisfyingWhen(ret);
     }
 
     checkFact(fact) {
@@ -155,8 +186,13 @@ class TypeLhs extends Lhs {
         this._type = type;  // the input type
     }
 
+    clone() {
+        return new this.constructor(this._type);
+    }
+
     fnodes(ruleset) {
-        return getDefault(ruleset.typeCache, this._type, () => []);
+        const cached = getDefault(ruleset.typeCache, this._type, () => []);
+        return super.fnodesSatisfyingWhen(cached);
     }
 
     /** Override the type previously specified by this constraint. */

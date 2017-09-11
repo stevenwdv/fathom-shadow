@@ -51,4 +51,30 @@ describe('LHS', function () {
         const best = facts.get('best');
         assert.equal(best.length, 1);
     });
+
+    it('testing when() on type()', function () {
+        const doc = staticDom('<p id="fat"></p><p id="bat"></p>');
+        const rules = ruleset(
+            rule(dom('p'), type('bar')),
+            rule(type('bar').when(fnode => fnode.element.id === 'fat'), type('when')),
+            rule(type('when'), out('best'))
+        );
+        const facts = rules.against(doc);
+        const best = facts.get('best');
+        assert.equal(best.length, 1);
+        assert.equal(best[0].element.id, 'fat');
+    });
+
+    it('testing when() on dom()', function () {
+        const doc = staticDom('<p id="fat"></p><p id="bat"></p>');
+        const rules = ruleset(
+            rule(dom('p').when(fnode => fnode.element.id === 'bat'), type('when')),
+            rule(type('when'), out('best'))
+        );
+        const facts = rules.against(doc);
+        const best = facts.get('best');
+        assert.equal(best.length, 1);
+        assert.equal(best[0].element.id, 'bat');
+    });
+
 });

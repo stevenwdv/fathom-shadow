@@ -43,6 +43,9 @@ Left-hand sides are currently a few special forms which select nodes to be fed t
 
 .. autofunction:: and(typeCall[, typeCall, ...])
 
+.. autofunction:: when(predicate)
+
+
 Right-hand Sides
 ----------------
 

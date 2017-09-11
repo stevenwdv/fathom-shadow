@@ -115,6 +115,10 @@ class Side {
         }
         return side;
     }
+
+    when(pred) {
+        return this._and('when', pred);
+    }
 }
 
 module.exports = {

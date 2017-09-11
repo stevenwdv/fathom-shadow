@@ -391,6 +391,7 @@ function isDomElement(thing) {
     return thing.nodeName !== undefined;
 }
 
+
 // -------- Methods below are private to Fathom. --------
 
 /**
