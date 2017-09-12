@@ -6,6 +6,7 @@ Version History
 ================
 * Generalize the computation of rule prerequisites, eliminating many special cases. As a bonus, `and(type('A')) -> type('A')` now gets an optimal query plan.
 * Add an `additionalCost` coefficient to :func:`distance` so you can hook your own math into it.
+* Add :func:`when` call for filtering by arbitrary conditions in left-hand sides.
 
 2.1
 ===

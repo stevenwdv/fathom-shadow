@@ -52,8 +52,9 @@ class Lhs {
      *
      * Can be chained with :func:`type` or :func:`dom`.
      *
-     * Example usage: ``dom('p').when(fnode => fnode.element.id === 'foo')``
-     * @arg {function} predicate accepts an fnode and returns a boolean.
+     * Example: ``dom('p').when(fnode => fnode.element.id.length > 10)``
+     *
+     * @arg {function} predicate Accepts a fnode and returns a boolean
      */
     when(predicate) {
         let lhs = this.clone();
