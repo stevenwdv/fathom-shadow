@@ -50,7 +50,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc)? 5 : 1;
+                return searchAttributes(fnode, searchFunc) ? 5 : 1;
             }
 
             function searchFunc(attr) {
@@ -73,7 +73,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc, 'id')? 5 : 1;
+                return searchAttributes(fnode, searchFunc, 'id') ? 5 : 1;
             }
 
             function searchFunc(attr) {
@@ -96,7 +96,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc)? 5 : 1;
+                return searchAttributes(fnode, searchFunc) ? 5 : 1;
             }
 
             function searchFunc(attr) {
@@ -120,7 +120,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc, 'alt')? 5 : 1;
+                return searchAttributes(fnode, searchFunc, 'alt') ? 5 : 1;
             }
 
             function searchFunc(attr) {
@@ -143,7 +143,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc)? 5 : 1;
+                return searchAttributes(fnode, searchFunc) ? 5 : 1;
             }
 
             function searchFunc(attr) {
@@ -165,7 +165,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc)? 5 : 1;
+                return searchAttributes(fnode, searchFunc) ? 5 : 1;
             }
 
             function searchFunc(attr) {

@@ -394,17 +394,18 @@ function isDomElement(thing) {
 /**
  * Checks whether any of the element's attributes satisfy some condition.
  *
- * Example usage: ``searchAttributes(fnode, attr => attr.includes('at'), 'id', 'alt')``
- * @arg fnode {object} Fnode whose attributes you want to search
- * @arg searchFunction {function} Function that specifies a condition to check. Takes a string and returns a boolean.
- * If an attribute has an array of values (e.g. class attribute), searchAttributes
- * will check each one.
- * @arg attrs {string} A list of attributes you want to search. If none provided, default is to search all.
- * @return Returns true if any of the attributes satisfy the search function
+ * Example: ``searchAttributes(fnode, attr => attr.includes('at'), 'id', 'alt')``
+ * @arg fnode {Fnode} Fnode whose attributes you want to search
+ * @arg searchFunction {function} Function that specifies a condition to check.
+ *     Takes a string and returns a boolean. If an attribute has an array of
+ *     values (e.g. class attribute), searchAttributes will check each one.
+ * @arg attrs {string} A list of attributes you want to search. If none
+ *     provided, search all.
+ * @return Whether any of the attributes satisfy the search function
  */
 function searchAttributes(fnode, searchFunction, ...attrs) {
     // if attrs argument not provided, default is to search all attributes
-    const attributes = attrs.length === 0? Array.from(fnode.element.attributes).map(a => a.name) : attrs;
+    const attributes = attrs.length === 0 ? Array.from(fnode.element.attributes).map(a => a.name) : attrs;
     for (let i = 0; i < attributes.length; i++) {
         const attr = fnode.element.getAttribute(attributes[i]);
         // If the attribute is an array, apply the scoring function to each element
