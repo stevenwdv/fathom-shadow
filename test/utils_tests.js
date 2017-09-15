@@ -39,7 +39,7 @@ describe('Utils', function () {
     });
 
     describe('searchAttributes', function () {
-        it('search with no args', function () {
+        it('searches all attributes', function () {
             const doc = staticDom(`
                 <img id="foo" alt="boo"></img><img id="fat" src= "bat"></img>
             `);
@@ -62,7 +62,7 @@ describe('Utils', function () {
             assert.equal(best[0].element.id, 'foo');
         });
 
-        it('search with args', function () {
+        it('searches specified attributes', function () {
             const doc = staticDom(`
                 <img id="foo" alt="bat"></img><img id="sat" src="bat"></img>
             `);
@@ -85,9 +85,9 @@ describe('Utils', function () {
             assert.equal(best[0].element.id, 'sat');
         });
 
-        it('search array attribute', function () {
+        it('searches attributes which are arrays', function () {
             const doc = staticDom(`
-                <img id="fat" class="fat bat sat" ></img><img id ="foo" class="foo bar boo"></img>
+                <img id="fat" class="fat bat sat" ></img><img id="foo" class="foo bar boo"></img>
             `);
             const rules = ruleset(
                 rule(dom('img'), type('attr')),
@@ -108,7 +108,7 @@ describe('Utils', function () {
             assert.equal(best[0].element.id, 'fat');
         });
 
-        it('test non-attribute', function () {
+        it('returns false for elements that lack the requested attributes', function () {
             // The first element has the alt attribute, and the second one doesn't, so it shouldn't get included in the results
             const doc = staticDom(`
                 <img id="foo" alt="bat"></img><img id="bar"></img>
@@ -132,7 +132,7 @@ describe('Utils', function () {
             assert.equal(best[0].element.id, 'foo');
         });
 
-        it('test negative', function () {
+        it("doesn't touch nodes that don't match", function () {
             const doc = staticDom(`
                 <img id="foo"></img><img id="bar"></img>
             `);
