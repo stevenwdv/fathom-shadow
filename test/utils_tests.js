@@ -50,12 +50,9 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc) ? 5 : 1;
+                return searchAttributes(fnode, attr => attr.includes('oo')) ? 5 : 1;
             }
 
-            function searchFunc(attr) {
-                return attr.includes('oo');
-            }
             const facts = rules.against(doc);
             const best = facts.get('best');
             assert.equal(best.length, 1);
@@ -73,12 +70,9 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc, 'id') ? 5 : 1;
+                return searchAttributes(fnode, attr => attr.includes('at'), 'id') ? 5 : 1;
             }
 
-            function searchFunc(attr) {
-                return attr.includes('at');
-            }
             const facts = rules.against(doc);
             const best = facts.get('best');
             assert.equal(best.length, 1);
@@ -96,12 +90,9 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc) ? 5 : 1;
+                return searchAttributes(fnode, attr => attr.includes('at')) ? 5 : 1;
             }
 
-            function searchFunc(attr) {
-                return attr.includes('at');
-            }
             const facts = rules.against(doc);
             const best = facts.get('best');
             assert.equal(best.length, 1);
@@ -120,12 +111,9 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc, 'alt') ? 5 : 1;
+                return searchAttributes(fnode, attr => attr.includes('at'), 'alt') ? 5 : 1;
             }
 
-            function searchFunc(attr) {
-                return attr.includes('at');
-            }
             const facts = rules.against(doc);
             const best = facts.get('best');
             assert.equal(best.length, 1);
@@ -143,12 +131,9 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc) ? 5 : 1;
+                return searchAttributes(fnode, attr => attr.includes('z')) ? 5 : 1;
             }
 
-            function searchFunc(attr) {
-                return attr.includes('z');
-            }
             const facts = rules.against(doc);
             const best = facts.get('best');
             assert.equal(best.length, 2);
