@@ -394,9 +394,15 @@ function isDomElement(thing) {
 /**
  * Checks whether any of the element's attribute values satisfy some condition.
  *
- * Example: ``attributesMatch(fnode, attr => attr.includes('at'), 'id', 'alt')``
+ * Example::
+ *
+ *     rule(type('foo'),
+ *          score(attributesMatch(fnode,
+ *                                attr => attr.includes('good'),
+ *                                ['id', 'alt']) ? 2 : 1))
+ *
  * @arg fnode {Fnode} Fnode whose attributes you want to search
- * @arg predicate {function} Specify a condition to check. Take a string and
+ * @arg predicate {function} A condition to check. Take a string and
  *     return a boolean. If an attribute has multiple values (e.g. the class
  *     attribute), attributesMatch will check each one.
  * @arg attrs {string[]} An Array of attributes you want to search. If none are
