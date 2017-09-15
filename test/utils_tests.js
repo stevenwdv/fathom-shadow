@@ -138,5 +138,26 @@ describe('Utils', function () {
             const best = facts.get('best');
             assert.equal(best.length, 2);
         });
+
+        it('searches multiple explicitly specified attributes', function () {
+            const doc = staticDom(`
+                <img id="foo" alt="bat"></img><img id="cat"></img><img ignored="fat"></img>
+            `);
+            const rules = ruleset(
+                rule(dom('img'), type('attr')),
+                rule(type('attr'), score(scoreFunc)),
+                rule(type('attr').max(), out('best'))
+            );
+
+            function scoreFunc(fnode) {
+                return attributesMatch(fnode, attr => attr.includes('at'), ['alt', 'id']) ? 5 : 1;
+            }
+
+            const facts = rules.against(doc);
+            const best = facts.get('best');
+            assert.equal(best.length, 2);
+            assert.equal(best[0].element.id, 'foo');
+            assert.equal(best[1].element.id, 'cat');
+        });
     });
 });

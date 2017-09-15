@@ -407,7 +407,7 @@ function isDomElement(thing) {
  *     attribute), attributesMatch will check each one.
  * @arg attrs {string[]} An Array of attributes you want to search. If none are
  *     provided, search all.
- * @return Whether any of the attributes satisfy the predicate function
+ * @return Whether any of the attribute values satisfy the predicate function
  */
 function attributesMatch(fnode, predicate, attrs = []) {
     const attributes = attrs.length === 0 ? Array.from(fnode.element.attributes).map(a => a.name) : attrs;
