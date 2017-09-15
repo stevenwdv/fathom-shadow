@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const {dom, out, rule, ruleset, score, type} = require('../index');
-const {NiceSet, toposort, staticDom, searchAttributes} = require('../utils');
+const {NiceSet, toposort, staticDom, attributesMatch} = require('../utils');
 
 
 describe('Utils', function () {
@@ -38,7 +38,7 @@ describe('Utils', function () {
         });
     });
 
-    describe('searchAttributes', function () {
+    describe('attributesMatch', function () {
         it('searches all attributes', function () {
             const doc = staticDom(`
                 <img id="foo" alt="boo"></img><img id="fat" src= "bat"></img>
@@ -50,7 +50,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, attr => attr.includes('oo')) ? 5 : 1;
+                return attributesMatch(fnode, attr => attr.includes('oo')) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -70,7 +70,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, attr => attr.includes('at'), 'id') ? 5 : 1;
+                return attributesMatch(fnode, attr => attr.includes('at'), 'id') ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -90,7 +90,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, attr => attr.includes('at')) ? 5 : 1;
+                return attributesMatch(fnode, attr => attr.includes('at')) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -111,7 +111,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, attr => attr.includes('at'), 'alt') ? 5 : 1;
+                return attributesMatch(fnode, attr => attr.includes('at'), 'alt') ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -131,7 +131,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return searchAttributes(fnode, attr => attr.includes('z')) ? 5 : 1;
+                return attributesMatch(fnode, attr => attr.includes('z')) ? 5 : 1;
             }
 
             const facts = rules.against(doc);

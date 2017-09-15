@@ -392,24 +392,24 @@ function isDomElement(thing) {
 }
 
 /**
- * Checks whether any of the element's attributes satisfy some condition.
+ * Checks whether any of the element's attribute values satisfy some condition.
  *
- * Example: ``searchAttributes(fnode, attr => attr.includes('at'), 'id', 'alt')``
+ * Example: ``attributesMatch(fnode, attr => attr.includes('at'), 'id', 'alt')``
  * @arg fnode {Fnode} Fnode whose attributes you want to search
- * @arg searchFunction {function} Function that specifies a condition to check.
- *     Takes a string and returns a boolean. If an attribute has an array of
- *     values (e.g. class attribute), searchAttributes will check each one.
- * @arg attrs {string} A list of attributes you want to search. If none
+ * @arg predicate {function} Specify a condition to check. Take a string and
+ *     return a boolean. If an attribute has multiple values (e.g. the class
+ *     attribute), attributesMatch will check each one.
+ * @arg attrs {string} A list of attributes you want to search. If none are
  *     provided, search all.
- * @return Whether any of the attributes satisfy the search function
+ * @return Whether any of the attributes satisfy the predicate function
  */
-function searchAttributes(fnode, searchFunction, ...attrs) {
+function attributesMatch(fnode, predicate, ...attrs) {
     // if attrs argument not provided, default is to search all attributes
     const attributes = attrs.length === 0 ? Array.from(fnode.element.attributes).map(a => a.name) : attrs;
     for (let i = 0; i < attributes.length; i++) {
         const attr = fnode.element.getAttribute(attributes[i]);
         // If the attribute is an array, apply the scoring function to each element
-        if (attr && ((attr.isArray && attr.some(searchFunction)) || searchFunction(attr))) {
+        if (attr && ((attr.isArray && attr.some(predicate)) || predicate(attr))) {
             return true;
         }
     }
@@ -449,7 +449,7 @@ module.exports = {
     page,
     reversed,
     rootElement,
-    searchAttributes,
+    attributesMatch,
     setDefault,
     staticDom,
     sum,
