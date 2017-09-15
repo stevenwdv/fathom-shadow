@@ -391,6 +391,35 @@ function isDomElement(thing) {
     return thing.nodeName !== undefined;
 }
 
+/**
+ * Checks whether any of the element's attribute values satisfy some condition.
+ *
+ * Example::
+ *
+ *     rule(type('foo'),
+ *          score(attributesMatch(fnode,
+ *                                attr => attr.includes('good'),
+ *                                ['id', 'alt']) ? 2 : 1))
+ *
+ * @arg fnode {Fnode} Fnode whose attributes you want to search
+ * @arg predicate {function} A condition to check. Take a string and
+ *     return a boolean. If an attribute has multiple values (e.g. the class
+ *     attribute), attributesMatch will check each one.
+ * @arg attrs {string[]} An Array of attributes you want to search. If none are
+ *     provided, search all.
+ * @return Whether any of the attribute values satisfy the predicate function
+ */
+function attributesMatch(fnode, predicate, attrs = []) {
+    const attributes = attrs.length === 0 ? Array.from(fnode.element.attributes).map(a => a.name) : attrs;
+    for (let i = 0; i < attributes.length; i++) {
+        const attr = fnode.element.getAttribute(attributes[i]);
+        // If the attribute is an array, apply the scoring function to each element
+        if (attr && ((attr.isArray && attr.some(predicate)) || predicate(attr))) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // -------- Methods below are private to Fathom. --------
 
@@ -425,6 +454,7 @@ module.exports = {
     page,
     reversed,
     rootElement,
+    attributesMatch,
     setDefault,
     staticDom,
     sum,

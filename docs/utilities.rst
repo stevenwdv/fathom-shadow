@@ -10,6 +10,7 @@ Import them from ``fathom-web/utils``. For example...
 
       const {best} = require('fathom-web/utils');
 
+.. autofunction:: attributesMatch
 .. autofunction:: best
 .. autofunction:: collapseWhitespace
 .. autofunction:: domSort
