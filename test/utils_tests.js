@@ -153,28 +153,5 @@ describe('Utils', function () {
             const best = facts.get('best');
             assert.equal(best.length, 2);
         });
-
-        it('test multiple', function () {
-            const doc = staticDom(`
-                <img id="foo"></img><img id="boo"></img>
-            `);
-            const rules = ruleset(
-                rule(dom('img'), type('attr')),
-                rule(type('attr'), score(scoreFunc)),
-                rule(type('attr').max(), out('best'))
-            );
-
-            function scoreFunc(fnode) {
-                return searchAttributes(fnode, searchFunc) ? 5 : 1;
-            }
-
-            function searchFunc(attr) {
-                return attr.includes('oo');
-            }
-            const facts = rules.against(doc);
-            const best = facts.get('best');
-            assert.equal(best.length, 2);
-        });
-
     });
 });
