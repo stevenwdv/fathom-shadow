@@ -70,7 +70,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return attributesMatch(fnode, attr => attr.includes('at'), 'id') ? 5 : 1;
+                return attributesMatch(fnode, attr => attr.includes('at'), ['id']) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -111,7 +111,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return attributesMatch(fnode, attr => attr.includes('at'), 'alt') ? 5 : 1;
+                return attributesMatch(fnode, attr => attr.includes('at'), ['alt']) ? 5 : 1;
             }
 
             const facts = rules.against(doc);

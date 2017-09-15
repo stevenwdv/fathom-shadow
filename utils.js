@@ -399,12 +399,11 @@ function isDomElement(thing) {
  * @arg predicate {function} Specify a condition to check. Take a string and
  *     return a boolean. If an attribute has multiple values (e.g. the class
  *     attribute), attributesMatch will check each one.
- * @arg attrs {string} A list of attributes you want to search. If none are
+ * @arg attrs {string[]} An Array of attributes you want to search. If none are
  *     provided, search all.
  * @return Whether any of the attributes satisfy the predicate function
  */
-function attributesMatch(fnode, predicate, ...attrs) {
-    // if attrs argument not provided, default is to search all attributes
+function attributesMatch(fnode, predicate, attrs = []) {
     const attributes = attrs.length === 0 ? Array.from(fnode.element.attributes).map(a => a.name) : attrs;
     for (let i = 0; i < attributes.length; i++) {
         const attr = fnode.element.getAttribute(attributes[i]);
