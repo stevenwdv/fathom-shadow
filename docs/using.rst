@@ -92,7 +92,8 @@ Once the ruleset is defined, run a DOM tree through it:
 
 .. code-block:: js
 
-   const dom = jsdom.jsdom("<html><head>...</html>"));
+   const JSDOM = require('jsdom').JSDOM;  // jsdom v10 and up
+   const dom = new JSDOM("<html><head>...</html>").window.document;
    // Tell the ruleset which DOM to run against, yielding a factbase about the document:
    const facts = rules.against(dom);
 
@@ -115,3 +116,13 @@ Or if you have a reference to a DOM element from elsewhere in your program, you 
 .. code-block:: js
 
    const fnode = facts.get(dom.getElementById('aTitle'));
+
+.. warning::
+
+    jsdom likes to load external resources, like CSS and JS, referenced from the HTML you feed it. This is, of course, slow, a security leak, and unhelpful for our purposes. This longer spelling will keep it from doing that::
+
+        const {jsdom} = require('jsdom/lib/old-api');
+        const dom = jsdom.jsdom("<html><head>...</html>",
+                                {features: {ProcessExternalResources: false}});
+
+    We're targeting jsdom version 10 and up here: particularly, its `old API <https://github.com/tmpvar/jsdom/blob/master/lib/old-api.md>`_, which is so far the only one that lets you control resource loading.

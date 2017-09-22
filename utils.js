@@ -428,7 +428,7 @@ function attributesMatch(fnode, predicate, attrs = []) {
  * execute any of its inline scripts.
  */
 function staticDom(html) {
-    const {jsdom} = require('jsdom');
+    const {jsdom} = require('jsdom/lib/old-api');
     return jsdom(html, {features: {ProcessExternalResources: false}});
 }
 
