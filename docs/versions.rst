@@ -9,6 +9,7 @@ Version History
 * Add :func:`when` call for filtering by arbitrary conditions in left-hand sides.
 * Add :func:`attributesMatch` utility function for applying tests to element attribute values.
 * Update to the latest (backward-incompatible) version of jsdom in the test harness, and modify callsite accordingly.
+* Exclude documentation source from the built package, dropping its unpacked size by 90K.
 
 2.1
 ===
