@@ -2,6 +2,10 @@
 Version History
 ===============
 
+Unreleased
+==========
+* Move `staticDom()` to a private test module so webpack and other bundlers don't trip over it.
+
 2.2
 ===
 * Generalize the computation of rule prerequisites, eliminating many special cases. As a bonus, `and(type('A')) -> type('A')` now gets an optimal query plan.

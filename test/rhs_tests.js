@@ -1,7 +1,7 @@
 const {assert} = require('chai');
 
 const {atMost, dom, note, out, props, rule, ruleset, score, type, typeIn} = require('../index');
-const {staticDom} = require('../utils');
+const {staticDom} = require('./testing');
 
 
 describe('RHS', function () {

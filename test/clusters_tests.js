@@ -3,7 +3,7 @@
 const assert = require('chai').assert;
 
 const {distance, clusters} = require('../clusters');
-const {staticDom} = require('../utils');
+const {staticDom} = require('./testing');
 
 
 // Assert that the distance between nodes a and b is greater in the `deep` DOM

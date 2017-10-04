@@ -1,6 +1,7 @@
 const {assert} = require('chai');
 const {dom, out, rule, ruleset, score, type} = require('../index');
-const {NiceSet, toposort, staticDom, attributesMatch} = require('../utils');
+const {NiceSet, toposort, attributesMatch} = require('../utils');
+const {staticDom} = require('./testing');
 
 
 describe('Utils', function () {

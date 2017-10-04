@@ -1,7 +1,8 @@
 const assert = require('chai').assert;
 
 const {dom, out, props, rule, ruleset, type} = require('../index');
-const {numberOfMatches, page, staticDom, sum} = require('../utils');
+const {numberOfMatches, page, sum} = require('../utils');
+const {staticDom} = require('./testing');
 
 
 describe('Design-driving demos', function () {

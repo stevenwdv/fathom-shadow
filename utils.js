@@ -421,17 +421,6 @@ function attributesMatch(fnode, predicate, attrs = []) {
     return false;
 }
 
-// -------- Methods below are private to Fathom. --------
-
-/**
- * Parse an HTML doc, and return a DOM-compliant interface to it. Do not
- * execute any of its inline scripts.
- */
-function staticDom(html) {
-    const {jsdom} = require('jsdom/lib/old-api');
-    return jsdom(html, {features: {ProcessExternalResources: false}});
-}
-
 module.exports = {
     best,
     collapseWhitespace,
@@ -456,7 +445,6 @@ module.exports = {
     rootElement,
     attributesMatch,
     setDefault,
-    staticDom,
     sum,
     toposort,
     walk
