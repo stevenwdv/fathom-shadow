@@ -6,7 +6,8 @@ const {jsdom} = require('jsdom/lib/old-api');
  * execute any of its inline scripts.
  */
 function staticDom(html) {
-    return jsdom(html, {features: {ProcessExternalResources: false}});
+    return jsdom(html, {features: {ProcessExternalResources: false,
+                                   FetchExternalResources: false}});
 }
 
 module.exports = {
