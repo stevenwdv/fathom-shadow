@@ -48,9 +48,9 @@ class Lhs {
     }
 
     /**
-     * Further specify type of node you'd like to select.
+     * Further constrain the kinds of nodes we take.
      *
-     * Can be chained with :func:`type` or :func:`dom`.
+     * Can be chained after :func:`type` or :func:`dom`.
      *
      * Example: ``dom('p').when(fnode => fnode.element.id.length > 10)``
      *
