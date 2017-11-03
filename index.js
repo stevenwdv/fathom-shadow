@@ -7,11 +7,14 @@ const {ruleset} = require('./ruleset');
 const {dom} = require('./lhs');
 const {out} = require('./rhs');
 const {and, atMost, conserveScore, max, note, props, score, type, typeIn} = require('./side');
+const utils = require('./utils');
+const clusters = require('./clusters');
 
 
 module.exports = {
     and,
     atMost,
+    clusters,
     conserveScore,
     dom,
     max,
@@ -22,5 +25,6 @@ module.exports = {
     ruleset,
     score,
     type,
-    typeIn
+    typeIn,
+    utils,
 };

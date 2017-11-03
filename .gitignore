@@ -2,3 +2,4 @@
 /*.log
 /coverage
 /docs/_build
+/dist
