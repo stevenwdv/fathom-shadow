@@ -1,3 +1,5 @@
+// Experimental config for bundling Fathom into a single file for use inside
+// web extensions, etc.
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
 
