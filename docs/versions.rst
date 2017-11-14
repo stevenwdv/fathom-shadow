@@ -5,6 +5,7 @@ Version History
 Unreleased
 ==========
 * Move `staticDom()` to a private test module so webpack and other bundlers don't trip over it.
+* Add Corpus Framework to further assist you in doing ruleset :doc:`optimization`.
 
 2.2
 ===
