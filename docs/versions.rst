@@ -8,7 +8,7 @@ Unreleased
 * Change jsdom from a devDependency to a proper dependency. It's still used only from :func:`staticDom`, which is generally used only while authoring a ruleset. Bundlers (used to pack Fathom into a webextension, for instance) should throw it away in their dead code elimination phase. See, for example, the included experimental `rollup <https://rollupjs.org/>`_ configuration.
 
 .. warning::
-   Backward-incompatible change: :func:`attributesMatch` now takes an HTML element as its first parameter, not a :class:`Fnode`. This makes it usable in more situations.
+   Backward-incompatible change: :func:`attributesMatch` now takes an HTML element as its first parameter, not a :class:`Fnode`. This makes it usable in more situations. Bring your uses up to date by sticking ``.element`` after your first params.
 
 2.2
 ===
