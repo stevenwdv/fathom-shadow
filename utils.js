@@ -1,3 +1,7 @@
+const {readdirSync, readFileSync, statSync} = require('fs');
+const {join} = require('path');
+
+const {jsdom} = require('jsdom/lib/old-api');
 const {forEach, map} = require('wu');
 
 const {CycleError} = require('./exceptions');
@@ -397,11 +401,11 @@ function isDomElement(thing) {
  * Example::
  *
  *     rule(type('foo'),
- *          score(attributesMatch(fnode,
+ *          score(attributesMatch(element,
  *                                attr => attr.includes('good'),
  *                                ['id', 'alt']) ? 2 : 1))
  *
- * @arg fnode {Fnode} Fnode whose attributes you want to search
+ * @arg element {Node} Element whose attributes you want to search
  * @arg predicate {function} A condition to check. Take a string and
  *     return a boolean. If an attribute has multiple values (e.g. the class
  *     attribute), attributesMatch will check each one.
@@ -409,10 +413,10 @@ function isDomElement(thing) {
  *     provided, search all.
  * @return Whether any of the attribute values satisfy the predicate function
  */
-function attributesMatch(fnode, predicate, attrs = []) {
-    const attributes = attrs.length === 0 ? Array.from(fnode.element.attributes).map(a => a.name) : attrs;
+function attributesMatch(element, predicate, attrs = []) {
+    const attributes = attrs.length === 0 ? Array.from(element.attributes).map(a => a.name) : attrs;
     for (let i = 0; i < attributes.length; i++) {
-        const attr = fnode.element.getAttribute(attributes[i]);
+        const attr = element.getAttribute(attributes[i]);
         // If the attribute is an array, apply the scoring function to each element
         if (attr && ((attr.isArray && attr.some(predicate)) || predicate(attr))) {
             return true;
@@ -421,9 +425,40 @@ function attributesMatch(fnode, predicate, attrs = []) {
     return false;
 }
 
+/**
+ * @return {String[]} The name (not path) of each directory directly within a
+ *      given path
+ */
+function dirsIn(path) {
+  return readdirSync(path).filter(f => statSync(join(path, f)).isDirectory());
+}
+
+/**
+ * Yield an element and each of its ancestors.
+ */
+function *ancestors(element) {
+    yield element;
+    let parent;
+    while ((parent = element.parentNode) !== null && parent.nodeType === parent.ELEMENT_NODE) {
+        yield parent;
+        element = parent;
+    }
+}
+
+/**
+ * Parse an HTML doc, and return a DOM-compliant interface to it. Do not
+ * execute any of its inline scripts.
+ */
+function staticDom(html) {
+    return jsdom(html, {features: {ProcessExternalResources: false,
+                                   FetchExternalResources: false}});
+}
+
 module.exports = {
+    ancestors,
     best,
     collapseWhitespace,
+    dirsIn,
     domSort,
     first,
     getDefault,
@@ -445,6 +480,7 @@ module.exports = {
     rootElement,
     attributesMatch,
     setDefault,
+    staticDom,
     sum,
     toposort,
     walk

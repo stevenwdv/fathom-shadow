@@ -1,7 +1,7 @@
 const assert = require('chai').assert;
 
 const {deviationScore, readabilityDocPairs, tunedContentFnodes} = require('../examples/readability');
-const {staticDom} = require('./testing');
+const {staticDom} = require('../utils');
 
 
 describe('Readability ruleset finds content from...', function () {
