@@ -21,8 +21,7 @@ const {dirname, join} = require('path');
 const leven = require('leven');
 
 const {dom, props, out, rule, ruleset, score, type} = require('../index');
-const {domSort, inlineTextLength, linkDensity} = require('../utils');
-const {staticDom} = require('../test/testing');
+const {domSort, inlineTextLength, linkDensity, staticDom} = require('../utils');
 
 
 /**

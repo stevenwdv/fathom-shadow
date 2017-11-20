@@ -1,6 +1,7 @@
 const {readdirSync, readFileSync, statSync} = require('fs');
 const {join} = require('path');
 
+const {jsdom} = require('jsdom/lib/old-api');
 const {forEach, map} = require('wu');
 
 const {CycleError} = require('./exceptions');
@@ -444,6 +445,15 @@ function *ancestors(element) {
     }
 }
 
+/**
+ * Parse an HTML doc, and return a DOM-compliant interface to it. Do not
+ * execute any of its inline scripts.
+ */
+function staticDom(html) {
+    return jsdom(html, {features: {ProcessExternalResources: false,
+                                   FetchExternalResources: false}});
+}
+
 module.exports = {
     ancestors,
     best,
@@ -470,6 +480,7 @@ module.exports = {
     rootElement,
     attributesMatch,
     setDefault,
+    staticDom,
     sum,
     toposort,
     walk

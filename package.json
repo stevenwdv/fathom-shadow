@@ -7,6 +7,7 @@
     "url": "https://github.com/mozilla/fathom/issues"
   },
   "dependencies": {
+    "jsdom": "^11.2.0",
     "wu": "^2.1.0"
   },
   "devDependencies": {
@@ -15,7 +16,6 @@
     "eslint": "^3.7.1",
     "eslint-plugin-node": "^2.1.2",
     "istanbul": "^0.4.5",
-    "jsdom": "^11.2.0",
     "leven": "^2.1.0",
     "mocha": "^3.2.0"
   },

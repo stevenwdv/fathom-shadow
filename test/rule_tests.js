@@ -1,7 +1,7 @@
 const {assert} = require('chai');
 
 const {dom, rule, ruleset, score, type, typeIn} = require('../index');
-const {staticDom} = require('./testing');
+const {staticDom} = require('../utils');
 
 
 describe('Rule', function () {
