@@ -50,7 +50,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return attributesMatch(fnode, attr => attr.includes('oo')) ? 5 : 1;
+                return attributesMatch(fnode.element, attr => attr.includes('oo')) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -70,7 +70,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return attributesMatch(fnode, attr => attr.includes('at'), ['id']) ? 5 : 1;
+                return attributesMatch(fnode.element, attr => attr.includes('at'), ['id']) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -90,7 +90,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return attributesMatch(fnode, attr => attr.includes('at')) ? 5 : 1;
+                return attributesMatch(fnode.element, attr => attr.includes('at')) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -111,7 +111,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return attributesMatch(fnode, attr => attr.includes('at'), ['alt']) ? 5 : 1;
+                return attributesMatch(fnode.element, attr => attr.includes('at'), ['alt']) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -131,7 +131,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return attributesMatch(fnode, attr => attr.includes('z')) ? 5 : 1;
+                return attributesMatch(fnode.element, attr => attr.includes('z')) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
@@ -150,7 +150,7 @@ describe('Utils', function () {
             );
 
             function scoreFunc(fnode) {
-                return attributesMatch(fnode, attr => attr.includes('at'), ['alt', 'id']) ? 5 : 1;
+                return attributesMatch(fnode.element, attr => attr.includes('at'), ['alt', 'id']) ? 5 : 1;
             }
 
             const facts = rules.against(doc);
