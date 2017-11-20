@@ -1,8 +1,7 @@
-const {readFileSync, readdirSync, statSync} = require('fs');
+const {readFileSync} = require('fs');
 const {basename, join} = require('path');
 
-const {dirsIn} = require('./utils');
-const {staticDom} = require('./test/testing');  // Not going to cut it. Admit a dependency on jsdom, or have one passed in by the caller.
+const {dirsIn, staticDom} = require('./utils');
 
 
 // This is based on public-domain code from
@@ -236,7 +235,7 @@ class Sample {
         /**
          * The name of the folder this sample came from
          */
-        this.name = basename(sampleDir)
+        this.name = basename(sampleDir);
     }
 }
 

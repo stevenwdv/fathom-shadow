@@ -1,4 +1,4 @@
-const {readdirSync, readFileSync, statSync} = require('fs');
+const {readdirSync, statSync} = require('fs');
 const {join} = require('path');
 
 const {jsdom} = require('jsdom/lib/old-api');
@@ -430,7 +430,7 @@ function attributesMatch(element, predicate, attrs = []) {
  *      given path
  */
 function dirsIn(path) {
-  return readdirSync(path).filter(f => statSync(join(path, f)).isDirectory());
+    return readdirSync(path).filter(f => statSync(join(path, f)).isDirectory());
 }
 
 /**
