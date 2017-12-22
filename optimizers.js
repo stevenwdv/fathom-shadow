@@ -1,7 +1,7 @@
 const {readFileSync} = require('fs');
 const {basename, join} = require('path');
 
-const {dirsIn, staticDom} = require('./utils');
+const {dirsIn, setDefault, staticDom} = require('./utils');
 
 
 // This is based on public-domain code from
@@ -21,11 +21,11 @@ const {dirsIn, staticDom} = require('./utils');
  * as the algorithim progresses.
  */
 class Annealer {
-    constructor() {
-        this.INITIAL_TEMPERATURE = 5000;
-        this.COOLING_STEPS = 5000;
-        this.COOLING_FRACTION = 0.95;
-        this.STEPS_PER_TEMP = 1000;
+    constructor(initialTemperature = 5000, coolingSteps = 5000, coolingFraction = .95, stepsPerTemp = 1000) {
+        this.INITIAL_TEMPERATURE = initialTemperature;
+        this.COOLING_STEPS = coolingSteps;
+        this.COOLING_FRACTION = coolingFraction;
+        this.STEPS_PER_TEMP = stepsPerTemp;
         this.BOLTZMANNS = 1.3806485279e-23;
     }
 
@@ -38,21 +38,36 @@ class Annealer {
     anneal() {
         let temperature = this.INITIAL_TEMPERATURE;
         let currentSolution = this.initialSolution();
+        let bestSolution = currentSolution;
         let currentCost = this.solutionCost(currentSolution);
+        let bestCost = currentCost;
         let m = 0;
         let n = 0;
+        let hits = 0, misses = 0;
+        const seenSolutions = new Map();  // solution => cost
         for (let i = 0; i < this.COOLING_STEPS; i++) {
             console.log('Cooling step', i, 'of', this.COOLING_STEPS, '...');
             const startCost = currentCost;
             for (let j = 0; j < this.STEPS_PER_TEMP; j++) {
                 let newSolution = this.randomTransition(currentSolution);
-                let newCost = this.solutionCost(newSolution);
+                if (seenSolutions.has(newSolution.toString())) {
+                    hits += 1;
+                } else {
+                    misses += 1;
+                }
+                let newCost = setDefault(seenSolutions, newSolution.toString(), () => this.solutionCost(newSolution));
 
                 if (newCost < currentCost) {
+                    // Always take improvements.
                     currentCost = newCost;
                     currentSolution = newSolution;
-                    console.log('New best solution is ', newSolution, ' with fitness ', newCost);
+                    if (newCost < bestCost) {
+                        bestCost = newCost;
+                        bestSolution = newSolution;
+                        console.log('New best solution is ', newSolution, ' with cost ', newCost);
+                    }
                 } else {
+                    // Sometimes take non-improvements.
                     const minusDelta = currentCost - newCost;
                     const merit = Math.exp(minusDelta / (this.BOLTZMANNS * temperature));
                     if (merit > Math.random()) {
@@ -68,7 +83,9 @@ class Annealer {
             temperature *= this.COOLING_FRACTION;
         }
         console.log('Iterations:', n, 'using', m, 'jumps.');
-        return currentSolution;
+        console.log('Cache hits', hits, 'misses', misses);
+        console.log('Cache hit rate', hits/(hits + misses));
+        return bestSolution;
     }
 
     /**
