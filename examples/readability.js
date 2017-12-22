@@ -232,7 +232,17 @@ if (require.main === module) {
         randomTransition(solution) {
             // Nudge a random coefficient in a random direction.
             const ret = solution.slice();
-            ret[Math.floor(Math.random() * solution.length)] += Math.floor(Math.random() * 2) ? -.5 : .5;
+            let element, nudge;
+
+            // Don't let weights go negative. Negative scores make overall
+            // scores flip signs spastically. If you want fractional scores in
+            // your ruleset, put 1 / coefficient in your ruleset.
+            do {
+                element = Math.floor(Math.random() * solution.length);
+                nudge = Math.floor(Math.random() * 2) ? -.5 : .5;
+            } while (ret[element] + nudge < 0);
+
+            ret[element] += nudge;
             return ret;
         }
 
