@@ -114,7 +114,7 @@ class Annealer {
 }
 
 /**
- * A run of a ruleset over an entire supervised corpus of pages
+ * A run of a parametrized ruleset over an entire supervised corpus of pages
  *
  * Builds up a total score and reports it at the end.
  */
@@ -207,7 +207,10 @@ class Corpus {
      */
     constructor() {
         const baseFolder = this.baseFolder();
+
+        /** An iterable of :class:`Sample` instances making up the corpus */
         this.samples = new Map();  // folder name -> sample
+
         for (const sampleDir of dirsIn(baseFolder)) {
             this.samples.set(sampleDir, this.sampleFromPath(join(baseFolder, sampleDir)));
         }
