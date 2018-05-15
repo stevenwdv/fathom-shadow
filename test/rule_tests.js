@@ -1,7 +1,7 @@
-const {assert} = require('chai');
+import {assert} from 'chai';
 
-const {dom, rule, ruleset, score, type, typeIn} = require('../index');
-const {staticDom} = require('../utils');
+import {dom, rule, ruleset, score, type, typeIn} from '../index';
+import {staticDom} from '../utils';
 
 
 describe('Rule', function () {

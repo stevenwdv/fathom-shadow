@@ -1,7 +1,7 @@
-const assert = require('chai').assert;
+import assert from 'chai';
 
-const {deviationScore, readabilityDocPairs, tunedContentFnodes} = require('../examples/readability');
-const {staticDom} = require('../utils');
+import {deviationScore, readabilityDocPairs, tunedContentFnodes} from '../examples/readability';
+import {staticDom} from '../utils';
 
 
 describe('Readability ruleset finds content from...', function () {

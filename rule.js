@@ -1,7 +1,7 @@
-const {forEach, map} = require('wu');
+import {forEach, map} from 'wu';
 
-const {NiceSet, setDefault} = require('./utils');
-const {OutwardRhs} = require('./rhs');
+import {NiceSet, setDefault} from './utils';
+import {OutwardRhs} from './rhs';
 
 
 /**
@@ -302,7 +302,7 @@ class OutwardRule extends Rule {
     }
 }
 
-module.exports = {
+export {
     InwardRule,
     OutwardRule,
     rule

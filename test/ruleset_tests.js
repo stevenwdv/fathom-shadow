@@ -1,7 +1,7 @@
-const {assert} = require('chai');
+import {assert} from 'chai';
 
-const {and, conserveScore, dom, out, props, rule, ruleset, score, type} = require('../index');
-const {staticDom} = require('../utils');
+import {and, conserveScore, dom, out, props, rule, ruleset, score, type} from '../index';
+import {staticDom} from '../utils';
 
 
 describe('Ruleset', function () {

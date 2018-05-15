@@ -2,16 +2,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const {rule} = require('./rule');
-const {ruleset} = require('./ruleset');
-const {dom} = require('./lhs');
-const {out} = require('./rhs');
-const {and, atMost, conserveScore, max, note, props, score, type, typeIn} = require('./side');
-const utils = require('./utils');
-const clusters = require('./clusters');
+import {rule} from './rule';
+import {ruleset} from './ruleset';
+import {dom} from './lhs';
+import {out} from './rhs';
+import {and, atMost, conserveScore, max, note, props, score, type, typeIn} from './side';
+import utils from './utils';
+import {clusters} from './clusters';
 
 
-module.exports = {
+export {
     and,
     atMost,
     clusters,

@@ -1,8 +1,8 @@
 // Tests for fathom/side.js
 
-const assert = require('chai').assert;
+import {assert} from 'chai';
 
-const {type} = require('../index');
+import {type} from '../index';
 
 
 describe('Side', function () {

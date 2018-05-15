@@ -1,5 +1,5 @@
-const {flatten} = require('wu');
-const {isDomElement, isWhitespace, min} = require('./utils');
+import {flatten} from 'wu';
+import {isDomElement, isWhitespace, min} from './utils';
 
 
 /**
@@ -321,7 +321,7 @@ function clusters(fnodes, splittingDistance, getDistance = distance) {
     return matrix.clusters();
 }
 
-module.exports = {
+export {
     clusters,
     distance
 };

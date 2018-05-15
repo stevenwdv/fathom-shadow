@@ -1,10 +1,10 @@
-const {readdirSync, statSync} = require('fs');
-const {join} = require('path');
+import {readdirSync, statSync} from 'fs';
+import {join} from 'path';
 
-const {jsdom} = require('jsdom/lib/old-api');
-const {forEach, map} = require('wu');
+import {jsdom} from 'jsdom/lib/old-api';
+import {forEach, map} from 'wu';
 
-const {CycleError} = require('./exceptions');
+import {CycleError} from './exceptions';
 
 
 /**

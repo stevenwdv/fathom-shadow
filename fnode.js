@@ -1,5 +1,5 @@
-const {type} = require('./side.js');
-const {getDefault, setDefault} = require('./utils');
+import {type} from './side.js';
+import {getDefault, setDefault} from './utils';
 
 
 /**
@@ -164,6 +164,6 @@ class Fnode {
     }
 }
 
-module.exports = {
+export {
     Fnode
 };

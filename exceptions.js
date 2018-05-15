@@ -1,6 +1,2 @@
-class CycleError extends Error {
+export class CycleError extends Error {
 }
-
-module.exports = {
-    CycleError
-};
