@@ -9,10 +9,9 @@ const {out} = require('./rhs');
 const {and, atMost, conserveScore, max, note, props, score, type, typeIn} = require('./side');
 const utils = require('./utils');
 const clusters = require('./clusters');
-const {Run} = require('./optimizers');
 
 
-export {
+module.exports = {
     and,
     atMost,
     clusters,
@@ -24,9 +23,8 @@ export {
     props,
     rule,
     ruleset,
-    Run,
     score,
     type,
     typeIn,
-    utils
+    utils,
 };

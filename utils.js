@@ -454,7 +454,7 @@ function staticDom(html) {
                                    FetchExternalResources: false}});
 }
 
-module.exports = {
+export {
     ancestors,
     best,
     collapseWhitespace,
