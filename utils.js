@@ -136,13 +136,12 @@ export function *walk(element, shouldTraverse) {
     }
 }
 
-const blockTags = new Set();
-forEach(blockTags.add.bind(blockTags),
-        ['ADDRESS', 'BLOCKQUOTE', 'BODY', 'CENTER', 'DIR', 'DIV', 'DL',
-         'FIELDSET', 'FORM', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'HR',
-         'ISINDEX', 'MENU', 'NOFRAMES', 'NOSCRIPT', 'OL', 'P', 'PRE',
-         'TABLE', 'UL', 'DD', 'DT', 'FRAMESET', 'LI', 'TBODY', 'TD',
-         'TFOOT', 'TH', 'THEAD', 'TR', 'HTML']);
+const blockTags = new Set(
+    ['ADDRESS', 'BLOCKQUOTE', 'BODY', 'CENTER', 'DIR', 'DIV', 'DL',
+     'FIELDSET', 'FORM', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'HR',
+     'ISINDEX', 'MENU', 'NOFRAMES', 'NOSCRIPT', 'OL', 'P', 'PRE',
+     'TABLE', 'UL', 'DD', 'DT', 'FRAMESET', 'LI', 'TBODY', 'TD',
+     'TFOOT', 'TH', 'THEAD', 'TR', 'HTML']);
 /**
  * Return whether a DOM element is a block element by default (rather than by
  * styling).
