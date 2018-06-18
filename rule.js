@@ -1,6 +1,6 @@
 import {forEach, map} from 'wu';
 
-import {NiceSet, setDefault} from './utils';
+import {NiceSet, setDefault} from './utilsForFrontend';
 import {OutwardRhs} from './rhs';
 
 

@@ -1,5 +1,5 @@
 import {flatten} from 'wu';
-import {isDomElement, isWhitespace, min} from './utils';
+import {isDomElement, isWhitespace, min} from './utilsForFrontend';
 
 
 /**

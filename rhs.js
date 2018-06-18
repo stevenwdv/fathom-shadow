@@ -1,6 +1,6 @@
 // The right-hand side of a rule
 
-import {NiceSet, reversed} from './utils';
+import {NiceSet, reversed} from './utilsForFrontend';
 
 
 const TYPE = 1;

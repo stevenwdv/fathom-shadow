@@ -1,7 +1,8 @@
 import {readFileSync} from 'fs';
 import {basename, join} from 'path';
 
-import {dirsIn, setDefault, staticDom} from './utils';
+import {dirsIn, staticDom} from './utilsForBackend';
+import {setDefault} from './utilsForFrontend';
 
 
 // This is based on public-domain code from

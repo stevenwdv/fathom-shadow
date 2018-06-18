@@ -7,7 +7,6 @@ import {ruleset} from './ruleset';
 import {dom} from './lhs';
 import {out} from './rhs';
 import {and, atMost, conserveScore, note, props, score, type, typeIn} from './side';
-import utils from './utils';
 import {clusters} from './clusters';
 
 

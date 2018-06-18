@@ -1,7 +1,7 @@
 // The left-hand side of a rule
 
 import {clusters, distance} from './clusters';
-import {maxes, getDefault, max, NiceSet, setDefault, sum} from './utils';
+import {maxes, getDefault, max, NiceSet, setDefault, sum} from './utilsForFrontend';
 
 
 /**

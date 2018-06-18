@@ -1,6 +1,6 @@
 import {CycleError} from './exceptions';
 import {Fnode} from './fnode';
-import {getDefault, isDomElement, reversed, setDefault, toposort} from './utils';
+import {getDefault, isDomElement, reversed, setDefault, toposort} from './utilsForFrontend';
 import {out} from './rhs';
 import {InwardRule, OutwardRule, rule} from './rule';
 

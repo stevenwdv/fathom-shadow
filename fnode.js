@@ -1,5 +1,5 @@
 import {type} from './side.js';
-import {getDefault, setDefault} from './utils';
+import {getDefault, setDefault} from './utilsForFrontend';
 
 
 /**
