@@ -23,6 +23,5 @@ export {
     ruleset,
     score,
     type,
-    typeIn,
-    utils,
+    typeIn
 };
