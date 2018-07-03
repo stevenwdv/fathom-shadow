@@ -413,7 +413,7 @@ export function attributesMatch(element, predicate, attrs = []) {
     for (let i = 0; i < attributes.length; i++) {
         const attr = element.getAttribute(attributes[i]);
         // If the attribute is an array, apply the scoring function to each element
-        if (attr && ((attr.isArray && attr.some(predicate)) || predicate(attr))) {
+        if (attr && ((Array.isArray(attr) && attr.some(predicate)) || predicate(attr))) {
             return true;
         }
     }
