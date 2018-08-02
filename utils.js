@@ -1,2 +1,2 @@
-export * from './utilsForBackend'
-export * from './utilsForFrontend'
+export * from './utilsForBackend';
+export * from './utilsForFrontend';
