@@ -11,6 +11,10 @@
     "wu": "^2.1.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.6",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-plugin-dynamic-import-node": "^2.0.0",
     "chai": "^4.0.2",
     "coveralls": "^2.11.11",
     "eslint": "^3.7.1",
@@ -38,9 +42,11 @@
     "url": "https://github.com/mozilla/fathom.git"
   },
   "scripts": {
+    "build": "babel *.mjs **/*.mjs --out-dir .",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "make lint",
     "pretest": "npm run lint",
     "test": "istanbul cover _mocha"
-  }
+  },
+  "main": "index"
 }
