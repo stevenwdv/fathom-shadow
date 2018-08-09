@@ -1,7 +1,7 @@
 all:
 
 lint:
-	@node_modules/.bin/eslint .
+	@node_modules/.bin/eslint --ext mjs .
 
 test:
 	@node_modules/.bin/mocha
