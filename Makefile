@@ -3,7 +3,10 @@ all:
 lint:
 	@node_modules/.bin/eslint --ext mjs .
 
-test:
+build:
+	@node_modules/.bin/babel *.mjs **/*.mjs --out-dir .
+
+test: build
 	@node_modules/.bin/mocha
 
 debugtest:
@@ -13,4 +16,4 @@ debugtest:
 clean:
 	rm -f clusters.js exceptions.js fnode.js index.js lhs.js optimizers.js rhs.js rule.js ruleset.js side.js utils.js utilsForBackend.js utilsForFrontend.js examples/readability.js test/clusters_tests.js test/demos.js test/lhs_tests.js test/readability_tests.js test/rhs_tests.js test/rule_tests.js test/ruleset_tests.js test/side_tests.js test/utils_tests.js
 
-.PHONY: all lint test debugtest
+.PHONY: all lint build test debugtest

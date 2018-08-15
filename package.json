@@ -43,7 +43,6 @@
     "url": "https://github.com/mozilla/fathom.git"
   },
   "scripts": {
-    "build": "babel *.mjs **/*.mjs --out-dir .",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "make lint",
     "pretest": "npm run lint",
