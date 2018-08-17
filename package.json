@@ -46,7 +46,7 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "make lint",
     "pretest": "npm run lint",
-    "test": "istanbul cover _mocha"
+    "test": "make && istanbul cover _mocha"
   },
   "main": "index"
 }
