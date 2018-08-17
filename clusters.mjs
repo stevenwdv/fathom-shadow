@@ -39,7 +39,12 @@ function numStrides(left, right) {
 }
 
 /**
- * Return a distance measurement between 2 DOM nodes or :term:`fnodes<fnode>`.
+ * Return a distance measurement between 2 DOM nodes or :term:`fnodes<fnode>`
+ * based on the similarity of their ancestry in the DOM. For instance, if one
+ * node is situated inside ``<div><span><b><theNode>`` and the other node is at
+ * ``<differentDiv><span><b><otherNode>``, they are considered close to each
+ * other for clustering purposes. This is useful for picking out nodes which
+ * have similar purposes.
  *
  * Return ``Number.MAX_VALUE`` if one of the nodes contains the other.
  *
