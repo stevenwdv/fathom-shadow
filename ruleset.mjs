@@ -1,8 +1,8 @@
-const {CycleError} = require('./exceptions');
-const {Fnode} = require('./fnode');
-const {getDefault, isDomElement, reversed, setDefault, toposort} = require('./utils');
-const {out} = require('./rhs');
-const {InwardRule, OutwardRule, rule} = require('./rule');
+import {CycleError} from './exceptions';
+import {Fnode} from './fnode';
+import {getDefault, isDomElement, reversed, setDefault, toposort} from './utilsForFrontend';
+import {out} from './rhs';
+import {InwardRule, OutwardRule, rule} from './rule';
 
 
 /**
@@ -225,6 +225,6 @@ class BoundRuleset {
     }
 }
 
-module.exports = {
+export {
     ruleset
 };

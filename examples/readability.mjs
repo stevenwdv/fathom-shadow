@@ -15,13 +15,15 @@
  *   over, loosening constraints each time, if it fails
  * * Happily finds body text in things other than divs and p tags.
  */
-const {readFileSync} = require('fs');
-const {dirname, join} = require('path');
+import {argv} from 'process';
+import {readFileSync} from 'fs';
+import {dirname, join} from 'path';
 
-const leven = require('leven');
+import leven from 'leven';
 
-const {dom, props, out, rule, ruleset, score, type} = require('../index');
-const {domSort, inlineTextLength, linkDensity, staticDom} = require('../utils');
+import {dom, props, out, rule, ruleset, score, type} from '../index';
+import {Annealer} from '../optimizers';
+import {domSort, inlineTextLength, linkDensity, staticDom} from '../utils';
 
 
 /**
@@ -217,8 +219,6 @@ function readabilityDocPairs() {
 if (require.main === module) {
     // By default, just run the Readability examples and show how our current
     // coefficients score on them.
-    const {Annealer} = require('../optimizers');
-    const {argv} = require('process');
 
     let coeffs = [1.5, 4.5, 2, 6.5, 2, 0.5, 0];
 
@@ -261,7 +261,7 @@ if (require.main === module) {
                 deviationScore(readabilityDocPairs(), coeffs));
 }
 
-module.exports = {
+export {
     deviationScore,
     readabilityDocPairs,
     textContent,

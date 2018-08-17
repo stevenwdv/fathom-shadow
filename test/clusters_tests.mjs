@@ -1,9 +1,9 @@
 // Tests for fathom/clusters.js
 
-const assert = require('chai').assert;
+import {assert} from 'chai';
 
-const {distance, clusters} = require('../clusters');
-const {staticDom} = require('../utils');
+import {distance, clusters} from '../clusters';
+import {staticDom} from '../utils';
 
 
 // Assert that the distance between nodes a and b is greater in the `deep` DOM

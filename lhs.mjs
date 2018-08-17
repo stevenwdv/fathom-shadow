@@ -1,7 +1,7 @@
 // The left-hand side of a rule
 
-const {clusters, distance} = require('./clusters');
-const {maxes, getDefault, max, NiceSet, setDefault, sum} = require('./utils');
+import {clusters, distance} from './clusters';
+import {maxes, getDefault, max, NiceSet, setDefault, sum} from './utilsForFrontend';
 
 
 /**
@@ -363,7 +363,7 @@ class AndLhs extends Lhs {
     }
 }
 
-module.exports = {
+export {
     dom,
     Lhs
 };

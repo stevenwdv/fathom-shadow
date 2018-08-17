@@ -1,7 +1,8 @@
-const {readFileSync} = require('fs');
-const {basename, join} = require('path');
+import {readFileSync} from 'fs';
+import {basename, join} from 'path';
 
-const {dirsIn, setDefault, staticDom} = require('./utils');
+import {dirsIn, staticDom} from './utilsForBackend';
+import {setDefault} from './utilsForFrontend';
 
 
 // This is based on public-domain code from
@@ -20,7 +21,7 @@ const {dirsIn, setDefault, staticDom} = require('./utils');
  * incorporated. The chance of incorporating a cost-increasing change lessens
  * as the algorithim progresses.
  */
-class Annealer {
+export class Annealer {
     constructor(initialTemperature = 5000, coolingSteps = 5000, coolingFraction = .95, stepsPerTemp = 1000) {
         this.INITIAL_TEMPERATURE = initialTemperature;
         this.COOLING_STEPS = coolingSteps;
@@ -118,7 +119,7 @@ class Annealer {
  *
  * Builds up a total score and reports it at the end.
  */
-class Run {
+export class Run {
     /**
      * Run ruleset against every document in the corpus, and make the final
      * score ready for retrieval by calling :func:`score` or :func:`humanScore`.
@@ -200,7 +201,7 @@ class Run {
  * This solves the problem of jsdom leaking on repeated instantiation and of
  * the performance penalty inherent in re-parsing sample data.
  */
-class Corpus {
+export class Corpus {
     /**
      * On construct, this loops across the folders inside :func:`baseFolder`,
      * caching each as a :class:`Sample`.
@@ -240,7 +241,7 @@ class Corpus {
  * :attr:`name` contains the name of the folder. Override the constructor to
  * pull in additional information you're interested in.
  */
-class Sample {
+export class Sample {
     /**
      * @arg sampleDir {String} Path to the folder representing the sample,
      *     containing ``source.html`` and other files at your discretion
@@ -258,10 +259,3 @@ class Sample {
         this.name = basename(sampleDir);
     }
 }
-
-module.exports = {
-    Annealer,
-    Corpus,
-    Run,
-    Sample
-};

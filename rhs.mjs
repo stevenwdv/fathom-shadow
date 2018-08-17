@@ -1,6 +1,6 @@
 // The right-hand side of a rule
 
-const {NiceSet, reversed} = require('./utils');
+import {NiceSet, reversed} from './utilsForFrontend';
 
 
 const TYPE = 1;
@@ -328,7 +328,7 @@ class OutwardRhs {
     }
 }
 
-module.exports = {
+export {
     InwardRhs,
     out,
     OutwardRhs

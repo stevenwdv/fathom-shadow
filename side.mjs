@@ -1,5 +1,5 @@
-const {Lhs} = require('./lhs');
-const {InwardRhs} = require('./rhs');
+import {Lhs} from './lhs';
+import {InwardRhs} from './rhs';
 
 
 function props(callback) {
@@ -121,7 +121,7 @@ class Side {
     }
 }
 
-module.exports = {
+export {
     and,
     atMost,
     conserveScore,

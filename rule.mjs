@@ -1,7 +1,7 @@
-const {forEach, map} = require('wu');
+import wu from 'wu';
 
-const {NiceSet, setDefault} = require('./utils');
-const {OutwardRhs} = require('./rhs');
+import {NiceSet, setDefault} from './utilsForFrontend';
+import {OutwardRhs} from './rhs';
 
 
 /**
@@ -149,7 +149,7 @@ class InwardRule extends Rule {
         const returnedFnodes = new Set();
 
         // Merge facts into fnodes:
-        forEach(
+        wu.forEach(
             function updateFnode(leftFnode) {
                 const leftType = self.lhs.guaranteedType();
                 const fact = self.rhs.fact(leftFnode, leftType);
@@ -284,7 +284,7 @@ class OutwardRule extends Rule {
      * can add caching later if it proves beneficial.)
      */
     results(ruleset) {
-        return this.rhs.allCallback(map(this.rhs.callback, this.lhs.fnodes(ruleset)));
+        return this.rhs.allCallback(wu.map(this.rhs.callback, this.lhs.fnodes(ruleset)));
     }
 
     /**
@@ -302,7 +302,7 @@ class OutwardRule extends Rule {
     }
 }
 
-module.exports = {
+export {
     InwardRule,
     OutwardRule,
     rule

@@ -1,16 +1,12 @@
-const {readdirSync, statSync} = require('fs');
-const {join} = require('path');
+import wu from 'wu';
 
-const {jsdom} = require('jsdom/lib/old-api');
-const {forEach, map} = require('wu');
-
-const {CycleError} = require('./exceptions');
+import {CycleError} from './exceptions';
 
 
 /**
  * Return the passed-in arg. Useful as a default.
  */
-function identity(x) {
+export function identity(x) {
     return x;
 }
 
@@ -22,10 +18,10 @@ function identity(x) {
  * @arg isBetter {function} Return whether its first arg is better than its
  *     second
  */
-function best(iterable, by, isBetter) {
+export function best(iterable, by, isBetter) {
     let bestSoFar, bestKeySoFar;
     let isFirst = true;
-    forEach(
+    wu.forEach(
         function (item) {
             const key = by(item);
             if (isBetter(key, bestKeySoFar) || isFirst) {
@@ -50,7 +46,7 @@ function best(iterable, by, isBetter) {
  * @arg by {function} Given an item of the iterable, returns a value to
  *     compare
  */
-function max(iterable, by = identity) {
+export function max(iterable, by = identity) {
     return best(iterable, by, (a, b) => a > b);
 }
 
@@ -59,11 +55,11 @@ function max(iterable, by = identity) {
  *
  * If an empty iterable is passed in, return [].
  */
-function maxes(iterable, by = identity) {
+export function maxes(iterable, by = identity) {
     let bests = [];
     let bestKeySoFar;
     let isFirst = true;
-    forEach(
+    wu.forEach(
         function (item) {
             const key = by(item);
             if (key > bestKeySoFar || isFirst) {
@@ -84,17 +80,17 @@ function maxes(iterable, by = identity) {
  * If multiple items are equally great, return the first. If an empty iterable
  * is passed in, return [].
  */
-function min(iterable, by = identity) {
+export function min(iterable, by = identity) {
     return best(iterable, by, (a, b) => a < b);
 }
 
 /**
  * Return the sum of an iterable, as defined by the + operator.
  */
-function sum(iterable) {
+export function sum(iterable) {
     let total;
     let isFirst = true;
-    forEach(
+    wu.forEach(
         function assignOrAdd(addend) {
             if (isFirst) {
                 total = addend;
@@ -110,7 +106,7 @@ function sum(iterable) {
 /**
  * Return the number of items in an iterable, consuming it as a side effect.
  */
-function length(iterable) {
+export function length(iterable) {
     let num = 0;
     // eslint-disable-next-line no-unused-vars
     for (let item of iterable) {
@@ -125,7 +121,7 @@ function length(iterable) {
  * @arg shouldTraverse {function} Given a node, say whether we should
  *     include it and its children
  */
-function *walk(element, shouldTraverse) {
+export function *walk(element, shouldTraverse) {
     yield element;
     for (let child of element.childNodes) {
         if (shouldTraverse(child)) {
@@ -136,18 +132,17 @@ function *walk(element, shouldTraverse) {
     }
 }
 
-const blockTags = new Set();
-forEach(blockTags.add.bind(blockTags),
-        ['ADDRESS', 'BLOCKQUOTE', 'BODY', 'CENTER', 'DIR', 'DIV', 'DL',
-         'FIELDSET', 'FORM', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'HR',
-         'ISINDEX', 'MENU', 'NOFRAMES', 'NOSCRIPT', 'OL', 'P', 'PRE',
-         'TABLE', 'UL', 'DD', 'DT', 'FRAMESET', 'LI', 'TBODY', 'TD',
-         'TFOOT', 'TH', 'THEAD', 'TR', 'HTML']);
+const blockTags = new Set(
+    ['ADDRESS', 'BLOCKQUOTE', 'BODY', 'CENTER', 'DIR', 'DIV', 'DL',
+     'FIELDSET', 'FORM', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'HR',
+     'ISINDEX', 'MENU', 'NOFRAMES', 'NOSCRIPT', 'OL', 'P', 'PRE',
+     'TABLE', 'UL', 'DD', 'DT', 'FRAMESET', 'LI', 'TBODY', 'TD',
+     'TFOOT', 'TH', 'THEAD', 'TR', 'HTML']);
 /**
  * Return whether a DOM element is a block element by default (rather than by
  * styling).
  */
-function isBlock(element) {
+export function isBlock(element) {
     return blockTags.has(element.tagName);
 }
 
@@ -158,7 +153,7 @@ function isBlock(element) {
  * @arg shouldTraverse {function} Specify additional elements to exclude by
  *     returning false
  */
-function *inlineTexts(element, shouldTraverse = element => true) {
+export function *inlineTexts(element, shouldTraverse = element => true) {
     // TODO: Could we just use querySelectorAll() with a really long
     // selector rather than walk(), for speed?
     for (let child of walk(element,
@@ -184,15 +179,15 @@ function *inlineTexts(element, shouldTraverse = element => true) {
  * @arg shouldTraverse {function} Specify additional elements to exclude by
  *     returning false
  */
-function inlineTextLength(element, shouldTraverse = element => true) {
-    return sum(map(text => collapseWhitespace(text).length,
-                   inlineTexts(element, shouldTraverse)));
+export function inlineTextLength(element, shouldTraverse = element => true) {
+    return sum(wu.map(text => collapseWhitespace(text).length,
+                      inlineTexts(element, shouldTraverse)));
 }
 
 /**
  * Return a string with each run of whitespace collapsed to a single space.
  */
-function collapseWhitespace(str) {
+export function collapseWhitespace(str) {
     return str.replace(/\s{2,}/g, ' ');
 }
 
@@ -203,7 +198,7 @@ function collapseWhitespace(str) {
  * @arg inlineLength {number} Optionally, the precalculated inline
  *     length of the fnode. If omitted, we will calculate it ourselves.
  */
-function linkDensity(fnode, inlineLength) {
+export function linkDensity(fnode, inlineLength) {
     if (inlineLength === undefined) {
         inlineLength = inlineTextLength(fnode.element);
     }
@@ -215,7 +210,7 @@ function linkDensity(fnode, inlineLength) {
 /**
  * Return whether an element is a text node that consist wholly of whitespace.
  */
-function isWhitespace(element) {
+export function isWhitespace(element) {
     return (element.nodeType === element.TEXT_NODE &&
             element.textContent.trim().length === 0);
 }
@@ -223,7 +218,7 @@ function isWhitespace(element) {
 /**
  * Get a key of a map, first setting it to a default value if it's missing.
  */
-function setDefault(map, key, defaultMaker) {
+export function setDefault(map, key, defaultMaker) {
     if (map.has(key)) {
         return map.get(key);
     }
@@ -235,7 +230,7 @@ function setDefault(map, key, defaultMaker) {
 /**
  * Get a key of a map or, if it's missing, a default value.
  */
-function getDefault(map, key, defaultMaker) {
+export function getDefault(map, key, defaultMaker) {
     if (map.has(key)) {
         return map.get(key);
     }
@@ -245,7 +240,7 @@ function getDefault(map, key, defaultMaker) {
 /**
  * Return an backward iterator over an Array.
  */
-function *reversed(array) {
+export function *reversed(array) {
     for (let i = array.length - 1; i >= 0; i--) {
         yield array[i];
     }
@@ -258,7 +253,7 @@ function *reversed(array) {
  * @arg nodesThatNeed {function} Take a node and returns an Array of nodes
  *     that depend on it
  */
-function toposort(nodes, nodesThatNeed) {
+export function toposort(nodes, nodesThatNeed) {
     const ret = [];
     const todo = new Set(nodes);
     const inProgress = new Set();
@@ -287,7 +282,7 @@ function toposort(nodes, nodesThatNeed) {
 /**
  * A Set with the additional methods it ought to have had
  */
-class NiceSet extends Set {
+export class NiceSet extends Set {
     /**
      * Remove and return an arbitrary item. Throw an Error if I am empty.
      */
@@ -322,7 +317,7 @@ class NiceSet extends Set {
 /**
  * Return the first item of an iterable.
  */
-function first(iterable) {
+export function first(iterable) {
     for (let i of iterable) {
         return i;
     }
@@ -332,7 +327,7 @@ function first(iterable) {
  * Given any node in a DOM tree, return the root element of the tree, generally
  * an HTML element.
  */
-function rootElement(element) {
+export function rootElement(element) {
     let parent;
     while ((parent = element.parentNode) !== null && parent.nodeType === parent.ELEMENT_NODE) {
         element = parent;
@@ -345,7 +340,7 @@ function rootElement(element) {
  *
  * Caller must make sure `regex` has the 'g' option set.
  */
-function numberOfMatches(regex, haystack) {
+export function numberOfMatches(regex, haystack) {
     return (haystack.match(regex) || []).length;
 }
 
@@ -356,7 +351,7 @@ function numberOfMatches(regex, haystack) {
  * This is used to build rulesets which classify entire pages rather than
  * picking out specific elements.
  */
-function page(scoringFunction) {
+export function page(scoringFunction) {
     function wrapper(node) {
         const scoreAndTypeAndNote = scoringFunction(node);
         if (scoreAndTypeAndNote.score !== undefined) {
@@ -373,7 +368,7 @@ function page(scoringFunction) {
  * @arg fnodes {iterable} fnodes to sort
  * @return {Array} sorted fnodes
  */
-function domSort(fnodes) {
+export function domSort(fnodes) {
     function compare(a, b) {
         const element = a.element;
         const position = element.compareDocumentPosition(b.element);
@@ -391,7 +386,7 @@ function domSort(fnodes) {
 /**
  * @return whether a thing appears to be a DOM element.
  */
-function isDomElement(thing) {
+export function isDomElement(thing) {
     return thing.nodeName !== undefined;
 }
 
@@ -413,12 +408,12 @@ function isDomElement(thing) {
  *     provided, search all.
  * @return Whether any of the attribute values satisfy the predicate function
  */
-function attributesMatch(element, predicate, attrs = []) {
+export function attributesMatch(element, predicate, attrs = []) {
     const attributes = attrs.length === 0 ? Array.from(element.attributes).map(a => a.name) : attrs;
     for (let i = 0; i < attributes.length; i++) {
         const attr = element.getAttribute(attributes[i]);
         // If the attribute is an array, apply the scoring function to each element
-        if (attr && ((attr.isArray && attr.some(predicate)) || predicate(attr))) {
+        if (attr && ((Array.isArray(attr) && attr.some(predicate)) || predicate(attr))) {
             return true;
         }
     }
@@ -426,17 +421,9 @@ function attributesMatch(element, predicate, attrs = []) {
 }
 
 /**
- * @return {String[]} The name (not path) of each directory directly within a
- *      given path
- */
-function dirsIn(path) {
-    return readdirSync(path).filter(f => statSync(join(path, f)).isDirectory());
-}
-
-/**
  * Yield an element and each of its ancestors.
  */
-function *ancestors(element) {
+export function *ancestors(element) {
     yield element;
     let parent;
     while ((parent = element.parentNode) !== null && parent.nodeType === parent.ELEMENT_NODE) {
@@ -445,20 +432,10 @@ function *ancestors(element) {
     }
 }
 
-/**
- * Parse an HTML doc, and return a DOM-compliant interface to it. Do not
- * execute any of its inline scripts.
- */
-function staticDom(html) {
-    return jsdom(html, {features: {ProcessExternalResources: false,
-                                   FetchExternalResources: false}});
-}
-
-module.exports = {
+export default {
     ancestors,
     best,
     collapseWhitespace,
-    dirsIn,
     domSort,
     first,
     getDefault,
@@ -480,7 +457,6 @@ module.exports = {
     rootElement,
     attributesMatch,
     setDefault,
-    staticDom,
     sum,
     toposort,
     walk

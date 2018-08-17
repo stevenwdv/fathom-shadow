@@ -1,6 +1,6 @@
-const {assert} = require('chai');
-const {dom, out, rule, ruleset, score, type} = require('../index');
-const {NiceSet, toposort, staticDom, attributesMatch} = require('../utils');
+import {assert} from 'chai';
+import {dom, out, rule, ruleset, score, type} from '../index';
+import {NiceSet, toposort, staticDom, attributesMatch} from '../utils';
 
 
 describe('Utils', function () {

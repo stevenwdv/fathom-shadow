@@ -1,7 +1,7 @@
-const assert = require('chai').assert;
+import {assert} from 'chai';
 
-const {dom, out, props, rule, ruleset, type} = require('../index');
-const {numberOfMatches, page, staticDom, sum} = require('../utils');
+import {dom, out, props, rule, ruleset, type} from '../index';
+import {numberOfMatches, page, staticDom, sum} from '../utils';
 
 
 describe('Design-driving demos', function () {
