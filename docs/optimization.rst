@@ -2,6 +2,9 @@
 Optimization
 ============
 
+.. note::
+   There is now `an in-browser GUI for optimizating rulesets <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_. It runs faster and has easy access to more sources of signal. You're almost certainly better off using it than writing custom code against the below APIs.
+
 Selecting the optimal :func:`score` coefficients in a complex ruleset is tricky, but it can have a huge effect on accuracy. Manual tweaking, supported by a laboriously constructed test harness, becomes untenable with more than a few coefficients, so we recommend letting the machine figure them out.
 
 The Annealer
