@@ -5,3 +5,5 @@
 
 # npm pack doesn't seem to get these from .gitignore:
 /coverage
+/*.log
+/dist
