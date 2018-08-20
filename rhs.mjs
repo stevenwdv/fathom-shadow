@@ -23,11 +23,11 @@ const SUBFACTS = {
  * function first by adding :func:`through()`, or you can run the entire set of
  * nodes through a callback function by adding :func:`allThrough()`.
  */
-function out(key) {
+export function out(key) {
     return new OutwardRhs(key);
 }
 
-class InwardRhs {
+export class InwardRhs {
     constructor(calls = [], max = Infinity, types) {
         this._calls = calls.slice();
         this._max = max;  // max score
@@ -294,7 +294,7 @@ class InwardRhs {
     }
 }
 
-class OutwardRhs {
+export class OutwardRhs {
     constructor(key, through = x => x, allThrough = x => x) {
         this.key = key;
         this.callback = through;
@@ -327,9 +327,3 @@ class OutwardRhs {
         return this;
     }
 }
-
-export {
-    InwardRhs,
-    out,
-    OutwardRhs
-};

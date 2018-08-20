@@ -6,7 +6,7 @@ import {getDefault, setDefault} from './utilsForFrontend';
  * A wrapper around a DOM node, storing :term:`types<type>`,
  * :term:`scores<score>`, and :term:`notes<note>` that apply to it
  */
-class Fnode {
+export class Fnode {
     /**
      * @arg element The DOM element I describe
      * @arg ruleset The ruleset which created me
@@ -163,7 +163,3 @@ class Fnode {
         }
     }
 }
-
-export {
-    Fnode
-};

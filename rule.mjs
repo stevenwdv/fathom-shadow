@@ -8,7 +8,7 @@ import {OutwardRhs} from './rhs';
  * Construct and return the proper type of rule class based on the
  * inwardness/outwardness of the RHS.
  */
-function rule(lhs, rhs) {
+export function rule(lhs, rhs) {
     // Since out() is a valid call only on the RHS (unlike type()), we can take
     // a shortcut here: any outward RHS will already be an OutwardRhs; we don't
     // need to sidetrack it through being a Side. And OutwardRhs has an asRhs()
@@ -125,7 +125,7 @@ class Rule {  // abstract
  * A normal rule, whose results head back into the Fathom knowledgebase, to be
  * operated on by further rules.
  */
-class InwardRule extends Rule {
+export class InwardRule extends Rule {
     // TODO: On construct, complain about useless rules, like a dom() rule that
     // doesn't assign a type.
 
@@ -275,7 +275,7 @@ class InwardRule extends Rule {
  * Its results go out into the world, not inward back into the Fathom
  * knowledgebase.
  */
-class OutwardRule extends Rule {
+export class OutwardRule extends Rule {
     /**
      * Compute the whole thing, including any .through() and .allThrough().
      * Do not mark me done in ruleset.doneRules; out rules are never marked as
@@ -301,9 +301,3 @@ class OutwardRule extends Rule {
         return this.lhs.typesMentioned().extend(super._typesFinalized());
     }
 }
-
-export {
-    InwardRule,
-    OutwardRule,
-    rule
-};

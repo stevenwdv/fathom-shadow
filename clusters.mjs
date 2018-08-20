@@ -68,7 +68,7 @@ function numStrides(left, right) {
  *    nodes.
  *
  */
-function distance(fnodeA,
+export function distance(fnodeA,
                   fnodeB,
                   {differentDepthCost = 2,
                    differentTagCost = 2,
@@ -315,7 +315,7 @@ class DistanceMatrix {
  *     in any particular order. You may find :func:`domSort` helpful to remedy
  *     the latter.
  */
-function clusters(fnodes, splittingDistance, getDistance = distance) {
+export function clusters(fnodes, splittingDistance, getDistance = distance) {
     const matrix = new DistanceMatrix(fnodes, getDistance);
     let closest;
 
@@ -325,8 +325,3 @@ function clusters(fnodes, splittingDistance, getDistance = distance) {
 
     return matrix.clusters();
 }
-
-export {
-    clusters,
-    distance
-};

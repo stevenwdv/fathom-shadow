@@ -8,7 +8,7 @@ import {InwardRule, OutwardRule, rule} from './rule';
 /**
  * Return a new :class:`Ruleset` containing the given rules.
  */
-function ruleset(...rules) {
+export function ruleset(...rules) {
     return new Ruleset(...rules);
 }
 
@@ -224,7 +224,3 @@ class BoundRuleset {
                           () => new Fnode(element, this));
     }
 }
-
-export {
-    ruleset
-};

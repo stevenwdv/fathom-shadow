@@ -2,32 +2,32 @@ import {Lhs} from './lhs';
 import {InwardRhs} from './rhs';
 
 
-function props(callback) {
+export function props(callback) {
     return new Side({method: 'props', args: [callback]});
 }
 
 /** Constrain to an input type on the LHS, or apply a type on the RHS. */
-function type(theType) {
+export function type(theType) {
     return new Side({method: 'type', args: [theType]});
 }
 
-function note(callback) {
+export function note(callback) {
     return new Side({method: 'note', args: [callback]});
 }
 
-function score(scoreOrCallback) {
+export function score(scoreOrCallback) {
     return new Side({method: 'score', args: [scoreOrCallback]});
 }
 
-function atMost(score) {
+export function atMost(score) {
     return new Side({method: 'atMost', args: [score]});
 }
 
-function typeIn(...types) {
+export function typeIn(...types) {
     return new Side({method: 'typeIn', args: types});
 }
 
-function conserveScore() {
+export function conserveScore() {
     return new Side({method: 'conserveScore', args: []});
 }
 
@@ -41,7 +41,7 @@ function conserveScore() {
  * ``not`` and ``or`` don't exist yet, but you can express ``or`` the long way
  * around by having 2 rules with identical RHSs.
  */
-function and(...lhss) {
+export function and(...lhss) {
     return new Side({method: 'and', args: lhss});
 }
 
@@ -120,14 +120,3 @@ class Side {
         return this._and('when', pred);
     }
 }
-
-export {
-    and,
-    atMost,
-    conserveScore,
-    note,
-    props,
-    score,
-    type,
-    typeIn
-};

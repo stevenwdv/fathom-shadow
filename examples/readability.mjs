@@ -33,7 +33,7 @@ import {domSort, inlineTextLength, linkDensity, staticDom} from '../utils';
  * Take a bunch of optional coefficients to tune its behavior. Default is to
  * use the best-performing coefficients we've come up with so far.
  */
-function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4.5, coeffLength = 2, coeffDifferentDepth = 6.5, coeffDifferentTag = 2, coeffSameTag = 0.5, coeffStride = 0) {
+export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4.5, coeffLength = 2, coeffDifferentDepth = 6.5, coeffDifferentTag = 2, coeffSameTag = 0.5, coeffStride = 0) {
     // The default coefficients are the ones that score best against a
     // subset of Readability test cases.
 
@@ -125,7 +125,7 @@ function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4.5, coe
 }
 
 /** Return the concatenated textual content of an entire DOM tree. */
-function textContent(dom) {
+export function textContent(dom) {
     // dom.textContent crashes. dom.firstChild is always an HTML element in
     // jsdom, even if you didn't include one.
     return dom.firstChild.textContent;
@@ -194,7 +194,7 @@ function expectedAndSourceDocs(folder) {
             domFromFile('source.html')];
 }
 
-function deviationScore(docPairs, coeffs = []) {
+export function deviationScore(docPairs, coeffs = []) {
     const stats = new DiffStats(tunedContentFnodes(...coeffs));
     for (let pair of docPairs) {
         stats.compare(...pair);
@@ -203,7 +203,7 @@ function deviationScore(docPairs, coeffs = []) {
 }
 
 /** Return (expected DOM, source DOM) for all the readbaility test docs. */
-function readabilityDocPairs() {
+export function readabilityDocPairs() {
     return ['basic-tags-cleaning',
             '001',
             //'002', // hellish number of candidate tags. Takes 14s.
@@ -260,10 +260,3 @@ if (require.main === module) {
     console.log('% difference from ideal:',
                 deviationScore(readabilityDocPairs(), coeffs));
 }
-
-export {
-    deviationScore,
-    readabilityDocPairs,
-    textContent,
-    tunedContentFnodes
-};

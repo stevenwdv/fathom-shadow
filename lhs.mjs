@@ -11,7 +11,7 @@ import {maxes, getDefault, max, NiceSet, setDefault, sum} from './utilsForFronte
  * Every ruleset has at least one ``dom`` rule, as that is where nodes begin to
  * flow into the system.
  */
-function dom(selector) {
+export function dom(selector) {
     return new DomLhs(selector);
 }
 
@@ -30,7 +30,7 @@ function dom(selector) {
  *
  * Lhs and its subclasses are private to the Fathom framework.
  */
-class Lhs {
+export class Lhs {
     constructor() {
         this._predicate = () => true;
     }
@@ -362,8 +362,3 @@ class AndLhs extends Lhs {
         return new NiceSet(this._args.map(arg => arg.guaranteedType()));
     }
 }
-
-export {
-    dom,
-    Lhs
-};

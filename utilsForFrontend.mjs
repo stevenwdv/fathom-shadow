@@ -431,33 +431,3 @@ export function *ancestors(element) {
         element = parent;
     }
 }
-
-export default {
-    ancestors,
-    best,
-    collapseWhitespace,
-    domSort,
-    first,
-    getDefault,
-    identity,
-    inlineTextLength,
-    inlineTexts,
-    isBlock,
-    isDomElement,
-    isWhitespace,
-    length,
-    linkDensity,
-    max,
-    maxes,
-    min,
-    NiceSet,
-    numberOfMatches,
-    page,
-    reversed,
-    rootElement,
-    attributesMatch,
-    setDefault,
-    sum,
-    toposort,
-    walk
-};
