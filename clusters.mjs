@@ -6,10 +6,6 @@ import {isDomElement, isWhitespace, min} from './utilsForFrontend';
  * Return the number of stride nodes between 2 DOM nodes *at the same
  * level of the tree*, without going up or down the tree.
  *
- * Stride nodes are {(1) siblings or (2) siblings of ancestors} that lie
- * between the 2 nodes. These interposed nodes make it less likely that the 2
- * nodes should be together in a cluster.
- *
  * ``left`` xor ``right`` may also be undefined.
  */
 function numStrides(left, right) {
@@ -39,12 +35,12 @@ function numStrides(left, right) {
 }
 
 /**
- * Return a distance measurement between 2 DOM nodes or :term:`fnodes<fnode>`
- * based on the similarity of their ancestry in the DOM. For instance, if one
- * node is situated inside ``<div><span><b><theNode>`` and the other node is at
- * ``<differentDiv><span><b><otherNode>``, they are considered close to each
- * other for clustering purposes. This is useful for picking out nodes which
- * have similar purposes.
+ * Return a topological distance between 2 DOM nodes or :term:`fnodes<fnode>`
+ * weighted according to the similarity of their ancestry in the DOM. For
+ * instance, if one node is situated inside ``<div><span><b><theNode>`` and the
+ * other node is at ``<differentDiv><span><b><otherNode>``, they are considered
+ * close to each other for clustering purposes. This is useful for picking out
+ * nodes which have similar purposes.
  *
  * Return ``Number.MAX_VALUE`` if one of the nodes contains the other.
  *
@@ -63,7 +59,10 @@ function numStrides(left, right) {
  *    where tagNames differ
  * @arg sameTagCost {number} Cost for a level below the common ancestor where
  *    tagNames are the same
- * @arg strideCost {number} Cost for each stride node between A and B
+ * @arg strideCost {number} Cost for each stride node between A and B. Stride
+ *     nodes are siblings or siblings-of-ancestors that lie between the 2
+ *     nodes. These interposed nodes make it less likely that the 2 nodes
+ *     should be together in a cluster.
  * @arg additionalCost {function} Return an additional cost, given 2 fnodes or
  *    nodes.
  *
