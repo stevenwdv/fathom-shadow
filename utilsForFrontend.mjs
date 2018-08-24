@@ -328,11 +328,7 @@ export function first(iterable) {
  * an HTML element.
  */
 export function rootElement(element) {
-    let parent;
-    while ((parent = element.parentNode) !== null && parent.nodeType === parent.ELEMENT_NODE) {
-        element = parent;
-    }
-    return element;
+    return element.ownerDocument.documentElement;
 }
 
 /**
