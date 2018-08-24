@@ -43,6 +43,8 @@ Left-hand sides are currently a few special forms which select nodes to be fed t
 
 .. autofunction:: and(typeCall[, typeCall, ...])
 
+.. autofunction:: nearest(typeCallA, typeCallB[, distance=euclidean])
+
 .. autofunction:: when(predicate)
 
 

@@ -50,7 +50,7 @@ One of Fathom's most powerful features is its flexible clustering algorithm, whi
 
    Third is depth disparity. Nodes are considered farther from each other if they are not the same distance from the root.
 
-   Finally is the presence of "stride" nodes, which are (1) siblings or (2) siblings of ancestors that lie
+   Finally is the presence of "stride" nodes, which are siblings or siblings-of-ancestors that lie
    between 2 nodes. (These are the nodes that would appear between the 2 nodes in a straightforward rendering of the page.) Each stride node makes it less likely that the 2 nodes will be together in a cluster.
 
    The costs for each factor can be customized by wrapping :func:`distance` in an arrow function and passing it as the third param.
@@ -60,3 +60,5 @@ One of Fathom's most powerful features is its flexible clustering algorithm, whi
         ``clusters()`` can actually cluster anything, not just DOM nodes. All you need to do is pass in a suitable distance function as the ``getDistance`` param.
 
 .. autofunction:: distance(fnodeA, fnodeB, {differentDepthCost = 2, differentTagCost = 2, sameTagCost = 1, strideCost = 1, additionalCost = (fnodeA, fnodeB) => 0})
+
+.. autofunction:: euclidean

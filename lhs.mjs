@@ -1,7 +1,7 @@
 // The left-hand side of a rule
 
 import {clusters, distance} from './clusters';
-import {maxes, getDefault, max, NiceSet, setDefault, sum} from './utilsForFrontend';
+import {maxes, getDefault, max, NiceSet, setDefault, sum, min} from './utilsForFrontend';
 
 
 /**
@@ -42,8 +42,10 @@ export class Lhs {
             return new TypeLhs(...firstCall.args);
         } else if (firstCall.method === 'and') {
             return new AndLhs(firstCall.args);
+        } else if (firstCall.method === 'nearest') {
+            return new NearestLhs(firstCall.args);
         } else {
-            throw new Error('The left-hand side of a rule() must start with dom(), type(), or and().');
+            throw new Error('The left-hand side of a rule() must start with dom(), type(), and(), or nearest().');
         }
     }
 
@@ -86,15 +88,13 @@ export class Lhs {
      * Check that a RHS-emitted fact is legal for this kind of LHS, and throw
      * an error if it isn't.
      */
-    checkFact(fact) {
-    }
+    checkFact(fact) {}
 
     /**
      * Return the single type the output of the LHS is guaranteed to have.
      * Return undefined if there is no such single type we can ascertain.
      */
-    guaranteedType() {
-    }
+    guaranteedType() {}
 
     /**
      * Return the type I aggregate if I am an aggregate LHS; return undefined
@@ -322,16 +322,6 @@ class AndLhs extends Lhs {
     constructor(lhss) {
         super();
 
-        function sideToTypeLhs(side) {
-            const lhs = side.asLhs();
-            if (!(lhs.constructor === TypeLhs)) {
-                throw new Error('and() supports only simple type() calls as arguments for now.');
-                // TODO: Though we could solve this with a compilation step: and(type(A), type(B).max()) is equivalent to type(B).max() -> type(Bmax); and(type(A), type(Bmax)).
-                // In fact, we should be able to compile most (any?) arbitrary and()s, including nested ands and and(type(...).max(), ...) constructions into several and(type(A), type(B), ...) rules.
-            }
-            return lhs;
-        }
-
         // For the moment, we accept only type()s as args. TODO: Generalize to
         // type().max() and such later.
         this._args = lhss.map(sideToTypeLhs);
@@ -360,5 +350,78 @@ class AndLhs extends Lhs {
 
     typesMentioned() {
         return new NiceSet(this._args.map(arg => arg.guaranteedType()));
+    }
+}
+
+function sideToTypeLhs(side) {
+    const lhs = side.asLhs();
+    if (!(lhs.constructor === TypeLhs)) {
+        throw new Error('and() and nearest() support only simple type() calls as arguments for now.');
+        // TODO: Though we could solve this with a compilation step: and(type(A), type(B).max()) is equivalent to type(B).max() -> type(Bmax); and(type(A), type(Bmax)).
+        // In fact, we should be able to compile most (any?) arbitrary and()s, including nested ands and and(type(...).max(), ...) constructions into several and(type(A), type(B), ...) rules.
+    }
+    return lhs;
+}
+
+class NearestLhs extends Lhs {
+    constructor([a, b, distance]) {
+        super();
+        this._a = sideToTypeLhs(a);
+        this._b = sideToTypeLhs(b);
+        this._distance = distance;
+    }
+
+    /**
+     * Return an iterable of {fnodes, transformer} pairs.
+     */
+    *fnodes(ruleset) {
+        // Go through all the left arg's nodes. For each one, find the closest
+        // right-arg's node. O(a * b). Once a right-arg's node is used, we
+        // don't eliminate it from consideration, because then order of left-
+        // args' nodes would matter.
+
+        // TODO: Still not sure how to get the distance to factor into the
+        // score multiplier unless we hard-code nearest() to do that. It's a
+        // matter of not being able to bind on the RHS to the output of the
+        // distance function on the LHS. Perhaps we could at least make
+        // distance part of the note and read it in a props() callback.
+
+        // We're assuming here that simple type() calls return just plain
+        // fnodes, not {fnode, rhsTransformer} pairs:
+        const as_ = this._a.fnodes(ruleset);
+        const bs = Array.from(this._b.fnodes(ruleset));
+        if (bs.length > 0) {
+            // If bs is empty, there can be no nearest nodes, so don't emit any.
+            for (const a of as_) {
+                const nearest = min(bs, b => this._distance(a, b));
+                yield {fnode: a,
+                       rhsTransformer: function setNoteIfEmpty(fact) {
+                        // If note is explicitly set by the RHS, let it take
+                        // precedence, even though that makes this entire LHS
+                        // pointless.
+                        if (fact.note === undefined) {
+                            fact.note = nearest;  // TODO: Wrap this in an object to make room to return distance later.
+                        }
+                        return fact;
+                    }};
+            }
+        }
+    }
+
+    checkFact(fact) {
+        // Barf if the fact doesn't set a type at least. It should be a *new* type or at least one that doesn't result in cycles, but we can't deduce that.
+    }
+
+    possibleTypeCombinations() {
+        return [new NiceSet([this._a.guaranteedType()])];
+    }
+
+    typesMentioned() {
+        return new NiceSet([this._a.guaranteedType(),
+                            this._b.guaranteedType()]);
+    }
+
+    guaranteedType() {
+        return this._a.guaranteedType();
     }
 }

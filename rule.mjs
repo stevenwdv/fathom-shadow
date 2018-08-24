@@ -1,7 +1,9 @@
 import wu from 'wu';
 
-import {NiceSet, setDefault} from './utilsForFrontend';
+import {Fnode} from './fnode';
 import {OutwardRhs} from './rhs';
+import {NiceSet, setDefault} from './utilsForFrontend';
+import {identity} from './utilsForFrontend';
 
 
 /**
@@ -142,7 +144,7 @@ export class InwardRule extends Rule {
         // For now, we consider most of what a LHS computes to be cheap, aside
         // from type() and type().max(), which are cached by their specialized
         // LHS subclasses.
-        const leftFnodes = this.lhs.fnodes(ruleset);
+        const leftResults = this.lhs.fnodes(ruleset);
         // Avoid returning a single fnode more than once. LHSs uniquify
         // themselves, but the RHS can change the element it's talking
         // about and thus end up with dupes.
@@ -150,9 +152,16 @@ export class InwardRule extends Rule {
 
         // Merge facts into fnodes:
         wu.forEach(
-            function updateFnode(leftFnode) {
+            // leftResult can be either a fnode or a {fnode, rhsTransformer} pair.
+            function updateFnode(leftResult) {
                 const leftType = self.lhs.guaranteedType();
-                const fact = self.rhs.fact(leftFnode, leftType);
+                // Get a fnode and a RHS transformer, whether a plain fnode is
+                // returned or a {fnode, rhsTransformer} pair:
+                const {fnode: leftFnode = leftResult, rhsTransformer = identity} = leftResult;
+                // Grab the fact from the RHS, and run the LHS's optional
+                // transformer over it to pick up anything special it wants to
+                // do:
+                const fact = rhsTransformer(self.rhs.fact(leftFnode, leftType));
                 self.lhs.checkFact(fact);
                 const rightFnode = ruleset.fnodeForElement(fact.element || leftFnode.element);
                 // If the RHS doesn't specify a type, default to the
@@ -188,7 +197,7 @@ export class InwardRule extends Rule {
                 }
                 returnedFnodes.add(rightFnode);
             },
-            leftFnodes);
+            leftResults);
 
         // Update ruleset lookup tables.
         // First, mark this rule as done:
@@ -284,7 +293,15 @@ export class OutwardRule extends Rule {
      * can add caching later if it proves beneficial.)
      */
     results(ruleset) {
-        return this.rhs.allCallback(wu.map(this.rhs.callback, this.lhs.fnodes(ruleset)));
+        /**
+         * From a LHS's ``{fnode, rhsTransform}`` object or plain fnode, pick off just
+         * the fnode and return it.
+         */
+        function justFnode(fnodeOrStruct) {
+            return (fnodeOrStruct instanceof Fnode) ? fnodeOrStruct : fnodeOrStruct.fnode;
+        }
+
+        return this.rhs.allCallback(wu.map(this.rhs.callback, wu.map(justFnode, this.lhs.fnodes(ruleset))));
     }
 
     /**

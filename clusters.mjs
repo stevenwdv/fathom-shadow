@@ -6,10 +6,6 @@ import {isDomElement, isWhitespace, min} from './utilsForFrontend';
  * Return the number of stride nodes between 2 DOM nodes *at the same
  * level of the tree*, without going up or down the tree.
  *
- * Stride nodes are {(1) siblings or (2) siblings of ancestors} that lie
- * between the 2 nodes. These interposed nodes make it less likely that the 2
- * nodes should be together in a cluster.
- *
  * ``left`` xor ``right`` may also be undefined.
  */
 function numStrides(left, right) {
@@ -39,12 +35,12 @@ function numStrides(left, right) {
 }
 
 /**
- * Return a distance measurement between 2 DOM nodes or :term:`fnodes<fnode>`
- * based on the similarity of their ancestry in the DOM. For instance, if one
- * node is situated inside ``<div><span><b><theNode>`` and the other node is at
- * ``<differentDiv><span><b><otherNode>``, they are considered close to each
- * other for clustering purposes. This is useful for picking out nodes which
- * have similar purposes.
+ * Return a topological distance between 2 DOM nodes or :term:`fnodes<fnode>`
+ * weighted according to the similarity of their ancestry in the DOM. For
+ * instance, if one node is situated inside ``<div><span><b><theNode>`` and the
+ * other node is at ``<differentDiv><span><b><otherNode>``, they are considered
+ * close to each other for clustering purposes. This is useful for picking out
+ * nodes which have similar purposes.
  *
  * Return ``Number.MAX_VALUE`` if one of the nodes contains the other.
  *
@@ -63,18 +59,21 @@ function numStrides(left, right) {
  *    where tagNames differ
  * @arg sameTagCost {number} Cost for a level below the common ancestor where
  *    tagNames are the same
- * @arg strideCost {number} Cost for each stride node between A and B
+ * @arg strideCost {number} Cost for each stride node between A and B. Stride
+ *     nodes are siblings or siblings-of-ancestors that lie between the 2
+ *     nodes. These interposed nodes make it less likely that the 2 nodes
+ *     should be together in a cluster.
  * @arg additionalCost {function} Return an additional cost, given 2 fnodes or
  *    nodes.
  *
  */
 export function distance(fnodeA,
-                  fnodeB,
-                  {differentDepthCost = 2,
-                   differentTagCost = 2,
-                   sameTagCost = 1,
-                   strideCost = 1,
-                   additionalCost = (fnodeA, fnodeB) => 0} = {}) {
+                         fnodeB,
+                         {differentDepthCost = 2,
+                          differentTagCost = 2,
+                          sameTagCost = 1,
+                          strideCost = 1,
+                          additionalCost = (fnodeA, fnodeB) => 0} = {}) {
     // I was thinking of something that adds little cost for siblings. Up
     // should probably be more expensive than down (see middle example in the
     // Nokia paper).
@@ -155,6 +154,33 @@ export function distance(fnodeA,
     }
 
     return cost + additionalCost(fnodeA, fnodeB);
+}
+
+/**
+ * Return the spatial distance between 2 fnodes, assuming a rendered page.
+ *
+ * Specifically, return the distance in pixels between the centers of
+ * ``fnodeA.element.getBoundingClientRect()`` and
+ * ``fnodeB.element.getBoundingClientRect()``.
+ */
+export function euclidean(fnodeA, fnodeB) {
+    /**
+     * Return the horizontal distance from the left edge of the viewport to the
+     * center of an element, given a DOMRect object for it. It doesn't matter
+     * that the distance is affected by the page's scroll offset, since the 2
+     * elements have the same offset.
+     */
+    function xCenter(domRect) {
+        return domRect.left + domRect.width / 2;
+    }
+    function yCenter(domRect) {
+        return domRect.top + domRect.height / 2;
+    }
+
+    const aRect = fnodeA.element.getBoundingClientRect();
+    const bRect = fnodeB.element.getBoundingClientRect();
+    return Math.sqrt((xCenter(aRect) - xCenter(bRect)) ** 2 +
+                     (yCenter(aRect) - yCenter(bRect)) ** 2);
 }
 
 /** A lower-triangular matrix of inter-cluster distances */
