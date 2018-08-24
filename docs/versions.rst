@@ -2,6 +2,12 @@
 Version History
 ===============
 
+2.5
+===
+* Add experimental :func:`nearest` function, our first primitive for tying together compound entities.
+* Add :func:`euclidean` distance function, a strong source of signal on rendered pages.
+* Improve speed of :func:`rootElement`.
+
 2.4
 ===
 * Fathom is now a `dual-mode <https://medium.com/@giltayar/native-es-modules-in-nodejs-status-and-future-directions-part-i-ee5ea3001f71>`_ package, exposing both ES6 modules and equivalent CommonJS ones. This lets us ``import`` Fathom into modern ES6 projects and enjoy rollup's dead-code elimination while still remaining ``require()``-able by old CommonJS code.
