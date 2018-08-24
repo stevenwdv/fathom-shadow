@@ -69,12 +69,12 @@ function numStrides(left, right) {
  *
  */
 export function distance(fnodeA,
-                  fnodeB,
-                  {differentDepthCost = 2,
-                   differentTagCost = 2,
-                   sameTagCost = 1,
-                   strideCost = 1,
-                   additionalCost = (fnodeA, fnodeB) => 0} = {}) {
+                         fnodeB,
+                         {differentDepthCost = 2,
+                          differentTagCost = 2,
+                          sameTagCost = 1,
+                          strideCost = 1,
+                          additionalCost = (fnodeA, fnodeB) => 0} = {}) {
     // I was thinking of something that adds little cost for siblings. Up
     // should probably be more expensive than down (see middle example in the
     // Nokia paper).

@@ -86,15 +86,13 @@ export class Lhs {
      * Check that a RHS-emitted fact is legal for this kind of LHS, and throw
      * an error if it isn't.
      */
-    checkFact(fact) {
-    }
+    checkFact(fact) {}
 
     /**
      * Return the single type the output of the LHS is guaranteed to have.
      * Return undefined if there is no such single type we can ascertain.
      */
-    guaranteedType() {
-    }
+    guaranteedType() {}
 
     /**
      * Return the type I aggregate if I am an aggregate LHS; return undefined
