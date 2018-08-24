@@ -1,3 +1,4 @@
+import {euclidean} from './clusters';
 import {Lhs} from './lhs';
 import {InwardRhs} from './rhs';
 

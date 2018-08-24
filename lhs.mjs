@@ -368,20 +368,29 @@ class NearestLhs extends Lhs {
         super();
         this._a = sideToTypeLhs(a);
         this._b = sideToTypeLhs(b);
-        this._distance = distance || euclidean;
+        this._distance = distance;
     }
 
     /**
      * Return an iterable of {fnodes, transformer} pairs.
      */
     *fnodes(ruleset) {
-        // Go through all the left arg's nodes. For each one, find the closest right-arg's node. O(a * b). Once a right-arg's node is used, we don't eliminate it from consideration, because then order of left-args' nodes would matter.
+        // Go through all the left arg's nodes. For each one, find the closest
+        // right-arg's node. O(a * b). Once a right-arg's node is used, we
+        // don't eliminate it from consideration, because then order of left-
+        // args' nodes would matter.
+
+        // TODO: Still not sure how to get the distance to factor into the
+        // score multiplier unless we hard-code nearest() to do that. It's a
+        // matter of not being able to bind on the RHS to the output of the
+        // distance function on the LHS. Perhaps we could at least make
+        // distance part of the note and read it in a props() callback.
 
         // We're assuming here that simple type() calls return just plain
         // fnodes, not {fnode, rhsTransformer} pairs:
         const as_ = this._a.fnodes(ruleset);
         const bs = Array.from(this._b.fnodes(ruleset));
-        if (bs.length !== 0) {
+        if (bs.length > 0) {
             // If bs is empty, there can be no nearest nodes, so don't emit any.
             for (const a of as_) {
                 const nearest = min(bs, b => this._distance(a, b));
