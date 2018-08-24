@@ -32,7 +32,7 @@ export function conserveScore() {
 }
 
 /**
- * Experimental. Pull nodes that conform to multiple conditions at once.
+ * Pull nodes that conform to multiple conditions at once.
  *
  * For example: ``and(type('title'), type('english'))``
  *
@@ -43,6 +43,26 @@ export function conserveScore() {
  */
 export function and(...lhss) {
     return new Side({method: 'and', args: lhss});
+}
+
+/**
+ * For each node ``a``, find the closest node ``b``, and attach it as a note on
+ * the type specified by the RHS. If there are no nodes ``b``, do and emit
+ * nothing.
+ *
+ * For example: ``nearest(type('image'), type('price'))``
+ *
+ * The score of the ``a`` can be multiplied into the new type's score by using
+ * ``:method:InwardRhs#conserveScore``::
+ *
+ *     rule(nearest(type('image'), type('price')),
+ *          type('imageWithPrice').score(2).conserveScore())
+ *
+ * Caveats: ``nearest`` supports only simple ``type`` calls as arguments for
+ * now.
+ */
+export function nearest(a, b, distance = euclidean) {
+    return new Side({method: 'nearest', args: [a, b, distance]});
 }
 
 /**
