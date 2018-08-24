@@ -46,23 +46,31 @@ export function and(...lhss) {
 }
 
 /**
- * For each node ``a``, find the closest node ``b``, and attach it as a note on
- * the type specified by the RHS. If there are no nodes ``b``, do and emit
- * nothing.
+ * Experimental. For each :term:`fnode` from ``typeCallA``, find the closest
+ * node from ``typeCallB``, and attach it as a note. The note is attached to
+ * the type specified by the RHS, defaulting to the type of ``typeCallA``. If
+ * no nodes are emitted from ``typeCallB``, do nothing.
  *
- * For example: ``nearest(type('image'), type('price'))``
+ * For example... ::
+ * 
+ *     nearest(type('image'), type('price'))
  *
- * The score of the ``a`` can be multiplied into the new type's score by using
- * ``:method:InwardRhs#conserveScore``::
+ * The score of the ``typeCallA`` can be multiplied into the new type's score
+ * by using :func:`conserveScore`::
  *
  *     rule(nearest(type('image'), type('price')),
  *          type('imageWithPrice').score(2).conserveScore())
  *
- * Caveats: ``nearest`` supports only simple ``type`` calls as arguments for
- * now.
+ * @arg distance {function} A function that takes 2 fnodes and returns a
+ *     numerical distance between them. Included options are :func:`distance`,    
+ *     which is a weighted topological distance, and :func:`euclidean`, which
+ *     is a spatial distance.                                                          
+ *
+ * Caveats: ``nearest`` supports only simple ``type`` calls as arguments ``a``
+ * and ``b`` for now.
  */
-export function nearest(a, b, distance = euclidean) {
-    return new Side({method: 'nearest', args: [a, b, distance]});
+export function nearest(typeCallA, typeCallB, distance = euclidean) {
+    return new Side({method: 'nearest', args: [typeCallA, typeCallB, distance]});
 }
 
 /**
