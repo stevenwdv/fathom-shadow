@@ -60,3 +60,5 @@ One of Fathom's most powerful features is its flexible clustering algorithm, whi
         ``clusters()`` can actually cluster anything, not just DOM nodes. All you need to do is pass in a suitable distance function as the ``getDistance`` param.
 
 .. autofunction:: distance(fnodeA, fnodeB, {differentDepthCost = 2, differentTagCost = 2, sameTagCost = 1, strideCost = 1, additionalCost = (fnodeA, fnodeB) => 0})
+
+.. autofunction:: euclidean

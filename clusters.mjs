@@ -156,6 +156,33 @@ export function distance(fnodeA,
     return cost + additionalCost(fnodeA, fnodeB);
 }
 
+/**
+ * Return the spatial distance between 2 fnodes, assuming a rendered page.
+ *
+ * Specifically, return the distance in pixels between the centers of
+ * ``fnodeA.element.getBoundingClientRect()`` and
+ * ``fnodeB.element.getBoundingClientRect()``.
+ */
+export function euclidean(fnodeA, fnodeB) {
+    /**
+     * Return the horizontal distance from the left edge of the viewport to the
+     * center of an element, given a DOMRect object for it. It doesn't matter
+     * that the distance is affected by the page's scroll offset, since the 2
+     * elements have the same offset.
+     */
+    function xCenter(domRect) {
+        return domRect.left + domRect.width / 2;
+    }
+    function yCenter(domRect) {
+        return domRect.top + domRect.height / 2;
+    }
+
+    const aRect = fnodeA.element.getBoundingClientRect();
+    const bRect = fnodeB.element.getBoundingClientRect();
+    return Math.sqrt((xCenter(aRect) - xCenter(bRect)) ** 2 +
+                     (yCenter(aRect) - yCenter(bRect)) ** 2);
+}
+
 /** A lower-triangular matrix of inter-cluster distances */
 class DistanceMatrix {
     /**
