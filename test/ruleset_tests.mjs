@@ -101,34 +101,53 @@ describe('Ruleset', function () {
         assert.equal(anchor.noteFor('anchor'), 'lovely');
     });
 
-    it('pairs nearby nodes', function () {
-        // We're pairing each good node with the nearest indifferent one. The
-        // bad node exists as a spacer.
-        const doc = staticDom(`
-            <p>
-                <a class="good" id="good0">Good!</a>
-                <a class="indifferent" id="indifferent0">Indifferent</a>
-                <a class="bad">Bad!</a>
+    describe('runs nearest()', function () {
+        it('pairs nearest() nodes', function () {
+            // We're pairing each good node with the nearest indifferent one. The
+            // bad node exists as a spacer.
+            const doc = staticDom(`
+                <p>
+                    <a class="good" id="good0">Good!</a>
+                    <a class="indifferent" id="indifferent0">Indifferent</a>
 
-                <a class="good" id="good1">Good!</a>
-                <a class="indifferent" id="indifferent1">Indifferent</a>
-            </p>
-        `);
-        const rules = ruleset(
-            rule(dom('a[class=good]'), type('good')),
-            rule(dom('a[class=indifferent]'), type('indifferent')),
-            rule(nearest(type('good'), type('indifferent'), distance), type('goodAndIndifferent'))
-        );
-        const goods = domSort(rules.against(doc).get(type('good')));
-        assert.equal(goods.length, 2);
-        const [good0, good1] = goods;
-        // TODO: Use conserveScore on the RHS. Still not sure how to get the distance to factor into the score multiplier unless we hard-code nearest() to do that. It's a matter of not being able to bind on the RHS to the output of the distance function on the LHS. Perhaps we could at least make distance part of the note and read it in a props() callback.
-        assert.equal(good0.element.id, 'good0');
-        assert.equal(good1.element.id, 'good1');
-        assert.equal(good0.noteFor('goodAndIndifferent').element.id,
-                     'indifferent0');
-        assert.equal(good1.noteFor('goodAndIndifferent').element.id,
-                     'indifferent1');
+                    <a class="bad">Bad!</a>
+
+                    <a class="good" id="good1">Good!</a>
+                    <a class="indifferent" id="indifferent1">Indifferent</a>
+                </p>
+            `);
+            const rules = ruleset(
+                rule(dom('a[class=good]'), type('good')),
+                rule(dom('a[class=indifferent]'), type('indifferent')),
+                rule(nearest(type('good'), type('indifferent'), distance), type('goodAndIndifferent'))
+            );
+            const goods = domSort(rules.against(doc).get(type('good')));
+            assert.equal(goods.length, 2);
+            const [good0, good1] = goods;
+            assert.equal(good0.element.id, 'good0');
+            assert.equal(good1.element.id, 'good1');
+            assert.equal(good0.noteFor('goodAndIndifferent').element.id,
+                         'indifferent0');
+            assert.equal(good1.noteFor('goodAndIndifferent').element.id,
+                         'indifferent1');
+        });
+
+        it('conserves scores from the first arg of nearest()', function () {
+            const doc = staticDom(`
+                <p>
+                    <a class="good" id="good0">Good!</a>
+                    <a class="indifferent" id="indifferent0">Indifferent</a>
+                </p>
+            `);
+            const rules = ruleset(
+                rule(dom('a[class=good]'), type('good').score(3)),
+                rule(dom('a[class=indifferent]'), type('indifferent')),
+                rule(nearest(type('good'), type('indifferent'), distance), type('goodAndIndifferent').score(2).conserveScore())
+            );
+            const goods = domSort(rules.against(doc).get(type('good')));
+            const [good0] = goods;
+            assert.equal(good0.scoreFor('goodAndIndifferent'), 6);
+        });
     });
 
     describe('complains about rules with missing input', function () {

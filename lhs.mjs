@@ -422,6 +422,6 @@ class NearestLhs extends Lhs {
     }
 
     guaranteedType() {
-        return this._a.guaranteedType;
+        return this._a.guaranteedType();
     }
 }
