@@ -4,6 +4,7 @@ env:
 
 parserOptions:
   sourceType: module
+  ecmaVersion: 7
 
 extends:
   - eslint:recommended

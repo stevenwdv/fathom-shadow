@@ -53,7 +53,7 @@ export function and(...lhss) {
  * no nodes are emitted from ``typeCallB``, do nothing.
  *
  * For example... ::
- * 
+ *
  *     nearest(type('image'), type('price'))
  *
  * The score of the ``typeCallA`` can be multiplied into the new type's score
@@ -63,9 +63,9 @@ export function and(...lhss) {
  *          type('imageWithPrice').score(2).conserveScore())
  *
  * @arg distance {function} A function that takes 2 fnodes and returns a
- *     numerical distance between them. Included options are :func:`distance`,    
+ *     numerical distance between them. Included options are :func:`distance`,
  *     which is a weighted topological distance, and :func:`euclidean`, which
- *     is a spatial distance.                                                          
+ *     is a spatial distance.
  *
  * Caveats: ``nearest`` supports only simple ``type`` calls as arguments ``a``
  * and ``b`` for now.

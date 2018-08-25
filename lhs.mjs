@@ -396,14 +396,14 @@ class NearestLhs extends Lhs {
                 const nearest = min(bs, b => this._distance(a, b));
                 yield {fnode: a,
                        rhsTransformer: function setNoteIfEmpty(fact) {
-                        // If note is explicitly set by the RHS, let it take
-                        // precedence, even though that makes this entire LHS
-                        // pointless.
-                        if (fact.note === undefined) {
-                            fact.note = nearest;  // TODO: Wrap this in an object to make room to return distance later.
-                        }
-                        return fact;
-                    }};
+                           // If note is explicitly set by the RHS, let it take
+                           // precedence, even though that makes this entire LHS
+                           // pointless.
+                           if (fact.note === undefined) {
+                               fact.note = nearest;  // TODO: Wrap this in an object to make room to return distance later.
+                           }
+                           return fact;
+                       }};
             }
         }
     }
