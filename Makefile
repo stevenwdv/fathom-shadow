@@ -1,22 +1,25 @@
-all: index.js
+JS := $(shell find . -name '*.mjs' | sed 's/\.mjs/\.js/')
+
+# It's faster to invoke Babel once and compile everything than to invoke it
+# separately on even 2 individual files that changed.
+%.js: %.mjs; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir .
+
+all: $(JS)
 
 lint:
 	@node_modules/.bin/eslint --ext mjs .
 
-index.js:
-	@node_modules/.bin/babel *.mjs **/*.mjs --out-dir .
-
-test: index.js
+test: $(JS)
 	@node_modules/.bin/mocha
 
-coverage: index.js
+coverage: $(JS)
 	@node_modules/.bin/istanbul cover node_modules/.bin/_mocha
 
-debugtest: index.js
+debugtest: $(JS)
 	# This is known to work on node 7.6.0.
 	@node_modules/.bin/mocha --inspect --debug-brk
 
 clean:
-	rm -f clusters.js exceptions.js fnode.js index.js lhs.js optimizers.js rhs.js rule.js ruleset.js side.js utils.js utilsForBackend.js utilsForFrontend.js examples/readability.js test/clusters_tests.js test/demos.js test/lhs_tests.js test/readability_tests.js test/rhs_tests.js test/rule_tests.js test/ruleset_tests.js test/side_tests.js test/utils_tests.js
+	rm -f $(JS)
 
 .PHONY: all lint test coverage debugtest
