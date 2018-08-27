@@ -1,3 +1,7 @@
+.babelrc
+.eslintignore
+.eslintrc.yml
+.travis.yml
 /docs
 /examples
 /Makefile
