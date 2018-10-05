@@ -2,6 +2,12 @@
 Version History
 ===============
 
+2.6
+===
+* Factor some boilerplate out of the fathom-trainees web extension into Fathom
+  itself. Now, after you fork fathom-trainees, you'll rarely have to change
+  anything to stay up to date.
+
 2.5
 ===
 * Add experimental :func:`nearest` function, our first primitive for tying together compound entities.

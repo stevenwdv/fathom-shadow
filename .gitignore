@@ -5,3 +5,4 @@
 /dist
 **/*.js
 !/rollup.config.js
+!/trainees.js
