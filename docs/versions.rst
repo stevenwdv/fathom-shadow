@@ -2,6 +2,10 @@
 Version History
 ===============
 
+2.7
+===
+* Add support for pluggable success functions in fathom-trainees.
+
 2.6
 ===
 * Factor some boilerplate out of the fathom-trainees web extension into Fathom
