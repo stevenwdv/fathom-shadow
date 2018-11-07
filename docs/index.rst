@@ -26,6 +26,7 @@ Documentation
 
    intro
    using
+   workflow
    ruleset
    clustering
    optimization
