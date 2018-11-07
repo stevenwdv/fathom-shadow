@@ -68,3 +68,4 @@ Tips
 * :func:`when()` is good for early pruning: hard, yes/no decisions on what should be considered. Scores are for gradations.
 * Many good rule ideas come out of labeling samples. If you are not labeling samples yourself, at least study them in depth so you can notice patterns.
 * Rubrics are vital for labeling. If samples are labeled inconsistently, they will push the trainer in conflicting directions, and your accuracy will be poor. Also, keep your rubrics up to date. Whenever you encounter a case where you have to make a new decision—something the rubric doesn't already clearly decide—edit the rubric to codify that decision so you are consistent with it in the future.
+* Include some samples that are missing the thing you're trying to recognize so you can tune your ruleset to avoid false positives.
