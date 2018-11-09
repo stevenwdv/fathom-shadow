@@ -4,7 +4,7 @@
  */
 
 /** Handle messages that come in from the FathomFox webext. */
-function handleExternalMessage(request, sender, sendResponse) {
+function handleBackgroundScriptMessage(request, sender, sendResponse) {
     if (request.type === 'rulesetSucceededOnTabs') {
         // Run a given ruleset on a given set of tabs, and return an array
         // of bools saying whether they got the right answer on each.
@@ -27,7 +27,7 @@ function handleExternalMessage(request, sender, sendResponse) {
 }
 
 export function initBackgroundScript() {
-    browser.runtime.onMessageExternal.addListener(handleExternalMessage);
+    browser.runtime.onMessageExternal.addListener(handleBackgroundScriptMessage);
 }
 
 /**
@@ -41,7 +41,6 @@ function foundLabelIsTraineeId(facts, traineeId) {
 }
 
 /** React to commands sent from the background script. */
-async function dispatch(request) {
     switch (request.type) {
         case 'rulesetSucceeded':
             // Run the trainee ruleset of the given ID with the given coeffs
@@ -53,10 +52,11 @@ async function dispatch(request) {
             const successFunc = trainee.successFunction || foundLabelIsTraineeId;
             return successFunc(facts, request.traineeId);
             break;  // belt, suspenders
+async function handleContentScriptMessage(request) {
     }
     return Promise.resolve({});
 }
 
 export function initContentScript() {
-    browser.runtime.onMessage.addListener(dispatch);
+    browser.runtime.onMessage.addListener(handleContentScriptMessage);
 }
