@@ -54,19 +54,26 @@ function foundLabelIsTraineeId(facts, traineeId, moreReturns) {
     }
 }
 
+/**
+ * A mindless factoring-out over the rulesetSucceeded and labelBadElement
+ * content-script messages
+ */
+function rulesetDidSucceed(traineeId, coeffs, moreReturns) {
+    // Run the trainee ruleset of the given ID with the given coeffs
+    // over the document, and report whether it found the right
+    // element.
+    const trainee = trainees.get(traineeId);
+    const rules = trainee.rulesetMaker(coeffs);
+    const facts = rules.against(window.document);
+    const successFunc = trainee.successFunction || foundLabelIsTraineeId;
+    const didSucceed = successFunc(facts, traineeId, moreReturns);
+    return didSucceed;
+}
+
 /** React to commands sent from the background script. */
 async function handleContentScriptMessage(request) {
     if (request.type === 'rulesetSucceeded') {
-        // Run the trainee ruleset of the given ID with the given coeffs
-        // over the document, and report whether it found the right
-        // element.
-        const trainee = trainees.get(request.traineeId);
-        const rules = trainee.rulesetMaker(request.coeffs);
-        const facts = rules.against(window.document);
-        const successFunc = trainee.successFunction || foundLabelIsTraineeId;
-        const moreReturns = {};
-        const didSucceed = successFunc(facts, request.traineeId, moreReturns);
-        return didSucceed;
+        return rulesetDidSucceed(request.traineeId, request.coeffs, {});
     } else if (request.type === 'labelBadElement') {
         // Run the ruleset on this document, and, if it fails, stick an
         // attr on the element it spuriously found, if any. This seems the
@@ -76,19 +83,17 @@ async function handleContentScriptMessage(request) {
         // it again, as well as a great deal of messaging. You have to have
         // the devtools panel open to freeze the page, so you'll be staring
         // right at the WRONG labels, not adding them undetectably.
-        const trainee = trainees.get(request.traineeId);
-        const rules = trainee.rulesetMaker(request.coeffs);
-        const facts = rules.against(window.document);
-        const successFunc = trainee.successFunction || foundLabelIsTraineeId;
         const moreReturns = {};
-        const didSucceed = successFunc(facts, request.traineeId, moreReturns);
-        const wrongLabel = 'WRONG ' + request.traineeId;
+        const didSucceed = rulesetDidSucceed(request.traineeId, request.coeffs, moreReturns);
+
         // Delete any old labels saying "WRONG [this trainee]" that might be
         // lying around so we don't mix the old with the quite-possibly-
         // revised:
+        const wrongLabel = 'WRONG ' + request.traineeId;
         for (const oldWrongNode of document.querySelectorAll('[data-fathom="' + wrongLabel.replace(/"/g, '\\"') + '"]')) {
             delete oldWrongNode.dataset.fathom;
         }
+
         if (!didSucceed && moreReturns.badElement) {
             if (!('fathom' in moreReturns.badElement.dataset)) {
                 // Don't overwrite any existing human-provided labels, lest we
