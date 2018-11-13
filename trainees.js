@@ -4,7 +4,7 @@
  */
 
 /** Handle messages that come in from the FathomFox webext. */
-function handleExternalMessage(request, sender, sendResponse) {
+function handleBackgroundScriptMessage(request, sender, sendResponse) {
     if (request.type === 'rulesetSucceededOnTabs') {
         // Run a given ruleset on a given set of tabs, and return an array
         // of bools saying whether they got the right answer on each.
@@ -14,6 +14,9 @@ function handleExternalMessage(request, sender, sendResponse) {
                 {type: 'rulesetSucceeded',
                  traineeId: request.traineeId,
                  coeffs: request.coeffs})));
+    } else if (request.type === 'labelBadElement') {
+        // Just forward these along to the correct tab:
+        browser.tabs.sendMessage(request.tabId, request)
     } else if (request.type === 'traineeKeys') {
         // Return an array of IDs of rulesets we can train.
         sendResponse(Array.from(trainees.keys()));
@@ -27,36 +30,81 @@ function handleExternalMessage(request, sender, sendResponse) {
 }
 
 export function initBackgroundScript() {
-    browser.runtime.onMessageExternal.addListener(handleExternalMessage);
+    browser.runtime.onMessageExternal.addListener(handleBackgroundScriptMessage);
 }
 
 /**
  * The default success function for a ruleset: succeed if the found element has
  * a data-fathom attribute equal to the traineeId. We arbitrarily use the first
  * found node if multiple are found.
+ *
+ * Meanwhile (and optionally), if the wrong element is found, return it in
+ * ``moreReturns.badElement`` so the tools can show it to the developer.
  */
-function foundLabelIsTraineeId(facts, traineeId) {
+function foundLabelIsTraineeId(facts, traineeId, moreReturns) {
     const found = facts.get(traineeId);
-    return found.length ? found[0].element.dataset.fathom === traineeId : false;
+    if (found.length) {
+        const firstFoundElement = found[0].element;
+        if (firstFoundElement.dataset.fathom === traineeId) {
+            return true;
+        } else {
+            moreReturns.badElement = firstFoundElement;
+            return false;
+        }
+    }
+}
+
+/**
+ * A mindless factoring-out over the rulesetSucceeded and labelBadElement
+ * content-script messages
+ */
+function rulesetDidSucceed(traineeId, coeffs, moreReturns) {
+    // Run the trainee ruleset of the given ID with the given coeffs
+    // over the document, and report whether it found the right
+    // element.
+    const trainee = trainees.get(traineeId);
+    const rules = trainee.rulesetMaker(coeffs);
+    const facts = rules.against(window.document);
+    const successFunc = trainee.successFunction || foundLabelIsTraineeId;
+    const didSucceed = successFunc(facts, traineeId, moreReturns);
+    return didSucceed;
 }
 
 /** React to commands sent from the background script. */
-async function dispatch(request) {
-    switch (request.type) {
-        case 'rulesetSucceeded':
-            // Run the trainee ruleset of the given ID with the given coeffs
-            // over the document, and report whether it found the right
-            // element.
-            const trainee = trainees.get(request.traineeId);
-            const rules = trainee.rulesetMaker(request.coeffs);
-            const facts = rules.against(window.document);
-            const successFunc = trainee.successFunction || foundLabelIsTraineeId;
-            return successFunc(facts, request.traineeId);
-            break;  // belt, suspenders
+async function handleContentScriptMessage(request) {
+    if (request.type === 'rulesetSucceeded') {
+        return rulesetDidSucceed(request.traineeId, request.coeffs, {});
+    } else if (request.type === 'labelBadElement') {
+        // Run the ruleset on this document, and, if it fails, stick an
+        // attr on the element it spuriously found, if any. This seems the
+        // least bad way of doing this. Actually constructing a path to the
+        // element to pass back to the caller would require attaching
+        // simmer.js to the page in the trainee extension and then removing
+        // it again, as well as a great deal of messaging. You have to have
+        // the devtools panel open to freeze the page, so you'll be staring
+        // right at the BAD labels, not adding them undetectably.
+        const moreReturns = {};
+        const didSucceed = rulesetDidSucceed(request.traineeId, request.coeffs, moreReturns);
+
+        // Delete any old labels saying "BAD [this trainee]" that might be
+        // lying around so we don't mix the old with the quite-possibly-
+        // revised:
+        const badLabel = 'BAD ' + request.traineeId;
+        for (const oldBadNode of document.querySelectorAll('[data-fathom="' + badLabel.replace(/"/g, '\\"') + '"]')) {
+            delete oldBadNode.dataset.fathom;
+        }
+
+        if (!didSucceed && moreReturns.badElement) {
+            if (!('fathom' in moreReturns.badElement.dataset)) {
+                // Don't overwrite any existing human-provided labels, lest we
+                // screw up future training runs.
+                moreReturns.badElement.dataset.fathom = badLabel;
+            }
+        }
     }
     return Promise.resolve({});
 }
 
 export function initContentScript() {
-    browser.runtime.onMessage.addListener(dispatch);
+    browser.runtime.onMessage.addListener(handleContentScriptMessage);
 }
