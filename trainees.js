@@ -82,23 +82,23 @@ async function handleContentScriptMessage(request) {
         // simmer.js to the page in the trainee extension and then removing
         // it again, as well as a great deal of messaging. You have to have
         // the devtools panel open to freeze the page, so you'll be staring
-        // right at the WRONG labels, not adding them undetectably.
+        // right at the BAD labels, not adding them undetectably.
         const moreReturns = {};
         const didSucceed = rulesetDidSucceed(request.traineeId, request.coeffs, moreReturns);
 
-        // Delete any old labels saying "WRONG [this trainee]" that might be
+        // Delete any old labels saying "BAD [this trainee]" that might be
         // lying around so we don't mix the old with the quite-possibly-
         // revised:
-        const wrongLabel = 'WRONG ' + request.traineeId;
-        for (const oldWrongNode of document.querySelectorAll('[data-fathom="' + wrongLabel.replace(/"/g, '\\"') + '"]')) {
-            delete oldWrongNode.dataset.fathom;
+        const badLabel = 'BAD ' + request.traineeId;
+        for (const oldBadNode of document.querySelectorAll('[data-fathom="' + badLabel.replace(/"/g, '\\"') + '"]')) {
+            delete oldBadNode.dataset.fathom;
         }
 
         if (!didSucceed && moreReturns.badElement) {
             if (!('fathom' in moreReturns.badElement.dataset)) {
                 // Don't overwrite any existing human-provided labels, lest we
                 // screw up future training runs.
-                moreReturns.badElement.dataset.fathom = wrongLabel;
+                moreReturns.badElement.dataset.fathom = badLabel;
             }
         }
     }
