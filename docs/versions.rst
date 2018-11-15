@@ -2,6 +2,10 @@
 Version History
 ===============
 
+2.8
+===
+* Add the ability to label wrongly recognized elements to fathom-trainees imports, for use with FathomFox 2.3 and above.
+
 2.7
 ===
 * Add support for pluggable success functions in fathom-trainees.
