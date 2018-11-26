@@ -98,11 +98,11 @@ export class Fnode {
     }
 
     /**
-     * Multiply one of our per-type scores by a given number. Implicitly assign
+     * Add a given number to one of our per-type scores. Implicitly assign
      * us the given type.
      */
-    multiplyScoreFor(type, score) {
-        this._typeRecordForSetting(type).score *= score;
+    addScoreFor(type, score) {
+        this._typeRecordForSetting(type).score += score;
     }
 
     /**
@@ -116,7 +116,7 @@ export class Fnode {
                                  leftFnode,
                                  () => new Set())).has(leftType)) {
             types.add(leftType);
-            this.multiplyScoreFor(rightType, leftFnode.scoreFor(leftType));
+            this.addScoreFor(rightType, leftFnode.scoreFor(leftType));
         }
     }
 
@@ -142,7 +142,7 @@ export class Fnode {
      * Return a score/note record for a type, creating it if it doesn't exist.
      */
     _typeRecordForSetting(type) {
-        return setDefault(this._types, type, () => ({score: 1}));
+        return setDefault(this._types, type, () => ({score: 0}));
     }
 
     /**
@@ -150,7 +150,7 @@ export class Fnode {
      * a .? operator in JS.
      */
     _typeRecordForGetting(type) {
-        return getDefault(this._types, type, () => ({score: 1}));
+        return getDefault(this._types, type, () => ({score: 0}));
     }
 
     /**
