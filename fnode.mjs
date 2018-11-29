@@ -49,11 +49,11 @@ export class Fnode {
     }
 
     /**
-     * Return the node's score for the given type, 1 by default.
+     * Return a mappity map of the node's score for the given type, 1 by default.
      */
     scoreFor(type) {
         this._computeType(type);
-        return this.scoreSoFarFor(type);
+        return this._ruleset.weightedScore(this.scoresSoFarFor(type));
     }
 
     /**
@@ -93,7 +93,7 @@ export class Fnode {
         return this._noteSoFarFor(type) !== undefined;
     }
 
-    scoreSoFarFor(type) {
+    scoresSoFarFor(type) {
         return this._typeRecordForGetting(type).score;
     }
 
@@ -101,8 +101,17 @@ export class Fnode {
      * Add a given number to one of our per-type scores. Implicitly assign
      * us the given type.
      */
-    addScoreFor(type, score) {
-        this._typeRecordForSetting(type).score += score;
+//     addScoreFor(type, score) {
+//         this._typeRecordForSetting(type).score += score;
+//     }
+
+    /**
+     * Append the given score to the list of scores kept for this fnode and
+     * this type. Keep track of which rule it resulted from so we can later
+     * mess with the coeffs.
+     */
+    pushScoreFor(type, score, ruleName) {
+        this._typeRecordForSetting(type).score.set(ruleName, score);
     }
 
     /**
@@ -116,7 +125,7 @@ export class Fnode {
                                  leftFnode,
                                  () => new Set())).has(leftType)) {
             types.add(leftType);
-            this.addScoreFor(rightType, leftFnode.scoreFor(leftType));
+            this.addScoreFor(rightType, leftFnode.scoreFor(leftType));  // TODO: change to adapt to changes in scoreFor()
         }
     }
 
@@ -142,7 +151,7 @@ export class Fnode {
      * Return a score/note record for a type, creating it if it doesn't exist.
      */
     _typeRecordForSetting(type) {
-        return setDefault(this._types, type, () => ({score: 0}));
+        return setDefault(this._types, type, () => ({score: new Map()}));
     }
 
     /**
@@ -150,7 +159,7 @@ export class Fnode {
      * a .? operator in JS.
      */
     _typeRecordForGetting(type) {
-        return getDefault(this._types, type, () => ({score: 0}));
+        return getDefault(this._types, type, () => ({score: new Map()}));
     }
 
     /**

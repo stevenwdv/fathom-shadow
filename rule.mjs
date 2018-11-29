@@ -10,12 +10,17 @@ import {identity} from './utilsForFrontend';
  * Construct and return the proper type of rule class based on the
  * inwardness/outwardness of the RHS.
  */
-export function rule(lhs, rhs) {
+export function rule(lhs, rhs, name) {
     // Since out() is a valid call only on the RHS (unlike type()), we can take
     // a shortcut here: any outward RHS will already be an OutwardRhs; we don't
     // need to sidetrack it through being a Side. And OutwardRhs has an asRhs()
     // that just returns itself.
-    return new ((rhs instanceof OutwardRhs) ? OutwardRule : InwardRule)(lhs, rhs);
+    return new ((rhs instanceof OutwardRhs) ? OutwardRule : InwardRule)(lhs, rhs, name);
+}
+
+let nextRuleNumber = 1;
+function newInternalRuleName() {
+    return '_' + nextRuleNumber++;
 }
 
 /**
@@ -24,9 +29,10 @@ export function rule(lhs, rhs) {
  * cache ruleset.ruleCache.
  */
 class Rule {  // abstract
-    constructor(lhs, rhs) {
+    constructor(lhs, rhs, name) {
         this.lhs = lhs.asLhs();
         this.rhs = rhs.asRhs();
+        this.name = name || newInternalRuleName();
     }
 
     /**
@@ -182,7 +188,7 @@ export class InwardRule extends Rule {
                 }
                 if (fact.score !== undefined) {
                     if (rightType !== undefined) {
-                        rightFnode.addScoreFor(rightType, fact.score);
+                        rightFnode.pushScoreFor(rightType, fact.score, self.name);
                     } else {
                         throw new Error(`The right-hand side of a rule specified a score (${fact.score}) with neither an explicit type nor one we could infer from the left-hand side.`);
                     }
