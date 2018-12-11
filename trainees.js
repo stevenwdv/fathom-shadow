@@ -5,7 +5,6 @@
 import {setDefault} from './utilsForFrontend';
 
 let boundRulesets = new Map();  // Hang onto a BoundRuleset for each page so we can cache rule outputs.
-let someVar = 333;
 
 /** Handle messages that come in from the FathomFox webext. */
 function handleBackgroundScriptMessage(request, sender, sendResponse) {
@@ -66,11 +65,16 @@ function rulesetDidSucceed(traineeId, serializedCoeffs, moreReturns) {
     // Run the trainee ruleset of the given ID with the given coeffs
     // over the document, and report whether it found the right
     // element.
-    console.log(someVar);
-    someVar = 444;
     const trainee = trainees.get(traineeId);
-    console.log(Array.from(boundRulesets.keys()), traineeId);
-    const rules = setDefault(boundRulesets, traineeId, () => trainee.rulesetMaker('dummy'));
+    console.log(Array.from(boundRulesets.keys()).toString(), traineeId);
+    if (!boundRulesets.has(traineeId)) {
+        console.log('initting ruleset for one page');
+        boundRulesets.set(traineeId, trainee.rulesetMaker('dummy'));
+    } else {
+        console.log('using cached ruleset');
+    }
+    const rules = boundRulesets.get(traineeId);
+    //const rules = setDefault(boundRulesets, traineeId, () => trainee.rulesetMaker('dummy'));
     rules.coeffs = new Map(serializedCoeffs);
     const facts = rules.against(window.document);
     const successFunc = trainee.successFunction || foundLabelIsTraineeId;
