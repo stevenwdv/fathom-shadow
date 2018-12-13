@@ -66,17 +66,12 @@ function rulesetDidSucceed(traineeId, serializedCoeffs, moreReturns) {
     // over the document, and report whether it found the right
     // element.
     const trainee = trainees.get(traineeId);
-    console.log(Array.from(boundRulesets.keys()).toString(), traineeId);
     if (!boundRulesets.has(traineeId)) {
-        console.log('initting ruleset for one page');
-        boundRulesets.set(traineeId, trainee.rulesetMaker('dummy'));
-    } else {
-        console.log('using cached ruleset');
+        boundRulesets.set(traineeId, trainee.rulesetMaker('dummy').against(window.document));
     }
-    const rules = boundRulesets.get(traineeId);
+    const facts = boundRulesets.get(traineeId);
     //const rules = setDefault(boundRulesets, traineeId, () => trainee.rulesetMaker('dummy'));
-    rules.coeffs = new Map(serializedCoeffs);
-    const facts = rules.against(window.document);
+    facts.coeffs = new Map(serializedCoeffs);
     const successFunc = trainee.successFunction || foundLabelIsTraineeId;
     const didSucceed = successFunc(facts, traineeId, moreReturns);
     return didSucceed;
