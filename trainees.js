@@ -42,9 +42,14 @@ export function initBackgroundScript() {
  * found node if multiple are found.
  *
  * Meanwhile (and optionally), if the wrong element is found, return it in
- * ``moreReturns.badElement`` so the tools can show it to the developer.
+ * ``moreReturns.badElement`` so the tools can show it to the developer. If
+ * there's a finer-grained cost than simply a did-succeed boolean, return it in
+ * ``moreReturns.cost``--though beware that this cost should include the
+ * success or failure as a high-order component, since the optimizer looks only
+ * at cost.
  */
 function foundLabelIsTraineeId(facts, traineeId, moreReturns) {
+    // TODO: Replace with the guts of successAndGapScore if it proves good.
     const found = facts.get(traineeId);
     if (found.length) {
         const firstFoundElement = found[0].element;
@@ -74,7 +79,7 @@ function rulesetDidSucceed(traineeId, serializedCoeffs, moreReturns) {
     facts.coeffs = new Map(serializedCoeffs);
     const successFunc = trainee.successFunction || foundLabelIsTraineeId;
     const didSucceed = successFunc(facts, traineeId, moreReturns);
-    return didSucceed;
+    return {didSucceed, cost: moreReturns.cost || (1 - didSucceed)};
 }
 
 /** React to commands sent from the background script. */
