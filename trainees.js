@@ -49,7 +49,7 @@ export function initBackgroundScript() {
  * at cost.
  */
 function foundLabelIsTraineeId(facts, traineeId, moreReturns) {
-    // TODO: Replace with the guts of successAndGapScore if it proves good.
+    // TODO: Replace with the guts of successAndScoreGap if it proves good.
     const found = facts.get(traineeId);
     if (found.length) {
         const firstFoundElement = found[0].element;
@@ -85,7 +85,11 @@ function rulesetDidSucceed(traineeId, serializedCoeffs, moreReturns) {
 /** React to commands sent from the background script. */
 async function handleContentScriptMessage(request) {
     if (request.type === 'rulesetSucceeded') {
-        return rulesetDidSucceed(request.traineeId, request.coeffs, {});
+        try {
+            return rulesetDidSucceed(request.traineeId, request.coeffs, {});
+        } catch(exc) {
+            throw new Error('Error on ' + window.location + ': ' + exc);
+        }
     } else if (request.type === 'labelBadElement') {
         // Run the ruleset on this document, and, if it fails, stick an
         // attr on the element it spuriously found, if any. This seems the
