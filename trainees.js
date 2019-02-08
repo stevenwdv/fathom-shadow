@@ -3,6 +3,7 @@
  * only thing left in that web extension is the ruleset developer's code
  */
 import {setDefault} from './utilsForFrontend';
+import {type} from './side';
 
 let boundRulesets = new Map();  // Hang onto a BoundRuleset for each page so we can cache rule outputs.
 
@@ -17,6 +18,9 @@ function handleBackgroundScriptMessage(request, sender, sendResponse) {
                 {type: 'rulesetSucceeded',
                  traineeId: request.traineeId,
                  coeffs: request.coeffs})));
+    } else if (request.type === 'vectorizeTab') {
+        const vector = browser.tabs.sendMessage(request.tabId, request);
+        sendResponse(vector);
     } else if (request.type === 'labelBadElement') {
         // Just forward these along to the correct tab:
         browser.tabs.sendMessage(request.tabId, request)
@@ -117,6 +121,30 @@ async function handleContentScriptMessage(request) {
                 moreReturns.badElement.dataset.fathom = badLabel;
             }
         }
+    } else if (request.type === 'vectorizeTab') {
+        // Return an array of unweighted scores for each element of a type,
+        // plus an indication of whether it is a target element. This is useful
+        // to feed to an external ML system. The return value looks like this:
+        //
+        //     {isTarget: true,
+        //      features: [['ruleName1', 4], ['ruleName2', 3]]}
+        //
+        // We assume, for the moment, that the type of node you're interested
+        // in is the same as the trainee ID.
+        const traineeId = request.traineeId;
+        const trainee = trainees.get(traineeId);
+        if (!boundRulesets.has(traineeId)) {
+            boundRulesets.set(traineeId, trainee.rulesetMaker('dummy').against(window.document));
+        }
+        const facts = boundRulesets.get(traineeId);
+        const fnodes = facts.get(type(trainee.vectorType));
+        return fnodes.map(function featureVectorForFnode(fnode) {
+            const scoreMap = fnode.scoresSoFarFor(trainee.vectorType);
+            return {
+                isTarget: fnode.element.dataset.fathom === traineeId,
+                features: Array.from(scoreMap.entries())
+            };
+        });
     }
     return Promise.resolve({});
 }
