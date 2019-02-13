@@ -136,13 +136,14 @@ async function handleContentScriptMessage(request) {
         if (!boundRulesets.has(traineeId)) {
             boundRulesets.set(traineeId, trainee.rulesetMaker('dummy').against(window.document));
         }
-        const facts = boundRulesets.get(traineeId);
-        const fnodes = facts.get(type(trainee.vectorType));
+        const boundRuleset = boundRulesets.get(traineeId);
+        const fnodes = boundRuleset.get(type(trainee.vectorType));
         return fnodes.map(function featureVectorForFnode(fnode) {
             const scoreMap = fnode.scoresSoFarFor(trainee.vectorType);
             return {
                 isTarget: fnode.element.dataset.fathom === traineeId,
-                features: Array.from(scoreMap.entries())
+                // Loop over ruleset.coeffs in order, and spit out each score:
+                features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName))
             };
         });
     }
