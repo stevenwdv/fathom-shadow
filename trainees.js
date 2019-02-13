@@ -126,7 +126,8 @@ async function handleContentScriptMessage(request) {
         // plus an indication of whether it is a target element. This is useful
         // to feed to an external ML system. The return value looks like this:
         //
-        //     {isTarget: true,
+        //     {filename: '3.html',
+        //      isTarget: true,
         //      features: [['ruleName1', 4], ['ruleName2', 3]]}
         //
         // We assume, for the moment, that the type of node you're interested
@@ -138,7 +139,8 @@ async function handleContentScriptMessage(request) {
         }
         const boundRuleset = boundRulesets.get(traineeId);
         const fnodes = boundRuleset.get(type(trainee.vectorType));
-        return fnodes.map(function featureVectorForFnode(fnode) {
+        const path = window.location.pathname;
+        const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
             const scoreMap = fnode.scoresSoFarFor(trainee.vectorType);
             return {
                 isTarget: fnode.element.dataset.fathom === traineeId,
@@ -146,6 +148,8 @@ async function handleContentScriptMessage(request) {
                 features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName))
             };
         });
+        return {filename: path.substr(path.lastIndexOf('/') + 1),
+                nodes: perNodeStuff};
     }
     return Promise.resolve({});
 }
