@@ -1,5 +1,5 @@
 import {type} from './side';
-import {getDefault, setDefault} from './utilsForFrontend';
+import {getDefault, setDefault, sigmoid} from './utilsForFrontend';
 
 
 /**
@@ -49,11 +49,13 @@ export class Fnode {
     }
 
     /**
-     * Return a mappity map of the node's score for the given type, 1 by default.
+     * Return the confidence, in the range (0, 1), that the node belongs to the
+     * given type, 0 by default.
      */
     scoreFor(type) {
         this._computeType(type);
-        return this._ruleset.weightedScore(this.scoresSoFarFor(type));
+        return sigmoid(this._ruleset.weightedScore(this.scoresSoFarFor(type)) +
+                       getDefault(this._ruleset.biases, type, () => 0));
     }
 
     /**
@@ -117,11 +119,11 @@ export class Fnode {
     /**
      * Indicate that I should inherit some score from a LHS-emitted fnode. I
      * keep track of (LHS fnode, type) pairs whose scores have already been
-     * inherited so we don't multiply them in more than once.
+     * inherited so we don't add them in more than once.
      */
     conserveScoreFrom(leftFnode, leftType, rightType) {
         let types;
-        if (!(types = setDefault(this._conservedScores,
+        if (!(types = setDefault(this._conservedScores,  // Maybe we don't need a separate conservedScores hash since score itself is now a map.
                                  leftFnode,
                                  () => new Set())).has(leftType)) {
             types.add(leftType);

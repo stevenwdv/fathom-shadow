@@ -138,13 +138,13 @@ class BoundRuleset {
     /**
      * Return the weighted sum of the per-rule, per-type scores from a fnode.
      *
-     * @arg mapOfScores a Map of rule name to the 0..1 score it dished out for the
-     *     type in question
+     * @arg mapOfScores a Map of rule name to the [0, 1] score it computed for
+     *      the type in question
      */
     weightedScore(mapOfScores) {
         let total = 0;
         for (const [name, score] of mapOfScores) {
-            total += score * getDefault(this.coeffs, name, () => 1);
+            total += score * getDefault(this.coeffs, name, () => 0);
         }
         return total;
     }

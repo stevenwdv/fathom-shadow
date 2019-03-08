@@ -427,3 +427,15 @@ export function *ancestors(element) {
         element = parent;
     }
 }
+
+/**
+ * Return the sigmoid of the argument: 1 / (1 + exp(-x)). This is useful for
+ * crunching a feature value that may have a wide range into the range (0, 1)
+ * without a hard ceiling: the sigmoid of even a very large number will be a
+ * little larger than that of a slightly smaller one.
+ *
+ * @arg x {Number} a number to be compressed into the range (0, 1)
+ */
+export function sigmoid(x) {
+   return 1 / (1 + Math.exp(-x));
+}
