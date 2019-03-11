@@ -317,7 +317,7 @@ describe('Ruleset', function () {
         ]);
         const ruleList = rules.rules();
         assert.equal(ruleList.length, 4);  // because deepEqual doesn't actually deep-compare Maps yet
-        assert.deepEqual(ruleset(...ruleList), rules);
+        assert.deepEqual(ruleset(ruleList), rules);
     });
 
     it('takes a subtree of a document and operates on it', function () {
