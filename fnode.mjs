@@ -121,13 +121,13 @@ export class Fnode {
      * keep track of (LHS fnode, type) pairs whose scores have already been
      * inherited so we don't add them in more than once.
      */
-    conserveScoreFrom(leftFnode, leftType, rightType) {
+    conserveScoreFrom(leftFnode, leftType, rightType, ruleName) {
         let types;
         if (!(types = setDefault(this._conservedScores,  // Maybe we don't need a separate conservedScores hash since score itself is now a map.
                                  leftFnode,
                                  () => new Set())).has(leftType)) {
             types.add(leftType);
-            this.addScoreFor(rightType, leftFnode.scoreFor(leftType));  // TODO: change to adapt to changes in scoreFor()
+            this.pushScoreFor(rightType, leftFnode.scoreFor(leftType), ruleName);
         }
     }
 

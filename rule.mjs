@@ -177,14 +177,14 @@ export class InwardRule extends Rule {
                 // type of the LHS, if any:
                 const rightType = fact.type || self.lhs.guaranteedType();
                 if (fact.conserveScore) {
-                    // If conserving, multiply in the input-type score
+                    // If conserving, don't discard the input-type score
                     // from the LHS node. (Never fall back to
                     // multiplying in the RHS-type score from the LHS:
                     // it's not guaranteed to be there, and even if it
                     // will ever be, the executor doesn't guarantee it
                     // has been filled in yet.)
                     if (leftType !== undefined) {
-                        rightFnode.conserveScoreFrom(leftFnode, leftType, rightType);
+                        rightFnode.conserveScoreFrom(leftFnode, leftType, rightType, self.name);
                     } else {
                         throw new Error('conserveScore() was called in a rule whose left-hand side is a dom() selector and thus has no predictable type.');
                     }
