@@ -161,7 +161,7 @@ class BoundRuleset {
     weightedScore(mapOfScores) {
         let total = 0;
         for (const [name, score] of mapOfScores) {
-            total += score * getDefault(this.coeffs, name, () => 0);
+            total += score * getDefault(this.coeffs, name, () => 1);
         }
         return total;
     }
