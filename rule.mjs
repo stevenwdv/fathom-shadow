@@ -10,15 +10,15 @@ import {identity} from './utilsForFrontend';
  * Construct and return the proper type of rule class based on the
  * inwardness/outwardness of the RHS.
  */
-export function rule(lhs, rhs, name) {
+export function rule(lhs, rhs, options) {
     // Since out() is a valid call only on the RHS (unlike type()), we can take
     // a shortcut here: any outward RHS will already be an OutwardRhs; we don't
     // need to sidetrack it through being a Side. And OutwardRhs has an asRhs()
     // that just returns itself.
-    return new ((rhs instanceof OutwardRhs) ? OutwardRule : InwardRule)(lhs, rhs, name);
+    return new ((rhs instanceof OutwardRhs) ? OutwardRule : InwardRule)(lhs, rhs, options);
 }
 
-let nextRuleNumber = 1;
+let nextRuleNumber = 0;
 function newInternalRuleName() {
     return '_' + nextRuleNumber++;
 }
@@ -29,10 +29,13 @@ function newInternalRuleName() {
  * cache ruleset.ruleCache.
  */
 class Rule {  // abstract
-    constructor(lhs, rhs, name) {
+    constructor(lhs, rhs, options) {
         this.lhs = lhs.asLhs();
         this.rhs = rhs.asRhs();
-        this.name = name || newInternalRuleName();
+        // TODO: Make auto-generated rule names be based on the out types of
+        // the rules, e.g. _priceish_4. That way, adding rules for one type
+        // won't make the coeffs misalign for another.
+        this.name = (options ? options.name : undefined) || newInternalRuleName();
     }
 
     /**

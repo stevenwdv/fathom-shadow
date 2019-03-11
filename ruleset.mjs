@@ -8,21 +8,35 @@ import {InwardRule, OutwardRule, rule} from './rule';
 /**
  * Return a new :class:`Ruleset` containing the given rules.
  */
-export function ruleset(...rules) {
-    return new Ruleset(...rules);
+export function ruleset(rules, coeffsAndBiases) {
+    return new Ruleset(rules, coeffsAndBiases);
 }
 
 /**
  * An unbound ruleset. Eventually, you'll be able to add rules to these. Then,
  * when you bind them by calling :func:`~Ruleset.against()`, the resulting
  * :class:`BoundRuleset` will be immutable.
+ *
+ * @arg rules {Array} :class:`Rule` instances
+ * @arg coeffs {Map} A map of rule names to numerical weights, typically
+ *     returned by the :doc:`optimizer<optimization>`.
+ * @arg coeffsAndBiases Optimized weights and biases of the neural net which
+ *     lead to high accuracy and accurate confidence estimates::
+ *
+ *     {coeffs: [['someRuleName', 30.04], ...],
+ *      biases: [['someType', 147.39], ...]}
+ *
+ *     This is all rolled into one argument so you can paste in a single blob
+ *     of numbers from the optimizer.
  */
 class Ruleset {
-    constructor(...rules) {
+    constructor(rules, coeffsAndBiases) {
         this._inRules = [];
         this._outRules = new Map();  // key -> rule
         this._rulesThatCouldEmit = new Map();  // type -> [rules]
         this._rulesThatCouldAdd = new Map();  // type -> [rules]
+        this.coeffs = new Map(coeffsAndBiases.coeffs);  // rule name => coefficient
+        this.biases = new Map(coeffsAndBiases.biases);  // type name => bias
 
         // Separate rules into out ones and in ones, and sock them away. We do
         // this here so mistakes raise errors early.
@@ -42,7 +56,7 @@ class Ruleset {
             } else if (rule instanceof OutwardRule) {
                 this._outRules.set(rule.key(), rule);
             } else {
-                throw new Error(`This input to ruleset() wasn't a rule: ${rule}`);
+                throw new Error(`This element of ruleset()'s first param wasn't a rule: ${rule}`);
             }
         }
     }
@@ -59,7 +73,9 @@ class Ruleset {
                                 this._inRules,
                                 this._outRules,
                                 this._rulesThatCouldEmit,
-                                this._rulesThatCouldAdd);
+                                this._rulesThatCouldAdd,
+                                this.coeffs,
+                                this.biases);
     }
 
     /**
@@ -84,13 +100,14 @@ class BoundRuleset {
      * @arg inRules {Array} Non-out() rules
      * @arg outRules {Map} Output key -> out() rule
      */
-    constructor(doc, inRules, outRules, rulesThatCouldEmit, rulesThatCouldAdd) {
+    constructor(doc, inRules, outRules, rulesThatCouldEmit, rulesThatCouldAdd, coeffs, biases) {
         this.doc = doc;
         this._inRules = inRules;
         this._outRules = outRules;
         this._rulesThatCouldEmit = rulesThatCouldEmit;
         this._rulesThatCouldAdd = rulesThatCouldAdd;
-        this.coeffs = new Map();  // rule name => coefficient
+        this.coeffs = coeffs;
+        this.biases = biases;
 
         // Private, for the use of only helper classes:
         this.maxCache = new Map();  // type => Array of max fnode (or fnodes, if tied) of this type
