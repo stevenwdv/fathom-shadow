@@ -17,7 +17,7 @@ describe('Design-driving demos', function () {
             <title>Title</title>
         `);
         const typeAndNote = type('titley').note(fnode => fnode.element.getAttribute('content'));
-        const rules = ruleset(
+        const rules = ruleset([
             rule(dom('meta[property="og:title"]'),
                  typeAndNote.score(40)),
             rule(dom('meta[property="twitter:title"]'),
@@ -27,7 +27,7 @@ describe('Design-driving demos', function () {
             rule(dom('title'),
                  typeAndNote.score(10).note(fnode => fnode.element.text)),
             rule(type('titley').max(), out('bestTitle'))
-        );
+        ]);
         const facts = rules.against(doc);
         const node = facts.get('bestTitle')[0];
         assert.equal(node.scoreFor('titley'), 40);
@@ -54,7 +54,7 @@ describe('Design-driving demos', function () {
             }
         }
 
-        const rules = ruleset(
+        const rules = ruleset([
             // Look for "logout", "signout", etc. in CSS classes and parts thereof:
             rule(dom('button[class], a[class]'),
                  props(page(scoreByLogoutClasses)).typeIn('logoutClass')),
@@ -71,7 +71,7 @@ describe('Design-driving demos', function () {
             // Look for "Log out", "Sign out", etc. in content of links: a
             // bonus for English pages.
             // rule(dom('a[href]'), props(page(...)).typeIn('logout
-        );
+        ]);
 
         function isProbablyLoggedIn(doc) {
             const ins = rules.against(doc).get(type('loggedIn'));

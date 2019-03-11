@@ -43,11 +43,11 @@ describe('Utils', function () {
             const doc = staticDom(`
                 <img id="foo" alt="boo"></img><img id="fat" src= "bat"></img>
             `);
-            const rules = ruleset(
+            const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
                 rule(type('attr').max(), out('best'))
-            );
+            ]);
 
             function scoreFunc(fnode) {
                 return attributesMatch(fnode.element, attr => attr.includes('oo')) ? 5 : 1;
@@ -63,11 +63,11 @@ describe('Utils', function () {
             const doc = staticDom(`
                 <img id="foo" alt="bat"></img><img id="sat" src="bat"></img>
             `);
-            const rules = ruleset(
+            const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
                 rule(type('attr').max(), out('best'))
-            );
+            ]);
 
             function scoreFunc(fnode) {
                 return attributesMatch(fnode.element, attr => attr.includes('at'), ['id']) ? 5 : 1;
@@ -83,11 +83,11 @@ describe('Utils', function () {
             const doc = staticDom(`
                 <img id="fat" class="fat bat sat" ></img><img id="foo" class="foo bar boo"></img>
             `);
-            const rules = ruleset(
+            const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
                 rule(type('attr').max(), out('best'))
-            );
+            ]);
 
             function scoreFunc(fnode) {
                 return attributesMatch(fnode.element, attr => attr.includes('at')) ? 5 : 1;
@@ -104,11 +104,11 @@ describe('Utils', function () {
             const doc = staticDom(`
                 <img id="foo" alt="bat"></img><img id="bar"></img>
             `);
-            const rules = ruleset(
+            const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
                 rule(type('attr').max(), out('best'))
-            );
+            ]);
 
             function scoreFunc(fnode) {
                 return attributesMatch(fnode.element, attr => attr.includes('at'), ['alt']) ? 5 : 1;
@@ -124,11 +124,11 @@ describe('Utils', function () {
             const doc = staticDom(`
                 <img id="foo"></img><img id="bar"></img>
             `);
-            const rules = ruleset(
+            const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
                 rule(type('attr').max(), out('best'))
-            );
+            ]);
 
             function scoreFunc(fnode) {
                 return attributesMatch(fnode.element, attr => attr.includes('z')) ? 5 : 1;
@@ -143,11 +143,11 @@ describe('Utils', function () {
             const doc = staticDom(`
                 <img id="foo" alt="bat"></img><img id="cat"></img><img ignored="fat"></img>
             `);
-            const rules = ruleset(
+            const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
                 rule(type('attr').max(), out('best'))
-            );
+            ]);
 
             function scoreFunc(fnode) {
                 return attributesMatch(fnode.element, attr => attr.includes('at'), ['alt', 'id']) ? 5 : 1;

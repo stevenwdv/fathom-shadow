@@ -30,13 +30,13 @@ export function ruleset(rules, coeffsAndBiases) {
  *     of numbers from the optimizer.
  */
 class Ruleset {
-    constructor(rules, coeffsAndBiases) {
+    constructor(rules, coeffsAndBiases = {coeffs: [], biases: []}) {
         this._inRules = [];
         this._outRules = new Map();  // key -> rule
         this._rulesThatCouldEmit = new Map();  // type -> [rules]
         this._rulesThatCouldAdd = new Map();  // type -> [rules]
-        this.coeffs = new Map(coeffsAndBiases.coeffs);  // rule name => coefficient
-        this.biases = new Map(coeffsAndBiases.biases);  // type name => bias
+        this.coeffs = new Map(coeffsAndBiases.coeffs || []);  // rule name => coefficient
+        this.biases = new Map(coeffsAndBiases.biases || []);  // type name => bias
 
         // Separate rules into out ones and in ones, and sock them away. We do
         // this here so mistakes raise errors early.

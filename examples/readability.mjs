@@ -51,7 +51,7 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
     // It's modeled after what I do when I try to do this by hand: I look
     // for balls of black text, and I look for them to be near each other,
     // generally siblings: a "cluster" of them.
-    const rules = ruleset(
+    const rules = ruleset([
         // Score on text length -> paragraphish. We start with this
         // because, no matter the other markup details, the main body text
         // is definitely going to have a bunch of text.
@@ -100,7 +100,7 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
                               strideCost: coeffStride}),
 
              out('content').allThrough(domSort))
-    );
+    ]);
 
     // Return the fnodes expressing a document's main textual content.
     function contentFnodes(doc) {
