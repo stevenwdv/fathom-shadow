@@ -209,25 +209,31 @@ describe('Ruleset', function () {
             `);
             const rules = ruleset([
                 rule(dom('p'), type('para').score(2)),
-                rule(type('para'), type('smoo').score(5)),
-                rule(type('para'), conserveScore().type('smee').score(5))
+                rule(type('para'), type('smoo').score(3)),
+                rule(type('para'), conserveScore().type('smee').score(5)),
+                rule(type('para'), type('smii').score(4).conserveScore())
             ]);
             const facts = rules.against(doc);
 
             const para = facts.get(type('para'))[0];
             // Show other-typed scores don't backpropagate to the upstream type:
-            assert.equal(para.scoreFor('para'), 2);
+            assert.equal(para.scoreFor('para'), sigmoid(2));
             // Other rules have had no reason to run yet, so their types' scores
             // remain the default:
-            assert.equal(para.scoreSoFarFor('smoo'), 1);
+            assert.equal(para.scoresSoFarFor('smoo').size, 0);
 
             const smoo = facts.get(type('smoo'))[0];
-            // Fresh score:
-            assert.equal(smoo.scoreFor('smoo'), 5);
+            // Fresh, unconserved score:
+            assert.equal(smoo.scoreFor('smoo'), sigmoid(3));
 
-            const smee = facts.get(type('smee'))[0];
             // Conserved score:
-            assert.equal(smee.scoreFor('smee'), 10);
+            const smee = facts.get(type('smee'))[0];
+            assert.equal(smee.scoreFor('smee'), sigmoid(sigmoid(2) + 5));
+
+            // Make sure neither the local score nor the conserved score
+            // obliterate the other when declared in the opposite order:
+            const smii = facts.get(type('smii'))[0];
+            assert.equal(smii.scoreFor('smii'), sigmoid(sigmoid(2) + 4));
         });
 
         it('when rules emitting the same element and type conflict on conservation', function () {

@@ -191,7 +191,7 @@ export class InwardRule extends Rule {
                 }
                 if (fact.score !== undefined) {
                     if (rightType !== undefined) {
-                        rightFnode.pushScoreFor(rightType, fact.score, self.name);
+                        rightFnode.addScoreFor(rightType, fact.score, self.name);
                     } else {
                         throw new Error(`The right-hand side of a rule specified a score (${fact.score}) with neither an explicit type nor one we could infer from the left-hand side.`);
                     }

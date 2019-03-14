@@ -27,7 +27,7 @@ export function ruleset(rules, coeffsAndBiases) {
  *      biases: [['someType', 147.39], ...]}
  *
  *     This is all rolled into one argument so you can paste in a single blob
- *     of numbers from the optimizer.
+ *     of numbers from the optimizer. Coeffs all default to 1, biases to 0.
  */
 class Ruleset {
     constructor(rules, coeffsAndBiases = {coeffs: [], biases: []}) {

@@ -95,39 +95,41 @@ export class Fnode {
         return this._noteSoFarFor(type) !== undefined;
     }
 
+    /**
+     * Return the score thus far computed on me for a certain type. Doesn't
+     * implicitly run any rules. If no score has yet been determined for the
+     * given type, return undefined.
+     */
     scoresSoFarFor(type) {
         return this._typeRecordForGetting(type).score;
     }
 
     /**
-     * Add a given number to one of our per-type scores. Implicitly assign
-     * us the given type.
+     * Add a given number to one of our per-type scores. Implicitly assign us
+     * the given type. Keep track of which rule it resulted from so we can
+     * later mess with the coeffs.
      */
-//     addScoreFor(type, score) {
-//         this._typeRecordForSetting(type).score += score;
-//     }
-
-    /**
-     * Append the given score to the list of scores kept for this fnode and
-     * this type. Keep track of which rule it resulted from so we can later
-     * mess with the coeffs.
-     */
-    pushScoreFor(type, score, ruleName) {
-        this._typeRecordForSetting(type).score.set(ruleName, score);
+    addScoreFor(type, score, ruleName) {
+        const scoreSoFarForType = this._ruleset.weightedScore(this.scoresSoFarFor(type));
+        this._typeRecordForSetting(type).score.set(ruleName, scoreSoFarForType + score);
     }
 
     /**
      * Indicate that I should inherit some score from a LHS-emitted fnode. I
-     * keep track of (LHS fnode, type) pairs whose scores have already been
-     * inherited so we don't add them in more than once.
+     * keep track of (LHS fnode, type) pairs, whose scores have already been
+     * inherited, for each of my types so we don't add them in more than once.
      */
     conserveScoreFrom(leftFnode, leftType, rightType, ruleName) {
         let types;
-        if (!(types = setDefault(this._conservedScores,  // Maybe we don't need a separate conservedScores hash since score itself is now a map.
+        // Munge left and right types into a sorta kinda pair. JS is an awful
+        // language:
+        const leftAndRightType = leftType + '\u0000' + rightType;
+        if (!(types = setDefault(this._conservedScores,
                                  leftFnode,
-                                 () => new Set())).has(leftType)) {
-            types.add(leftType);
-            this.pushScoreFor(rightType, leftFnode.scoreFor(leftType), ruleName);
+                                 () => new Set())).has(leftAndRightType)) {
+            types.add(leftAndRightType);
+            const leftScore = leftFnode.scoreFor(leftType);
+            this.addScoreFor(rightType, leftScore, ruleName);
         }
     }
 
