@@ -17,7 +17,7 @@ coverage: $(JS)
 
 debugtest: $(JS)
 	# This is known to work on node 7.6.0.
-	@node_modules/.bin/mocha --inspect --debug-brk
+	@node_modules/.bin/mocha --inspect-brk
 
 publish: $(JS)
 	npm publish
