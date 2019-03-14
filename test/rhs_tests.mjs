@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
 import {atMost, dom, note, out, props, rule, ruleset, score, type, typeIn} from '../index';
-import {staticDom} from '../utils';
+import {sigmoid, staticDom} from '../utils';
 
 
 describe('RHS', function () {
@@ -47,7 +47,7 @@ describe('RHS', function () {
             rule(dom('p'), atMost(3).score(2).type('para'))
         ]);
         const facts = rules.against(doc);
-        assert.equal(facts.get(type('para'))[0].scoreFor('para'), 2);
+        assert.equal(facts.get(type('para'))[0].scoreFor('para'), sigmoid(2));
     });
 
     it('enforces typeIn() for explicit types', function () {
@@ -109,6 +109,6 @@ describe('RHS', function () {
             rule(dom('p'), type('p').score(fnode => 5))
         ]);
         const facts = rules.against(doc);
-        assert.equal(facts.get(type('p'))[0].scoreFor('p'), 5);
+        assert.equal(facts.get(type('p'))[0].scoreFor('p'), sigmoid(5));
     });
 });
