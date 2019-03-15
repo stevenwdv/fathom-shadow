@@ -64,10 +64,10 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
         // contiguousness.
 
         // Scale it by inverse of link density:
-        rule(type('paragraphish'), score(fnode => (1 - linkDensity(fnode, fnode.noteFor('paragraphish').inlineLength)) * coeffLinkDensity)),
+        rule(type('paragraphish'), score(fnode => (1 - linkDensity(fnode, fnode.noteFor('paragraphish').inlineLength))), {name: 'linkDensity'}),
 
         // Give bonuses for being in p tags.
-        rule(dom('p'), score(coeffParagraphTag).type('paragraphish')),
+        rule(dom('p'), type('paragraphish'), {name: 'paragraphTag'}),
         // TODO: article tags, etc., too
 
         // TODO: Ignore invisible nodes so people can't game us with those.
@@ -100,7 +100,10 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
                               strideCost: coeffStride}),
 
              out('content').allThrough(domSort))
-    ]);
+        ],
+        {coeffs: [['linkDensity', coeffLinkDensity],
+                  ['paragraphTag', coeffParagraphTag]]}
+    );
 
     // Return the fnodes expressing a document's main textual content.
     function contentFnodes(doc) {
