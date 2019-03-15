@@ -279,7 +279,7 @@ class TypeMaxLhs extends AggregateTypeLhs {
         // https://stackoverflow.com/questions/32943776/using-super-within-an-
         // arrow-function-within-an-arrow-function-within-a-method
         const getSuperFnodes = () => super.fnodes(ruleset);
-        return getDefault(  // TODO: Switch back. Just did this to temporarily disable the cache so we wouldn't pull an answer based on an old set of coeffs.
+        return setDefault(
             ruleset.maxCache,
             this._type,
             function maxFnodesOfType() {

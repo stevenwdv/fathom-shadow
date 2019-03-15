@@ -35,8 +35,7 @@ class Ruleset {
         this._outRules = new Map();  // key -> rule
         this._rulesThatCouldEmit = new Map();  // type -> [rules]
         this._rulesThatCouldAdd = new Map();  // type -> [rules]
-        this.coeffs = new Map(coeffsAndBiases.coeffs || []);  // rule name => coefficient
-        this.biases = new Map(coeffsAndBiases.biases || []);  // type name => bias
+        this._setCoeffsAndBiases(coeffsAndBiases);
 
         // Separate rules into out ones and in ones, and sock them away. We do
         // this here so mistakes raise errors early.
@@ -61,6 +60,12 @@ class Ruleset {
         }
     }
 
+    _setCoeffsAndBiases(coeffsAndBiases) {
+        this._coeffs = new Map(coeffsAndBiases.coeffs || []);  // rule name => coefficient
+        // Private to the framework:
+        this.biases = new Map(coeffsAndBiases.biases || []);  // type name => bias
+    }
+
     /**
      * Commit this ruleset to running against a specific DOM tree.
      *
@@ -74,7 +79,7 @@ class Ruleset {
                                 this._outRules,
                                 this._rulesThatCouldEmit,
                                 this._rulesThatCouldAdd,
-                                this.coeffs,
+                                this._coeffs,
                                 this.biases);
     }
 
@@ -106,14 +111,32 @@ class BoundRuleset {
         this._outRules = outRules;
         this._rulesThatCouldEmit = rulesThatCouldEmit;
         this._rulesThatCouldAdd = rulesThatCouldAdd;
-        this.coeffs = coeffs;
+        this._coeffs = coeffs;
         this.biases = biases;
 
         // Private, for the use of only helper classes:
-        this.maxCache = new Map();  // type => Array of max fnode (or fnodes, if tied) of this type
-        this.typeCache = new Map();  // type => Set of all fnodes of this type found so far. (The dependency resolution during execution ensures that individual types will be comprehensive just in time.)
+        this._clearCaches();
         this.elementCache = new Map();  // DOM element => fnode about it
         this.doneRules = new Set();  // InwardRules that have been executed. OutwardRules can be executed more than once because they don't change any fnodes and are thus idempotent.
+    }
+
+    /**
+     * Change my coefficients and biases after I've already been constructed.
+     *
+     * @arg coeffsAndBiases See the :class:`Ruleset` constructor.
+     */
+    setCoeffsAndBiases(coeffsAndBiases) {
+        this._setCoeffsAndBiases(coeffsAndBiases);
+        this._clearCaches();
+    }
+
+    /**
+     * Clear the typeCache and maxCache, usually in the wake of changing
+     * ``this._coeffs``, because both of thise depend on weighted scores.
+     */
+    _clearCaches() {
+        this.maxCache = new Map();  // type => Array of max fnode (or fnodes, if tied) of this type
+        this.typeCache = new Map();  // type => Set of all fnodes of this type found so far. (The dependency resolution during execution ensures that individual types will be comprehensive just in time.)
     }
 
     /**
@@ -161,7 +184,7 @@ class BoundRuleset {
     weightedScore(mapOfScores) {
         let total = 0;
         for (const [name, score] of mapOfScores) {
-            total += score * getDefault(this.coeffs, name, () => 1);
+            total += score * getDefault(this._coeffs, name, () => 1);
         }
         return total;
     }
