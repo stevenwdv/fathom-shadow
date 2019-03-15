@@ -1,13 +1,13 @@
 import {assert} from 'chai';
 
 import {distance} from '../clusters';
-import {and, conserveScore, dom, nearest, out, props, rule, ruleset, score, type} from '../index';
-import {domSort, staticDom} from '../utils';
+import {and, dom, nearest, out, props, rule, ruleset, score, type} from '../index';
+import {domSort, sigmoid, staticDom} from '../utils';
 
 
 describe('Ruleset', function () {
     describe('get()s', function () {
-        it('by arbitrary passed-in LHSs (and scores dom() nodes at 1)', function () {
+        it('by arbitrary passed-in LHSs (and scores dom() nodes at 0)', function () {
             const doc = staticDom(`
                 <div>Hooooooo</div>
             `);
@@ -16,7 +16,7 @@ describe('Ruleset', function () {
             ]);
             const facts = rules.against(doc);
             const div = facts.get(type('paragraphish'))[0];
-            assert.equal(div.scoreFor('paragraphish'), 1);
+            assert.equal(div.scoreFor('paragraphish'), sigmoid(0));
         });
 
         it('by passed-in type(A) LHS, triggering A -> A rules along the way', function () {
@@ -32,11 +32,11 @@ describe('Ruleset', function () {
 
             // type(A) queries cause A -> A rules to run:
             const div = facts.get(type('paragraphish'))[0];
-            assert.equal(div.scoreFor('paragraphish'), 2);
+            assert.equal(div.scoreFor('paragraphish'), sigmoid(2));
 
             // max() queries do, too:
             const divMax = facts.get(type('paragraphish').max())[0];
-            assert.equal(divMax.scoreFor('paragraphish'), 2);
+            assert.equal(divMax.scoreFor('paragraphish'), sigmoid(2));
 
             // The and() returns the same fnode as the other queries (which
             // presumably still runs the A -> A rule):
@@ -66,7 +66,7 @@ describe('Ruleset', function () {
             const facts = rules.against(doc);
             const div = facts.get(doc.querySelectorAll('div')[0]);
             // scoreFor() triggers rule execution:
-            assert.equal(div.scoreFor('paragraphish'), 8);
+            assert.equal(div.scoreFor('paragraphish'), sigmoid(8));
         });
 
         it('an empty iterable for nonexistent types', function () {
@@ -97,8 +97,27 @@ describe('Ruleset', function () {
         // Make sure dom() selector actually discriminates:
         assert.equal(anchors.length, 1);
         const anchor = anchors[0];
-        assert.equal(anchor.scoreFor('anchor'), 2);
+        assert.equal(anchor.scoreFor('anchor'), sigmoid(2));
         assert.equal(anchor.noteFor('anchor'), 'lovely');
+    });
+
+    it("fires rules lazily and doesn't leak scores upstream", function () {
+        // Also test that rules fire lazily.
+        const doc = staticDom(`
+            <p></p>
+        `);
+        const rules = ruleset([
+            rule(dom('p'), type('para').score(2)),
+            rule(type('para'), type('smoo').score(3))
+        ]);
+        const facts = rules.against(doc);
+
+        const para = facts.get(type('para'))[0];
+        // Show other-typed scores don't backpropagate to the upstream type:
+        assert.equal(para.scoreFor('para'), sigmoid(2));
+        // Other rules have had no reason to run yet, so their types' scores
+        // remain the default:
+        assert.equal(para.scoresSoFarFor('smoo').size, 0);
     });
 
     describe('runs nearest()', function () {
@@ -130,23 +149,6 @@ describe('Ruleset', function () {
                          'indifferent0');
             assert.equal(good1.noteFor('goodAndIndifferent').element.id,
                          'indifferent1');
-        });
-
-        it('conserves scores from the first arg of nearest()', function () {
-            const doc = staticDom(`
-                <p>
-                    <a class="good" id="good0">Good!</a>
-                    <a class="indifferent" id="indifferent0">Indifferent</a>
-                </p>
-            `);
-            const rules = ruleset([
-                rule(dom('a[class=good]'), type('good').score(3)),
-                rule(dom('a[class=indifferent]'), type('indifferent')),
-                rule(nearest(type('good'), type('indifferent'), distance), type('goodAndIndifferent').score(2).conserveScore())
-            ]);
-            const goods = domSort(rules.against(doc).get(type('good')));
-            const [good0] = goods;
-            assert.equal(good0.scoreFor('goodAndIndifferent'), 6);
         });
     });
 
@@ -198,70 +200,6 @@ describe('Ruleset', function () {
             const facts = rules.against(doc);
             assert.throws(() => facts.get(type('a')),
                           'There is a cyclic dependency in the ruleset.');
-        });
-    });
-
-    describe('conserves score', function () {
-        it('only when conserveScore() is used, using per-type scores otherwise', function () {
-            // Also test that rules fire lazily.
-            const doc = staticDom(`
-                <p></p>
-            `);
-            const rules = ruleset([
-                rule(dom('p'), type('para').score(2)),
-                rule(type('para'), type('smoo').score(3)),
-                rule(type('para'), conserveScore().type('smee').score(5)),
-                rule(type('para'), type('smii').score(4).conserveScore())
-            ]);
-            const facts = rules.against(doc);
-
-            const para = facts.get(type('para'))[0];
-            // Show other-typed scores don't backpropagate to the upstream type:
-            assert.equal(para.scoreFor('para'), sigmoid(2));
-            // Other rules have had no reason to run yet, so their types' scores
-            // remain the default:
-            assert.equal(para.scoresSoFarFor('smoo').size, 0);
-
-            const smoo = facts.get(type('smoo'))[0];
-            // Fresh, unconserved score:
-            assert.equal(smoo.scoreFor('smoo'), sigmoid(3));
-
-            // Conserved score:
-            const smee = facts.get(type('smee'))[0];
-            assert.equal(smee.scoreFor('smee'), sigmoid(sigmoid(2) + 5));
-
-            // Make sure neither the local score nor the conserved score
-            // obliterate the other when declared in the opposite order:
-            const smii = facts.get(type('smii'))[0];
-            assert.equal(smii.scoreFor('smii'), sigmoid(sigmoid(2) + 4));
-        });
-
-        it('when rules emitting the same element and type conflict on conservation', function () {
-            const doc = staticDom(`
-                <p></p>
-            `);
-            const rules = ruleset([
-                rule(dom('p'), type('para').score(2)),
-                rule(type('para'), type('smoo').score(5)),
-                rule(type('para'), type('smoo').score(7).conserveScore())
-            ]);
-            const facts = rules.against(doc);
-            const para = facts.get(type('smoo'))[0];
-            assert.equal(para.scoreFor('smoo'), 70);
-        });
-
-        it('but never factors in a score more than once', function () {
-            const doc = staticDom(`
-                <p></p>
-            `);
-            const rules = ruleset([
-                rule(dom('p'), type('para').score(2)),
-                rule(type('para'), type('smoo').score(5).conserveScore()),
-                rule(type('para'), type('smoo').score(7).conserveScore())
-            ]);
-            const facts = rules.against(doc);
-            const para = facts.get(type('smoo'))[0];
-            assert.equal(para.scoreFor('smoo'), 70);
         });
     });
 

@@ -12,8 +12,7 @@ const SUBFACTS = {
     type: TYPE,
     note: NOTE,
     score: SCORE,
-    element: ELEMENT,
-    conserveScore: CONSERVE_SCORE
+    element: ELEMENT
 };
 
 /**
@@ -202,24 +201,6 @@ export class InwardRhs {
         getSubfacts.possibleSubfacts = SCORE;
         getSubfacts.kind = 'score';
 
-        return new this.constructor(this._calls.concat(getSubfacts),
-                                    this._max,
-                                    this._types);
-    }
-
-    /**
-     * Base the scores this RHS applies on the scores of the input nodes rather
-     * than starting over from 1.
-     *
-     * For now, there is no way to turn this back off (for example with a later
-     * application of ``props`` or ``conserveScore(false)``).
-     */
-    conserveScore() {
-        function getSubfacts(fnode) {
-            return {conserveScore: true};
-        }
-        getSubfacts.possibleSubfacts = CONSERVE_SCORE;
-        getSubfacts.kind = 'conserveScore';
         return new this.constructor(this._calls.concat(getSubfacts),
                                     this._max,
                                     this._types);

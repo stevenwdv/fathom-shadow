@@ -27,7 +27,7 @@ describe('RHS', function () {
     });
 
     it('ignores unexpected subfacts returned from props() callbacks', function () {
-        const rhs = props(node => ({conserveScore: true, score: 3})).asRhs();
+        const rhs = props(node => ({booga: true, score: 3})).asRhs();
         assert.deepEqual(rhs.fact('dummy'), {score: 3});
     });
 

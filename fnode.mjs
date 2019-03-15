@@ -110,27 +110,7 @@ export class Fnode {
      * later mess with the coeffs.
      */
     addScoreFor(type, score, ruleName) {
-        const scoreSoFarForType = this._ruleset.weightedScore(this.scoresSoFarFor(type));
-        this._typeRecordForSetting(type).score.set(ruleName, scoreSoFarForType + score);
-    }
-
-    /**
-     * Indicate that I should inherit some score from a LHS-emitted fnode. I
-     * keep track of (LHS fnode, type) pairs, whose scores have already been
-     * inherited, for each of my types so we don't add them in more than once.
-     */
-    conserveScoreFrom(leftFnode, leftType, rightType, ruleName) {
-        let types;
-        // Munge left and right types into a sorta kinda pair. JS is an awful
-        // language:
-        const leftAndRightType = leftType + '\u0000' + rightType;
-        if (!(types = setDefault(this._conservedScores,
-                                 leftFnode,
-                                 () => new Set())).has(leftAndRightType)) {
-            types.add(leftAndRightType);
-            const leftScore = leftFnode.scoreFor(leftType);
-            this.addScoreFor(rightType, leftScore, ruleName);
-        }
+        this._typeRecordForSetting(type).score.set(ruleName, score);
     }
 
     /**

@@ -6,7 +6,7 @@ import {rule} from './rule';
 import {ruleset} from './ruleset';
 import {dom} from './lhs';
 import {out} from './rhs';
-import {and, atMost, conserveScore, nearest, note, props, score, type, typeIn} from './side';
+import {and, atMost, nearest, note, props, score, type, typeIn} from './side';
 import {clusters} from './clusters';
 
 
@@ -14,7 +14,6 @@ export {
     and,
     atMost,
     clusters,
-    conserveScore,
     dom,
     nearest,
     note,
