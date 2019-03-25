@@ -286,6 +286,17 @@ describe('Ruleset', function () {
         assert.equal(subtreeBest.length, 1);
         assert.equal(subtreeBest[0].element.id, 'inner');
     });
+
+    it('adjusts coeffs and biases after construction', function () {
+        const doc = staticDom(`
+        `);
+        const rules = ruleset([]);
+        const facts = rules.against(doc);
+        facts.setCoeffsAndBiases({coeffs: [['someRule', 2]],
+                                  biases: [['someType', 5]]});
+        assert.equal(facts._coeffs.get('someRule'), 2);
+        assert.equal(facts.biases.get('someType'), 5);
+    });
 });
 
 

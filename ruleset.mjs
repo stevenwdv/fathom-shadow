@@ -35,7 +35,10 @@ class Ruleset {
         this._outRules = new Map();  // key -> rule
         this._rulesThatCouldEmit = new Map();  // type -> [rules]
         this._rulesThatCouldAdd = new Map();  // type -> [rules]
-        this._setCoeffsAndBiases(coeffsAndBiases);
+        const unpacked = unpackedCoeffsAndBiases(coeffsAndBiases);
+        // Private to the framework:
+        this._coeffs = unpacked[0];
+        this.biases = unpacked[1];
 
         // Separate rules into out ones and in ones, and sock them away. We do
         // this here so mistakes raise errors early.
@@ -58,12 +61,6 @@ class Ruleset {
                 throw new Error(`This element of ruleset()'s first param wasn't a rule: ${rule}`);
             }
         }
-    }
-
-    _setCoeffsAndBiases(coeffsAndBiases) {
-        this._coeffs = new Map(coeffsAndBiases.coeffs || []);  // rule name => coefficient
-        // Private to the framework:
-        this.biases = new Map(coeffsAndBiases.biases || []);  // type name => bias
     }
 
     /**
@@ -95,6 +92,15 @@ class Ruleset {
 }
 
 /**
+ * Handle defaulting to empty values for the {coeffs, biases} data structure.
+ */
+function unpackedCoeffsAndBiases(coeffsAndBiases) {
+    const coeffs = new Map(coeffsAndBiases.coeffs || []);  // rule name => coefficient
+    const biases = new Map(coeffsAndBiases.biases || []);  // type name => bias
+    return [coeffs, biases];
+}
+
+/**
  * A ruleset that is earmarked to analyze a certain DOM
  *
  * Carries a cache of rule results on that DOM. Typically comes from
@@ -112,9 +118,9 @@ class BoundRuleset {
         this._rulesThatCouldEmit = rulesThatCouldEmit;
         this._rulesThatCouldAdd = rulesThatCouldAdd;
         this._coeffs = coeffs;
-        this.biases = biases;
 
         // Private, for the use of only helper classes:
+        this.biases = biases;
         this._clearCaches();
         this.elementCache = new Map();  // DOM element => fnode about it
         this.doneRules = new Set();  // InwardRules that have been executed. OutwardRules can be executed more than once because they don't change any fnodes and are thus idempotent.
@@ -126,7 +132,11 @@ class BoundRuleset {
      * @arg coeffsAndBiases See the :class:`Ruleset` constructor.
      */
     setCoeffsAndBiases(coeffsAndBiases) {
-        this._setCoeffsAndBiases(coeffsAndBiases);
+        const unpacked = unpackedCoeffsAndBiases(coeffsAndBiases);
+        // Destructuring assignment doesn't make it through rollup properly
+        // (https://github.com/rollup/rollup-plugin-commonjs/issues/358):
+        this._coeffs = unpacked[0];
+        this.biases = unpacked[1];
         this._clearCaches();
     }
 
