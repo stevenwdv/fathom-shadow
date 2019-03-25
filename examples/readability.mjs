@@ -51,7 +51,7 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
     // It's modeled after what I do when I try to do this by hand: I look
     // for balls of black text, and I look for them to be near each other,
     // generally siblings: a "cluster" of them.
-    const rules = ruleset(
+    const rules = ruleset([
         // Score on text length -> paragraphish. We start with this
         // because, no matter the other markup details, the main body text
         // is definitely going to have a bunch of text.
@@ -64,10 +64,10 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
         // contiguousness.
 
         // Scale it by inverse of link density:
-        rule(type('paragraphish'), score(fnode => (1 - linkDensity(fnode, fnode.noteFor('paragraphish').inlineLength)) * coeffLinkDensity)),
+        rule(type('paragraphish'), score(fnode => (1 - linkDensity(fnode, fnode.noteFor('paragraphish').inlineLength))), {name: 'linkDensity'}),
 
         // Give bonuses for being in p tags.
-        rule(dom('p'), score(coeffParagraphTag).type('paragraphish')),
+        rule(dom('p'), type('paragraphish'), {name: 'paragraphTag'}),
         // TODO: article tags, etc., too
 
         // TODO: Ignore invisible nodes so people can't game us with those.
@@ -100,6 +100,9 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
                               strideCost: coeffStride}),
 
              out('content').allThrough(domSort))
+        ],
+        {coeffs: [['linkDensity', coeffLinkDensity],
+                  ['paragraphTag', coeffParagraphTag]]}
     );
 
     // Return the fnodes expressing a document's main textual content.

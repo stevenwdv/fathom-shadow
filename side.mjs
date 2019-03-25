@@ -28,10 +28,6 @@ export function typeIn(...types) {
     return new Side({method: 'typeIn', args: types});
 }
 
-export function conserveScore() {
-    return new Side({method: 'conserveScore', args: []});
-}
-
 /**
  * Pull nodes that conform to multiple conditions at once.
  *
@@ -57,7 +53,7 @@ export function and(...lhss) {
  *     nearest(type('image'), type('price'))
  *
  * The score of the ``typeCallA`` can be multiplied into the new type's score
- * by using :func:`conserveScore`::
+ * by using :func:`conserveScore` (though this routine has since been removed)::
  *
  *     rule(nearest(type('image'), type('price')),
  *          type('imageWithPrice').score(2).conserveScore())
@@ -116,10 +112,6 @@ class Side {
 
     typeIn(...types) {
         return this._and('typeIn', ...types);
-    }
-
-    conserveScore() {
-        return this._and('conserveScore');
     }
 
     and(...lhss) {

@@ -2,6 +2,10 @@
  * Boilerplate factored out of fathom-trainees so, as much as possible, the
  * only thing left in that web extension is the ruleset developer's code
  */
+import {setDefault} from './utilsForFrontend';
+import {type} from './side';
+
+let boundRulesets = new Map();  // Hang onto a BoundRuleset for each page so we can cache rule outputs.
 
 /** Handle messages that come in from the FathomFox webext. */
 function handleBackgroundScriptMessage(request, sender, sendResponse) {
@@ -14,6 +18,9 @@ function handleBackgroundScriptMessage(request, sender, sendResponse) {
                 {type: 'rulesetSucceeded',
                  traineeId: request.traineeId,
                  coeffs: request.coeffs})));
+    } else if (request.type === 'vectorizeTab') {
+        const vector = browser.tabs.sendMessage(request.tabId, request);
+        sendResponse(vector);
     } else if (request.type === 'labelBadElement') {
         // Just forward these along to the correct tab:
         browser.tabs.sendMessage(request.tabId, request)
@@ -39,9 +46,14 @@ export function initBackgroundScript() {
  * found node if multiple are found.
  *
  * Meanwhile (and optionally), if the wrong element is found, return it in
- * ``moreReturns.badElement`` so the tools can show it to the developer.
+ * ``moreReturns.badElement`` so the tools can show it to the developer. If
+ * there's a finer-grained cost than simply a did-succeed boolean, return it in
+ * ``moreReturns.cost``--though beware that this cost should include the
+ * success or failure as a high-order component, since the optimizer looks only
+ * at cost.
  */
 function foundLabelIsTraineeId(facts, traineeId, moreReturns) {
+    // TODO: Replace with the guts of successAndScoreGap if it proves good.
     const found = facts.get(traineeId);
     if (found.length) {
         const firstFoundElement = found[0].element;
@@ -58,22 +70,30 @@ function foundLabelIsTraineeId(facts, traineeId, moreReturns) {
  * A mindless factoring-out over the rulesetSucceeded and labelBadElement
  * content-script messages
  */
-function rulesetDidSucceed(traineeId, coeffs, moreReturns) {
+function rulesetDidSucceed(traineeId, serializedCoeffs, moreReturns) {
     // Run the trainee ruleset of the given ID with the given coeffs
     // over the document, and report whether it found the right
     // element.
     const trainee = trainees.get(traineeId);
-    const rules = trainee.rulesetMaker(coeffs);
-    const facts = rules.against(window.document);
+    if (!boundRulesets.has(traineeId)) {
+        boundRulesets.set(traineeId, trainee.rulesetMaker('dummy').against(window.document));
+    }
+    const facts = boundRulesets.get(traineeId);
+    //const rules = setDefault(boundRulesets, traineeId, () => trainee.rulesetMaker('dummy'));
+    facts.setCoeffsAndBiases({coeffs: serializedCoeffs});
     const successFunc = trainee.successFunction || foundLabelIsTraineeId;
     const didSucceed = successFunc(facts, traineeId, moreReturns);
-    return didSucceed;
+    return {didSucceed, cost: moreReturns.cost || (1 - didSucceed)};
 }
 
 /** React to commands sent from the background script. */
 async function handleContentScriptMessage(request) {
     if (request.type === 'rulesetSucceeded') {
-        return rulesetDidSucceed(request.traineeId, request.coeffs, {});
+        try {
+            return rulesetDidSucceed(request.traineeId, request.coeffs, {});
+        } catch(exc) {
+            throw new Error('Error on ' + window.location + ': ' + exc);
+        }
     } else if (request.type === 'labelBadElement') {
         // Run the ruleset on this document, and, if it fails, stick an
         // attr on the element it spuriously found, if any. This seems the
@@ -101,6 +121,35 @@ async function handleContentScriptMessage(request) {
                 moreReturns.badElement.dataset.fathom = badLabel;
             }
         }
+    } else if (request.type === 'vectorizeTab') {
+        // Return an array of unweighted scores for each element of a type,
+        // plus an indication of whether it is a target element. This is useful
+        // to feed to an external ML system. The return value looks like this:
+        //
+        //     {filename: '3.html',
+        //      isTarget: true,
+        //      features: [['ruleName1', 4], ['ruleName2', 3]]}
+        //
+        // We assume, for the moment, that the type of node you're interested
+        // in is the same as the trainee ID.
+        const traineeId = request.traineeId;
+        const trainee = trainees.get(traineeId);
+        if (!boundRulesets.has(traineeId)) {
+            boundRulesets.set(traineeId, trainee.rulesetMaker('dummy').against(window.document));
+        }
+        const boundRuleset = boundRulesets.get(traineeId);
+        const fnodes = boundRuleset.get(type(trainee.vectorType));
+        const path = window.location.pathname;
+        const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
+            const scoreMap = fnode.scoresSoFarFor(trainee.vectorType);
+            return {
+                isTarget: fnode.element.dataset.fathom === traineeId,
+                // Loop over ruleset.coeffs in order, and spit out each score:
+                features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName))
+            };
+        });
+        return {filename: path.substr(path.lastIndexOf('/') + 1),
+                nodes: perNodeStuff};
     }
     return Promise.resolve({});
 }

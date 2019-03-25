@@ -23,7 +23,7 @@ describe('Rule', function () {
         const maxRule = rule(type('a').max(), type('b'));
         const maintainRule = rule(type('b'), score(2));
         const addRule = rule(type('b'), type('c'));
-        const rules = ruleset(domRule, maxRule, maintainRule, addRule);
+        const rules = ruleset([domRule, maxRule, maintainRule, addRule]);
         const facts = rules.against(staticDom(''));
         assert.sameMembers(Array.from(domRule.prerequisites(facts)), []);
         assert.sameMembers(Array.from(maxRule.prerequisites(facts)), [domRule]);

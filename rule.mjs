@@ -10,12 +10,17 @@ import {identity} from './utilsForFrontend';
  * Construct and return the proper type of rule class based on the
  * inwardness/outwardness of the RHS.
  */
-export function rule(lhs, rhs) {
+export function rule(lhs, rhs, options) {
     // Since out() is a valid call only on the RHS (unlike type()), we can take
     // a shortcut here: any outward RHS will already be an OutwardRhs; we don't
     // need to sidetrack it through being a Side. And OutwardRhs has an asRhs()
     // that just returns itself.
-    return new ((rhs instanceof OutwardRhs) ? OutwardRule : InwardRule)(lhs, rhs);
+    return new ((rhs instanceof OutwardRhs) ? OutwardRule : InwardRule)(lhs, rhs, options);
+}
+
+let nextRuleNumber = 0;
+function newInternalRuleName() {
+    return '_' + nextRuleNumber++;
 }
 
 /**
@@ -24,9 +29,13 @@ export function rule(lhs, rhs) {
  * cache ruleset.ruleCache.
  */
 class Rule {  // abstract
-    constructor(lhs, rhs) {
+    constructor(lhs, rhs, options) {
         this.lhs = lhs.asLhs();
         this.rhs = rhs.asRhs();
+        // TODO: Make auto-generated rule names be based on the out types of
+        // the rules, e.g. _priceish_4. That way, adding rules for one type
+        // won't make the coeffs misalign for another.
+        this.name = (options ? options.name : undefined) || newInternalRuleName();
     }
 
     /**
@@ -167,22 +176,9 @@ export class InwardRule extends Rule {
                 // If the RHS doesn't specify a type, default to the
                 // type of the LHS, if any:
                 const rightType = fact.type || self.lhs.guaranteedType();
-                if (fact.conserveScore) {
-                    // If conserving, multiply in the input-type score
-                    // from the LHS node. (Never fall back to
-                    // multiplying in the RHS-type score from the LHS:
-                    // it's not guaranteed to be there, and even if it
-                    // will ever be, the executor doesn't guarantee it
-                    // has been filled in yet.)
-                    if (leftType !== undefined) {
-                        rightFnode.conserveScoreFrom(leftFnode, leftType, rightType);
-                    } else {
-                        throw new Error('conserveScore() was called in a rule whose left-hand side is a dom() selector and thus has no predictable type.');
-                    }
-                }
                 if (fact.score !== undefined) {
                     if (rightType !== undefined) {
-                        rightFnode.multiplyScoreFor(rightType, fact.score);
+                        rightFnode.addScoreFor(rightType, fact.score, self.name);
                     } else {
                         throw new Error(`The right-hand side of a rule specified a score (${fact.score}) with neither an explicit type nor one we could infer from the left-hand side.`);
                     }

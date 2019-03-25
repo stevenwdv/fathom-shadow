@@ -62,9 +62,6 @@ A good practice is to use more declarative calls—:func:`score`, :func:`note`, 
 .. autofunction:: InwardRhs#atMost
    :short-name:
 
-.. autofunction:: InwardRhs#conserveScore
-   :short-name:
-
 .. autofunction:: InwardRhs#props
    :short-name:
 

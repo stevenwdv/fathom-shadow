@@ -1,5 +1,5 @@
 import {type} from './side';
-import {getDefault, setDefault} from './utilsForFrontend';
+import {getDefault, setDefault, sigmoid} from './utilsForFrontend';
 
 
 /**
@@ -49,11 +49,13 @@ export class Fnode {
     }
 
     /**
-     * Return the node's score for the given type, 1 by default.
+     * Return the confidence, in the range (0, 1), that the node belongs to the
+     * given type, 0 by default.
      */
     scoreFor(type) {
         this._computeType(type);
-        return this.scoreSoFarFor(type);
+        return sigmoid(this._ruleset.weightedScore(this.scoresSoFarFor(type)) +
+                       getDefault(this._ruleset.biases, type, () => 0));
     }
 
     /**
@@ -93,31 +95,22 @@ export class Fnode {
         return this._noteSoFarFor(type) !== undefined;
     }
 
-    scoreSoFarFor(type) {
+    /**
+     * Return the score thus far computed on me for a certain type. Doesn't
+     * implicitly run any rules. If no score has yet been determined for the
+     * given type, return undefined.
+     */
+    scoresSoFarFor(type) {
         return this._typeRecordForGetting(type).score;
     }
 
     /**
-     * Multiply one of our per-type scores by a given number. Implicitly assign
-     * us the given type.
+     * Add a given number to one of our per-type scores. Implicitly assign us
+     * the given type. Keep track of which rule it resulted from so we can
+     * later mess with the coeffs.
      */
-    multiplyScoreFor(type, score) {
-        this._typeRecordForSetting(type).score *= score;
-    }
-
-    /**
-     * Indicate that I should inherit some score from a LHS-emitted fnode. I
-     * keep track of (LHS fnode, type) pairs whose scores have already been
-     * inherited so we don't multiply them in more than once.
-     */
-    conserveScoreFrom(leftFnode, leftType, rightType) {
-        let types;
-        if (!(types = setDefault(this._conservedScores,
-                                 leftFnode,
-                                 () => new Set())).has(leftType)) {
-            types.add(leftType);
-            this.multiplyScoreFor(rightType, leftFnode.scoreFor(leftType));
-        }
+    addScoreFor(type, score, ruleName) {
+        this._typeRecordForSetting(type).score.set(ruleName, score);
     }
 
     /**
@@ -142,7 +135,7 @@ export class Fnode {
      * Return a score/note record for a type, creating it if it doesn't exist.
      */
     _typeRecordForSetting(type) {
-        return setDefault(this._types, type, () => ({score: 1}));
+        return setDefault(this._types, type, () => ({score: new Map()}));
     }
 
     /**
@@ -150,7 +143,7 @@ export class Fnode {
      * a .? operator in JS.
      */
     _typeRecordForGetting(type) {
-        return getDefault(this._types, type, () => ({score: 1}));
+        return getDefault(this._types, type, () => ({score: new Map()}));
     }
 
     /**

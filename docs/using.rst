@@ -21,7 +21,7 @@ Run ``npm install`` to download any install Fathom, and then import the symbols 
 
 .. code-block:: js
 
-   const {rule, ruleset, dom, out, and, atMost, conserveScore, max, note, props, score, type, typeIn} = require('fathom-web');
+   const {rule, ruleset, dom, out, and, atMost, max, note, props, score, type, typeIn} = require('fathom-web');
 
 All the public symbols are in the top-level fathom-web package.
 
