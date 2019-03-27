@@ -5,7 +5,7 @@ Basic Use
 Where It Works
 ==============
 
-Fathom works against the DOM API, so you can use it server-side with ``jsdom`` (which the test harness uses) or another implementation, or you can embed it in a browser and pass it a native DOM. You can also pass in a subtree of a DOM.
+Fathom is a JavaScript framework that works against the DOM API, so you can use it server-side with ``jsdom`` (which the test harness uses) or another implementation, or you can embed it in a browser and pass it a native DOM. You can also pass in a subtree of a DOM.
 
 To use it in a `node.js <https://nodejs.org/en/>`_ project, add ``fathom-web`` to your package.json file as a dependency:
 
