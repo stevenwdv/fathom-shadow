@@ -98,9 +98,8 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
                               differentTagCost: coeffDifferentTag,
                               sameTagCost: coeffSameTag,
                               strideCost: coeffStride}),
-
-             out('content').allThrough(domSort))
-        ],
+             out('content').allThrough(domSort))],
+        // eslint-disable-next-line indent
         {coeffs: [['linkDensity', coeffLinkDensity],
                   ['paragraphTag', coeffParagraphTag]]}
     );

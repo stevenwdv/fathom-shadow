@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
-import {dom, out, props, rule, ruleset, type} from '../index';
-import {numberOfMatches, page, sigmoid, staticDom, sum} from '../utils';
+import {dom, out, rule, ruleset, type} from '../index';
+import {sigmoid, staticDom} from '../utils';
 
 
 describe('Design-driving demos', function () {

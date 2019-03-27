@@ -437,5 +437,5 @@ export function *ancestors(element) {
  * @arg x {Number} a number to be compressed into the range (0, 1)
  */
 export function sigmoid(x) {
-   return 1 / (1 + Math.exp(-x));
+    return 1 / (1 + Math.exp(-x));
 }

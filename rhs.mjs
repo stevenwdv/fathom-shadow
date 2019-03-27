@@ -7,7 +7,6 @@ const TYPE = 1;
 const NOTE = 2;
 const SCORE = 4;
 const ELEMENT = 8;
-const CONSERVE_SCORE = 16;
 const SUBFACTS = {
     type: TYPE,
     note: NOTE,
