@@ -58,13 +58,13 @@ export function and(...lhss) {
  *     rule(nearest(type('image'), type('price')),
  *          type('imageWithPrice').score(2).conserveScore())
  *
+ * Caveats: ``nearest`` supports only simple ``type`` calls as arguments ``a``
+ * and ``b`` for now.
+ *
  * @arg distance {function} A function that takes 2 fnodes and returns a
  *     numerical distance between them. Included options are :func:`distance`,
  *     which is a weighted topological distance, and :func:`euclidean`, which
  *     is a spatial distance.
- *
- * Caveats: ``nearest`` supports only simple ``type`` calls as arguments ``a``
- * and ``b`` for now.
  */
 export function nearest(typeCallA, typeCallB, distance = euclidean) {
     return new Side({method: 'nearest', args: [typeCallA, typeCallB, distance]});

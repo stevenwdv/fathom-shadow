@@ -20,11 +20,10 @@ export function ruleset(rules, coeffsAndBiases) {
  * @arg rules {Array} :class:`Rule` instances
  * @arg coeffs {Map} A map of rule names to numerical weights, typically
  *     returned by the :doc:`optimizer<optimization>`.
- * @arg coeffsAndBiases Optimized weights and biases of the neural net which
- *     lead to high accuracy and accurate confidence estimates::
- *
- *     {coeffs: [['someRuleName', 30.04], ...],
- *      biases: [['someType', 147.39], ...]}
+ * @arg coeffsAndBiases {object} Optimized weights and biases of the neural net
+ *      which lead to high accuracy and accurate confidence estimates. Example:
+ *      ``{coeffs: [['someRuleName', 30.04], ...],
+ *         biases: [['someType', 147.39], ...]}``.
  *
  *     This is all rolled into one argument so you can paste in a single blob
  *     of numbers from the optimizer. Coeffs all default to 1, biases to 0.
