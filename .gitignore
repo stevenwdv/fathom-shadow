@@ -6,3 +6,5 @@
 **/*.js
 !/rollup.config.js
 !/trainees.js
+/trainer/build
+/trainer/dist
