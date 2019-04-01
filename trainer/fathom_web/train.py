@@ -151,6 +151,8 @@ Bias: {bias}""".format(coeffs=pretty_coeffs, bias=dict_params['0.bias'][0])
         is_flag=True,
         help='Show additional diagnostics that may help with ruleset debugging')
 def main(training_file, validation_file, learning_rate, decay, iterations, comment, verbose):
+    """Compute optimal coefficients for a Fathom ruleset, based on a set of
+    labeled pages exported by the FathomFox Vectorizer."""
     full_comment = '.LR={l},d={d},i={i}{c}'.format(
             l=learning_rate,
             d=decay,
