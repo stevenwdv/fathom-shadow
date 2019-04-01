@@ -15,7 +15,8 @@ setup(
     install_requires=['click>=7.0,<8.0', 'tensorboardX>=1.6,<2.0', 'torch>=1.0,<2.0'],
     entry_points={'console_scripts': [
         'fathom-train = fathom_web.train:main',
-        'fathom-unzip = fathom_web.unzip:main'
+        'fathom-unzip = fathom_web.unzip:main',
+        'fathom-pick = fathom_web.pick:main'
     ]},
     classifiers=[
         'Intended Audience :: Developers',
