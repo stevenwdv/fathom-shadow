@@ -1,11 +1,10 @@
 from json import load
-from sys import argv
 
 from click import argument, command, File, option, progressbar
 from tensorboardX import SummaryWriter
 import torch
-from torch import no_grad
-from torch.nn import Sequential, Linear, ReLU, MSELoss, BCEWithLogitsLoss, L1Loss
+from torch.nn import Sequential, Linear, BCEWithLogitsLoss
+from torch.optim import Adam
 
 
 def tensor(some_list):
@@ -32,7 +31,7 @@ def tensors_from(pages):
     return tensor(xs), tensor(ys), num_targets
 
 
-def learn(learning_rate, decay, iterations, x, y, validation=None, run_comment=''):
+def learn(learning_rate, iterations, x, y, validation=None, run_comment=''):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = Sequential(
@@ -40,6 +39,7 @@ def learn(learning_rate, decay, iterations, x, y, validation=None, run_comment='
     )
     loss_fn = BCEWithLogitsLoss(reduction='sum')  # reduction=mean converges slower.
     # TODO: Add an option to twiddle pos_weight, which lets us trade off precision and recall. Maybe also graph using add_pr_curve(), which can show how that tradeoff is going.
+    optimizer = Adam(model.parameters(),lr=learning_rate)
 
     if validation:
         validation_ins, validation_outs = validation
@@ -51,17 +51,9 @@ def learn(learning_rate, decay, iterations, x, y, validation=None, run_comment='
             if validation:
                 writer.add_scalar('validation_loss', loss_fn(model(validation_ins), validation_outs), t)
             writer.add_scalar('training_accuracy_per_tag', accuracy_per_tag(model, x, y), t)
-            # See if values are getting super small or large and floating point
-            # precision limits are taking over and making the loss function grow:
-            #writer.add_scalar('coeff_abs_sum', list(model.parameters())[0].abs().sum().item(), t)
-
-            model.zero_grad()  # Zero the gradients.
+            optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
-
-            with no_grad():
-                for param in model.parameters():
-                    param -= learning_rate * param.grad   # Update the parameters using SGD.
-            learning_rate *= decay
+            optimizer.step()
 
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
@@ -74,7 +66,7 @@ def accuracy_per_tag(model, x, y):
     and correct output tensors."""
     successes = 0
     for (i, input) in enumerate(x):
-        if abs(model(input).sigmoid().item() - y[i].item()) < .5:  # TODO: Change to .5 to not demand such certainty.
+        if abs(model(input).sigmoid().item() - y[i].item()) < .5:
             successes += 1
     return successes / len(x)
 
@@ -132,15 +124,11 @@ Bias: {bias}""".format(coeffs=pretty_coeffs, bias=dict_params['0.bias'][0])
         type=File('r'),
         help="A file of validation samples from FathomFox's Vectorizer, used to graph validation loss so you can see when you start to overfit")
 @option('--learning-rate', '-l',
-        default=.1,
+        default=1,
         show_default=True,
         help='The learning rate to start from')
-@option('--decay', '-d',
-        default=.99,
-        show_default=True,
-        help='The factor by which to multiply the learning rate on each iteration')
 @option('--iterations', '-i',
-        default=300,
+        default=1000,
         show_default=True,
         help='The number of training iterations to run through')
 @option('--comment', '-c',
@@ -150,12 +138,16 @@ Bias: {bias}""".format(coeffs=pretty_coeffs, bias=dict_params['0.bias'][0])
         default=False,
         is_flag=True,
         help='Show additional diagnostics that may help with ruleset debugging')
-def main(training_file, validation_file, learning_rate, decay, iterations, comment, verbose):
+def main(training_file, validation_file, learning_rate, iterations, comment, verbose):
     """Compute optimal coefficients for a Fathom ruleset, based on a set of
-    labeled pages exported by the FathomFox Vectorizer."""
-    full_comment = '.LR={l},d={d},i={i}{c}'.format(
+    labeled pages exported by the FathomFox Vectorizer.
+
+    To see graphs of the results, install TensorBoard, then run this:
+    tensorboard --logdir runs/.
+
+    """
+    full_comment = '.LR={l},i={i}{c}'.format(
             l=learning_rate,
-            d=decay,
             i=iterations,
             c=(',' + comment) if comment else '')
     training_data = data_from_file(training_file)
@@ -166,7 +158,7 @@ def main(training_file, validation_file, learning_rate, decay, iterations, comme
         validation_arg = validation_ins, validation_outs
     else:
         validation_arg = None
-    model = learn(learning_rate, decay, iterations, x, y, validation=validation_arg, run_comment=full_comment)
+    model = learn(learning_rate, iterations, x, y, validation=validation_arg, run_comment=full_comment)
     print(pretty_output(model, training_data['header']['featureNames']))
     print('Training accuracy per tag:', accuracy_per_tag(model, x, y))
     if validation_file:
