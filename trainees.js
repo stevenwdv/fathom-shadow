@@ -70,7 +70,7 @@ function foundLabelIsTraineeId(facts, traineeId, moreReturns) {
  * A mindless factoring-out over the rulesetSucceeded and labelBadElement
  * content-script messages
  */
-function rulesetDidSucceed(traineeId, serializedCoeffs, moreReturns) {
+function runTraineeOnThisDocument(traineeId, serializedCoeffs, moreReturns) {
     // Run the trainee ruleset of the given ID with the given coeffs
     // over the document, and report whether it found the right
     // element.
@@ -90,7 +90,7 @@ function rulesetDidSucceed(traineeId, serializedCoeffs, moreReturns) {
 async function handleContentScriptMessage(request) {
     if (request.type === 'rulesetSucceeded') {
         try {
-            return rulesetDidSucceed(request.traineeId, request.coeffs, {});
+            return runTraineeOnThisDocument(request.traineeId, request.coeffs, {});
         } catch(exc) {
             throw new Error('Error on ' + window.location + ': ' + exc);
         }
@@ -104,7 +104,7 @@ async function handleContentScriptMessage(request) {
         // the devtools panel open to freeze the page, so you'll be staring
         // right at the BAD labels, not adding them undetectably.
         const moreReturns = {};
-        const didSucceed = rulesetDidSucceed(request.traineeId, request.coeffs, moreReturns);
+        const results = runTraineeOnThisDocument(request.traineeId, request.coeffs, moreReturns);
 
         // Delete any old labels saying "BAD [this trainee]" that might be
         // lying around so we don't mix the old with the quite-possibly-
@@ -114,7 +114,7 @@ async function handleContentScriptMessage(request) {
             delete oldBadNode.dataset.fathom;
         }
 
-        if (!didSucceed && moreReturns.badElement) {
+        if (!results.didSucceed && moreReturns.badElement) {
             if (!('fathom' in moreReturns.badElement.dataset)) {
                 // Don't overwrite any existing human-provided labels, lest we
                 // screw up future training runs.
