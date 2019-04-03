@@ -124,7 +124,7 @@ Bias: {bias}""".format(coeffs=pretty_coeffs, bias=dict_params['0.bias'][0])
         type=File('r'),
         help="A file of validation samples from FathomFox's Vectorizer, used to graph validation loss so you can see when you start to overfit")
 @option('--learning-rate', '-l',
-        default=1,
+        default=1.0,
         show_default=True,
         help='The learning rate to start from')
 @option('--iterations', '-i',
