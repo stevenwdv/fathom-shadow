@@ -1,3 +1,5 @@
+/*eslint-env browser*/
+
 import wu from 'wu';
 
 import {CycleError} from './exceptions';
@@ -438,4 +440,25 @@ export function *ancestors(element) {
  */
 export function sigmoid(x) {
     return 1 / (1 + Math.exp(-x));
+}
+
+/**
+ * Return whether an element is practically visible, considing things like 0
+ * size or opacity, ``display: none``, and ``visibility: hidden``.
+ */
+export function isVisible(element) {
+    for (const ancestor of ancestors(element)) {
+        const style = getComputedStyle(ancestor);
+        const isElementHidden = (
+            style.visibility === 'hidden'
+            || style.display === 'none'
+            || style.opacity === '0'
+            || style.width === '0'
+            || style.height === '0'
+        );
+        if (isElementHidden) {
+            return false;
+        }
+    }
+    return true;
 }
