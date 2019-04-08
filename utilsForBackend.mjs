@@ -1,3 +1,7 @@
+/**
+ * Things that work only on a command-line node.js environment
+ */
+
 import {readdirSync, statSync} from 'fs';
 import {join} from 'path';
 

@@ -389,6 +389,16 @@ export function isDomElement(thing) {
 }
 
 /**
+ * Return the DOM element contained in a passed-in fnode. Return passed-in DOM
+ * elements verbatim.
+ *
+ * @arg fnodeOrElement {Node|Fnode}
+ */
+export function toDomElement(fnodeOrElement) {
+    return isDomElement(fnodeOrElement) ? fnodeOrElement : fnodeOrElement.element;
+}
+
+/**
  * Checks whether any of the element's attribute values satisfy some condition.
  *
  * Example::
@@ -446,18 +456,27 @@ export function sigmoid(x) {
  * Return whether an element is practically visible, considing things like 0
  * size or opacity, ``display: none``, and ``visibility: hidden``.
  */
-export function isVisible(element) {
+export function isVisible(fnodeOrElement) {
+    const element = toDomElement(fnodeOrElement);
     for (const ancestor of ancestors(element)) {
         const style = getComputedStyle(ancestor);
-        const isElementHidden = (
-            style.visibility === 'hidden'
-            || style.display === 'none'
-            || style.opacity === '0'
-            || style.width === '0'
-            || style.height === '0'
-        );
-        if (isElementHidden) {
+        if (style.visibility === 'hidden' ||
+            style.display === 'none' ||
+            style.opacity === '0' ||
+            style.width === '0' ||
+            style.height === '0') {
             return false;
+        } else {
+            // It wasn't hidden based on a computed style. See if it's
+            // offscreen:
+            const rect = element.getBoundingClientRect();
+            const frame = element.ownerDocument.defaultView;  // window or iframe
+            if ((rect.right < 0) ||
+                (rect.bottom < 0) ||
+                (rect.left > frame.innerWidth) ||
+                (rect.top > frame.innerHeight)) {
+                return false;
+            }
         }
     }
     return true;
