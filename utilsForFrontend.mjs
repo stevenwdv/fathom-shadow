@@ -1,5 +1,3 @@
-/*eslint-env browser*/
-
 import wu from 'wu';
 
 import {CycleError} from './exceptions';
@@ -11,6 +9,8 @@ import {CycleError} from './exceptions';
 export function identity(x) {
     return x;
 }
+
+/*eslint-env browser*/
 
 /**
  * From an iterable return the best item, according to an arbitrary comparator
