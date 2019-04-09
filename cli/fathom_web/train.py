@@ -1,4 +1,5 @@
 from json import load
+from math import sqrt
 
 from click import argument, command, File, option, progressbar
 from tensorboardX import SummaryWriter
@@ -80,6 +81,12 @@ def firstTargetPrediction(predictions):
         if p['isTarget']:
             return i, p
     return None
+
+
+def confidence_interval(success_ratio, number_of_samples):
+    z_for_95_percent = 1.96
+    addend = z_for_95_percent * sqrt(success_ratio * (1 - success_ratio) / number_of_samples)
+    return (success_ratio - addend), min(1, success_ratio + addend)
 
 
 def accuracy_per_page(model, pages, verbose=False):
@@ -175,7 +182,8 @@ def main(training_file, validation_file, learning_rate, iterations, comment, ver
     print('Training accuracy per tag:', accuracy_per_tag(model, x, y))
     if validation_file:
         print('Validation accuracy per tag:', accuracy_per_tag(model, validation_ins, validation_outs))
-    print('Training accuracy per page:', accuracy_per_page(model, training_data['pages'], verbose=verbose))
+    accuracy = accuracy_per_page(model, training_data['pages'], verbose=verbose)
+    print('Training accuracy per page:', accuracy, ' 95% CI:', confidence_interval(accuracy, len(training_data['pages'])))
     if validation_file:
         print('Validation accuracy per page:', accuracy_per_page(model, validation_data['pages'], verbose=verbose))
     # TODO: Print "8000 elements. 7900 successes. 50 false positive. 50 false negatives."
