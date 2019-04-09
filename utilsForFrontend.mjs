@@ -481,3 +481,56 @@ export function isVisible(fnodeOrElement) {
     }
     return true;
 }
+
+/**
+ * Return the extracted [r, g, b, a] values from a string like "rgba(0, 5, 255, 0.8)",
+ * and scale them to 0..1. If no alpha is specified, return undefined for it.
+ */
+export function rgbaFromString(str) {
+    const m = str.match(/^rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*(\d+(?:\.\d+)?)\s*)?\)$/i);
+    if (m) {
+        return [m[1] / 255, m[2] / 255, m[3] / 255, m[4] === undefined ? undefined : parseFloat(m[4])];
+    } else {
+        throw new Error('Color ' + str + ' did not match pattern rgb[a](r, g, b[, a]).');
+    }
+}
+
+/**
+ * Return the saturation 0..1 of a color defined by RGB values 0..1.
+ */
+export function saturation(r, g, b) {
+    const cMax = Math.max(r, g, b);
+    const cMin = Math.min(r, g, b);
+    const delta = cMax - cMin;
+    const lightness = (cMax + cMin) / 2;
+    const denom = (1 - (Math.abs(2 * lightness - 1)));
+    // Return 0 if it's black (R, G, and B all 0).
+    return (denom === 0) ? 0 : delta / denom;
+}
+
+/**
+ * Scale a number to the range [0, 1] using a linear slope.
+ *
+ * For a rising line, the result is 0 until the input reaches zeroAt, then
+ * increases linearly until oneAt, at which it becomes 1. To make a falling
+ * line, where the result is 1 to the left and 0 to the right, use a zeroAt
+ * greater than oneAt.
+ */
+export function linearScale(number, zeroAt, oneAt) {
+    const isRising = zeroAt < oneAt;
+    if (isRising) {
+        if (number <= zeroAt) {
+            return 0;
+        } else if (number >= oneAt) {
+            return 1;
+        }
+    } else {
+        if (number >= zeroAt) {
+            return 0;
+        } else if (number <= oneAt) {
+            return 1;
+        }
+    }
+    const slope = 1 / (oneAt - zeroAt);
+    return slope * (number - zeroAt);
+}

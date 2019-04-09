@@ -24,6 +24,7 @@ Import them from ``fathom-web/utils``. For example...
 .. autofunction:: isBlock
 .. autofunction:: isWhitespace
 .. autofunction:: length
+.. autofunction:: linearScale
 .. autofunction:: linkDensity
 .. autofunction:: utilsForFrontend.max
    :short-name:
@@ -34,7 +35,9 @@ Import them from ``fathom-web/utils``. For example...
 .. autofunction:: numberOfMatches
 .. autofunction:: page
 .. autofunction:: reversed
+.. autofunction:: rgbaFromString
 .. autofunction:: rootElement
+.. autofunction:: saturation
 .. autofunction:: setDefault
 .. autofunction:: sum
 .. autofunction:: toposort
