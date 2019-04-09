@@ -75,6 +75,13 @@ def confidences(model, x):
     return model(x).sigmoid()
 
 
+def firstTargetPrediction(predictions):
+    for i, p in enumerate(predictions):
+        if p['isTarget']:
+            return i, p
+    return None
+
+
 def accuracy_per_page(model, pages, verbose=False):
     """Return the accuracy 0..1 of the model on a per-page basis, assuming the
     model is looking for the equivalent of Fathom's ``max(the type)``."""
@@ -94,17 +101,19 @@ def accuracy_per_page(model, pages, verbose=False):
             print('{success_or_failure} on {file}. Confidence: {confidence}'.format(
                     file=page['filename'],
                     confidence=predictions[0]['prediction'],
-                    success_or_failure='Success' if succeeded else 'FAILURE'))
+                    success_or_failure='Success' if succeeded else 'FAIL   '))
         if succeeded:
             successes += 1
         else:
             if verbose:
-                for i, p in enumerate(predictions):
-                    if p['isTarget']:
-                        print('    First target at index {index}: {confidence}'.format(
-                                index=i,
-                                confidence=p['prediction']))
-                        break
+                firstTarget = firstTargetPrediction(predictions)
+                if firstTarget:
+                    i, p = firstTarget
+                    print('    First target at index {index}: {confidence}'.format(
+                            index=i,
+                            confidence=p['prediction']))
+                else:
+                    print('    No actual-target candidates for this page.')
     return successes / len(pages)
 
 
