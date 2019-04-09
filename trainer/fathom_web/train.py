@@ -80,6 +80,9 @@ def accuracy_per_page(model, pages, verbose=False):
     model is looking for the equivalent of Fathom's ``max(the type)``."""
     successes = 0
     for page in pages:
+        if not page['nodes']:
+            print('No candidate nodes for {}.'.format(page['filename']))
+            continue
         predictions = []
         for tag in page['nodes']:
             prediction = model(tensor(tag['features'])).sigmoid().item()
