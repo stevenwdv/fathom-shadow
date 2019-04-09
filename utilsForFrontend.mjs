@@ -471,10 +471,8 @@ export function isVisible(fnodeOrElement) {
             // offscreen:
             const rect = element.getBoundingClientRect();
             const frame = element.ownerDocument.defaultView;  // window or iframe
-            if ((rect.right < 0) ||
-                (rect.bottom < 0) ||
-                (rect.left > frame.innerWidth) ||
-                (rect.top > frame.innerHeight)) {
+            if ((rect.right + frame.scrollX < 0) ||
+                (rect.bottom + frame.scrollY < 0)) {
                 return false;
             }
         }
