@@ -32,7 +32,7 @@ def tensors_from(pages):
     return tensor(xs), tensor(ys), num_targets
 
 
-def learn(learning_rate, iterations, x, y, validation=None, run_comment=''):
+def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment=''):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = Sequential(
@@ -44,13 +44,23 @@ def learn(learning_rate, iterations, x, y, validation=None, run_comment=''):
 
     if validation:
         validation_ins, validation_outs = validation
+        previous_validation_loss = None
     with progressbar(range(iterations)) as bar:
         for t in bar:
             y_pred = model(x)  # Make predictions.
             loss = loss_fn(y_pred, y)
             writer.add_scalar('loss', loss, t)
             if validation:
-                writer.add_scalar('validation_loss', loss_fn(model(validation_ins), validation_outs), t)
+                validation_loss = loss_fn(model(validation_ins), validation_outs)
+                if stop_early:
+                    if previous_validation_loss is not None and previous_validation_loss < validation_loss:
+                        print('Stopping early at iteration {t} because validation error rose.'.format(t=t))
+                        model.load_state_dict(previous_model)
+                        break
+                    else:
+                        previous_validation_loss = validation_loss
+                        previous_model = model.state_dict()
+                writer.add_scalar('validation_loss', validation_loss, t)
             writer.add_scalar('training_accuracy_per_tag', accuracy_per_tag(model, x, y), t)
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
@@ -142,6 +152,10 @@ Bias: {bias}""".format(coeffs=pretty_coeffs, bias=dict_params['0.bias'][0])
 @option('validation_file', '-a',
         type=File('r'),
         help="A file of validation samples from FathomFox's Vectorizer, used to graph validation loss so you can see when you start to overfit")
+@option('--stop-early', '-s',
+        default=False,
+        is_flag=True,
+        help='Stop 1 iteration before validation loss begins to rise, to avoid overfitting. Before using this, make sure validation loss is monotonically decreasing.')
 @option('--learning-rate', '-l',
         default=1.0,
         show_default=True,
@@ -157,7 +171,7 @@ Bias: {bias}""".format(coeffs=pretty_coeffs, bias=dict_params['0.bias'][0])
         default=False,
         is_flag=True,
         help='Show additional diagnostics that may help with ruleset debugging')
-def main(training_file, validation_file, learning_rate, iterations, comment, verbose):
+def main(training_file, validation_file, stop_early, learning_rate, iterations, comment, verbose):
     """Compute optimal coefficients for a Fathom ruleset, based on a set of
     labeled pages exported by the FathomFox Vectorizer.
 
@@ -177,7 +191,7 @@ def main(training_file, validation_file, learning_rate, iterations, comment, ver
         validation_arg = validation_ins, validation_outs
     else:
         validation_arg = None
-    model = learn(learning_rate, iterations, x, y, validation=validation_arg, run_comment=full_comment)
+    model = learn(learning_rate, iterations, x, y, validation=validation_arg, stop_early=stop_early, run_comment=full_comment)
     print(pretty_output(model, training_data['header']['featureNames']))
     print('Training accuracy per tag:', accuracy_per_tag(model, x, y))
     if validation_file:
