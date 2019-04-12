@@ -1,5 +1,5 @@
 from json import load
-from math import sqrt
+from math import floor, sqrt
 
 from click import argument, command, File, option, progressbar, style
 from tensorboardX import SummaryWriter
@@ -145,13 +145,21 @@ def success_on_page(model, page):
                     is_success = True
                 else:  # a high-confidence non-target
                     color_scheme = 'bad'
-                    reason = ' There were no right choices, but highest-scorer had a high confidence anyway.'
+                    reason = ' There were no right choices, but highest-scorer had high confidence anyway.'
     else:  # We did not find a candidate.
         confidence = None
         color_scheme = 'good'
         is_success = True
         reason = 'Assumed negative sample.'
     return color_scheme, is_success, reason, confidence, first_target
+
+
+def thermometer(ratio):
+    """Return a graphical representation of a decimal with linear scale."""
+    text = '{ratio:.8f}'.format(ratio=ratio)
+    tenth = min(floor(ratio * 10), 9)  # bucket to [0..9]
+    return (style(text[:tenth], bg='white', fg='black') +
+            style(text[tenth:], bg='bright_white', fg='black'))
 
 
 def accuracy_per_page(model, pages, verbose=False):
@@ -168,22 +176,25 @@ def accuracy_per_page(model, pages, verbose=False):
     COLOR_SCHEMES = {'good': {'fg': 'black', 'bg': 'bright_green'},
                      'medium': {'fg': 'black', 'bg': 'bright_yellow'},
                      'bad': {'fg': 'white', 'bg': 'red', 'bold': True}}
+    if not pages:
+        return 1  # just to keep max() from crashing
+    max_filename_len = max(len(page['filename']) for page in pages)
     for page in pages:
         color_scheme, is_success, reason, confidence, first_target = success_on_page(model, page)
         if is_success:
             successes += 1
 
         if verbose:
-            print('{success_or_failure} on {file}. Confidence: {confidence:.5f}.{reason}'.format(
+            print(('{success_or_failure} on {file: >' + str(max_filename_len) + '}. Confidence: {confidence}{reason}').format(
                     file=page['filename'],
-                    confidence=confidence if confidence is not None else 'no candidate nodes.',
+                    confidence=thermometer(confidence) if confidence is not None else 'no candidate nodes.',
                     reason=reason,
                     success_or_failure=style(' success ' if is_success else ' failure ', **COLOR_SCHEMES[color_scheme])))
             if first_target:
                 index, score = first_target
-                print('    First target at index {index}: {confidence:.5f}'.format(
+                print('    First target at index {index}: {confidence}'.format(
                         index=index,
-                        confidence=score))
+                        confidence=thermometer(score)))
     return successes / len(pages)
 
 
