@@ -138,7 +138,7 @@ def success_on_page(model, page):
             first_target = first_target_prediction(predictions)
             if first_target:  # There was a target to hit.
                 color_scheme = 'bad'
-                reason = " Highest-scoring element was a wrong choice."
+                reason = ' Highest-scoring element was a wrong choice.'
             else:  # There were no targets.
                 if candidate['prediction'] < .5:
                     color_scheme = 'good'
@@ -150,7 +150,7 @@ def success_on_page(model, page):
         confidence = None
         color_scheme = 'good'
         is_success = True
-        reason = 'Assumed negative sample.'
+        reason = ' Assumed negative sample.'
     return color_scheme, is_success, reason, confidence, first_target
 
 
