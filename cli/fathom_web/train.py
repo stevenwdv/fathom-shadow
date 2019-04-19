@@ -1,5 +1,6 @@
 from json import load
 from math import floor, sqrt
+from random import sample
 
 from click import argument, command, File, option, progressbar, style
 from tensorboardX import SummaryWriter
@@ -17,13 +18,18 @@ def data_from_file(file):
     return load(file)
 
 
-def tensors_from(pages):
+def tensors_from(pages, shuffle=False):
     """Return (inputs, correct outputs, number of tags that are recognition targets)
-    tuple of training tensors."""
+    tuple.
+
+    Can also shuffle to improve training performance.
+
+    """
     xs = []
     ys = []
     num_targets = 0
-    for page in pages:
+    maybe_shuffled_pages = sample(pages, len(pages)) if shuffle else pages
+    for page in maybe_shuffled_pages:
         for tag in page['nodes']:
             xs.append(tag['features'])
             ys.append([1 if tag['isTarget'] else 0])  # Tried 0.1 and 0.9 instead. Was much worse.
@@ -248,7 +254,7 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
             i=iterations,
             c=(',' + comment) if comment else '')
     training_data = data_from_file(training_file)
-    x, y, num_yes = tensors_from(training_data['pages'])
+    x, y, num_yes = tensors_from(training_data['pages'], shuffle=True)
     if validation_file:
         validation_data = data_from_file(validation_file)
         validation_ins, validation_outs, _ = tensors_from(validation_data['pages'])
