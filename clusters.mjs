@@ -1,5 +1,5 @@
 import wu from 'wu';
-import {isDomElement, isWhitespace, min} from './utilsForFrontend';
+import {isDomElement, isWhitespace, min, toDomElement} from './utilsForFrontend';
 
 
 /**
@@ -157,7 +157,8 @@ export function distance(fnodeA,
 }
 
 /**
- * Return the spatial distance between 2 fnodes, assuming a rendered page.
+ * Return the spatial distance between 2 fnodes or elements, assuming a
+ * rendered page.
  *
  * Specifically, return the distance in pixels between the centers of
  * ``fnodeA.element.getBoundingClientRect()`` and
@@ -177,8 +178,10 @@ export function euclidean(fnodeA, fnodeB) {
         return domRect.top + domRect.height / 2;
     }
 
-    const aRect = fnodeA.element.getBoundingClientRect();
-    const bRect = fnodeB.element.getBoundingClientRect();
+    const elementA = toDomElement(fnodeA);
+    const elementB = toDomElement(fnodeB);
+    const aRect = elementA.getBoundingClientRect();
+    const bRect = elementB.getBoundingClientRect();
     return Math.sqrt((xCenter(aRect) - xCenter(bRect)) ** 2 +
                      (yCenter(aRect) - yCenter(bRect)) ** 2);
 }
