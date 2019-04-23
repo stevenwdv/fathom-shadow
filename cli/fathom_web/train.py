@@ -51,6 +51,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
     if validation:
         validation_ins, validation_outs = validation
         previous_validation_loss = None
+    stopped_early = False
     with progressbar(range(iterations)) as bar:
         for t in bar:
             y_pred = model(x)  # Make predictions.
@@ -60,7 +61,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
                 validation_loss = loss_fn(model(validation_ins), validation_outs)
                 if stop_early:
                     if previous_validation_loss is not None and previous_validation_loss < validation_loss:
-                        print('Stopping early at iteration {t} because validation error rose.'.format(t=t))
+                        stopped_early = True
                         model.load_state_dict(previous_model)
                         break
                     else:
@@ -71,6 +72,8 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
             optimizer.step()
+    if stopped_early:
+        print('Stopping early at iteration {t}, just before validation error rose.'.format(t=t))
 
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
@@ -168,7 +171,7 @@ def thermometer(ratio):
             style(text[tenth:], bg='bright_white', fg='black'))
 
 
-def accuracy_per_page(model, pages, verbose=False):
+def accuracy_per_page(model, pages):
     """Return the accuracy 0..1 of the model on a per-page basis. A page is
     considered a success if...
 
@@ -178,30 +181,31 @@ def accuracy_per_page(model, pages, verbose=False):
     We may later tighten this to require that all targets are found >0.5.
 
     """
+    if not pages:
+        return 1  # just to keep max() from crashing
     successes = 0
     COLOR_SCHEMES = {'good': {'fg': 'black', 'bg': 'bright_green'},
                      'medium': {'fg': 'black', 'bg': 'bright_yellow'},
                      'bad': {'fg': 'white', 'bg': 'red', 'bold': True}}
-    if not pages:
-        return 1  # just to keep max() from crashing
+    report_lines = []
     max_filename_len = max(len(page['filename']) for page in pages)
     for page in pages:
         color_scheme, is_success, reason, confidence, first_target = success_on_page(model, page)
         if is_success:
             successes += 1
 
-        if verbose:
-            print(('{success_or_failure} on {file: >' + str(max_filename_len) + '}. Confidence: {confidence}{reason}').format(
-                    file=page['filename'],
-                    confidence=thermometer(confidence) if confidence is not None else 'no candidate nodes.',
-                    reason=reason,
-                    success_or_failure=style(' success ' if is_success else ' failure ', **COLOR_SCHEMES[color_scheme])))
-            if first_target:
-                index, score = first_target
-                print('    First target at index {index}: {confidence}'.format(
-                        index=index,
-                        confidence=thermometer(score)))
-    return successes / len(pages)
+        # Build pretty report:
+        report_lines.append(('{success_or_failure} on {file: >' + str(max_filename_len) + '}. Confidence: {confidence}{reason}').format(
+                file=page['filename'],
+                confidence=thermometer(confidence) if confidence is not None else 'no candidate nodes.',
+                reason=reason,
+                success_or_failure=style(' success ' if is_success else ' failure ', **COLOR_SCHEMES[color_scheme])))
+        if first_target:
+            index, score = first_target
+            report_lines.append('    First target at index {index}: {confidence}'.format(
+                    index=index,
+                    confidence=thermometer(score)))
+    return (successes / len(pages)), '\n'.join(report_lines)
 
 
 def pretty_output(model, feature_names):
@@ -263,11 +267,31 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         validation_arg = None
     model = learn(learning_rate, iterations, x, y, validation=validation_arg, stop_early=stop_early, run_comment=full_comment)
     print(pretty_output(model, training_data['header']['featureNames']))
-    print('Training accuracy per tag:', accuracy_per_tag(model, x, y))
+    accuracy = accuracy_per_tag(model, x, y)
+    print('Training accuracy per tag:',
+          accuracy,
+          ' 95% CI:',
+          confidence_interval(accuracy, len(x)))
     if validation_file:
-        print('Validation accuracy per tag:', accuracy_per_tag(model, validation_ins, validation_outs))
-    accuracy = accuracy_per_page(model, training_data['pages'], verbose=verbose)
-    print('Training accuracy per page:', accuracy, ' 95% CI:', confidence_interval(accuracy, len(training_data['pages'])))
+        accuracy = accuracy_per_tag(model, validation_ins, validation_outs)
+        print('Validation accuracy per tag:',
+              accuracy,
+              ' 95% CI:',
+              confidence_interval(accuracy, len(validation_ins)))
+    accuracy, training_report = accuracy_per_page(model, training_data['pages'])
+    print('Training accuracy per page:',
+          accuracy,
+          ' 95% CI:',
+          confidence_interval(accuracy, len(training_data['pages'])))
     if validation_file:
-        print('Validation accuracy per page:', accuracy_per_page(model, validation_data['pages'], verbose=verbose))
+        accuracy, validation_report = accuracy_per_page(model, validation_data['pages'])
+        print('Validation accuracy per page:',
+              accuracy,
+              ' 95% CI:',
+              confidence_interval(accuracy, len(validation_data['pages'])))
+
+    if verbose:
+        print('Training per-page results:\n', training_report, sep='')
+        if validation_file:
+            print('Validation per-page results:\n', validation_report, sep='')
     # TODO: Print "8000 elements. 7900 successes. 50 false positive. 50 false negatives."
