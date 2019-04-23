@@ -79,8 +79,7 @@ export function maxes(iterable, by = identity) {
 /**
  * Return the minimum item from an iterable, as defined by <.
  *
- * If multiple items are equally great, return the first. If an empty iterable
- * is passed in, return [].
+ * If multiple items are equally great, return the first.
  */
 export function min(iterable, by = identity) {
     return best(iterable, by, (a, b) => a < b);
