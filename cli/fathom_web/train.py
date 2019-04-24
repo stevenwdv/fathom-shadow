@@ -96,9 +96,10 @@ def confidences(model, x):
 
 
 def confidence_interval(success_ratio, number_of_samples):
+    """Return a 95% binomial proportion confidence interval."""
     z_for_95_percent = 1.96
     addend = z_for_95_percent * sqrt(success_ratio * (1 - success_ratio) / number_of_samples)
-    return (success_ratio - addend), min(1, success_ratio + addend)
+    return max(0., success_ratio - addend), min(1., success_ratio + addend)
 
 
 def first_target_prediction(predictions):
@@ -208,16 +209,21 @@ def accuracy_per_page(model, pages):
     return (successes / len(pages)), '\n'.join(report_lines)
 
 
-def pretty_output(model, feature_names):
+def pretty_coeffs(model, feature_names):
     """Format coefficient and bias numbers for easy pasting into JS."""
     dict_params = {}
     for name, param in model.named_parameters():
         dict_params[name] = param.data.tolist()
-    pretty_coeffs = '\n        '.join("['{k}', {v}],".format(k=k, v=v) for k, v in zip(feature_names, dict_params['0.weight'][0]))
+    pretty = '\n        '.join("['{k}', {v}],".format(k=k, v=v) for k, v in zip(feature_names, dict_params['0.weight'][0]))
     return """Coeffs: [
         {coeffs}
     ]
-Bias: {bias}""".format(coeffs=pretty_coeffs, bias=dict_params['0.bias'][0])
+Bias: {bias}""".format(coeffs=pretty, bias=dict_params['0.bias'][0])
+
+
+def pretty_accuracy(description, accuracy, number_of_samples):
+    ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
+    return '{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f})'.format(description=description, accuracy=accuracy, ci_low=ci_low, ci_high=ci_high)
 
 
 @command()
@@ -266,32 +272,20 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
     else:
         validation_arg = None
     model = learn(learning_rate, iterations, x, y, validation=validation_arg, stop_early=stop_early, run_comment=full_comment)
-    print(pretty_output(model, training_data['header']['featureNames']))
+    print(pretty_coeffs(model, training_data['header']['featureNames']))
     accuracy = accuracy_per_tag(model, x, y)
-    print('Training accuracy per tag:',
-          accuracy,
-          ' 95% CI:',
-          confidence_interval(accuracy, len(x)))
+    print(pretty_accuracy('  Training accuracy per tag: ', accuracy, len(x)))
     if validation_file:
         accuracy = accuracy_per_tag(model, validation_ins, validation_outs)
-        print('Validation accuracy per tag:',
-              accuracy,
-              ' 95% CI:',
-              confidence_interval(accuracy, len(validation_ins)))
+        print(pretty_accuracy('Validation accuracy per tag: ', accuracy, len(validation_ins)))
     accuracy, training_report = accuracy_per_page(model, training_data['pages'])
-    print('Training accuracy per page:',
-          accuracy,
-          ' 95% CI:',
-          confidence_interval(accuracy, len(training_data['pages'])))
+    print(pretty_accuracy('  Training accuracy per page:', accuracy, len(training_data['pages'])))
     if validation_file:
         accuracy, validation_report = accuracy_per_page(model, validation_data['pages'])
-        print('Validation accuracy per page:',
-              accuracy,
-              ' 95% CI:',
-              confidence_interval(accuracy, len(validation_data['pages'])))
+        print(pretty_accuracy('Validation accuracy per page:', accuracy, len(validation_data['pages'])))
 
     if verbose:
-        print('Training per-page results:\n', training_report, sep='')
+        print('\nTraining per-page results:\n', training_report, sep='')
         if validation_file:
-            print('Validation per-page results:\n', validation_report, sep='')
+            print('\nValidation per-page results:\n', validation_report, sep='')
     # TODO: Print "8000 elements. 7900 successes. 50 false positive. 50 false negatives."
