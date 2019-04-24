@@ -179,7 +179,8 @@ export class InwardRhs {
      * ``dom(...)`` LHS, an error is raised.
      *
      * @arg {number|function} scoreOrCallback Can either be a static number or
-     *     else a callback which takes the fnode and returns a number.
+     *     else a callback which takes the fnode and returns a number. If the
+     *     callback returns a boolean, it is cast to a number.
      */
     score(scoreOrCallback) {
         let getSubfacts;
@@ -189,7 +190,14 @@ export class InwardRhs {
         }
 
         function getSubfactsFromFunction(fnode) {
-            return {score: scoreOrCallback(fnode)};
+            let result = scoreOrCallback(fnode);
+            if (typeof result === 'boolean') {
+                // Case bools to numbers for convenience. Boolean features are
+                // common. Don't cast other things, as it frustrates ruleset
+                // debugging.
+                result = Number(result);
+            }
+            return {score: result};
         }
 
         if (typeof scoreOrCallback === 'number') {
