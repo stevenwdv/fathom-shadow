@@ -153,6 +153,7 @@ def success_on_page(model, page):
                 if candidate['prediction'] < .5:
                     color_scheme = 'good'
                     is_success = True
+                    reason = ' No target nodes. Assumed negative sample.'
                 else:  # a high-confidence non-target
                     color_scheme = 'bad'
                     reason = ' There were no right choices, but highest-scorer had high confidence anyway.'
