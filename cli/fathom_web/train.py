@@ -259,6 +259,16 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
     To see graphs of the results, install TensorBoard, then run this:
     tensorboard --logdir runs/.
 
+    Some vocab used in the output messages:
+
+      target -- A "right answer" DOM node, one that should be recognized
+
+      candidate -- Any node (target or not) brought into the ruleset, by a
+      dom() call, for consideration
+
+      negative sample -- A sample with no intended target nodes, used to bait
+      the recognizer into a false-positive choice
+
     """
     full_comment = '.LR={l},i={i}{c}'.format(
             l=learning_rate,
