@@ -68,7 +68,8 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
                         previous_validation_loss = validation_loss
                         previous_model = model.state_dict()
                 writer.add_scalar('validation_loss', validation_loss, t)
-            writer.add_scalar('training_accuracy_per_tag', accuracy_per_tag(model, x, y), t)
+            accuracy, _, _ = accuracy_per_tag(model, x, y)
+            writer.add_scalar('training_accuracy_per_tag', accuracy, t)
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
             optimizer.step()
@@ -84,11 +85,15 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
 def accuracy_per_tag(model, x, y):
     """Return the accuracy 0..1 of the model on a per-tag basis, given input
     and correct output tensors."""
-    successes = 0
+    successes = false_positives = false_negatives = 0
     for (i, input) in enumerate(x):
-        if abs(model(input).sigmoid().item() - y[i].item()) < .5:
+        if abs(model(input).sigmoid().item() - y[i].item()) < .5:  # We got it right.
             successes += 1
-    return successes / len(x)
+        elif y[i].item():  # Right answer was 1, but we got it wrong.
+            false_negatives += 1
+        else:
+            false_positives += 1
+    return (successes / len(x)), (false_positives / len(x)), (false_negatives / len(x))
 
 
 def confidences(model, x):
@@ -222,9 +227,10 @@ def pretty_coeffs(model, feature_names):
 Bias: {bias}""".format(coeffs=pretty, bias=dict_params['0.bias'][0])
 
 
-def pretty_accuracy(description, accuracy, number_of_samples):
+def pretty_accuracy(description, accuracy, number_of_samples, false_positive=None, false_negative=None):
     ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
-    return '{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f})'.format(description=description, accuracy=accuracy, ci_low=ci_low, ci_high=ci_high)
+    falses = '' if false_positive is None else '  FP: {false_positive:.3f}  FN: {false_negative:.3f}'.format(false_positive=false_positive, false_negative=false_negative)
+    return '{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'.format(description=description, accuracy=accuracy, ci_low=ci_low, ci_high=ci_high, falses=falses)
 
 
 @command()
@@ -284,11 +290,11 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         validation_arg = None
     model = learn(learning_rate, iterations, x, y, validation=validation_arg, stop_early=stop_early, run_comment=full_comment)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy = accuracy_per_tag(model, x, y)
-    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ', accuracy, len(x)))
+    accuracy, false_positive, false_negative = accuracy_per_tag(model, x, y)
+    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ', accuracy, len(x), false_positive, false_negative))
     if validation_file:
-        accuracy = accuracy_per_tag(model, validation_ins, validation_outs)
-        print(pretty_accuracy('Validation accuracy per tag: ', accuracy, len(validation_ins)))
+        accuracy, false_positive, false_negative = accuracy_per_tag(model, validation_ins, validation_outs)
+        print(pretty_accuracy('Validation accuracy per tag: ', accuracy, len(validation_ins), false_positive, false_negative))
     accuracy, training_report = accuracy_per_page(model, training_data['pages'])
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per page:', accuracy, len(training_data['pages'])))
     if validation_file:
