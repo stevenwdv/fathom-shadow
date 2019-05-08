@@ -52,8 +52,8 @@ export function and(...lhss) {
  *
  *     nearest(type('image'), type('price'))
  *
- * The score of the ``typeCallA`` can be multiplied into the new type's score
- * by using :func:`conserveScore` (though this routine has since been removed)::
+ * The score of the ``typeCallA`` can be added to the new type's score by using
+ * :func:`conserveScore` (though this routine has since been removed)::
  *
  *     rule(nearest(type('image'), type('price')),
  *          type('imageWithPrice').score(2).conserveScore())

@@ -91,7 +91,7 @@ describe('RHS', function () {
 
     it('paves over undefined notes', function () {
         // We shouldn't re-run any rules. Run order shouldn't matter, because
-        // we forbid notes from overwriting, score multiplication is
+        // we forbid notes from overwriting, score contribution is
         // commutative, and type assignment is idempotent and immutable.
         const doc = staticDom('<p></p>');
         const rules = ruleset([

@@ -114,7 +114,7 @@ class Rule {  // abstract
         // Get the types that are fed to aggregate functions. Aggregate
         // functions are more demanding than a simple type() LHS. A type() LHS
         // itself does not finalize its nodes because the things it could do to
-        // them without changing their type (adding notes, multiplying score)
+        // them without changing their type (adding notes, adding to score)
         // are immutable or commutative (respectively). Thus, we require a RHS
         // type change in order to require finalization of a simple type()
         // mention. A max(B), OTOH, is not commutative with other B->B rules
@@ -147,7 +147,7 @@ export class InwardRule extends Rule {
      */
     results(ruleset) {
         if (ruleset.doneRules.has(this)) {  // shouldn't happen
-            throw new Error('A bug in Fathom caused results() to be called on an inward rule twice. That could cause redundant score multiplications, etc.');
+            throw new Error('A bug in Fathom caused results() to be called on an inward rule twice. That could cause redundant score contributions, etc.');
         }
         const self = this;
         // For now, we consider most of what a LHS computes to be cheap, aside

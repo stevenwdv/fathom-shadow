@@ -14,7 +14,10 @@ Glossary
        The unordered collection of rules that forms a Fathom program. See :doc:`using` for more on the relationships between top-level constructs.
 
    score
-       The fuzzy-edged part of :term:`fnode` state. A floating-point number attached to a certain :term:`type` on a :term:`fnode`. They often represent the degree to which a node belongs to a type.
+       The fuzzy-edged part of :term:`fnode` state. A floating-point number, typically between 0 and 1, attached to a certain :term:`type` on a :term:`fnode`. They represent the confidence with which a node belongs to a type.
+
+   subscore
+       A single rule's contribution to a node's score for some type. In Fathom's current incarnation as a series of (single-layer) perceptrons, each rule's subscore is multiplied by a coefficient, which is derived from training. The weighted subscores are then added together and fed through a sigmoid function to get the final score for a node for a type.
 
    type
        A string-typed category assigned to a :term:`fnode`. Types are the boolean, hard-edged, enumerated parts of fnode state. They also largely determine inter-rule dependencies and thus which rules get run in response to a query.

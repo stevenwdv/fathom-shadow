@@ -381,7 +381,7 @@ class NearestLhs extends Lhs {
         // args' nodes would matter.
 
         // TODO: Still not sure how to get the distance to factor into the
-        // score multiplier unless we hard-code nearest() to do that. It's a
+        // score unless we hard-code nearest() to do that. It's a
         // matter of not being able to bind on the RHS to the output of the
         // distance function on the LHS. Perhaps we could at least make
         // distance part of the note and read it in a props() callback.

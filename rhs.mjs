@@ -33,7 +33,7 @@ export class InwardRhs {
     }
 
     /**
-     * Declare that the maximum returned score multiplier is such and such,
+     * Declare that the maximum returned subscore is such and such,
      * which helps the optimizer plan efficiently. This doesn't force it to be
      * true; it merely throws an error at runtime if it isn't. To lift an
      * ``atMost`` constraint, call ``atMost()`` (with no args). The reason
@@ -60,7 +60,7 @@ export class InwardRhs {
       *
       * The callback should return...
       *
-      * * An optional score multiplier
+      * * An optional :term:`subscore`
       * * A type (required on ``dom(...)`` rules, defaulting to the input one on
       *   ``type(...)`` rules)
       * * Optional notes
@@ -169,18 +169,24 @@ export class InwardRhs {
     }
 
     /**
-     * Multiply the score of the input node by some number, which can be >1 to
-     * increase the score or <1 to decrease it (though negative scores are not
-     * recommended due to constant sign-flipping).
+     * Affect the confidence with which the input node should be considered a
+     * member of a type.
      *
-     * Since every node can have multiple, independent scores (one for each type),
-     * this applies to the type explicitly set by the RHS or, if none, to the type
-     * named by the ``type`` call on the LHS. If the LHS has none because it's a
-     * ``dom(...)`` LHS, an error is raised.
+     * The parameter is generally between 0 and 1 (inclusive), with 0 meaning
+     * the node does not have the "smell" this rule checks for and 1 meaning it
+     * does. The range between 0 and 1 is available to represent "fuzzy"
+     * confidences. If you have an unbounded range to compress down to [0, 1],
+     * consider using :func:`sigmoid` or a scaling thereof.
      *
-     * @arg {number|function} scoreOrCallback Can either be a static number or
-     *     else a callback which takes the fnode and returns a number. If the
-     *     callback returns a boolean, it is cast to a number.
+     * Since every node can have multiple, independent scores (one for each
+     * type), this applies to the type explicitly set by the RHS or, if none,
+     * to the type named by the ``type`` call on the LHS. If the LHS has none
+     * because it's a ``dom(...)`` LHS, an error is raised.
+     *
+     * @arg {number|function} scoreOrCallback Can either be a static number,
+     *     generally 0 to 1 inclusive, or else a callback which takes the fnode
+     *     and returns such a number. If the callback returns a boolean, it is
+     *     cast to a number.
      */
     score(scoreOrCallback) {
         let getSubfacts;

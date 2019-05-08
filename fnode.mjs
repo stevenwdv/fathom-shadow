@@ -26,7 +26,9 @@ export class Fnode {
         // not undefined.
         this._types = new Map();
 
-        // By default, an fnode has an independent score for each of its types.
+        // Note: conserveScore() is temporarily absent in 3.0.
+        //
+        // By default, a fnode has an independent score for each of its types.
         // However, a RHS can opt to conserve the score of an upstream type,
         // carrying it forward into another type. To avoid runaway scores in
         // the case that multiple rules choose to do this, we limit the

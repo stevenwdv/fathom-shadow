@@ -225,7 +225,7 @@ class BoundRuleset {
      *
      * The caller is responsible for ensuring that _execute() is not called
      * more than once for a given InwardRule, lest non-idempotent
-     * transformations, like score multiplications, be applied to fnodes more
+     * transformations, like score contributions, be applied to fnodes more
      * than once.
      *
      * The basic idea is to sort rules in topological order (according to input
