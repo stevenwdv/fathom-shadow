@@ -80,7 +80,7 @@ function runTraineeOnThisDocument(traineeId, serializedCoeffs, moreReturns) {
     }
     const facts = boundRulesets.get(traineeId);
     //const rules = setDefault(boundRulesets, traineeId, () => trainee.rulesetMaker('dummy'));
-    facts.setCoeffsAndBiases({coeffs: serializedCoeffs});
+    facts.setCoeffsAndBiases(serializedCoeffs);
     const successFunc = trainee.successFunction || foundLabelIsTraineeId;
     const didSucceed = successFunc(facts, traineeId, moreReturns);
     return {didSucceed, cost: moreReturns.cost || (1 - didSucceed)};

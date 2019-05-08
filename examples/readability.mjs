@@ -100,8 +100,8 @@ export function tunedContentFnodes(coeffLinkDensity = 1.5, coeffParagraphTag = 4
                               strideCost: coeffStride}),
              out('content').allThrough(domSort))],
         // eslint-disable-next-line indent
-        {coeffs: [['linkDensity', coeffLinkDensity],
-                  ['paragraphTag', coeffParagraphTag]]}
+        [['linkDensity', coeffLinkDensity],
+         ['paragraphTag', coeffParagraphTag]]
     );
 
     // Return the fnodes expressing a document's main textual content.

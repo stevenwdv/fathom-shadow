@@ -292,8 +292,8 @@ describe('Ruleset', function () {
         `);
         const rules = ruleset([]);
         const facts = rules.against(doc);
-        facts.setCoeffsAndBiases({coeffs: [['someRule', 2]],
-                                  biases: [['someType', 5]]});
+        facts.setCoeffsAndBiases([['someRule', 2]],
+                                 [['someType', 5]]);
         assert.equal(facts._coeffs.get('someRule'), 2);
         assert.equal(facts.biases.get('someType'), 5);
     });

@@ -8,8 +8,8 @@ import {InwardRule, OutwardRule, rule} from './rule';
 /**
  * Return a new :class:`Ruleset` containing the given rules.
  */
-export function ruleset(rules, coeffsAndBiases) {
-    return new Ruleset(rules, coeffsAndBiases);
+export function ruleset(rules, coeffs = [], biases = []) {
+    return new Ruleset(rules, coeffs, biases);
 }
 
 /**
@@ -29,15 +29,14 @@ export function ruleset(rules, coeffsAndBiases) {
  *     of numbers from the optimizer. Coeffs all default to 1, biases to 0.
  */
 class Ruleset {
-    constructor(rules, coeffsAndBiases = {coeffs: [], biases: []}) {
+    constructor(rules, coeffs = [], biases = []) {
         this._inRules = [];
         this._outRules = new Map();  // key -> rule
         this._rulesThatCouldEmit = new Map();  // type -> [rules]
         this._rulesThatCouldAdd = new Map();  // type -> [rules]
-        const unpacked = unpackedCoeffsAndBiases(coeffsAndBiases);
         // Private to the framework:
-        this._coeffs = unpacked[0];
-        this.biases = unpacked[1];
+        this._coeffs = new Map(coeffs);  // rule name => coefficient
+        this.biases = new Map(biases);  // type name => bias
 
         // Separate rules into out ones and in ones, and sock them away. We do
         // this here so mistakes raise errors early.
@@ -91,15 +90,6 @@ class Ruleset {
 }
 
 /**
- * Handle defaulting to empty values for the {coeffs, biases} data structure.
- */
-function unpackedCoeffsAndBiases(coeffsAndBiases) {
-    const coeffs = new Map(coeffsAndBiases.coeffs || []);  // rule name => coefficient
-    const biases = new Map(coeffsAndBiases.biases || []);  // type name => bias
-    return [coeffs, biases];
-}
-
-/**
  * A ruleset that is earmarked to analyze a certain DOM
  *
  * Carries a cache of rule results on that DOM. Typically comes from
@@ -130,12 +120,11 @@ class BoundRuleset {
      *
      * @arg coeffsAndBiases See the :class:`Ruleset` constructor.
      */
-    setCoeffsAndBiases(coeffsAndBiases) {
-        const unpacked = unpackedCoeffsAndBiases(coeffsAndBiases);
+    setCoeffsAndBiases(coeffs, biases = []) {
         // Destructuring assignment doesn't make it through rollup properly
         // (https://github.com/rollup/rollup-plugin-commonjs/issues/358):
-        this._coeffs = unpacked[0];
-        this.biases = unpacked[1];
+        this._coeffs = new Map(coeffs);
+        this.biases = new Map(biases);
         this._clearCaches();
     }
 
