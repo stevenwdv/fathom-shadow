@@ -22,6 +22,7 @@ Import them from ``fathom-web/utils``. For example...
 .. autofunction:: inlineTextLength
 .. autofunction:: inlineTexts
 .. autofunction:: isBlock
+.. autofunction:: isVisible
 .. autofunction:: isWhitespace
 .. autofunction:: length
 .. autofunction:: linearScale
@@ -39,6 +40,7 @@ Import them from ``fathom-web/utils``. For example...
 .. autofunction:: rootElement
 .. autofunction:: saturation
 .. autofunction:: setDefault
+.. autofunction:: sigmoid
 .. autofunction:: sum
 .. autofunction:: toposort
 .. autofunction:: walk
