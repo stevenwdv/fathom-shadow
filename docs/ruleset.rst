@@ -7,9 +7,9 @@ Rulesets
 
 The top-level Fathom object is the ruleset, an unordered collection of rules. The plain old :class:`Ruleset` is what you typically construct, via the ``ruleset`` convenience function:
 
-.. autofunction:: ruleset(rule[, rule, ...])
+.. autofunction:: ruleset
 
-.. autoclass:: Ruleset(rule[, rule, ...])
+.. autoclass:: Ruleset
    :members: against, rules
 
 Then you call :func:`Ruleset.against` to get back a :class:`BoundRuleset`, which is specific to a given DOM tree. From that, you pull answers.

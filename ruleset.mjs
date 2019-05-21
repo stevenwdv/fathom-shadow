@@ -6,7 +6,8 @@ import {InwardRule, OutwardRule, rule} from './rule';
 
 
 /**
- * Return a new :class:`Ruleset` containing the given rules.
+ * A shortcut for creating a new :class:`Ruleset`, for symmetry with
+ * :func:`rule`
  */
 export function ruleset(rules, coeffs = [], biases = []) {
     return new Ruleset(rules, coeffs, biases);
@@ -17,16 +18,14 @@ export function ruleset(rules, coeffs = [], biases = []) {
  * when you bind them by calling :func:`~Ruleset.against()`, the resulting
  * :class:`BoundRuleset` will be immutable.
  *
- * @arg rules {Array} :class:`Rule` instances
+ * @arg rules {Array} Rules returned from :func:`rule`
  * @arg coeffs {Map} A map of rule names to numerical weights, typically
- *     returned by the :doc:`optimizer<optimization>`.
- * @arg coeffsAndBiases {object} Optimized weights and biases of the neural net
- *      which lead to high accuracy and accurate confidence estimates. Example:
- *      ``{coeffs: [['someRuleName', 30.04], ...],
- *         biases: [['someType', 147.39], ...]}``.
- *
- *     This is all rolled into one argument so you can paste in a single blob
- *     of numbers from the optimizer. Coeffs all default to 1, biases to 0.
+ *     returned by the :doc:`optimizer<optimization>`. Example:
+ *     ``[['someRuleName', 5.04], ...]``. If not given, coefficients default to
+ *     1.
+ * @arg biases {object} A map of type names to neural-net biases. These enable
+ *      accurate confidence estimates. Example: ``[['someType', -2.08], ...]``.
+ *      If absent, biases default to 0.
  */
 class Ruleset {
     constructor(rules, coeffs = [], biases = []) {
