@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Fathom'
-copyright = u'2017-2018, Mozilla Foundation'
+copyright = u'2017-2019, Mozilla Foundation'
 author = u'Erik Rose'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -65,7 +65,7 @@ author = u'Erik Rose'
 # built documents.
 #
 # The short X.Y version.
-version = u'3.0a1'
+version = u'3.0'
 # The full version, including alpha/beta/rc tags.
 release = version
 
