@@ -17,17 +17,18 @@ export function ruleset(rules, coeffs = [], biases = []) {
  * An unbound ruleset. Eventually, you'll be able to add rules to these. Then,
  * when you bind them by calling :func:`~Ruleset.against()`, the resulting
  * :class:`BoundRuleset` will be immutable.
- *
- * @arg rules {Array} Rules returned from :func:`rule`
- * @arg coeffs {Map} A map of rule names to numerical weights, typically
- *     returned by the :doc:`trainer<training>`. Example:
- *     ``[['someRuleName', 5.04], ...]``. If not given, coefficients default to
- *     1.
- * @arg biases {object} A map of type names to neural-net biases. These enable
- *      accurate confidence estimates. Example: ``[['someType', -2.08], ...]``.
- *      If absent, biases default to 0.
  */
 class Ruleset {
+    /**
+     * @arg rules {Array} Rules returned from :func:`rule`
+     * @arg coeffs {Map} A map of rule names to numerical weights, typically
+     *     returned by the :doc:`trainer<training>`. Example:
+     *     ``[['someRuleName', 5.04], ...]``. If not given, coefficients
+     *     default to 1.
+     * @arg biases {object} A map of type names to neural-net biases. These
+     *      enable accurate confidence estimates. Example: ``[['someType',
+     *      -2.08], ...]``. If absent, biases default to 0.
+     */
     constructor(rules, coeffs = [], biases = []) {
         this._inRules = [];
         this._outRules = new Map();  // key -> rule
