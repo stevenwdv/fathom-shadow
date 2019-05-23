@@ -9,6 +9,15 @@ import {identity} from './utilsForFrontend';
 /**
  * Construct and return the proper type of rule class based on the
  * inwardness/outwardness of the RHS.
+ *
+ * @arg lhs {Lhs} The left-hand side of the rule
+ * @arg rhs {Rhs} The right-hand side of the rule
+ * @arg options {object} Other, optional information about the rule.
+ *     Currently, the only recognized option is ``name``, which points to a
+ *     string that uniquely identifies this rule in a ruleset. The name
+ *     correlates this rule with one of the coefficients passed into
+ *     :func:`ruleset`. If no name is given, an identifier is assigned based on
+ *     the index of this rule in the ruleset, but that is, of course, brittle.
  */
 export function rule(lhs, rhs, options) {
     // Since out() is a valid call only on the RHS (unlike type()), we can take
