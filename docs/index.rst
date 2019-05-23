@@ -26,10 +26,9 @@ Documentation
 
    intro
    using
-   workflow
+   training
    ruleset
    clustering
-   optimization
    fnodes
    utilities
    development

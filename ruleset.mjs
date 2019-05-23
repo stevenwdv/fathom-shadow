@@ -20,7 +20,7 @@ export function ruleset(rules, coeffs = [], biases = []) {
  *
  * @arg rules {Array} Rules returned from :func:`rule`
  * @arg coeffs {Map} A map of rule names to numerical weights, typically
- *     returned by the :doc:`optimizer<optimization>`. Example:
+ *     returned by the :doc:`trainer<training>`. Example:
  *     ``[['someRuleName', 5.04], ...]``. If not given, coefficients default to
  *     1.
  * @arg biases {object} A map of type names to neural-net biases. These enable

@@ -2,12 +2,12 @@
 Introduction
 ============
 
-Fathom is a supervised-learning system for recognizing parts of web pages—pop-ups, address forms, slideshows—or for classifying a page as a whole. A DOM flows in one side, and DOM nodes flow out the other, tagged with types and probabilities that those types are correct. A Prolog-like language makes it straightforward to specify the “smells” that suggest each type, and a neural-net-based optimizer determines the contribution of each smell. Finally, the FathomFox a web extension lets you collect and label a corpus of web pages for training.
+Fathom is a supervised-learning system for recognizing parts of web pages—pop-ups, address forms, slideshows—or for classifying a page as a whole. A DOM flows in one side, and DOM nodes flow out the other, tagged with types and probabilities that those types are correct. A Prolog-like language makes it straightforward to specify the “smells” that suggest each type, and a neural-net-based trainer determines the optimal contribution of each smell. Finally, the `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ web extension lets you collect and label a corpus of web pages for training.
 
 Why?
 ====
 
-A study of existing projects like Readability and Distiller suggests that purely imperative approaches to semantic extraction get bogged down in the mechanics of DOM traversal and state accumulation, obscuring the operative parts of the extractors and making new ones long and tedious to write. They involve a lot of human guessing of numerical weights. And they are brittle due to the promiscuous profusion of state. Fathom makes extractors easier to write by providing a declarative language and training tooling around these weak points. In short, Fathom handles tree-walking, execution order, weight determination, and annotation bookkeeping so you don't have to.
+A study of existing projects like Readability and Distiller suggests that purely imperative approaches to semantic extraction get bogged down in the mechanics of DOM traversal and state accumulation, obscuring the operative parts of the extractors and making new ones long and tedious to write. They involve a lot of human guessing of numerical weights. And they are brittle due to the promiscuous profusion of state. Fathom makes extractors easier to write by providing a declarative language, corpus capture, and neural-net-based training. With these, Fathom handles tree-walking, execution order, weight determination, and annotation bookkeeping so you don't have to.
 
 Specific Areas We Address
 =========================
@@ -17,6 +17,7 @@ Specific Areas We Address
 * Types provide an easy way to categorize DOM nodes. They are also Fathom's black-box units of abstraction, as functions are in other programming languages.
 * The type system also makes explicit the division between a ruleset's public and private APIs: the types are public, and the imperative activity that goes on inside callback functions is private. This provides the freedom to extend existing rulesets without editing them directly, so multiple third-party refinements can be mixed together.
 * Persistent state is cordoned off in typed :term:`notes<note>` on fnodes. Thus, when a rule declares that it takes such-and-such a type as input, it can rightly assume (if rules are written consistently) there will be a note of that type on the fnodes that are passed in.
+* A :doc:`neural-network-powered trainer<training>` quickly adjusts the weights of your rules to maximize accuracy.
 
 Bonus Features
 --------------
@@ -26,7 +27,6 @@ Bonus Features
 * Caching to keep from re-deriving intermediate results between queries
 * Clustering based on a notion of DOM node distance influenced by structural similarity
 * Many handy utils from which to compose scoring callbacks
-
 
 Support
 =======

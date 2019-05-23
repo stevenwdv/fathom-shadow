@@ -56,7 +56,7 @@ In the near future...
 
 2.3
 ===
-* Add Corpus Framework to further assist you in doing ruleset :doc:`optimization`.
+* Add Corpus Framework to further assist you in doing ruleset optimization.
 * Improve the optimizer's speed by about 4x.
 * Change jsdom from a devDependency to a proper dependency. It's still used only from :func:`staticDom`, which is generally used only while authoring a ruleset. Bundlers (used to pack Fathom into a webextension, for instance) should throw it away in their dead code elimination phase. See, for example, the included experimental `rollup <https://rollupjs.org/>`_ configuration.
 

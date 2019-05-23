@@ -4,6 +4,9 @@ Glossary
 
 .. glossary::
 
+   candidate
+       Any node (:term:`target` or not) brought into the ruleset by a :func:`dom` call for consideration
+
    fnode
        A data structure parallel to a DOM node, holding :term:`scores<score>`, :term:`notes<note>`, and :term:`types<type>` pertaining to it. See :doc:`fnodes`.
 
@@ -18,6 +21,9 @@ Glossary
 
    subscore
        A single rule's contribution to a node's score for some type. In Fathom's current incarnation as a series of (single-layer) perceptrons, each rule's subscore is multiplied by a coefficient, which is derived from training. The weighted subscores are then added together and fed through a sigmoid function to get the final score for a node for a type.
+
+   target
+       A "right answer" DOM node, one that should be recognized as belonging to some type
 
    type
        A string-typed category assigned to a :term:`fnode`. Types are the boolean, hard-edged, enumerated parts of fnode state. They also largely determine inter-rule dependencies and thus which rules get run in response to a query.
