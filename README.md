@@ -1,8 +1,6 @@
 # Fathom
 
-Fathom is a JavaScript framework for extracting meaning from web pages, identifying parts like Previous/Next buttons, address forms, and the main textual content—or classifying a page as a whole. 
-
-Essentially, it scores DOM nodes and extracts them based on conditions you specify. A Prolog-inspired system of types and annotations expresses dependencies between scoring steps and keeps state under control. It also provides the freedom to extend existing sets of scoring rules without editing them directly, so multiple third-party refinements can be mixed together.
+Fathom is a supervised-learning system for recognizing parts of web pages—pop-ups, address forms, slideshows—or for classifying a page as a whole. A DOM flows in one side, and DOM nodes flow out the other, tagged with types and probabilities that those types are correct. A Prolog-like language makes it straightforward to specify the “smells” that suggest each type, and a neural-net-based trainer determines the optimal contribution of each smell. Finally, the FathomFox web extension lets you collect and label a corpus of web pages for training.
 
 Continue reading at <https://mozilla.github.io/fathom/intro.html#why>.
 
