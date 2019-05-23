@@ -2,6 +2,7 @@
 .eslintignore
 .eslintrc.yml
 .travis.yml
+/cli
 /docs
 /examples
 /Makefile
