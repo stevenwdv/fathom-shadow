@@ -52,9 +52,10 @@ export class Lhs {
     /**
      * Further constrain the kinds of nodes we take.
      *
-     * Can be chained after :func:`type` or :func:`dom`.
+     * Can be chained after :func:`type` or :func:`dom`. Useful for early
+     * pruning of the universe of tags for performance and training speed.
      *
-     * Example: ``dom('p').when(fnode => fnode.element.id.length > 10)``
+     * Example: ``dom('p').when(isVisible)``
      *
      * @arg {function} predicate Accepts a fnode and returns a boolean
      */
