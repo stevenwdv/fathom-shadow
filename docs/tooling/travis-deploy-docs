@@ -4,7 +4,7 @@
 CHECKOUT=$(pwd)
 
 # Install prereqs:
-npm install jsdoc
+npm install jsdoc@3.5.4
 virtualenv venv  # Global Python env is unwriteable.
 VIRTUAL_ENV="$CHECKOUT/venv"  # activate script doesn't work.
 PATH="$VIRTUAL_ENV/bin:$PATH"
