@@ -2,15 +2,15 @@
 Version History
 ===============
 
-3.0a1
-=====
+3.0
+===
 3.0 brings to bear simple neural nets, yielding...
 
 * Faster optimization by several orders of magnitude
-* Optimization that is guaranteed to converge to at least a local minimum
+* More accurate optimization, guaranteed to converge to at least a local minimum
 * Lower RAM use during optimization, by several orders of magnitude, uncapping corpus size. You should now be able to train on a corpus of 200,000 samples in 1GB of RAM.
-* Confidence calculations for free. Scores now represent the probability that a node belongs to a given type, informed by statistics (binary cross-entropy) run over the training corpus. If you've been using 0..1 fuzzy-logic value in your scoring callbacks, you're already most of the way there. Just strip away any reference to coefficients, and you're done.
-* Coefficients have been moved into the framework: no more multiplying or exponentiating yourself. (Bias values have been added as well to make confidences work out.)
+* Confidence calculations for free. A score now represents the probability that a node belongs to a given type, informed by statistics (binary cross-entropy) run over the training corpus. If you've been using 0..1 fuzzy-logic value in your scoring callbacks, you're already most of the way there. Just strip away any manual weighting, and you're done.
+* Coefficients have been moved into the framework: no more multiplying or exponentiating yourself. Bias values have been added to make confidences work out.
 
 Essentially, 3.0 recasts the Fathom recognition problem as a classification one, turning each Fathom type into a perceptron and each rule into one of its input features. (We were close already, mathematically; we just had to switch multiplicative mixing to additive and add a bias.) Besides gaining the advantage of a great deal of existing literature and off-the-shelf tooling, it means Fathom is no longer practically limited to grabbing the single most likely member of a class from a page. It can grab all that exist, and confidence calculations inform the caller when to stop believing its guesses.
 
@@ -21,10 +21,16 @@ Backward-incompatible changes
 * :func:`ruleset` takes its rules in an array rather than as varargs, making room to pass in coefficients and biases.
 * Scores are no longer multiplied together. They are now added and then run through a :func:`sigmoid` function, which, combined with the math in the new optimizer, makes them probabilities.
 
-In the near future...
----------------------
+Other specific changes
+----------------------
 
-* Expect the annealing optimizer to be deprecated.
+* The annealing optimizer is deprecated. Training is now purview of the commandline :command:`fathom-train` tool.
+* Add :command:`fathom-unzip` and :command:`fathom-pick` tools for corpus management.
+* Fix the bad-element labeling in FathomFox (by fixing a file compiled into fathom-trainees).
+* Add utility functions :func:`isVisible`, :func:`rgbaFromString`, :func:`saturation`, :func:`sigmoid`, and :func:`linearScale`.
+* Allow :func:`euclidean` to take HTML elements in addition to fnodes.
+* Accept boolean return values from :func:`score` callbacks, which get cast to 0 or 1.
+
 
 2.8
 ===
