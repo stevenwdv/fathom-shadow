@@ -14,7 +14,7 @@ The top-level Fathom object is the ruleset, an unordered collection of rules. Th
 
 Then you call :func:`Ruleset.against` to get back a :class:`BoundRuleset`, which is specific to a given DOM tree. From that, you pull answers.
 
-.. autoclass:: BoundRuleset()
+.. autoclass:: BoundRuleset
    :members: get
 
 Rules
