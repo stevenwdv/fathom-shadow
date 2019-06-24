@@ -6,9 +6,9 @@ Version History
 ===
 3.0 brings to bear simple neural nets, yielding...
 
-* Faster optimization by several orders of magnitude
-* More accurate optimization, guaranteed to converge to at least a local minimum
-* Lower RAM use during optimization, by several orders of magnitude, uncapping corpus size. You should now be able to train on a corpus of 200,000 samples in 1GB of RAM.
+* Faster training by several orders of magnitude
+* More accurate training, guaranteed to converge to at least a local minimum
+* Lower RAM use during training, by several orders of magnitude, uncapping corpus size. You should now be able to train on a corpus of 200,000 samples in 1GB of RAM.
 * Confidence calculations for free. A score now represents the probability that a node belongs to a given type, informed by statistics (binary cross-entropy) run over the training corpus. If you've been using 0..1 fuzzy-logic value in your scoring callbacks, you're already most of the way there. Just strip away any manual weighting, and you're done.
 * Coefficients have been moved into the framework: no more multiplying or exponentiating yourself. Bias values have been added to make confidences work out.
 
@@ -19,7 +19,7 @@ Backward-incompatible changes
 
 * :func:`conserveScore` is gone, at least for now.
 * :func:`ruleset` takes its rules in an array rather than as varargs, making room to pass in coefficients and biases.
-* Scores are no longer multiplied together. They are now added and then run through a :func:`sigmoid` function, which, combined with the math in the new optimizer, makes them probabilities.
+* Scores are no longer multiplied together. They are now added and then run through a :func:`sigmoid` function, which, combined with the math in the new trainer, makes them probabilities.
 
 Other specific changes
 ----------------------
