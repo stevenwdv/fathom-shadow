@@ -16,7 +16,8 @@ setup(
     entry_points={'console_scripts': [
         'fathom-train = fathom_web.train:main',
         'fathom-unzip = fathom_web.unzip:main',
-        'fathom-pick = fathom_web.pick:main'
+        'fathom-pick = fathom_web.pick:main',
+        'fathom-list = fathom_web.list:main'
     ]},
     classifiers=[
         'Intended Audience :: Developers',
