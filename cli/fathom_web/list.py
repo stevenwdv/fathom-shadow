@@ -1,18 +1,19 @@
-from click import argument, command, File, option, Path
 import pathlib
+
+from click import argument, command, File, option, Path
 
 
 @command()
-@option('--out_file', '-o', type=File(mode='w'), default=None,
+@option('--out-file', '-o', type=File(mode='w'), default=None,
         help='A file for saving the printed filenames for easy future reference.')
-@argument('in_directory', type=Path(exists=True, file_okay=False, allow_dash=True))
+@argument('in_directory', type=Path(exists=True, file_okay=False))
 def main(in_directory, out_file):
     """
     Lists filenames in a IN_DIRECTORY, one filename per line. Optionally saves output to OUT_FILE.
 
     Ignores hidden files.
 
-    This is useful for vectorizing samples using fathom-fox. Fathom-fox expects input filenames copied into a text box
+    This is useful for vectorizing samples using FathomFox. FathomFox expects input filenames copied into a text box
     with one filename per line.
     """
     if out_file is not None:
