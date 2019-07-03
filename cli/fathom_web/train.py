@@ -312,7 +312,3 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         if validation_file:
             print('\nValidation per-page results:\n', validation_report, sep='')
     # TODO: Print "8000 elements. 7900 successes. 50 false positive. 50 false negatives."
-
-
-if __name__ == '__main__':
-    main()
