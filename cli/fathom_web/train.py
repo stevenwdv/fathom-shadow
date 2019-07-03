@@ -3,6 +3,7 @@ from math import floor, sqrt
 from random import sample
 
 from click import argument, command, File, option, progressbar, style
+import numpy as np
 from tensorboardX import SummaryWriter
 import torch
 from torch.nn import Sequential, Linear, BCEWithLogitsLoss
@@ -68,7 +69,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
                         previous_validation_loss = validation_loss
                         previous_model = model.state_dict()
                 writer.add_scalar('validation_loss', validation_loss, t)
-            accuracy, _, _ = accuracy_per_tag(model, x, y)
+            accuracy, _, _ = accuracy_per_tag(y, y_pred)
             writer.add_scalar('training_accuracy_per_tag', accuracy, t)
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
@@ -82,18 +83,21 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
     return model
 
 
-def accuracy_per_tag(model, x, y):
-    """Return the accuracy 0..1 of the model on a per-tag basis, given input
-    and correct output tensors."""
-    successes = false_positives = false_negatives = 0
-    for (i, input) in enumerate(x):
-        if abs(model(input).sigmoid().item() - y[i].item()) < .5:  # We got it right.
-            successes += 1
-        elif y[i].item():  # Right answer was 1, but we got it wrong.
-            false_negatives += 1
-        else:
-            false_positives += 1
-    return (successes / len(x)), (false_positives / len(x)), (false_negatives / len(x))
+def accuracy_per_tag(y, y_pred):
+    """Return the accuracy 0..1 of the model on a per-tag basis, given the correct output tensors
+    and the prediction tensors from the model for the same samples."""
+    # Use `torch.no_grad()` so the sigmoid on y_pred is not tracked by pytorch's autograd
+    with torch.no_grad():
+        # We turn our tensors into 1-D numpy arrays because its methods are faster
+        y = y.numpy().flatten()
+        y_pred_confidence = y_pred.sigmoid().numpy().flatten()
+
+        absolute_confidence_error = np.abs(y_pred_confidence - y)
+        successes = (absolute_confidence_error < 0.5).sum()
+        false_negatives = ((absolute_confidence_error >= 0.5) & (y == 1)).sum()
+        number_of_tags = len(y)
+        false_positives = number_of_tags - successes - false_negatives
+        return (successes / number_of_tags), (false_positives / number_of_tags), (false_negatives / number_of_tags)
 
 
 def confidences(model, x):
@@ -290,10 +294,10 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         validation_arg = None
     model = learn(learning_rate, iterations, x, y, validation=validation_arg, stop_early=stop_early, run_comment=full_comment)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positive, false_negative = accuracy_per_tag(model, x, y)
+    accuracy, false_positive, false_negative = accuracy_per_tag(y, model(x))
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ', accuracy, len(x), false_positive, false_negative))
     if validation_file:
-        accuracy, false_positive, false_negative = accuracy_per_tag(model, validation_ins, validation_outs)
+        accuracy, false_positive, false_negative = accuracy_per_tag(validation_outs, model(validation_ins))
         print(pretty_accuracy('Validation accuracy per tag: ', accuracy, len(validation_ins), false_positive, false_negative))
     accuracy, training_report = accuracy_per_page(model, training_data['pages'])
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per page:', accuracy, len(training_data['pages'])))
