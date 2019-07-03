@@ -294,12 +294,10 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         validation_arg = None
     model = learn(learning_rate, iterations, x, y, validation=validation_arg, stop_early=stop_early, run_comment=full_comment)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    y_pred = model(x)  # Make predictions.
-    accuracy, false_positive, false_negative = accuracy_per_tag(y, y_pred)
+    accuracy, false_positive, false_negative = accuracy_per_tag(y, model(x))
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ', accuracy, len(x), false_positive, false_negative))
     if validation_file:
-        validation_preds = model(validation_ins)
-        accuracy, false_positive, false_negative = accuracy_per_tag(validation_outs, validation_preds)
+        accuracy, false_positive, false_negative = accuracy_per_tag(validation_outs, model(validation_ins))
         print(pretty_accuracy('Validation accuracy per tag: ', accuracy, len(validation_ins), false_positive, false_negative))
     accuracy, training_report = accuracy_per_page(model, training_data['pages'])
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per page:', accuracy, len(training_data['pages'])))
