@@ -84,8 +84,8 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
 
 
 def accuracy_per_tag(y, y_pred):
-    """Return the accuracy 0..1 of the model on a per-tag basis, given input
-    and correct output tensors."""
+    """Return the accuracy 0..1 of the model on a per-tag basis, given the correct output tensors
+    and the prediction tensors from the model for the same samples."""
     # Use `torch.no_grad()` so the sigmoid on y_pred is not tracked by pytorch's autograd
     with torch.no_grad():
         # We turn our tensors into 1-D numpy arrays because its methods are faster
