@@ -5,8 +5,6 @@
 import {setDefault} from './utilsForFrontend';
 import {type} from './side';
 
-let boundRulesets = new Map();  // Hang onto a BoundRuleset for each page so we can cache rule outputs.
-
 /** Handle messages that come in from the FathomFox webext. */
 function handleBackgroundScriptMessage(request, sender, sendResponse) {
     if (request.type === 'rulesetSucceededOnTabs') {
@@ -75,11 +73,7 @@ function runTraineeOnThisDocument(traineeId, serializedCoeffs, moreReturns) {
     // over the document, and report whether it found the right
     // element.
     const trainee = trainees.get(traineeId);
-    if (!boundRulesets.has(traineeId)) {
-        boundRulesets.set(traineeId, trainee.rulesetMaker('dummy').against(window.document));
-    }
-    const facts = boundRulesets.get(traineeId);
-    //const rules = setDefault(boundRulesets, traineeId, () => trainee.rulesetMaker('dummy'));
+    const facts = trainee.rulesetMaker('dummy').against(window.document);
     facts.setCoeffsAndBiases(serializedCoeffs);
     const successFunc = trainee.successFunction || foundLabelIsTraineeId;
     const didSucceed = successFunc(facts, traineeId, moreReturns);
@@ -134,10 +128,7 @@ async function handleContentScriptMessage(request) {
         // in is the same as the trainee ID.
         const traineeId = request.traineeId;
         const trainee = trainees.get(traineeId);
-        if (!boundRulesets.has(traineeId)) {
-            boundRulesets.set(traineeId, trainee.rulesetMaker('dummy').against(window.document));
-        }
-        const boundRuleset = boundRulesets.get(traineeId);
+        const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
         const fnodes = boundRuleset.get(type(trainee.vectorType));
         const path = window.location.pathname;
         const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
