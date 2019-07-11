@@ -22,7 +22,10 @@ debugtest: $(JS)
 publish: $(JS)
 	npm publish
 
+cli:
+	cd cli && python setup.py sdist bdist_wheel
+
 clean:
 	rm -f $(JS)
 
-.PHONY: all lint test coverage debugtest
+.PHONY: all lint test coverage debugtest cli
