@@ -2,6 +2,12 @@
 Version History
 ===============
 
+3.1
+===
+* Make BAD-element-labeling reliable when using FathomFox to debug rulesets.
+* Add :command:`fathom-list` tool.
+* Further optimize trainer: about 17x faster for a 60-sample corpus, with superlinear improvements for larger ones.
+
 3.0
 ===
 3.0 brings to bear simple neural nets, yielding...

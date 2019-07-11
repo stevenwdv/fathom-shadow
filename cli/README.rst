@@ -2,10 +2,14 @@
 The Fathom Trainer and Other Tools
 ==================================
 
-This is the commandline trainer for `Fathom <https://mozilla.github.io/fathom/>`_, which itself is a supervised-learning system for recognizing parts of web pages. It also includes other commandline tools for ruleset development, like ``fathom-unzip`` and ``fathom-pick``. `See docs for the trainer here <http://mozilla.github.io/fathom/training.html#running-the-trainer>`_.
+This is the commandline trainer for `Fathom <https://mozilla.github.io/fathom/>`_, which itself is a supervised-learning system for recognizing parts of web pages. It also includes other commandline tools for ruleset development, like ``fathom-unzip``, ``fathom-pick``, and ``fathom-list``. `See docs for the trainer here <http://mozilla.github.io/fathom/training.html#running-the-trainer>`_.
 
 Version History
 ===============
+
+3.1
+  * Add ``fathom-list`` tool.
+  * Further optimize trainer: about 17x faster for a 60-sample corpus, with superlinear improvements for larger ones.
 
 3.0
   * Move to Fathom repo.
