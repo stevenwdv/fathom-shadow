@@ -2,7 +2,9 @@
 Clustering
 ==========
 
-One of Fathom's most powerful features is its flexible clustering algorithm, which groups nodes based on their proximity and ancestry. It is documented here as top-level functions but is also available directly within rulesets as :func:`bestCluster`, which has the advantage of letting you direct its results to further rules. Clustering is computationally expensive (at least O(n^2)) but widely applicable.
+One of Fathom's most powerful features is its flexible clustering algorithm, which groups nodes based on their proximity and ancestry. It is documented here as top-level functions but is also available directly within rulesets as :func:`bestCluster`, which has the advantage of letting you direct its results to further rules.
+
+Note that clustering is computationally expensive (at least O(n^2)).  It is widely applicable, but should generally be considered a last resort for performance reasons.
 
 .. autofunction:: clusters
 
