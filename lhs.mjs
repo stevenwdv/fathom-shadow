@@ -50,7 +50,15 @@ export class Lhs {
     }
 
     /**
-     * Further constrain the kinds of nodes we take.
+     * Returns a boolean representing a hard cutoff of whether or not the
+     * input is a match.
+     *
+     * This is usually too aggressive; you should generally use either
+     * :func:`score` or :func:`page` instead of this so that the
+     * application can weight the values appropriately.  Human intuition
+     * as to what is important is often wrong (e.g., you would assume that
+     * a music player website would include the word "play", which fails
+     * once you include sites in other languages).
      *
      * Can be chained after :func:`type` or :func:`dom`. Useful for early
      * pruning of the universe of tags for performance and training speed.
