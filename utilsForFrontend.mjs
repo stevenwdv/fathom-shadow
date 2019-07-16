@@ -347,12 +347,18 @@ export function numberOfMatches(regex, haystack) {
  *
  * This is used to build rulesets which classify entire pages rather than
  * picking out specific elements.
+ *
+ * For example, these rules might classify a page as a "login page", influenced
+ * by whether they have login buttons or username fields:
+ *
+ * ``rule('loginPage', score(page(pageContainsLoginButton))),``
+ * ``rule('loginPage', score(page(pageContainsUsernameField)))``
  */
 export function page(scoringFunction) {
-    function wrapper(node) {
-        const scoreAndTypeAndNote = scoringFunction(node);
+    function wrapper(fnode) {
+        const scoreAndTypeAndNote = scoringFunction(fnode);
         if (scoreAndTypeAndNote.score !== undefined) {
-            scoreAndTypeAndNote.element = rootElement(node.element);
+            scoreAndTypeAndNote.element = rootElement(fnode.element);
         }
         return scoreAndTypeAndNote;
     }
