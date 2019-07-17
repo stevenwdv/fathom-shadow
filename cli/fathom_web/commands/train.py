@@ -6,7 +6,7 @@ from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 
 from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
-from ..utils import classifier, tensor, tensors_from
+from ..utils import classifier, tensors_from
 
 
 def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment=''):

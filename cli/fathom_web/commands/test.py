@@ -1,6 +1,6 @@
 from json import JSONDecodeError, load, loads
 
-from click import argument, BadParameter, command, File, style
+from click import argument, BadParameter, command, File
 
 from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
 from ..utils import classifier, tensor, tensors_from
