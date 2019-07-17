@@ -50,18 +50,18 @@ export class Lhs {
     }
 
     /**
-     * Returns a boolean representing a hard cutoff of whether or not the
-     * input is a match.
+     * Prune nodes from consideration early in run execution, before scoring is
+     * done.
      *
-     * This is usually too aggressive; you should generally use either
-     * :func:`score` or :func:`page` instead of this so that the
-     * application can weight the values appropriately.  Human intuition
-     * as to what is important is often wrong (e.g., you would assume that
-     * a music player website would include the word "play", which fails
-     * once you include sites in other languages).
+     * Reserve this for where you are sure it is always correct or when
+     * performance demands it. It is generally preferable to use :func:`score`
+     * and let the :doc:`trainer<training>` determine the relative significance
+     * of each rule. Human intuition as to what is important is often wrong:
+     * for example, one might assume that a music player website would include
+     * the word "play", but this does not hold once you include sites in other
+     * languages.
      *
-     * Can be chained after :func:`type` or :func:`dom`. Useful for early
-     * pruning of the universe of tags for performance and training speed.
+     * Can be chained after :func:`type` or :func:`dom`.
      *
      * Example: ``dom('p').when(isVisible)``
      *
