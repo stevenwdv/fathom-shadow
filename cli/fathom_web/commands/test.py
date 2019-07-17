@@ -13,19 +13,18 @@ def decode_weights(ctx, param, value):
         decoded_weights = loads(value)
     except JSONDecodeError:
         raise BadParameter('Weights must be a valid JSON object.')
-    else:
-        if 'coeffs' in decoded_weights and 'bias' in decoded_weights:
-            if type(decoded_weights['bias']) is float:
-                if (type(decoded_weights['coeffs']) is list and
-                    all((len(pair) == 2 and type(pair[0]) is str and type(pair[1]) is float)
-                        for pair in decoded_weights['coeffs'])):
-                    return decoded_weights
-                else:
-                    raise BadParameter('Coeffs must be a list of 2-element lists: [["ruleName", numericCoefficient], ...].')
-            else:
-                raise BadParameter('Bias must be a float.')
-        else:
-            raise BadParameter('Weights must contain "coeffs" and "bias" keys.')
+
+    if 'coeffs' not in decoded_weights or 'bias' not in decoded_weights:
+        raise BadParameter('Weights must contain "coeffs" and "bias" keys.')
+    if not isinstance(decoded_weights['bias'], float):
+        raise BadParameter('Bias must be a float.')
+    if not (isinstance(decoded_weights['coeffs'], list) and
+            all((len(pair) == 2 and
+                 isinstance(pair[0], str) and
+                 isinstance(pair[1], float))
+                for pair in decoded_weights['coeffs'])):
+        raise BadParameter('Coeffs must be a list of 2-element lists: [["ruleName", numericCoefficient], ...].')
+    return decoded_weights
 
 
 def model_from_json(weights, num_outputs, feature_names):
