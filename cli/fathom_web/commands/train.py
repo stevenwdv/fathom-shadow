@@ -60,11 +60,11 @@ def pretty_coeffs(model, feature_names):
     dict_params = {}
     for name, param in model.named_parameters():
         dict_params[name] = param.data.tolist()
-    pretty = '\n        '.join('["{k}", {v}],'.format(k=k, v=v) for k, v in zip(feature_names, dict_params['0.weight'][0]))
-    return ('"{coeffs: ['
-        """{coeffs}
-     ]
- "bias": {bias}}""".format(coeffs=pretty, bias=dict_params['0.bias'][0]))
+    pretty = ',\n        '.join('["{k}", {v}]'.format(k=k, v=v) for k, v in zip(feature_names, dict_params['0.weight'][0]))
+    return ("""{{"coeffs": [
+        {coeffs}
+    ],
+ "bias": {bias}}}""".format(coeffs=pretty, bias=dict_params['0.bias'][0]))
 
 
 @command()
