@@ -88,11 +88,11 @@ def pretty_coeffs(model, feature_names):
 @option('--comment', '-c',
         default='',
         help='Additional comment to append to the Tensorboard run name, for display in the web UI')
-@option('--verbose', '-v',
+@option('--quiet', '-q',
         default=False,
         is_flag=True,
-        help='Show additional diagnostics that may help with ruleset debugging')
-def main(training_file, validation_file, stop_early, learning_rate, iterations, comment, verbose):
+        help='Hide per-page diagnostics that may help with ruleset debugging.')
+def main(training_file, validation_file, stop_early, learning_rate, iterations, comment, quiet):
     """Compute optimal coefficients for a Fathom ruleset, based on a set of
     labeled pages exported by the FathomFox Vectorizer.
 
@@ -135,7 +135,7 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         accuracy, validation_report = accuracy_per_page(model, validation_data['pages'])
         print(pretty_accuracy('Validation accuracy per page:', accuracy, len(validation_data['pages'])))
 
-    if verbose:
+    if not quiet:
         print('\nTraining per-page results:\n', training_report, sep='')
         if validation_file:
             print('\nValidation per-page results:\n', validation_report, sep='')
