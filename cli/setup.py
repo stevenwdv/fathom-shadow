@@ -17,6 +17,7 @@ setup(
         'fathom-extract = fathom_web.extract:main'
         'fathom-list = fathom_web.list:main'
         'fathom-pick = fathom_web.pick:main',
+        'fathom-test = fathom_web.commands.test:main',
         'fathom-train = fathom_web.train:main',
         'fathom-unzip = fathom_web.unzip:main',
     ]},
