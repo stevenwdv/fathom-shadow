@@ -14,13 +14,13 @@ from click import command, option, Path
         help='The directory to serve files from (default: current working directory')
 def main(directory, port):
     """
-    Serves the files in DIRECTORY over a local https server: https://localhost:PORT.
+    Serves the files in DIRECTORY over a local HTTPS server: https://localhost:PORT.
 
     The default PORT is 8000.
     The default DIRECTORY is the directory this program is executed from.
 
     This is useful for vectorizing samples using FathomFox. FathomFox expects you to provide,
-    in the vectorizer page, an address to an https server that is serving your samples.
+    in the vectorizer page, an address to an HTTPS server that is serving your samples.
     """
     handler = partial(SimpleHTTPRequestHandler, directory=directory)
     server = HTTPServer(('localhost', port), handler)
