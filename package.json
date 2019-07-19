@@ -7,25 +7,25 @@
     "url": "https://github.com/mozilla/fathom/issues"
   },
   "dependencies": {
-    "jsdom": "^11.2.0",
+    "jsdom": "^11.12.0",
     "wu": "^2.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.6",
-    "babel-plugin-dynamic-import-node": "^2.0.0",
+    "babel-plugin-dynamic-import-node": "^2.3.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "chai": "^4.0.2",
-    "coveralls": "^3.0.2",
+    "chai": "^4.2.0",
+    "coveralls": "^3.0.5",
     "eslint": "^3.7.1",
-    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-import": "^2.18.1",
     "eslint-plugin-node": "^2.1.2",
     "istanbul": "^1.1.0-alpha.1",
     "leven": "^2.1.0",
     "mocha": "^5.2.0",
     "rollup": "^0.50.0",
     "rollup-plugin-commonjs": "^8.2.4",
-    "rollup-plugin-node-resolve": "^3.0.0"
+    "rollup-plugin-node-resolve": "^3.4.0"
   },
   "engines": {
     "node": ">= 6.0.0"
