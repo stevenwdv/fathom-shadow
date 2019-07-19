@@ -1,7 +1,7 @@
 from functools import partial
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
-import pathlib
+from pkg_resources import resource_filename
 import ssl
 
 from click import command, option, Path
@@ -24,7 +24,7 @@ def main(directory, port):
     """
     handler = partial(SimpleHTTPRequestHandler, directory=directory)
     server = HTTPServer(('localhost', port), handler)
-    certfile = pathlib.Path(os.path.realpath(__file__)).parent / '..' / 'cert' / 'cert.pem'
+    certfile = resource_filename('fathom_web', 'cert/cert.pem')
     server.socket = ssl.wrap_socket(
         server.socket,
         certfile=certfile,
@@ -33,7 +33,3 @@ def main(directory, port):
     print(f'Serving {directory} over https://localhost:{port}')
     print('Press Ctrl+C to stop')
     server.serve_forever()
-
-
-if __name__ == '__main__':
-    main()
