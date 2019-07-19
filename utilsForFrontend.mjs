@@ -468,8 +468,8 @@ export function isVisible(fnodeOrElement) {
         if (style.visibility === 'hidden' ||
             style.display === 'none' ||
             style.opacity === '0' ||
-            style.width === '0' ||
-            style.height === '0') {
+            style.width === '0px' ||
+            style.height === '0px') {
             return false;
         } else {
             // It wasn't hidden based on a computed style. See if it's
