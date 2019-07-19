@@ -7,6 +7,9 @@ from click import argument, command, Path
 
 
 BASE64_DATA_PATTERN = re.compile(r'(data:(?P<mime>[a-zA-Z0-9]+?/[a-zA-Z0-9\-.+]+?);(\s?charset=utf-8;)?base64,(?P<string>[a-zA-Z0-9+/=]+))')
+BASE_TAG_PATTERN = re.compile(r'<base.*?>')
+OLD_CSP = re.compile(r"default-src 'none'; img-src data:; media-src data:; style-src data: 'unsafe-inline'; font-src data:; frame-src data:")
+NEW_CSP = r"default-src 'none'; img-src 'self' data:; media-src 'self' data:; style-src 'self' data: 'unsafe-inline'; font-src 'self' data:; frame-src 'self' data:"
 # These are MIME types the `mimetypes` library doesn't recognize or gets wrong. Matches were found at:
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
 MIME_TYPE_TO_FILE_EXTENSION = {
@@ -28,7 +31,6 @@ def main(in_directory):
     Extracts resources from the html pages in IN_DIRECTORY and stores them in a separate directory for Git-LFS storage.
     """
     for file in pathlib.Path(in_directory).iterdir():
-        # TODO: How should we handle non-html files?
         if file.suffix != '.html':
             print(f'Skipping {file.name}; not an html file')
             continue
@@ -48,8 +50,8 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
         html = fp.read()
 
     # Make the subresources directory
-    subresources_directory = file.parent / f'{file.stem}_resources'
-    subresources_directory.mkdir(exist_ok=True)
+    subresources_directory = file.parent / 'resources' / f'{file.stem}_resources'
+    subresources_directory.mkdir(parents=True, exist_ok=True)
 
     offset = 0
     new_html = ''
@@ -57,6 +59,12 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
     filename_counter = 0
     # A cache for elements that are repeated (e.g. icons)
     saved_strings = {}
+
+    # Remove any existing `<base>` tag
+    html = BASE_TAG_PATTERN.sub('', html)
+
+    # Add `'self'` to the Content Security Policy so we can load our extracted resources
+    html = OLD_CSP.sub(NEW_CSP, html)
 
     base64_data_matches = BASE64_DATA_PATTERN.finditer(html)
     for match in base64_data_matches:
@@ -74,7 +82,6 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
             binary_data = decode_base64_string_to_binary(base64_string)
             file_path = subresources_directory / filename
             save_binary_data(binary_data, file_path)
-            # TODO: Is there a better format than the strings to use for caching?
             saved_strings[base64_string] = file_path
 
         # "Replace" the old base64 data with the relative path to the newly created file
@@ -110,7 +117,6 @@ def generate_filename(mime_type: str, filename: str) -> str:
     """
     # `mimetypes` gets some extensions wrong (e.g. image/jpeg -> .jpe) and doesn't
     # work for some MIME types that freeze-dry gives so use our own mapping first
-    # TODO: This still feels a little fragile
     try:
         extension = MIME_TYPE_TO_FILE_EXTENSION[mime_type]
     except KeyError:
