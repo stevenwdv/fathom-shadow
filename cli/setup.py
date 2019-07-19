@@ -18,7 +18,8 @@ setup(
         'fathom-train = fathom_web.commands.train:main',
         'fathom-unzip = fathom_web.commands.unzip:main',
         'fathom-pick = fathom_web.commands.pick:main',
-        'fathom-list = fathom_web.commands.list:main'
+        'fathom-list = fathom_web.commands.list:main',
+        'fathom-serve = fathom_web.commands.serve:main',
     ]},
     classifiers=[
         'Intended Audience :: Developers',
