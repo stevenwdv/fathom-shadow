@@ -1,9 +1,10 @@
 import base64
 import mimetypes
 import pathlib
+import shutil
 import re
 
-from click import argument, command, Path
+from click import argument, command, option, Path
 
 
 BASE64_DATA_PATTERN = re.compile(r'(data:(?P<mime>[a-zA-Z0-9]+?/[a-zA-Z0-9\-.+]+?);(\s?charset=utf-8;)?base64,(?P<string>[a-zA-Z0-9+/=]+))')
@@ -25,15 +26,24 @@ MIME_TYPE_TO_FILE_EXTENSION = {
 
 
 @command()
+@option('--preserve-originals/--no-preserve-originals',
+        default=True,
+        help='Save original html files in a newly created `originals` directory in IN_DIRECTORY (default: True)')
 @argument('in_directory', type=Path(exists=True, file_okay=False))
-def main(in_directory):
+def main(in_directory, preserve_originals):
     """
     Extracts resources from the html pages in IN_DIRECTORY and stores them in a separate directory for Git-LFS storage.
     """
+    if preserve_originals:
+        originals_dir = pathlib.Path(in_directory) / 'originals'
+        originals_dir.mkdir(parents=True, exist_ok=True)
+
     for file in pathlib.Path(in_directory).iterdir():
         if file.suffix != '.html':
             print(f'Skipping {file.name}; not an html file')
             continue
+        if preserve_originals:
+            shutil.copyfile(file, originals_dir / file.name)
         extract_base64_data_from_html_page(file)
 
 
@@ -93,7 +103,7 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
     # Add the remainder of the content
     new_html += html[offset:]
 
-    with (file.parent / f'extracted_{file.name}').open('w', encoding='utf-8') as fp:
+    with file.open('w', encoding='utf-8') as fp:
         fp.write(new_html)
 
 
