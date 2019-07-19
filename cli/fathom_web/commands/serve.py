@@ -29,6 +29,7 @@ def main(directory, port):
         server_side=True,
     )
     print(f'Serving {directory} over https://localhost:{port}')
+    print('Press Ctrl+C to stop')
     server.serve_forever()
 
 
