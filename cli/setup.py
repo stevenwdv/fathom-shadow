@@ -22,7 +22,7 @@ setup(
         'fathom-serve = fathom_web.commands.serve:main',
     ]},
     package_data={
-        'fathom_web': ['cert/cert.pem'],
+        'fathom_web': ['cert.pem'],
     },
     classifiers=[
         'Intended Audience :: Developers',
