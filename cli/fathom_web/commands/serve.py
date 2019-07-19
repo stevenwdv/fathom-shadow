@@ -4,18 +4,20 @@ import os
 import pathlib
 import ssl
 
-from click import argument, command, option, Path
+from click import command, option, Path
 
 
 @command()
 @option('--port', '-p', type=int, default=8000,
         help='The port to use (default: 8000)')
-@argument('directory', type=Path(exists=True, file_okay=False))
+@option('--directory', '-d', type=Path(exists=True, file_okay=False), default=os.getcwd(),
+        help='The directory to serve files from (default: current working directory')
 def main(directory, port):
     """
     Serves the files in DIRECTORY over a local https server: https://localhost:PORT.
 
     The default PORT is 8000.
+    The default DIRECTORY is the directory this program is executed from.
 
     This is useful for vectorizing samples using FathomFox. FathomFox expects you to provide,
     in the vectorizer page, an address to an https server that is serving your samples.
