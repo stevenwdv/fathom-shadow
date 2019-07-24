@@ -459,30 +459,29 @@ export function sigmoid(x) {
 
 /**
  * Return whether an element is practically visible, considing things like 0
- * size or opacity, ``display: none``, and ``visibility: hidden``.
+ * size or opacity, and clickability.
  */
 export function isVisible(fnodeOrElement) {
     const element = toDomElement(fnodeOrElement);
-    for (const ancestor of ancestors(element)) {
-        const style = getComputedStyle(ancestor);
-        if (style.visibility === 'hidden' ||
-            style.display === 'none' ||
-            style.opacity === '0' ||
-            style.width === '0px' ||
-            style.height === '0px') {
-            return false;
-        } else {
-            // It wasn't hidden based on a computed style. See if it's
-            // offscreen:
-            const rect = element.getBoundingClientRect();
-            const frame = element.ownerDocument.defaultView;  // window or iframe
-            if ((rect.right + frame.scrollX < 0) ||
-                (rect.bottom + frame.scrollY < 0)) {
-                return false;
-            }
-        }
+    const rect = element.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+        return false;
     }
-    return true;
+    const style = getComputedStyle(element);
+    if (style.opacity === '0') {
+        return false;
+    }
+    // workaround for https://github.com/w3c/csswg-drafts/issues/4122
+    const scrollX = window.pageXOffset;
+    const scrollY = window.pageYOffset;
+    const absX = rect.x + scrollX;
+    const absY = rect.y + scrollY;
+    window.scrollTo(absX, absY);
+    const newX = absX - window.pageXOffset;
+    const newY = absY - window.pageYOffset;
+    const eles = document.elementsFromPoint(newX, newY);
+    window.scrollTo(scrollX, scrollY);
+    return eles.includes(element);
 }
 
 /**
