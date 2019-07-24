@@ -11,6 +11,7 @@ lint:
 
 test: $(JS)
 	@node_modules/.bin/mocha
+	pytest cli/test
 
 coverage: $(JS)
 	@node_modules/.bin/istanbul cover node_modules/.bin/_mocha
