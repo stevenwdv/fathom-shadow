@@ -1,15 +1,19 @@
-language: node_js
-
-node_js:
-  - node
-
-addons:
-  apt:
-    packages:
-      - python-virtualenv
-
-after_success:
-  - "npm run coveralls"
+matrix:
+  include:
+    -
+      language: node_js
+      node_js:
+        - node
+      addons:
+        apt:
+          packages:
+            - python-virtualenv
+      after_success:
+        - "npm run coveralls"
+    -
+      language: python
+      python: "3.6"
+      script: pytest cli/test
 
 notifications:
   email:
