@@ -12,8 +12,12 @@ matrix:
         - "npm run coveralls"
     -
       language: python
-      python: "3.6"
-      script: pytest $TRAVIS_BUILD_DIR/cli/fathom_web/test
+      python:
+        - "3.6"
+      install:
+        - pip install -r cli/test_requirements.txt
+      script:
+        - pytest cli/fathom_web/test
 
 #notifications:
 #  email:
