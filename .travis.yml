@@ -19,17 +19,17 @@ matrix:
       script:
         - pytest cli/fathom_web/test
 
-#notifications:
-#  email:
-#    on_success: change
-#    on_failure: always
-#  irc:
-#    channels:
-#      - "irc.mozilla.org#fathom"
-#    template:
-#      - "[%{repository_name} %{branch} %{result}] \"%{commit_subject}\" by %{author}"
-#      - "Changes: %{compare_url}"
-#      - "Build details: %{build_url}"
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+  irc:
+    channels:
+      - "irc.mozilla.org#fathom"
+    template:
+      - "[%{repository_name} %{branch} %{result}] \"%{commit_subject}\" by %{author}"
+      - "Changes: %{compare_url}"
+      - "Build details: %{build_url}"
 
 deploy:
   provider: script
@@ -41,7 +41,6 @@ deploy:
 branches:
   only:
   - master
-  - python-test-harness
 
 env:
   global:
