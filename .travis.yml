@@ -13,7 +13,7 @@ matrix:
     -
       language: python
       python: "3.6"
-      script: pytest cli/test
+      script: pytest $TRAVIS_BUILD_DIR/cli/test
 
 #notifications:
 #  email:
