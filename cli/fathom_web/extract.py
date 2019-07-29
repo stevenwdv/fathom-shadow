@@ -83,7 +83,7 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
         html = fp.read()
 
     # Make the subresources directory
-    subresources_directory = file.parent / 'resources' / f'{file.stem}_resources'
+    subresources_directory = file.parent / f'{file.stem}_resources'
     subresources_directory.mkdir(parents=True, exist_ok=True)
 
     offset = 0
@@ -154,7 +154,3 @@ def generate_filename(mime_type: str, filename: str) -> str:
     except KeyError:
         extension = mimetypes.guess_extension(mime_type, strict=True)
     return f'{filename}{extension}'
-
-
-if __name__ == '__main__':
-    main()
