@@ -14,8 +14,8 @@ setup(
     url='https://mozilla.github.io/fathom/',
     install_requires=['click>=7.0,<8.0', 'tensorboardX>=1.6,<2.0', 'torch>=1.0,<2.0'],
     entry_points={'console_scripts': [
-        'fathom-extract = fathom_web.extract:main'
-        'fathom-list = fathom_web.list:main'
+        'fathom-extract = fathom_web.extract:main',
+        'fathom-list = fathom_web.list:main',
         'fathom-pick = fathom_web.pick:main',
         'fathom-test = fathom_web.commands.test:main',
         'fathom-train = fathom_web.train:main',
