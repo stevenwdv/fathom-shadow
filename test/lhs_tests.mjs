@@ -20,7 +20,7 @@ describe('LHS', function () {
         const rules = ruleset([
             rule(dom('p'), type('smoo').score(2)),
             rule(dom('div'), type('smoo').score(5)),
-            rule(type('smoo').max(), out('best'))
+            rule(type('smoo').max(), 'best')
         ]);
         const facts = rules.against(doc);
         const best = facts.get('best');
@@ -35,7 +35,7 @@ describe('LHS', function () {
         `);
         const rules = ruleset([
             rule(dom('div'), type('smoo')),
-            rule(type('smoo').bestCluster(), out('cluster'))
+            rule(type('smoo').bestCluster(), 'cluster')
         ]);
         const facts = rules.against(doc);
         assert.deepEqual(facts.get('cluster'), []);
@@ -45,7 +45,7 @@ describe('LHS', function () {
         const doc = staticDom('<p></p>');
         const rules = ruleset([
             rule(dom('p'), type('bar')),
-            rule(type('foo').type('bar'), out('best'))
+            rule(type('foo').type('bar'), 'best')
         ]);
         const facts = rules.against(doc);
         const best = facts.get('best');
@@ -57,7 +57,7 @@ describe('LHS', function () {
         const rules = ruleset([
             rule(dom('p'), type('bar')),
             rule(type('bar').when(fnode => fnode.element.id === 'fat'), type('when')),
-            rule(type('when'), out('best'))
+            rule(type('when'), 'best')
         ]);
         const facts = rules.against(doc);
         const best = facts.get('best');
@@ -69,7 +69,7 @@ describe('LHS', function () {
         const doc = staticDom('<p id="fat"></p><p id="bat"></p>');
         const rules = ruleset([
             rule(dom('p').when(fnode => fnode.element.id === 'bat'), type('when')),
-            rule(type('when'), out('best'))
+            rule(type('when'), 'best')
         ]);
         const facts = rules.against(doc);
         const best = facts.get('best');

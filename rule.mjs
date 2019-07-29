@@ -1,7 +1,7 @@
 import wu from 'wu';
 
 import {Fnode} from './fnode';
-import {OutwardRhs} from './rhs';
+import {out, OutwardRhs} from './rhs';
 import {NiceSet, setDefault} from './utilsForFrontend';
 import {identity} from './utilsForFrontend';
 
@@ -24,6 +24,9 @@ export function rule(lhs, rhs, options) {
     // a shortcut here: any outward RHS will already be an OutwardRhs; we don't
     // need to sidetrack it through being a Side. And OutwardRhs has an asRhs()
     // that just returns itself.
+    if (typeof rhs === 'string') {
+        rhs = out(rhs);
+    }
     return new ((rhs instanceof OutwardRhs) ? OutwardRule : InwardRule)(lhs, rhs, options);
 }
 

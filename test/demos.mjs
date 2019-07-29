@@ -26,7 +26,7 @@ describe('Design-driving demos', function () {
                  typeAndNote.score(20)),
             rule(dom('title'),
                  typeAndNote.score(10).note(fnode => fnode.element.text)),
-            rule(type('titley').max(), out('bestTitle'))
+            rule(type('titley').max(), 'bestTitle')
         ]);
         const facts = rules.against(doc);
         const node = facts.get('bestTitle')[0];

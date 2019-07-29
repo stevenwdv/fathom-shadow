@@ -46,7 +46,7 @@ describe('Utils', function () {
             const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
-                rule(type('attr').max(), out('best'))
+                rule(type('attr').max(), 'best')
             ]);
 
             function scoreFunc(fnode) {
@@ -66,7 +66,7 @@ describe('Utils', function () {
             const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
-                rule(type('attr').max(), out('best'))
+                rule(type('attr').max(), 'best')
             ]);
 
             function scoreFunc(fnode) {
@@ -86,7 +86,7 @@ describe('Utils', function () {
             const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
-                rule(type('attr').max(), out('best'))
+                rule(type('attr').max(), 'best')
             ]);
 
             function scoreFunc(fnode) {
@@ -107,7 +107,7 @@ describe('Utils', function () {
             const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
-                rule(type('attr').max(), out('best'))
+                rule(type('attr').max(), 'best')
             ]);
 
             function scoreFunc(fnode) {
@@ -127,7 +127,7 @@ describe('Utils', function () {
             const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
-                rule(type('attr').max(), out('best'))
+                rule(type('attr').max(), 'best')
             ]);
 
             function scoreFunc(fnode) {
@@ -146,7 +146,7 @@ describe('Utils', function () {
             const rules = ruleset([
                 rule(dom('img'), type('attr')),
                 rule(type('attr'), score(scoreFunc)),
-                rule(type('attr').max(), out('best'))
+                rule(type('attr').max(), 'best')
             ]);
 
             function scoreFunc(fnode) {
