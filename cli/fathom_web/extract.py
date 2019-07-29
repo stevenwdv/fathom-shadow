@@ -3,7 +3,6 @@ import mimetypes
 import pathlib
 import shutil
 import re
-from typing import Optional
 from urllib.request import pathname2url
 
 from click import argument, command, option, Path
@@ -58,11 +57,17 @@ def main(in_directory, preserve_originals):
         if file.suffix != '.html':
             print(f'Skipping {file.name}; not an HTML file')
             continue
-        extract_base64_data_from_html_page(file, preserve_originals, originals_dir)
+
+        html = extract_base64_data_from_html_page(file)
+
+        if preserve_originals:
+            shutil.move(file, originals_dir / file.name)
+
+        with file.open('w', encoding='utf-8') as fp:
+            fp.write(html)
 
 
-def extract_base64_data_from_html_page(file: pathlib.Path, preserve_originals: bool,
-                                       originals_dir: Optional[pathlib.Path]):
+def extract_base64_data_from_html_page(file: pathlib.Path):
     """
     Extract all base64 data from the given HTML page and store the data in
     separate files.
@@ -126,10 +131,7 @@ def extract_base64_data_from_html_page(file: pathlib.Path, preserve_originals: b
     # Add the remainder of the content
     new_html += html[offset:]
 
-    if preserve_originals:
-        shutil.move(file, originals_dir / file.name)
-    with file.open('w', encoding='utf-8') as fp:
-        fp.write(new_html)
+    return new_html
 
 
 def generate_filename(mime_type: str, filename: str) -> str:
