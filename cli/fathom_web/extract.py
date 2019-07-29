@@ -3,13 +3,14 @@ import mimetypes
 import pathlib
 import shutil
 import re
+from typing import Optional
 from urllib.request import pathname2url
 
 from click import argument, command, option, Path
 
 
-BASE64_DATA_PATTERN = re.compile(r'(data:(?P<mime>[a-zA-Z0-9]+?/[a-zA-Z0-9\-.+]+?);(\s?charset=utf-8;)?base64,(?P<string>[a-zA-Z0-9+/=]+))')
-BASE_TAG_PATTERN = re.compile(r'<base.*?>')
+BASE64_DATA_PATTERN = re.compile(r'(data:(?P<mime>[a-zA-Z0-9]+/[a-zA-Z0-9\-.+]+);(\s?charset=utf-8;)?base64,(?P<string>[a-zA-Z0-9+/=]+))')
+BASE_TAG_PATTERN = re.compile(r'<base [^>]*>')
 OLD_CSP = re.compile(r"default-src 'none'; img-src data:; media-src data:; style-src data: 'unsafe-inline'; font-src data:; frame-src data:")
 NEW_CSP = r"default-src 'none'; img-src 'self' data:; media-src 'self' data:; style-src 'self' data: 'unsafe-inline'; font-src 'self' data:; frame-src 'self' data:"
 # These are MIME types the `mimetypes` library doesn't recognize or gets wrong.
@@ -45,20 +46,23 @@ def main(in_directory, preserve_originals):
         except FileExistsError:
             raise RuntimeError(f'Tried to make directory {originals_dir.as_posix()}, but it already exists. To protect'
                                f' against unwanted data loss, please move or remove the existing directory.')
+    else:
+        originals_dir = None
 
     for file in pathlib.Path(in_directory).iterdir():
+        if file == originals_dir:
+            continue
         if file.is_dir():
             print(f'Skipping directory {file.name}/')
             continue
         if file.suffix != '.html':
             print(f'Skipping {file.name}; not an HTML file')
             continue
-        if preserve_originals:
-            shutil.move(file, originals_dir / file.name)
-        extract_base64_data_from_html_page(file)
+        extract_base64_data_from_html_page(file, preserve_originals, originals_dir)
 
 
-def extract_base64_data_from_html_page(file: pathlib.Path):
+def extract_base64_data_from_html_page(file: pathlib.Path, preserve_originals: bool,
+                                       originals_dir: Optional[pathlib.Path]):
     """
     Extract all base64 data from the given HTML page and store the data in
     separate files.
@@ -108,8 +112,8 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
             filename = generate_filename(mime_type, str(filename_counter))
             binary_data = base64.b64decode(base64_string)
             file_path = subresources_directory / filename
-            with file_path.open('wb') as file:
-                file.write(binary_data)
+            with file_path.open('wb') as resource_file:
+                resource_file.write(binary_data)
             saved_strings[base64_string] = file_path
 
         # "Replace" the old base64 data with the relative
@@ -122,6 +126,8 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
     # Add the remainder of the content
     new_html += html[offset:]
 
+    if preserve_originals:
+        shutil.move(file, originals_dir / file.name)
     with file.open('w', encoding='utf-8') as fp:
         fp.write(new_html)
 
