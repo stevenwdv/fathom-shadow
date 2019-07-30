@@ -13,10 +13,19 @@ jobs:
         - "npm run coveralls"
     - stage: test
       name: "Python 3.6 tests"
-      dist: bionic
       language: python
       python:
         - "3.6"
+      install:
+        - pip install -e cli/
+      script:
+        - pytest cli/fathom_web/test
+    - stage: test
+      name: "Python 3.7 tests"
+      dist: bionic
+      language: python
+      python:
+        - "3.7"
       install:
         - pip install -e cli/
       script:
@@ -31,22 +40,21 @@ jobs:
           branch: master
         skip_cleanup: true
 
-#notifications:
-#  email:
-#    on_success: change
-#    on_failure: always
-#  irc:
-#    channels:
-#      - "irc.mozilla.org#fathom"
-#    template:
-#      - "[%{repository_name} %{branch} %{result}] \"%{commit_subject}\" by %{author}"
-#      - "Changes: %{compare_url}"
-#      - "Build details: %{build_url}"
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+  irc:
+    channels:
+      - "irc.mozilla.org#fathom"
+    template:
+      - "[%{repository_name} %{branch} %{result}] \"%{commit_subject}\" by %{author}"
+      - "Changes: %{compare_url}"
+      - "Build details: %{build_url}"
 
 branches:
   only:
   - master
-  - python-test-harness
 
 env:
   global:
