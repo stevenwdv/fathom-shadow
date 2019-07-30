@@ -36,10 +36,11 @@ MIME_TYPE_TO_FILE_EXTENSION = {
 def main(in_directory, preserve_originals):
     """
     Extract resources from the HTML pages in IN_DIRECTORY and store the
-    resources for each page in a newly created directory in IN_DIRECTORY.
+    resources for each page in a newly created page-specific directory
+    within a newly created resources directory in IN_DIRECTORY.
     For example, the resources for `example.html` would be stored in
-    `example_resources/`. This tool is used to prepare your samples for a
-    git-LFS enabled repository.
+    `resources/example_resources/`. This tool is used to prepare your
+    samples for a git-LFS enabled repository.
     """
     if preserve_originals:
         originals_dir = pathlib.Path(in_directory) / 'originals'
@@ -86,7 +87,7 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
         html = fp.read()
 
     # Make the subresources directory
-    subresources_directory = file.parent / f'{file.stem}_resources'
+    subresources_directory = file.parent / 'resources' / f'{file.stem}_resources'
     subresources_directory.mkdir(parents=True, exist_ok=True)
 
     offset = 0
