@@ -1,10 +1,11 @@
 from click import BadParameter
-import pytest
+from pytest import raises
 
 from ..commands.test import decode_weights
 
 
-def test_valid_json_input():
+def test_expected_input_format():
+    """Test that an example of good input decodes as expected"""
     json_string = '{"coeffs": [["rule1", 0.1], ["rule2", 0.2]], "bias": 0.5}'
     expected_dict = {
         'coeffs': [
@@ -22,7 +23,8 @@ def test_not_json():
 
 
 def run_invalid_json(json_string, assertion_match_regex):
-    with pytest.raises(BadParameter, match=assertion_match_regex):
+    """Helper method to run `decode_weights()` with invalid input"""
+    with raises(BadParameter, match=assertion_match_regex):
         decode_weights(None, None, json_string)
 
 
