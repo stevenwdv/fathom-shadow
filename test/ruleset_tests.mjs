@@ -50,7 +50,7 @@ describe('Ruleset', function () {
             `);
             const rules = ruleset([
                 rule(dom('div'), type('paragraphish')),
-                rule(type('paragraphish'), out('p'))
+                rule(type('paragraphish'), 'p')
             ]);
             assert.equal(rules.against(doc).get('p').length, 1);
         });
@@ -225,7 +225,7 @@ describe('Ruleset', function () {
                 rule(dom('p'), type('b')),
                 rule(type('a'), props(fnode => ({type: 'c'})).typeIn('c')),
                 rule(type('b'), props(fnode => ({type: 'd'})).typeIn('d')),
-                rule(type('c'), out('c'))
+                rule(type('c'), 'c')
             ]);
             const facts = rules.against(doc);
             const p = facts.get('c')[0];
@@ -256,8 +256,8 @@ describe('Ruleset', function () {
         const rules = ruleset([
             rule(dom('a'), type('A')),
             rule(type('A'), type('B')),
-            rule(type('A'), out('ay')),
-            rule(type('B'), out('be'))
+            rule(type('A'), 'ay'),
+            rule(type('B'), 'be')
         ]);
         const ruleList = rules.rules();
         assert.equal(ruleList.length, 4);  // because deepEqual doesn't actually deep-compare Maps yet
@@ -273,7 +273,7 @@ describe('Ruleset', function () {
         const rules = ruleset([
             rule(dom('#root'), type('smoo').score(10)),
             rule(dom('#inner'), type('smoo').score(5)),
-            rule(type('smoo').max(), out('best'))
+            rule(type('smoo').max(), 'best')
         ]);
         const facts = rules.against(doc);
         const best = facts.get('best');

@@ -57,7 +57,7 @@ This simple ruleset finds DOM nodes that could contain a useful page title and s
            // The score on that node will represent the probability, informed by a
            // corpus of training pages, that the node is, indeed, the proper page
            // title.
-           rule(type('titley').max(), out('title'))
+           rule(type('titley').max(), 'title')
        ],
        [['colons', -0.3606211543083191], ['length', -1.6875461339950562]],  // coefficients from training
        ['titley', 3.660104751586914]  // biases from training
