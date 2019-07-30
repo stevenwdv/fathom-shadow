@@ -1,39 +1,60 @@
-language: node_js
+jobs:
+  include:
+    - stage: test
+      name: "Javascript tests"
+      language: node_js
+      node_js:
+        - node
+      addons:
+        apt:
+          packages:
+            - python-virtualenv
+      after_success:
+        - "npm run coveralls"
+    - stage: test
+      name: "Python 3.6 tests"
+      language: python
+      python:
+        - "3.6"
+      install:
+        - pip install -e cli/
+      script:
+        - pytest cli/fathom_web/test
+    - stage: test
+      name: "Python 3.7 tests"
+      dist: bionic
+      language: python
+      python:
+        - "3.7"
+      install:
+        - pip install -e cli/
+      script:
+        - pytest cli/fathom_web/test
+    - stage: deploy
+      name: "Docs deployment"
+      script: skip
+      deploy:
+        provider: script
+        script: docs/tooling/travis-deploy-docs
+        on:
+          branch: master
+        skip_cleanup: true
 
-node_js:
-  - node
-
-addons:
-  apt:
-    packages:
-      - python-virtualenv
-
-after_success:
-  - "npm run coveralls"
-
-#notifications:
-#  email:
-#    on_success: change
-#    on_failure: always
-#  irc:
-#    channels:
-#      - "irc.mozilla.org#fathom"
-#    template:
-#      - "[%{repository_name} %{branch} %{result}] \"%{commit_subject}\" by %{author}"
-#      - "Changes: %{compare_url}"
-#      - "Build details: %{build_url}"
-
-deploy:
-  provider: script
-  script: docs/tooling/travis-deploy-docs
-  on:
-    branch: master
-  skip_cleanup: true
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+  irc:
+    channels:
+      - "irc.mozilla.org#fathom"
+    template:
+      - "[%{repository_name} %{branch} %{result}] \"%{commit_subject}\" by %{author}"
+      - "Changes: %{compare_url}"
+      - "Build details: %{build_url}"
 
 branches:
   only:
   - master
-  - python-test-harness
 
 env:
   global:
