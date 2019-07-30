@@ -38,8 +38,8 @@ def main(in_directory, preserve_originals):
     Extract resources from the HTML pages in IN_DIRECTORY and store the
     resources for each page in a newly created page-specific directory
     within a newly created resources directory in IN_DIRECTORY.
-    For example, the resources for `example.html` would be stored in
-    `resources/example_resources/`. This tool is used to prepare your
+    For example, the resources for ``example.html`` would be stored in
+    ``resources/example_resources/``. This tool is used to prepare your
     samples for a git-LFS enabled repository.
     """
     if preserve_originals:
