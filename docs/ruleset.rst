@@ -91,6 +91,8 @@ A good practice is to use more declarative calls—:func:`score`, :func:`note`, 
 
 .. autofunction:: out
 
+   If you are not using ``through()`` or ``allThrough()``, you can omit the call to ``out()`` and simply use specify the key as the RHS of the rule. For example: ``rule(type('titley').max(), out('title'))`` can be written as ``rule(type('titley').max(), 'title')``.
+
    .. autofunction:: OutwardRhs#through
       :short-name:
 
