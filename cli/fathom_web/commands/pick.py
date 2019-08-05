@@ -12,7 +12,7 @@ from click import argument, command, Path
           type=Path(exists=True, file_okay=False, writable=True, dir_okay=True, allow_dash=True))
 @argument('number', type=int)
 def main(from_dir, to_dir, number):
-    """Move a given number of html files and any extracted resources from one directory to another.
+    """Move a given number of HTML files and any extracted resources from one directory to another.
 
     Ignore hidden files.
 
