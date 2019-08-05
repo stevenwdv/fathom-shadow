@@ -87,7 +87,7 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
         html = fp.read()
 
     # Make the subresources directory
-    subresources_directory = file.parent / 'resources' / f'{file.stem}_resources'
+    subresources_directory = file.parent / 'resources' / f'{file.stem}'
     subresources_directory.mkdir(parents=True, exist_ok=True)
 
     offset = 0
