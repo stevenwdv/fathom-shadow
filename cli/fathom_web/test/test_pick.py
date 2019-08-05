@@ -61,3 +61,50 @@ def test_end_to_end(tmp_path):
     # Make sure we didn't lose any files
     files_in_directories = {file.name for file in files_in_source} | {file.name for file in files_in_destination}
     assert {'1.html', '2.html', '3.html'} == files_in_directories
+
+
+def test_resource_directory_path_collision(tmp_path):
+    """
+    Ensure an exception is raised when moving a resource directory
+    if that directory already exists in the destination directory.
+    """
+    # Make temporary source and destination directories
+    source = tmp_path / 'source'
+    source.mkdir()
+    destination = tmp_path / 'destination'
+    destination.mkdir()
+
+    # Add the file to the source directory
+    file_1 = source / '1.html'
+    file_1.write_text('I am file 1')
+
+    # Add the resource directory for our file
+    resources = source / 'resources'
+    resources.mkdir()
+    file_1_resources = resources / '1'
+    file_1_resources.mkdir()
+    file_1_resource_1 = file_1_resources / '1.png'
+    file_1_resource_1.write_text('I am resource 1 for file 1')
+    file_1_resource_2 = file_1_resources / '2.css'
+    file_1_resource_2.write_text('I am resource 2 for file 1')
+
+    # Add a resource directory for the same file in the destination directory
+    conflicting_resources = destination / 'resources' / '1'
+    conflicting_resources.mkdir(parents=True)
+
+    # Run fathom-pick to move the only file from source to destination
+    runner = CliRunner()
+    # Arguments to invoke() must be passed as strings (this isn't documented!!!)
+    result = runner.invoke(pick_main, [source.as_posix(), destination.as_posix(), '1'])
+
+    # Assert the program exited with an error and the exception message is about creating a directory
+    assert result.exit_code == 1
+    assert str(result.exc_info[1]).startswith('Tried to make directory')
+
+    # Check that our files haven't moved
+    files_in_source = list(source.glob('*.html'))
+    assert len(files_in_source) == 1
+    assert (source / 'resources' / '1' / '1.png').exists()
+    assert (source / 'resources' / '1' / '2.css').exists()
+    files_in_destination = list(destination.glob('*.html'))
+    assert len(files_in_destination) == 0
