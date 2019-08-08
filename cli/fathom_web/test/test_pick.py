@@ -15,28 +15,17 @@ def test_end_to_end(tmp_path):
     destination.mkdir()
 
     # Add files to the source directory
-    file_1 = source / '1.html'
-    file_1.write_text('I am file 1')
-    file_2 = source / '2.html'
-    file_2.write_text('I am file 2')
-    file_3 = source / '3.html'
-    file_3.write_text('I am file 3')
+    (source / '1.html').touch()
+    (source / '2.html').touch()
+    (source / '3.html').touch()
 
     # Add resource directories for files 1 and 2
-    resources = source / 'resources'
-    resources.mkdir()
-    file_1_resources = resources / '1'
-    file_1_resources.mkdir()
-    file_1_resource_1 = file_1_resources / '1.png'
-    file_1_resource_1.write_text('I am resource 1 for file 1')
-    file_1_resource_2 = file_1_resources / '2.css'
-    file_1_resource_2.write_text('I am resource 2 for file 1')
-    file_2_resources = resources / '2'
-    file_2_resources.mkdir()
-    file_2_resource_1 = file_2_resources / '1.png'
-    file_2_resource_1.write_text('I am resource 1 for file 2')
-    file_2_resource_2 = file_2_resources / '2.css'
-    file_2_resource_2.write_text('I am resource 2 for file 2')
+    (source / 'resources' / '1').mkdir(parents=True)
+    (source / 'resources' / '1' / '1.png').touch()
+    (source / 'resources' / '1' / '2.css').touch()
+    (source / 'resources' / '2').mkdir(parents=True)
+    (source / 'resources' / '2' / '1.png').touch()
+    (source / 'resources' / '2' / '2.css').touch()
 
     # Run fathom-pick to move 2 files from source to destination
     runner = CliRunner()
@@ -75,31 +64,24 @@ def test_resource_directory_path_collision(tmp_path):
     destination.mkdir()
 
     # Add the file to the source directory
-    file_1 = source / '1.html'
-    file_1.write_text('I am file 1')
+    (source / '1.html').touch()
 
     # Add the resource directory for our file
-    resources = source / 'resources'
-    resources.mkdir()
-    file_1_resources = resources / '1'
-    file_1_resources.mkdir()
-    file_1_resource_1 = file_1_resources / '1.png'
-    file_1_resource_1.write_text('I am resource 1 for file 1')
-    file_1_resource_2 = file_1_resources / '2.css'
-    file_1_resource_2.write_text('I am resource 2 for file 1')
+    (source / 'resources' / '1').mkdir(parents=True)
+    (source / 'resources' / '1' / '1.png').touch()
+    (source / 'resources' / '1' / '2.css').touch()
 
     # Add a resource directory for the same file in the destination directory
-    conflicting_resources = destination / 'resources' / '1'
-    conflicting_resources.mkdir(parents=True)
+    (destination / 'resources' / '1').mkdir(parents=True)
 
     # Run fathom-pick to move the only file from source to destination
     runner = CliRunner()
     # Arguments to invoke() must be passed as strings (this isn't documented!!!)
     result = runner.invoke(pick_main, [source.as_posix(), destination.as_posix(), '1'])
 
-    # Assert the program exited with an error and the exception message is about creating a directory
-    assert result.exit_code == 1
-    assert str(result.exc_info[1]).startswith('Tried to make directory')
+    # Assert the program exited with a UsageError and our error message is in the program output
+    assert result.exit_code == 2
+    assert 'Error: Tried to make directory' in result.output
 
     # Check that our files haven't moved
     files_in_source = list(source.glob('*.html'))
@@ -108,3 +90,4 @@ def test_resource_directory_path_collision(tmp_path):
     assert (source / 'resources' / '1' / '2.css').exists()
     files_in_destination = list(destination.glob('*.html'))
     assert len(files_in_destination) == 0
+    assert (destination / 'resources' / '1').exists()

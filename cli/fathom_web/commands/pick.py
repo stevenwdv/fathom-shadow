@@ -2,7 +2,7 @@ import pathlib
 from random import sample
 from shutil import move
 
-from click import argument, command, Path
+from click import argument, command, Path, UsageError
 
 
 @command()
@@ -23,14 +23,13 @@ def main(from_dir, to_dir, number):
     from_dir = pathlib.Path(from_dir)
     to_dir = pathlib.Path(to_dir)
 
-    files = [f for f in from_dir.glob('*.html')]
-    for file in sample(files, number):
-        # If the file has resources, we must move those as well
+    for file in sample(list(from_dir.glob('*.html')), number):
+        # If the file has resources, we must move those as well:
         if (from_dir / 'resources' / file.stem).exists():
             # Make sure we don't overwrite an existing resources directory
             if (to_dir / 'resources' / file.stem).exists():
-                raise RuntimeError(f'Tried to make directory {(to_dir / "resources" / file.stem).as_posix()}, but it'
-                                   f' already exists. To protect against unwanted data loss, please move or remove the'
-                                   f' existing directory.')
+                raise UsageError(f'Tried to make directory {(to_dir / "resources" / file.stem).as_posix()}, but it'
+                                 f' already exists. To protect against unwanted data loss, please move or remove the'
+                                 f' existing directory.')
             move(from_dir / 'resources' / file.stem, to_dir / 'resources' / file.stem)
         move(file.as_posix(), to_dir)
