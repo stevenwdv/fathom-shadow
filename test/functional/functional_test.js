@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const firefox = require('selenium-webdriver/firefox');
 const webdriver = require('selenium-webdriver');
-const { ancestors, isDomElement, isVisible, toDomElement } = require('../utilsForFrontend');
+const { ancestors, isDomElement, isVisible, toDomElement } = require('../../utilsForFrontend');
 
 describe('isVisible', () => {
     const options = new firefox.Options();
@@ -14,7 +14,7 @@ describe('isVisible', () => {
     describe('Unprivileged', () => {
         it('should return true when an element is visible', async () => {
             // TODO: put actual checks here
-            await driver.get('https://developer.mozilla.org/');
+            await driver.get('http://localhost:8000/functional_test.html');
             await driver.wait(async () => {
                 const readyState = await driver.executeScript('return document.readyState');
                 return readyState === 'complete';
@@ -24,7 +24,7 @@ describe('isVisible', () => {
                     ${ancestors}
                     ${isDomElement}
                     ${toDomElement}
-                    return (${isVisible}(document.getElementById("home-q")));
+                    return (${isVisible}(document.getElementById("image")));
                 `);
             });
             const expected = true;
