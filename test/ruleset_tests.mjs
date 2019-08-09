@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
 import {distance} from '../clusters';
-import {and, dom, nearest, out, props, rule, ruleset, score, type} from '../index';
+import {and, dom, nearest, props, rule, ruleset, score, type} from '../index';
 import {domSort, sigmoid, staticDom} from '../utils';
 
 
