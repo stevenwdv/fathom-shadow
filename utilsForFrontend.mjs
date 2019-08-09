@@ -460,11 +460,9 @@ export function sigmoid(x) {
 /**
  * Return whether an element is practically visible, considering things like 0
  * size or opacity, ``visibility: hidden`` and ``overflow: hidden``.
- *
- * This could be 5x more efficient if https://github.com/w3c/csswg-drafts/issues/4122
- * happens.
  */
 export function isVisible(fnodeOrElement) {
+    // This could be 5x more efficient if https://github.com/w3c/csswg-drafts/issues/4122 happens.
     const element = toDomElement(fnodeOrElement);
     // Avoid reading ``display: none`` due to Bug 1381071
     const elementRect = element.getBoundingClientRect();
@@ -475,7 +473,14 @@ export function isVisible(fnodeOrElement) {
     if (elementStyle.visibility === 'hidden') {
         return false;
     }
+    // Check if the element is off-screen
     const frame = element.ownerDocument.defaultView;
+    if (elementRect.x + elementRect.width < 0
+        || (elementRect.y + elementRect.height) < 0
+        || (elementRect.x > frame.innerWidth || elementRect.y > frame.innerHeight)
+    ) {
+        return false;
+    }
     for (const ancestor of ancestors(element)) {
         const isElement = ancestor === element;
         const style = isElement ? elementStyle : getComputedStyle(ancestor);
@@ -491,10 +496,6 @@ export function isVisible(fnodeOrElement) {
         if ((rect.width === 0 || rect.height === 0) && elementStyle.overflow === 'hidden') {
             // Zero-sized ancestors don’t make descendants hidden unless the descendant
             // has overflow: hidden
-            return false;
-        }
-        // Check if the element is off-screen
-        if (isElement && ((rect.right + frame.scrollX < 0) || (rect.bottom + frame.scrollY < 0))) {
             return false;
         }
     }
