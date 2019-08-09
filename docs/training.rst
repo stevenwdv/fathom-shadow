@@ -101,7 +101,7 @@ Running the Trainer
 
 .. note::
 
-   Fathom has had several trainers over its evolution. The trainer in old versions of FathomFox are obsoleted by :command:`fathom-train`, described herein.
+   Fathom has had several trainers over its evolution. Both the Corpus Framework and the trainer built into old versions of FathomFox are obsoleted by :command:`fathom-train`, described herein.
 
 Once your samples are collected and at least several rules are written, you're ready to do some initial training. Fathom's trainer is a commandline Python 3 program that can be installed, along with a few other utilities, by running... ::
 
