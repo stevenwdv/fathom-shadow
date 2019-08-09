@@ -101,7 +101,7 @@ Running the Trainer
 
 .. note::
 
-   Fathom has had several trainers over its evolution. Both the Corpus Framework and FathomFox's built-in Trainer are obsoleted by :command:`fathom-train`, described herein.
+   Fathom has had several trainers over its evolution. Both the Corpus Framework and the trainer built into old versions of FathomFox are obsoleted by :command:`fathom-train`, described herein.
 
 Once your samples are collected and at least several rules are written, you're ready to do some initial training. Fathom's trainer is a commandline Python 3 program that can be installed, along with a few other utilities, by running... ::
 
@@ -198,7 +198,7 @@ A sane authoring process is a feedback loop something like this:
 1. Collect samples. Observe patterns in the :term:`target` nodes as you do.
 2. Write a few rules based on your observations.
 3. Run the trainer. Start with 10-20 training pages and an equal number of validation ones.
-4. If accuracy is insufficient, examine the failing pages. The Evaluate function of FathomFox's old built-in Trainer is invaluable for this, as it will show you the element Fathom spuriously picked. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
+4. If accuracy is insufficient, examine the failing pages. FathomFox's Evaluator page is invaluable for this, as it will show you the element Fathom spuriously picked. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
 5. Go to 3, making sure to re-vectorize if you have added or changed rules.
 6. Once *validation accuracy* is sufficient, copy the coefficients into your ruleset, and use the :command:`fathom-test` tool on a fresh set of vectorized *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
 7. If testing accuracy is too low, imbibe the testing pages into your training corpus, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
