@@ -1,60 +1,52 @@
 jobs:
   include:
-    # TODO: move into "Javascript tests" stage
     - stage: test
-      name: "Javascript functional tests"
+      name: "Javascript tests"
       language: node_js
       node_js:
         - node
       env:
         - MOZ_HEADLESS=1
       addons:
+        apt:
+          packages:
+            - python-virtualenv
         firefox: latest
       script:
-        - make all
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/node_modules/geckodriver/bin
-        - node test/functional/setup_http_server &
-        - yarn mocha --timeout 60000 test/functional/isVisible.js
+        - test/functional/setup_http_server &
+        - npm test
         - kill %1
-    # - stage: test
-    #   name: "Javascript tests"
-    #   language: node_js
-    #   node_js:
-    #     - node
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - python-virtualenv
-    #   after_success:
-    #     - "npm run coveralls"
-    # - stage: test
-    #   name: "Python 3.6 tests"
-    #   language: python
-    #   python:
-    #     - "3.6"
-    #   install:
-    #     - pip install -e cli/
-    #   script:
-    #     - pytest cli/fathom_web/test
-    # - stage: test
-    #   name: "Python 3.7 tests"
-    #   dist: bionic
-    #   language: python
-    #   python:
-    #     - "3.7"
-    #   install:
-    #     - pip install -e cli/
-    #   script:
-    #     - pytest cli/fathom_web/test
-    # - stage: deploy
-    #   name: "Docs deployment"
-    #   script: skip
-    #   deploy:
-    #     provider: script
-    #     script: docs/tooling/travis-deploy-docs
-    #     on:
-    #       branch: master
-    #     skip_cleanup: true
+      after_success:
+        - "npm run coveralls"
+    - stage: test
+      name: "Python 3.6 tests"
+      language: python
+      python:
+        - "3.6"
+      install:
+        - pip install -e cli/
+      script:
+        - pytest cli/fathom_web/test
+    - stage: test
+      name: "Python 3.7 tests"
+      dist: bionic
+      language: python
+      python:
+        - "3.7"
+      install:
+        - pip install -e cli/
+      script:
+        - pytest cli/fathom_web/test
+    - stage: deploy
+      name: "Docs deployment"
+      script: skip
+      deploy:
+        provider: script
+        script: docs/tooling/travis-deploy-docs
+        on:
+          branch: master
+        skip_cleanup: true
 
 notifications:
   email:
