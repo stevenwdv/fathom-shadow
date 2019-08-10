@@ -4,7 +4,7 @@ const webdriver = require('selenium-webdriver');
 const { ancestors, isDomElement, isVisible, toDomElement } = require('../../utilsForFrontend');
 
 const WAIT_MS = 10000;
-const TEST_PAGE_URL = 'http://localhost:8000/functional_test.html';
+const TEST_PAGE_URL = 'http://localhost:8000/isVisible.html';
 
 describe('isVisible', () => {
     const options = new firefox.Options();

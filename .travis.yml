@@ -14,7 +14,7 @@ jobs:
         - make all
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/node_modules/geckodriver/bin
         - node test/functional/setup_http_server &
-        - yarn mocha --timeout 60000 test/functional/functional_test.js
+        - yarn mocha --timeout 60000 test/functional/isVisible.js
         - kill %1
     # - stage: test
     #   name: "Javascript tests"
