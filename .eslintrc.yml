@@ -37,6 +37,7 @@ rules:
   no-var: warn
   no-warning-comments: [warn, {terms: [xxx, fixme, hack], location: start}]
   object-shorthand: [error, properties]
+  operator-linebreak: [error, after]
   prefer-const: off
   quotes: [error, single, {avoidEscape: true, allowTemplateLiterals: true}]
   semi: [error, always]

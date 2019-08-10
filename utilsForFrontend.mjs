@@ -160,8 +160,8 @@ export function *inlineTexts(element, shouldTraverse = element => true) {
     for (let child of walk(element,
                            element => !(isBlock(element) ||
                                         element.tagName === 'SCRIPT' &&
-                                        element.tagName === 'STYLE')
-                                      && shouldTraverse(element))) {
+                                        element.tagName === 'STYLE') &&
+                                        shouldTraverse(element))) {
         if (child.nodeType === child.TEXT_NODE) {
             // wholeText() is not implemented by jsdom, so we use
             // textContent(). The result should be the same, since
@@ -464,20 +464,20 @@ export function sigmoid(x) {
 export function isVisible(fnodeOrElement) {
     // This could be 5x more efficient if https://github.com/w3c/csswg-drafts/issues/4122 happens.
     const element = toDomElement(fnodeOrElement);
-    // Avoid reading ``display: none`` due to Bug 1381071
     const elementRect = element.getBoundingClientRect();
-    if (elementRect.width === 0 && elementRect.height === 0) {
+    const elementStyle = getComputedStyle(element);
+    // Alternative to reading ``display: none`` due to Bug 1381071.
+    if (elementRect.width === 0 && elementRect.height === 0 && elementStyle.overflow !== 'hidden') {
         return false;
     }
-    const elementStyle = getComputedStyle(element);
     if (elementStyle.visibility === 'hidden') {
         return false;
     }
-    // Check if the element is off-screen
+    // Check if the element is off-screen:
     const frame = element.ownerDocument.defaultView;
-    if (elementRect.x + elementRect.width < 0
-        || (elementRect.y + elementRect.height) < 0
-        || (elementRect.x > frame.innerWidth || elementRect.y > frame.innerHeight)
+    if (elementRect.x + elementRect.width < 0 ||
+        elementRect.y + elementRect.height < 0 ||
+        elementRect.x > frame.innerWidth || elementRect.y > frame.innerHeight
     ) {
         return false;
     }
@@ -488,14 +488,14 @@ export function isVisible(fnodeOrElement) {
             return false;
         }
         if (style.display === 'contents') {
-            // display: contents elements have no box themselves, but children are
+            // ``display: contents`` elements have no box themselves, but children are
             // still rendered.
             continue;
         }
         const rect = isElement ? elementRect : ancestor.getBoundingClientRect();
         if ((rect.width === 0 || rect.height === 0) && elementStyle.overflow === 'hidden') {
             // Zero-sized ancestors don’t make descendants hidden unless the descendant
-            // has overflow: hidden
+            // has ``overflow: hidden``.
             return false;
         }
     }
