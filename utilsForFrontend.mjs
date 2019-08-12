@@ -160,8 +160,8 @@ export function *inlineTexts(element, shouldTraverse = element => true) {
     for (let child of walk(element,
                            element => !(isBlock(element) ||
                                         element.tagName === 'SCRIPT' &&
-                                        element.tagName === 'STYLE') &&
-                                        shouldTraverse(element))) {
+                                        element.tagName === 'STYLE')
+                                      && shouldTraverse(element))) {
         if (child.nodeType === child.TEXT_NODE) {
             // wholeText() is not implemented by jsdom, so we use
             // textContent(). The result should be the same, since
