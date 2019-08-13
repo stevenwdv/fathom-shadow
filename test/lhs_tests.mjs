@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 
-import {dom, rule, ruleset, out, type} from '../index';
+import {dom, rule, ruleset, type} from '../index';
 import {staticDom} from '../utils';
 
 

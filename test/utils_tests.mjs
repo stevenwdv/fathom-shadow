@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import {dom, out, rule, ruleset, score, type} from '../index';
+import {dom, rule, ruleset, score, type} from '../index';
 import {NiceSet, toposort, staticDom, attributesMatch} from '../utils';
 
 

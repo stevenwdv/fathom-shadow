@@ -458,28 +458,45 @@ export function sigmoid(x) {
 }
 
 /**
- * Return whether an element is practically visible, considing things like 0
- * size or opacity, ``display: none``, and ``visibility: hidden``.
+ * Return whether an element is practically visible, considering things like 0
+ * size or opacity, ``visibility: hidden`` and ``overflow: hidden``.
  */
 export function isVisible(fnodeOrElement) {
+    // This could be 5x more efficient if https://github.com/w3c/csswg-drafts/issues/4122 happens.
     const element = toDomElement(fnodeOrElement);
+    const elementRect = element.getBoundingClientRect();
+    const elementStyle = getComputedStyle(element);
+    // Alternative to reading ``display: none`` due to Bug 1381071.
+    if (elementRect.width === 0 && elementRect.height === 0 && elementStyle.overflow !== 'hidden') {
+        return false;
+    }
+    if (elementStyle.visibility === 'hidden') {
+        return false;
+    }
+    // Check if the element is off-screen:
+    const frame = element.ownerDocument.defaultView;
+    if (elementRect.x + elementRect.width < 0 ||
+        elementRect.y + elementRect.height < 0 ||
+        elementRect.x > frame.innerWidth || elementRect.y > frame.innerHeight
+    ) {
+        return false;
+    }
     for (const ancestor of ancestors(element)) {
-        const style = getComputedStyle(ancestor);
-        if (style.visibility === 'hidden' ||
-            style.display === 'none' ||
-            style.opacity === '0' ||
-            style.width === '0' ||
-            style.height === '0') {
+        const isElement = ancestor === element;
+        const style = isElement ? elementStyle : getComputedStyle(ancestor);
+        if (style.opacity === '0') {
             return false;
-        } else {
-            // It wasn't hidden based on a computed style. See if it's
-            // offscreen:
-            const rect = element.getBoundingClientRect();
-            const frame = element.ownerDocument.defaultView;  // window or iframe
-            if ((rect.right + frame.scrollX < 0) ||
-                (rect.bottom + frame.scrollY < 0)) {
-                return false;
-            }
+        }
+        if (style.display === 'contents') {
+            // ``display: contents`` elements have no box themselves, but children are
+            // still rendered.
+            continue;
+        }
+        const rect = isElement ? elementRect : ancestor.getBoundingClientRect();
+        if ((rect.width === 0 || rect.height === 0) && elementStyle.overflow === 'hidden') {
+            // Zero-sized ancestors don’t make descendants hidden unless the descendant
+            // has ``overflow: hidden``.
+            return false;
         }
     }
     return true;
