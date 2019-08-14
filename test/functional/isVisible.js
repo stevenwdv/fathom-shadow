@@ -1,7 +1,7 @@
 const {assert} = require('chai');
 const firefox = require('selenium-webdriver/firefox');
 const webdriver = require('selenium-webdriver');
-const {ancestors, isDomElement, isVisible, toDomElement} = require('../../utilsForFrontend');
+const {ancestors, isDomElement, isVisible, toDomElement} = require('../../utilsForFrontend'); // eslint-disable-line node/no-missing-require
 
 const {Builder, until, By} = webdriver;
 
