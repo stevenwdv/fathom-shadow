@@ -14,7 +14,7 @@ jobs:
         firefox: latest
       script:
         - export PATH=$PATH:$TRAVIS_BUILD_DIR/node_modules/geckodriver/bin
-        - test/functional/setup_http_server &
+        - test/functional/start_http_server &
         - npm test
         - kill %1
       after_success:

@@ -8,6 +8,7 @@ all: $(JS)
 
 lint:
 	@node_modules/.bin/eslint --ext mjs .
+	@node_modules/.bin/eslint test/functional
 
 test: $(JS)
 	@node_modules/.bin/mocha --recursive

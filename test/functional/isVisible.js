@@ -1,9 +1,9 @@
-const { assert } = require('chai');
+const {assert} = require('chai');
 const firefox = require('selenium-webdriver/firefox');
 const webdriver = require('selenium-webdriver');
-const { ancestors, isDomElement, isVisible, toDomElement } = require('../../utilsForFrontend');
+const {ancestors, isDomElement, isVisible, toDomElement} = require('../../utilsForFrontend');
 
-const { until, By } = webdriver;
+const {Builder, until, By} = webdriver;
 
 const WAIT_MS = 10000;
 const TEST_PAGE_URL = 'http://localhost:8000/isVisible.html';
@@ -12,45 +12,46 @@ describe('isVisible', () => {
     const options = new firefox.Options();
     options.headless();
 
-    const driver = new webdriver.Builder()
+    const driver = new Builder()
         .forBrowser('firefox')
         .setFirefoxOptions(options)
         .build();
 
-    it('Should return false when an element is hidden', async () => {
-        const hiddenElementIds = [
-            'not-visible-1',
-            'not-visible-2',
-            'not-visible-3',
-            'not-visible-4',
-            'not-visible-5',
-            'not-visible-6',
-            'not-visible-7',
-            'not-visible-8',
-            'not-visible-9',
-            'not-visible-10',
-            'not-visible-11',
-            'not-visible-12',
-        ];
+    async function checkVisibility(id, expected) {
+        await driver.wait(until.elementLocated(By.id(id)), WAIT_MS);
+        const isElementVisible = await driver.executeScript(`
+            ${ancestors}
+            ${isDomElement}
+            ${toDomElement}
+            return ${isVisible}(document.getElementById('${id}'));
+        `);
+        assert.equal(
+            isElementVisible,
+            expected,
+            `isVisible should return false for element with id '${id}'.`
+        );
+    }
+
+    it('should return false when an element is hidden', async () => {
+        const hiddenElementIds = await driver.executeScript(`
+            return [].slice.call(document.querySelectorAll('[id^="not-visible-"]')).map((element) => element.id);
+        `);
+
         await driver.get(TEST_PAGE_URL);
-        // await driver.wait(async () => {
-        //     const readyState = await driver.executeScript('return document.readyState');
-        //     return readyState === 'complete';
-        // }, WAIT_MS, `Page did not finish loading after ${WAIT_MS} ms`);
 
         for (const id of hiddenElementIds) {
-            await driver.wait(until.elementLocated(By.id(id)), WAIT_MS);
-            const isElementVisible = await driver.executeScript(`
-                ${ancestors}
-                ${isDomElement}
-                ${toDomElement}
-                return ${isVisible}(document.getElementById('${id}'));
-            `);
-            assert.equal(
-                isElementVisible,
-                false,
-                `isVisible should return false for element with id '${id}'.`
-            );
+            await checkVisibility(id, false);
+        }
+    }).timeout(60000);
+
+    it('should return true when an element is visible', async () => {
+        const visibleElementIds = await driver.executeScript(`
+            return [].slice.call(document.querySelectorAll('[id^="visible-"]')).map((element) => element.id);
+        `);
+        await driver.get(TEST_PAGE_URL);
+
+        for (const id of visibleElementIds) {
+            await checkVisibility(id, true);
         }
     }).timeout(60000);
 

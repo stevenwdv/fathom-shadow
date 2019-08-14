@@ -1,10 +1,11 @@
 env:
   es6: true
   node: true
+  mocha: true
 
 parserOptions:
   sourceType: module
-  ecmaVersion: 7
+  ecmaVersion: 8
 
 extends:
   - eslint:recommended
@@ -17,6 +18,7 @@ plugins:
 root: true
 
 rules:
+  array-bracket-spacing: [error, never]
   eqeqeq: error
   generator-star-spacing: [warn, {before: true, after: false}]
   guard-for-in: warn  # There's nothing wrong with for..in if you know what you're doing. This is here just to keep me from accidentally saying "for..in" when I mean "for..of". Delete this and come up with a better solution if we ever need to use "for..in".
@@ -36,6 +38,7 @@ rules:
   no-useless-escape: error
   no-var: warn
   no-warning-comments: [warn, {terms: [xxx, fixme, hack], location: start}]
+  object-curly-spacing: [error, never]
   object-shorthand: [error, properties]
   prefer-const: off
   quotes: [error, single, {avoidEscape: true, allowTemplateLiterals: true}]
