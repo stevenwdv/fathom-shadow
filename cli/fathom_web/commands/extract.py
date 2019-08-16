@@ -3,12 +3,13 @@ import mimetypes
 import pathlib
 import shutil
 import re
+from urllib.parse import unquote
 from urllib.request import pathname2url
 
 from click import argument, command, option, Path
 
 
-BASE64_DATA_PATTERN = re.compile(r'(data:(?P<mime>[a-zA-Z0-9]+/[a-zA-Z0-9\-.+]+);(\s?charset=utf-8;)?base64,(?P<string>[a-zA-Z0-9+/=]+))')
+BASE64_DATA_PATTERN = re.compile(r'(data:(?P<mime>[a-zA-Z0-9]+/[a-zA-Z0-9\-.+]+);(\s?charset=utf-8;)?base64,(?P<string>(?:[a-zA-Z0-9+/=]|%3D)+))')
 BASE_TAG_PATTERN = re.compile(r'<base [^>]*>')
 OLD_CSP = re.compile(r"default-src 'none'; img-src data:; media-src data:; style-src data: 'unsafe-inline'; font-src data:; frame-src data:")
 NEW_CSP = r"default-src 'none'; img-src 'self' data:; media-src 'self' data:; style-src 'self' data: 'unsafe-inline'; font-src 'self' data:; frame-src 'self' data:"
@@ -119,7 +120,7 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
             mime_type = match.group('mime')
             filename_counter += 1
             filename = generate_filename(mime_type, str(filename_counter))
-            binary_data = base64.b64decode(base64_string)
+            binary_data = decode(base64_string)
             file_path = subresources_directory / filename
             with file_path.open('wb') as resource_file:
                 resource_file.write(binary_data)
@@ -158,3 +159,14 @@ def generate_filename(mime_type: str, filename: str) -> str:
     except KeyError:
         extension = mimetypes.guess_extension(mime_type, strict=True)
     return f'{filename}{extension}'
+
+
+def decode(base64_string: str) -> bytes:
+    """
+    Decodes the base64 string into bytes. If as string has any additional
+    encoding (ex. percent encoding of the padding characters), decode that
+    first.
+    """
+    if '%' in base64_string:
+        base64_string = unquote(base64_string)
+    return base64.b64decode(base64_string)
