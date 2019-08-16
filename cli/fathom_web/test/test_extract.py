@@ -1,4 +1,4 @@
-from ..commands.extract import BASE64_DATA_PATTERN
+from ..commands.extract import BASE64_DATA_PATTERN, decode
 
 
 def test_common_example():
@@ -39,3 +39,25 @@ def test_string_with_multiple_base64_strings():
     test_string = 'data:image/png;base64,rsoitenaofi2345wf/+ste data:image/png;base64,arsti390/'
     matches = get_base64_regex_matches(test_string)
     assert len(matches) == 2
+
+
+def test_string_with_percent_encoded_equals_signs_is_found():
+    """Some base64 strings have their padding characters (=) percent
+    encoded so they appear as %3D. Our regex should capture them.
+    """
+    base64_string = 'R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw%3D%3D'
+    test_string = f'url(&quot;data:image/gif;base64,{base64_string}&quot;)'
+    matches = get_base64_regex_matches(test_string)
+    assert len(matches) == 1
+    assert matches[0].group('string') == base64_string
+
+
+def test_string_with_percent_encoded_equals_signs_is_decoded():
+    """Some base64 strings have their padding characters (=) percent
+    encoded so they appear as %3D. We should be able to decode them.
+
+    At the moment, we will trust the decoding is correct, we just want
+    to make sure no errors are raised.
+    """
+    base64_string = 'R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw%3D%3D'
+    decode(base64_string)
