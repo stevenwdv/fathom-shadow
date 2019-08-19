@@ -32,7 +32,8 @@ describe('isVisible', () => {
         );
     }
 
-    it('should return false when an element is hidden', async () => {
+    it('should return false when an element is hidden', async function () {
+        this.timeout(WAIT_MS);
         const hiddenElementIds = await driver.executeScript(`
             return [].slice.call(document.querySelectorAll('[id^="not-visible-"]')).map((element) => element.id);
         `);
@@ -41,10 +42,12 @@ describe('isVisible', () => {
 
         for (const id of hiddenElementIds) {
             await checkVisibility(id, false);
-        }
-    }).timeout(60000);
 
-    it('should return true when an element is visible', async () => {
+        }
+    });
+
+    it('should return true when an element is visible', async function () {
+        this.timeout(WAIT_MS);
         const visibleElementIds = await driver.executeScript(`
             return [].slice.call(document.querySelectorAll('[id^="visible-"]')).map((element) => element.id);
         `);
@@ -53,7 +56,10 @@ describe('isVisible', () => {
         for (const id of visibleElementIds) {
             await checkVisibility(id, true);
         }
-    }).timeout(60000);
+    });
 
-    after(async () => driver.quit());
+    after(async function () {
+        this.timeout(WAIT_MS);
+        return driver.quit();
+    });
 });
