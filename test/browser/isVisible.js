@@ -26,7 +26,7 @@ describe('isVisible', () => {
         assert.equal(
             isElementVisible,
             expected,
-            `isVisible should return false for element with id '${id}'.`
+            `isVisible should return ${expected} for element with id '${id}'.`
         );
     }
 

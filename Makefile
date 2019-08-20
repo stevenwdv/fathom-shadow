@@ -10,8 +10,9 @@ lint:
 	@node_modules/.bin/eslint --ext mjs .
 	@node_modules/.bin/eslint test/browser
 
+# Does not include mocha browser tests. Use 'npm test' (Linux-based shells only) to run all mocha tests.
 test: $(JS)
-	@node_modules/.bin/mocha --recursive
+	@node_modules/.bin/mocha
 	pytest cli/fathom_web/test
 
 coverage: $(JS)
