@@ -389,6 +389,7 @@ export function domSort(fnodes) {
 /**
  * @return whether a thing appears to be a DOM element.
  */
+/* istanbul ignore next */
 export function isDomElement(thing) {
     return thing.nodeName !== undefined;
 }
@@ -399,6 +400,7 @@ export function isDomElement(thing) {
  *
  * @arg fnodeOrElement {Node|Fnode}
  */
+/* istanbul ignore next */
 export function toDomElement(fnodeOrElement) {
     return isDomElement(fnodeOrElement) ? fnodeOrElement : fnodeOrElement.element;
 }
@@ -436,6 +438,7 @@ export function attributesMatch(element, predicate, attrs = []) {
 /**
  * Yield an element and each of its ancestors.
  */
+/* istanbul ignore next */
 export function *ancestors(element) {
     yield element;
     let parent;
@@ -461,6 +464,7 @@ export function sigmoid(x) {
  * Return whether an element is practically visible, considering things like 0
  * size or opacity, ``visibility: hidden`` and ``overflow: hidden``.
  */
+/* istanbul ignore next */
 export function isVisible(fnodeOrElement) {
     // This could be 5x more efficient if https://github.com/w3c/csswg-drafts/issues/4122 happens.
     const element = toDomElement(fnodeOrElement);

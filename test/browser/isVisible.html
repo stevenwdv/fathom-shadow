@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <!-- Empty favicon to avoid HTTP GET error when Firefox requests it -->
+    <link rel="icon" href="data:,">
+    <title>isVisible functional test</title>
+    <style type="text/css">
+      :root {
+        --size: 100px;
+      }
+      .off-screen {
+        width: var(--size);
+        height: var(--size);
+        border: 1px solid black;
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>isVisible functional test</h1>
+    <div id="not-visible-1" style="width: 0px; overflow: hidden;"></div>
+    <div id="not-visible-2" style="height: 0px; overflow: hidden;"></div>
+    <div id="not-visible-3" style="display: none;"></div>
+    <!-- ``display: none`` ancestor -->
+    <div id="ancestor-not-visible-4" style="display: none;">
+      <div id="not-visible-4"></div>
+    </div>
+    <div id="not-visible-5" style="opacity: 0;"></div>
+    <!-- ``opacity: 0`` ancestor -->
+    <div id="ancestor-not-visible-6" style="opacity: 0;">
+      <div id="not-visible-6"></div>
+    </div>
+    <!-- ``overflow: hidden`` with zero width ancestor -->
+    <div id="ancestor-not-visible-7" style="width: 0;">
+      <div id="not-visible-7" style="overflow: hidden;"></div>
+    </div>
+    <!-- ``overflow: hidden`` with zero height ancestor -->
+    <div id="ancestor-not-visible-8" style="height: 0;">
+      <div id="not-visible-8" style="overflow: hidden;"></div>
+    </div>
+    <!-- off-screen to the left of viewport -->
+    <div id="not-visible-9" class="off-screen" style="left: calc(-2 * var(--size));"></div>
+    <!-- off-screen above viewport -->
+    <div id="not-visible-10" class="off-screen" style="top: calc(-2 * var(--size));"></div>
+    <!-- off-screen to the right of viewport -->
+    <div id="not-visible-11" class="off-screen" style="right: calc(100vw + 2 * var(--size));"></div>
+    <!-- off-screen below viewport -->
+    <div id="not-visible-12" class="off-screen" style="bottom: calc(100vh + 2 * var(--size));"></div>
+    <div id="not-visible-13" style="display: contents"></div>
+    <!-- ``display: contents`` ancestor -->
+    <div id="ancestor-visible-1" style="display: contents">
+      <div id="visible-1"></div>
+    </div>
+  </body>
+</html>

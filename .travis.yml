@@ -5,10 +5,15 @@ jobs:
       language: node_js
       node_js:
         - node
+      env:
+        - MOZ_HEADLESS=1
       addons:
         apt:
           packages:
             - python-virtualenv
+        firefox: latest
+      script:
+        - npm test
       after_success:
         - "npm run coveralls"
     - stage: test

@@ -20,12 +20,14 @@
     "eslint": "^3.7.1",
     "eslint-plugin-import": "^2.18.1",
     "eslint-plugin-node": "^2.1.2",
+    "geckodriver": "^1.16.2",
     "istanbul": "^1.1.0-alpha.1",
     "leven": "^2.1.0",
     "mocha": "^5.2.0",
     "rollup": "^0.50.0",
     "rollup-plugin-commonjs": "^8.2.4",
-    "rollup-plugin-node-resolve": "^3.4.0"
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "selenium-webdriver": "^4.0.0-alpha.4"
   },
   "engines": {
     "node": ">= 6.0.0"
@@ -45,8 +47,10 @@
   "scripts": {
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "make lint",
+    "init-server": "./test/browser/start_http_server & echo $! > pid",
     "pretest": "npm run lint",
-    "test": "make coverage"
+    "test": "PATH=$PATH:$PWD/node_modules/geckodriver/bin && npm run init-server && make coverage && npm run uninit-server",
+    "uninit-server": "kill $(cat pid) && rm pid"
   },
   "main": "index"
 }

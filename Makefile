@@ -8,13 +8,15 @@ all: $(JS)
 
 lint:
 	@node_modules/.bin/eslint --ext mjs .
+	@node_modules/.bin/eslint test/browser
 
+# Does not include mocha browser tests. Use 'npm test' (Linux-based shells only) to run all mocha tests.
 test: $(JS)
 	@node_modules/.bin/mocha
 	pytest cli/fathom_web/test
 
 coverage: $(JS)
-	@node_modules/.bin/istanbul cover node_modules/.bin/_mocha
+	@node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --recursive
 
 debugtest: $(JS)
 	# This is known to work on node 7.6.0.
