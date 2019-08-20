@@ -45,10 +45,13 @@
     "url": "https://github.com/mozilla/fathom.git"
   },
   "scripts": {
+    "add-geckodriver-to-path": "export PATH=$PATH:$PWD/node_modules/geckodriver/bin",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "make lint",
+    "init-server": "./test/functional/start_http_server & echo $! > pid",
     "pretest": "npm run lint",
-    "test": "make coverage"
+    "test": "npm run add-geckodriver-to-path && npm run init-server && make coverage && npm run uninit-server",
+    "uninit-server": "kill $(cat pid) && rm pid"
   },
   "main": "index"
 }
