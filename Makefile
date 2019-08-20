@@ -15,7 +15,7 @@ test: $(JS)
 	pytest cli/fathom_web/test
 
 coverage: $(JS)
-	@node_modules/.bin/istanbul cover node_modules/.bin/mocha -- --recursive
+	@node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --recursive
 
 debugtest: $(JS)
 	# This is known to work on node 7.6.0.
