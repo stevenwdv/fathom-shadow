@@ -6,6 +6,6 @@
 **/*.js
 !/rollup.config.js
 !/trainees.js
-!/test/functional/*
+!/test/browser/*
 /cli/build
 /cli/dist
