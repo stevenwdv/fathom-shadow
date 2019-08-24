@@ -18,6 +18,7 @@ setup(
         'fathom-list = fathom_web.commands.list:main',
         'fathom-pick = fathom_web.commands.pick:main',
         'fathom-serve = fathom_web.commands.serve:main',
+        'fathom-label = fathom_web.commands.label:main',
         'fathom-test = fathom_web.commands.test:main',
         'fathom-train = fathom_web.commands.train:main',
         'fathom-unzip = fathom_web.commands.unzip:main',
