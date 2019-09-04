@@ -1,4 +1,6 @@
 from html.parser import HTMLParser
+from functools import partial
+import multiprocessing
 import os
 import pathlib
 import re
@@ -34,29 +36,45 @@ def main(in_directory, in_type, preserve_originals):
     list_of_items = os.listdir(in_directory)
     number_of_items = len(list_of_items)
 
-    with progressbar(pathlib.Path(in_directory).iterdir(),
+    print_statements = [] # Capture any print statements to log at the end.
+
+    # Make a pool of workers. Each worker is in its own process. We use a scaling factor to account for the overhead of
+    # setting up all of the processes.
+    pool = multiprocessing.Pool(multiprocessing.cpu_count() * 4)
+    # Curry ``task``, so we can pass more than one argument into pool.imap_unordered.
+    task = partial(label_task, in_directory, in_type, originals_dir, preserve_originals)
+
+    with progressbar(pool.imap_unordered(task, list_of_items),
                     label='Labeling pages',
-                    length=number_of_items) as bar:
-        for file in bar:
-            if file == originals_dir:
-                continue
-            if file.is_dir():
-                print(f'\nSkipping directory {file.name}/')
-                continue
-            if file.suffix != '.html':
-                print(f'\nSkipping {file.name}; not an HTML file')
-                continue
+                    length = len(list_of_items)) as bar:
+        for result in bar:
+            if result is not None:
+                print_statements.append(result)
+            pass
 
-            with file.open(encoding='utf-8') as fp:
-                html = fp.read()
+    for statement in print_statements:
+        print(statement)
 
-            new_html = label_html_tags_in_html_string(html, in_type)
 
-            if preserve_originals:
-                shutil.move(file, originals_dir / file.name)
+def label_task(in_directory, in_type, originals_dir, preserve_originals, filename):
+    file = pathlib.Path(in_directory) / filename
+    if file == originals_dir:
+        return
+    if file.is_dir():
+        return f'Skipped directory {file.name}/'
+    if file.suffix != '.html':
+        return f'Skipped {file.name}; not an HTML file'
 
-            with file.open('w', encoding='utf-8') as fp:
-                fp.write(new_html)
+    with file.open(encoding='utf-8') as fp:
+        html = fp.read()
+
+    new_html = label_html_tags_in_html_string(html, in_type)
+
+    if preserve_originals:
+        shutil.move(file, originals_dir / file.name)
+
+    with file.open('w', encoding='utf-8') as fp:
+        fp.write(new_html)
 
 
 class HTMLParserSubclass(HTMLParser):
