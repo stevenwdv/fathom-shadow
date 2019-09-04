@@ -1,9 +1,10 @@
 from html.parser import HTMLParser
+import os
 import pathlib
 import re
 import shutil
 
-from click import argument, command, option, Path, STRING
+from click import argument, command, option, Path, STRING, progressbar
 
 
 @command()
@@ -30,26 +31,32 @@ def main(in_directory, in_type, preserve_originals):
     else:
         originals_dir = None
 
-    for file in pathlib.Path(in_directory).iterdir():
-        if file == originals_dir:
-            continue
-        if file.is_dir():
-            print(f'Skipping directory {file.name}/')
-            continue
-        if file.suffix != '.html':
-            print(f'Skipping {file.name}; not an HTML file')
-            continue
+    list_of_items = os.listdir(in_directory)
+    number_of_items = len(list_of_items)
 
-        with file.open(encoding='utf-8') as fp:
-            html = fp.read()
+    with progressbar(pathlib.Path(in_directory).iterdir(),
+                    label='Labeling pages',
+                    length=number_of_items) as bar:
+        for file in bar:
+            if file == originals_dir:
+                continue
+            if file.is_dir():
+                print(f'\nSkipping directory {file.name}/')
+                continue
+            if file.suffix != '.html':
+                print(f'\nSkipping {file.name}; not an HTML file')
+                continue
 
-        new_html = label_html_tags_in_html_string(html, in_type)
+            with file.open(encoding='utf-8') as fp:
+                html = fp.read()
 
-        if preserve_originals:
-            shutil.move(file, originals_dir / file.name)
+            new_html = label_html_tags_in_html_string(html, in_type)
 
-        with file.open('w', encoding='utf-8') as fp:
-            fp.write(new_html)
+            if preserve_originals:
+                shutil.move(file, originals_dir / file.name)
+
+            with file.open('w', encoding='utf-8') as fp:
+                fp.write(new_html)
 
 
 class HTMLParserSubclass(HTMLParser):
@@ -63,7 +70,7 @@ class HTMLParserSubclass(HTMLParser):
             original_html_tag = self.get_starttag_text()
             new_html_substring = f'html data-fathom="{self.in_type}"'
             new_html_tag = original_html_tag.replace('html', new_html_substring, 1)
-            self.html_tags_list.append(tuple([original_html_tag, new_html_tag]));
+            self.html_tags_list.append(tuple([original_html_tag, new_html_tag]))
 
 
 def label_html_tags_in_html_string(html: str, in_type: str) -> str:
@@ -77,11 +84,11 @@ def label_html_tags_in_html_string(html: str, in_type: str) -> str:
     built-in html.parser library.
     """
     parser = HTMLParserSubclass(in_type)
-    parser.feed(html);
+    parser.feed(html)
 
     new_html = html
 
     for (original_html_tag, new_html_tag) in parser.html_tags_list:
-        new_html = new_html.replace(original_html_tag, new_html_tag, 1);
+        new_html = new_html.replace(original_html_tag, new_html_tag, 1)
 
     return new_html
