@@ -9,6 +9,7 @@ all: $(JS)
 lint:
 	@node_modules/.bin/eslint --ext mjs .
 	@node_modules/.bin/eslint test/browser
+	@flake8 cli
 
 # Does not include mocha browser tests. Use 'npm test' (Linux-based shells only) to run all mocha tests.
 test: $(JS)

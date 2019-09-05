@@ -31,7 +31,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
                 if stop_early:
                     if previous_validation_loss is not None and previous_validation_loss < validation_loss:
                         stopped_early = True
-                        model.load_state_dict(previous_model)
+                        model.load_state_dict(previous_model)  # noqa: previous_model will always be defined here, but the linter can't follow the logic.
                         break
                     else:
                         previous_validation_loss = validation_loss

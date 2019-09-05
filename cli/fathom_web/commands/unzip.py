@@ -38,7 +38,7 @@ def main(zip_file):
         with progressbar(archive.namelist()) as bar:
             for name in bar:
                 base = basename(name)
-                match = re.match('0*(\d+) .*(\.[a-zA-Z0-9]+$)', base)
+                match = re.match(r'0*(\d+) .*(\.[a-zA-Z0-9]+$)', base)
                 if match:
                     extracted_name = match.group(1) + match.group(2)
                 else:
