@@ -44,13 +44,5 @@
     "type": "git",
     "url": "https://github.com/mozilla/fathom.git"
   },
-  "scripts": {
-    "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "lint": "make lint",
-    "init-server": "./test/browser/start_http_server & echo $! > pid",
-    "pretest": "npm run lint",
-    "test": "PATH=$PATH:$PWD/node_modules/geckodriver/bin && npm run init-server && make coverage && npm run uninit-server",
-    "uninit-server": "kill $(cat pid) && rm pid"
-  },
   "main": "index"
 }

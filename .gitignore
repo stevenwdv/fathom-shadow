@@ -9,3 +9,4 @@
 !/test/browser/*
 /cli/build
 /cli/dist
+/venv
