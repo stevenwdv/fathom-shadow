@@ -9,13 +9,13 @@ Tests and Examples
 
 To run the tests, run... ::
 
-    make lint coverage
+    make lint all_js_test py_test
 
 This will also run the linter and analyze test coverage. You can find the coverage report in the ``coverage`` directory and the HTML version under ``coverage/lcov-report/fathom/index.html``.
 
 If you're in the midst of a tornado of rapid development and the fancy stuff is too slow, you can invoke... ::
 
-    make test
+    make js_test py_test
 
 ...to run "just the tests, ma'am".
 
