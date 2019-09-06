@@ -1,6 +1,6 @@
 # If there's an activated virtualenv, use that. Otherwise, make one in the cwd.
 VIRTUAL_ENV ?= $(PWD)/venv
-PATH := $(PWD)/node_modules/geckodriver/bin:$(VIRTUAL_ENV)/bin:$(PATH)
+PATH := $(PWD)/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(PATH)
 
 JS := $(shell find . -name '*.mjs' | sed 's/\.mjs/\.js/')
 
