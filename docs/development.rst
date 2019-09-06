@@ -28,12 +28,6 @@ If you want to drop into the debugger in the middle of a JS test, add a ``debugg
 Docs
 ====
 
-To build the docs, first install jsdoc and Sphinx::
+To build the docs... ::
 
-    npm install jsdoc
-    pip install 'sphinx-js>=1.3,<2.0' sphinx_rtd_theme
-
-You may also have to mess with your ``$PATH`` so Sphinx can find jsdoc. Then, go into the docs dir, and build them::
-
-    cd docs
-    make html
+    make doc

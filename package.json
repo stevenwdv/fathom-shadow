@@ -22,6 +22,7 @@
     "eslint-plugin-node": "^2.1.2",
     "geckodriver": "^1.16.2",
     "istanbul": "^1.1.0-alpha.1",
+    "jsdoc": "^3.5.4",
     "leven": "^2.1.0",
     "mocha": "^5.2.0",
     "rollup": "^0.50.0",

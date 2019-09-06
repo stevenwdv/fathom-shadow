@@ -1,21 +1,7 @@
 #!/bin/sh -e
-# Rebuild Sphinx docs, and upload them to gh-pages branch.
+# Upload Sphinx docs to gh-pages branch.
 
-CHECKOUT=$(pwd)
-
-# Install prereqs:
-npm install jsdoc@3.5.4
-virtualenv venv  # Global Python env is unwriteable.
-VIRTUAL_ENV="$CHECKOUT/venv"  # activate script doesn't work.
-PATH="$VIRTUAL_ENV/bin:$PATH"
-pip install -r tooling/doc-building-requirements.txt
-
-# Build docs:
-cd docs
-PATH="$CHECKOUT/node_modules/.bin:$PATH"
-make clean html
-
-# Upload them:
+make doc
 cd _build/html
 touch .nojekyll
 REV=$(git rev-parse HEAD)

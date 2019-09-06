@@ -1,6 +1,6 @@
 # If there's an activated virtualenv, use that. Otherwise, make one in the cwd.
 VIRTUAL_ENV ?= $(PWD)/venv
-PATH := $(PWD)/node_modules/geckodriver/bin:$(PATH)
+PATH := $(PWD)/node_modules/geckodriver/bin:$(VIRTUAL_ENV)/bin:$(PATH)
 
 JS := $(shell find . -name '*.mjs' | sed 's/\.mjs/\.js/')
 
@@ -40,6 +40,9 @@ publish: $(JS)
 cli:
 	cd cli && python setup.py sdist bdist_wheel
 
+doc: $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py
+	$(MAKE) -C docs clean html
+
 clean:
 	rm -rf $(JS) venv
 
@@ -53,4 +56,9 @@ $(VIRTUAL_ENV)/bin/activate: tooling/dev-requirements.txt cli/setup.py
 	$(VIRTUAL_ENV)/bin/pip install -r tooling/dev-requirements.txt
 	$(VIRTUAL_ENV)/bin/pip install -e cli
 
-.PHONY: all lint js_lint py_lint test js_test py_test all_js_test coveralls debugtest publish cli clean
+# Install the doc-building requirements.
+$(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/bin/activate tooling/doc-building-requirements.txt
+	$(VIRTUAL_ENV)/bin/pip install -r tooling/doc-building-requirements.txt
+
+
+.PHONY: all lint js_lint py_lint test js_test py_test all_js_test coveralls debugtest publish cli doc clean
