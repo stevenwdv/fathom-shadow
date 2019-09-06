@@ -15,6 +15,7 @@ setup(
     install_requires=['click>=7.0,<8.0', 'tensorboardX>=1.6,<2.0', 'torch>=1.0,<2.0'],
     entry_points={'console_scripts': [
         'fathom-extract = fathom_web.commands.extract:main',
+        'fathom-label = fathom_web.commands.label:main',
         'fathom-list = fathom_web.commands.list:main',
         'fathom-pick = fathom_web.commands.pick:main',
         'fathom-serve = fathom_web.commands.serve:main',
