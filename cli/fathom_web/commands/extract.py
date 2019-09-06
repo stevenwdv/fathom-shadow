@@ -177,6 +177,6 @@ def decode(base64_string: str) -> bytes:
     # Padding check
     string_mod_4 = len(base64_string) % 4
     if string_mod_4 != 0:
-        base64_string += "=" * (4 - string_mod_4)
+        base64_string += '=' * (4 - string_mod_4)
 
     return base64.b64decode(base64_string)
