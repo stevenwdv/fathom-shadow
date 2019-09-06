@@ -6,7 +6,7 @@ JS := $(shell find . -name '*.mjs' | sed 's/\.mjs/\.js/')
 
 # It's faster to invoke Babel once and compile everything than to invoke it
 # separately on even 2 individual files that changed.
-%.js: %.mjs; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir .
+%.js: %.mjs node_modules/.bin/babel; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir .
 
 all: $(JS)
 
@@ -60,5 +60,7 @@ $(VIRTUAL_ENV)/bin/activate: tooling/dev-requirements.txt cli/setup.py
 $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/bin/activate tooling/doc-building-requirements.txt
 	$(VIRTUAL_ENV)/bin/pip install -r tooling/doc-building-requirements.txt
 
+node_modules/.bin/babel:
+	npm install
 
 .PHONY: all lint js_lint py_lint test js_test py_test all_js_test coveralls debugtest publish cli doc clean
