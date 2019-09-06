@@ -351,8 +351,8 @@ export function numberOfMatches(regex, haystack) {
  * For example, these rules might classify a page as a "login page", influenced
  * by whether they have login buttons or username fields:
  *
- * ``rule('loginPage', score(page(pageContainsLoginButton))),``
- * ``rule('loginPage', score(page(pageContainsUsernameField)))``
+ * ``rule(type('loginPage'), score(page(pageContainsLoginButton))),``
+ * ``rule(type('loginPage'), score(page(pageContainsUsernameField)))``
  */
 export function page(scoringFunction) {
     function wrapper(fnode) {
