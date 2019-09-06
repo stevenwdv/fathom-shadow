@@ -1,12 +1,11 @@
-from html.parser import HTMLParser
 from functools import partial
+from html.parser import HTMLParser
 import multiprocessing
 import os
 import pathlib
-import re
 import shutil
 
-from click import argument, command, option, Path, STRING, progressbar
+from click import argument, command, option, Path, progressbar, STRING
 
 
 @command()
@@ -14,9 +13,13 @@ from click import argument, command, option, Path, STRING, progressbar
         default=True,
         help='Save original HTML files in a newly created `originals`'
              ' directory in IN_DIRECTORY (default: True)')
+@option('--number-of-workers',
+        default=multiprocessing.cpu_count(),
+        help='Use the specified number of workers to speed up the labeling'
+             ' process (default: the number of logical cores the machine has)')
 @argument('in_directory', type=Path(exists=True, file_okay=False))
 @argument('in_type', type=STRING)
-def main(in_directory, in_type, preserve_originals):
+def main(in_directory, in_type, preserve_originals, number_of_workers):
     """
     Add the ``data-fathom`` attribute with a value of IN_TYPE to the
     opening tag of any ``<html>`` elements in the HTML pages in
@@ -34,23 +37,21 @@ def main(in_directory, in_type, preserve_originals):
         originals_dir = None
 
     list_of_items = os.listdir(in_directory)
-    number_of_items = len(list_of_items)
 
-    print_statements = [] # Capture any print statements to log at the end.
+    print_statements = []  # Capture any print statements to log at the end.
 
     # Make a pool of workers. Each worker is in its own process. We use a scaling factor to account for the overhead of
     # setting up all of the processes.
-    pool = multiprocessing.Pool(multiprocessing.cpu_count() * 4)
+    pool = multiprocessing.Pool(number_of_workers)
     # Curry ``task``, so we can pass more than one argument into pool.imap_unordered.
     task = partial(label_task, in_directory, in_type, originals_dir, preserve_originals)
 
     with progressbar(pool.imap_unordered(task, list_of_items),
-                    label='Labeling pages',
-                    length = len(list_of_items)) as bar:
+                        label='Labeling pages',
+                        length=len(list_of_items)) as bar:
         for result in bar:
             if result is not None:
                 print_statements.append(result)
-            pass
 
     for statement in print_statements:
         print(statement)
@@ -77,20 +78,6 @@ def label_task(in_directory, in_type, originals_dir, preserve_originals, filenam
         fp.write(new_html)
 
 
-class HTMLParserSubclass(HTMLParser):
-    def __init__(self, in_type, **kwargs):
-        self.in_type = in_type
-        self.html_tags_list = []
-        super().__init__(**kwargs)
-
-    def handle_starttag(self, tag, attrs):
-        if tag == 'html':
-            original_html_tag = self.get_starttag_text()
-            new_html_substring = f'html data-fathom="{self.in_type}"'
-            new_html_tag = original_html_tag.replace('html', new_html_substring, 1)
-            self.html_tags_list.append(tuple([original_html_tag, new_html_tag]))
-
-
 def label_html_tags_in_html_string(html: str, in_type: str) -> str:
     """
     Finds all opening ``html`` tags in the HTML string and adds a
@@ -110,3 +97,17 @@ def label_html_tags_in_html_string(html: str, in_type: str) -> str:
         new_html = new_html.replace(original_html_tag, new_html_tag, 1)
 
     return new_html
+
+
+class HTMLParserSubclass(HTMLParser):
+    def __init__(self, in_type, **kwargs):
+        self.in_type = in_type
+        self.html_tags_list = []
+        super().__init__(**kwargs)
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'html':
+            original_html_tag = self.get_starttag_text()
+            new_html_substring = f'html data-fathom="{self.in_type}"'
+            new_html_tag = original_html_tag.replace('html', new_html_substring, 1)
+            self.html_tags_list.append((original_html_tag, new_html_tag))
