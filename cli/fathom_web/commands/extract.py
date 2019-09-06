@@ -163,10 +163,20 @@ def generate_filename(mime_type: str, filename: str) -> str:
 
 def decode(base64_string: str) -> bytes:
     """
-    Decodes the base64 string into bytes. If as string has any additional
-    encoding (ex. percent encoding of the padding characters), decode that
-    first.
+    Decodes the base64 string into bytes.
+
+    If as string has any additional encoding (ex. percent encoding of the
+    padding characters), decode that first.
+
+    We also check if the string is padded to a number of characters that is a
+    multiple of four, which is what base64.b64decode() requires.
     """
+    # Percent encoding
     if '%' in base64_string:
         base64_string = unquote(base64_string)
+    # Padding check
+    string_mod_4 = len(base64_string) % 4
+    if string_mod_4 != 0:
+        base64_string += "=" * (4 - string_mod_4)
+
     return base64.b64decode(base64_string)

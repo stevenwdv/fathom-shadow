@@ -61,3 +61,15 @@ def test_string_with_percent_encoded_equals_signs_is_decoded():
     """
     base64_string = 'R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw%3D%3D'
     decode(base64_string)
+
+
+def test_unpadded_string_is_decoded():
+    """Some base64 strings do not have padding characters. Python's
+    base64.b64decode() expects the string to be padded to a number of
+    characters that is a multiple of four.
+
+    At the moment, we will trust the decoding is correct, we just want
+    to make sure no errors are raised.
+    """
+    base64_string = 'R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs'
+    decode(base64_string)
