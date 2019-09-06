@@ -15,7 +15,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
     model = classifier(len(x[0]), len(y[0]))
     loss_fn = BCEWithLogitsLoss(reduction='sum')  # reduction=mean converges slower.
     # TODO: Add an option to twiddle pos_weight, which lets us trade off precision and recall. Maybe also graph using add_pr_curve(), which can show how that tradeoff is going.
-    optimizer = Adam(model.parameters(),lr=learning_rate)
+    optimizer = Adam(model.parameters(), lr=learning_rate)
 
     if validation:
         validation_ins, validation_outs = validation
@@ -111,9 +111,9 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
 
     """
     full_comment = '.LR={l},i={i}{c}'.format(
-            l=learning_rate,
-            i=iterations,
-            c=(',' + comment) if comment else '')
+        l=learning_rate,
+        i=iterations,
+        c=(',' + comment) if comment else '')
     training_data = load(training_file)
     x, y, num_yes = tensors_from(training_data['pages'], shuffle=True)
     if validation_file:

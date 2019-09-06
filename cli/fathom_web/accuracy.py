@@ -131,15 +131,15 @@ def accuracy_per_page(model, pages):
 
         # Build pretty report:
         report_lines.append(('{success_or_failure} on {file: >' + str(max_filename_len) + '}. Confidence: {confidence}{reason}').format(
-                file=page['filename'],
-                confidence=thermometer(confidence) if confidence is not None else 'no candidate nodes.',
-                reason=reason,
-                success_or_failure=style(' success ' if is_success else ' failure ', **COLOR_SCHEMES[color_scheme])))
+            file=page['filename'],
+            confidence=thermometer(confidence) if confidence is not None else 'no candidate nodes.',
+            reason=reason,
+            success_or_failure=style(' success ' if is_success else ' failure ', **COLOR_SCHEMES[color_scheme])))
         if first_target:
             index, score = first_target
             report_lines.append('    First target at index {index}: {confidence}'.format(
-                    index=index,
-                    confidence=thermometer(score)))
+                index=index,
+                confidence=thermometer(score)))
     return (successes / len(pages)), '\n'.join(report_lines)
 
 
