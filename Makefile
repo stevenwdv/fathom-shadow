@@ -2,7 +2,7 @@
 VIRTUAL_ENV ?= $(PWD)/venv
 PATH := $(PWD)/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(PATH)
 
-JS := $(shell find . -name '*.mjs' | sed 's/\.mjs/\.js/')
+JS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs/\.js/')
 
 # It's faster to invoke Babel once and compile everything than to invoke it
 # separately on even 2 individual files that changed.
