@@ -1,7 +1,6 @@
 #!/bin/sh -e
 # Upload Sphinx docs to gh-pages branch.
 
-make doc
 cd _build/html
 touch .nojekyll
 REV=$(git rev-parse HEAD)

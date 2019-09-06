@@ -28,9 +28,10 @@ jobs:
         - "3.7"
       script:
         - make py_lint py_test
-    - stage: deploy
-      name: "Docs deployment"
-      script: skip
+    - stage: docs
+      name: "Doc build and deployment"
+      script:
+        - make doc
       deploy:
         provider: script
         script: tooling/travis-deploy-docs
