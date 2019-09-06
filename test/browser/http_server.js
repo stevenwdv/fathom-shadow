@@ -1,11 +1,13 @@
-#!/usr/bin/env node
-
+/**
+ * Before any test in the entire project starts, spin up a server to serve test
+ * pages to the Selenium-driven headless Firefox we use in some tests.
+ */
 const http = require('http');
 const fs = require('fs');
 const url = require('url');
 
-const PORT = 8000;
 
+const PORT = 8000;
 const server = http.createServer((request, response) => {
     const path = url.parse(request.url).pathname;
     fs.readFile(__dirname + path, 'utf8', (error, data) => {
@@ -18,5 +20,16 @@ const server = http.createServer((request, response) => {
         }
     });
 });
-server.listen(PORT);
-console.log(`Serving from ${__dirname} at http://localhost:${PORT}...`);
+
+before(
+    function start_server() {
+        server.listen(PORT);
+        console.log(`Serving from ${__dirname} at http://localhost:${PORT}...`);
+    }
+);
+
+after(
+    function stop_server() {
+        server.close();
+    }
+);

@@ -21,21 +21,11 @@ py_lint: $(VIRTUAL_ENV)/bin/activate
 
 test: js_test py_test
 
-# Does not include browser tests. See all_js_test target (Linux-based shells
-# only).
 js_test: $(JS)
-	@node_modules/.bin/mocha
+	@node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --recursive
 
 py_test: $(VIRTUAL_ENV)/bin/activate
 	@$(VIRTUAL_ENV)/bin/pytest cli/fathom_web/test
-
-# Run even the browser tests and the coverage report. Works only on UNIXy
-# shells.
-all_js_test: $(JS)
-	./test/browser/start_http_server & echo "$$!" > pid
-	node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --recursive
-	kill $$(cat pid)
-	rm pid
 
 coveralls:
 	cat ./coverage/lcov.info | coveralls

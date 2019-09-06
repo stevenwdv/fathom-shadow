@@ -10,7 +10,7 @@ jobs:
       addons:
         firefox: latest
       script:
-        - make js_lint all_js_test
+        - make js_lint js_test
       after_success:
         - make coveralls
     - stage: test

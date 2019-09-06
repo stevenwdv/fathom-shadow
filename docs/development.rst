@@ -9,17 +9,19 @@ Tests and Examples
 
 To run the tests, run... ::
 
-    make lint all_js_test py_test
+    make lint test
 
 This will also run the linter and analyze test coverage. You can find the coverage report in the ``coverage`` directory and the HTML version under ``coverage/lcov-report/fathom/index.html``.
 
-If you're in the midst of a tornado of rapid development and the fancy stuff is too slow, you can invoke... ::
+You can also run the linter or tests for just the code of one language at a time::
 
-    make js_test py_test
+    make js_lint
+    make js_test
 
-...to run "just the tests, ma'am".
+    make py_lint
+    make py_test
 
-And if you want to drop into the debugger in the middle of a test, add a ``debugger;`` statement at your desired breakpoint, then run... ::
+If you want to drop into the debugger in the middle of a JS test, add a ``debugger;`` statement at your desired breakpoint, then run... ::
 
     make debugtest
 
