@@ -13,6 +13,9 @@ setup(
     packages=find_packages(exclude=['*.test']),
     url='https://mozilla.github.io/fathom/',
     install_requires=['click>=7.0,<8.0', 'tensorboardX>=1.6,<2.0', 'torch>=1.0,<2.0'],
+    dependency_links=[
+        'https://download.pytorch.org/whl/torch_stable.html'
+    ],
     entry_points={'console_scripts': [
         'fathom-extract = fathom_web.commands.extract:main',
         'fathom-list = fathom_web.commands.list:main',
