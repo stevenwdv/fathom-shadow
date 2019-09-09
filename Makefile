@@ -1,6 +1,6 @@
 # If there's an activated virtualenv, use that. Otherwise, make one in the cwd.
 VIRTUAL_ENV ?= $(CURDIR)/venv
-PATH := $(CURDIR)/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(PATH)
+PATH := $(CURDIR)/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
 
 JS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs/\.js/')
 
@@ -16,16 +16,16 @@ js_lint: $(JS)
 	@node_modules/.bin/eslint --ext mjs .
 	@node_modules/.bin/eslint test/browser
 
-py_lint: $(VIRTUAL_ENV)/bin/activate
-	@$(VIRTUAL_ENV)/bin/flake8 cli
+py_lint: $(VIRTUAL_ENV)/pyvenv.cfg
+	flake8 cli
 
 test: js_test py_test
 
 js_test: $(JS)
 	@node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --recursive
 
-py_test: $(VIRTUAL_ENV)/bin/activate
-	@$(VIRTUAL_ENV)/bin/pytest cli/fathom_web/test
+py_test: $(VIRTUAL_ENV)/pyvenv.cfg
+	pytest cli/fathom_web/test
 
 coveralls:
 	cat ./coverage/lcov.info | coveralls
@@ -51,14 +51,14 @@ clean:
 
 # Make a virtualenv at $VIRTUAL_ENV if there isn't one or if requirements have
 # changed. Install the dev requirements and the actual requirements.
-$(VIRTUAL_ENV)/bin/activate: tooling/dev-requirements.txt cli/setup.py
+$(VIRTUAL_ENV)/pyvenv.cfg: tooling/dev-requirements.txt cli/setup.py
 	python3 -m venv $(VIRTUAL_ENV)
-	$(VIRTUAL_ENV)/bin/pip install -r tooling/dev-requirements.txt
-	$(VIRTUAL_ENV)/bin/pip install -e cli
+	pip install -r tooling/dev-requirements.txt
+	pip install -e cli
 
 # Install the doc-building requirements.
-$(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/bin/activate tooling/doc-building-requirements.txt
-	$(VIRTUAL_ENV)/bin/pip install -r tooling/doc-building-requirements.txt
+$(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/pyvenv.cfg tooling/doc-building-requirements.txt
+	pip install -r tooling/doc-building-requirements.txt
 
 # .npm_installed is an empty file we touch whenever we run npm install. This
 # target redoes the install if package.json is newer than that file:
