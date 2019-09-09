@@ -1,6 +1,6 @@
 # If there's an activated virtualenv, use that. Otherwise, make one in the cwd.
-VIRTUAL_ENV ?= $(PWD)/venv
-PATH := $(PWD)/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(PATH)
+VIRTUAL_ENV ?= $(CURDIR)/venv
+PATH := $(CURDIR)/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(PATH)
 
 JS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs/\.js/')
 
