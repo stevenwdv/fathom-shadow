@@ -1,5 +1,6 @@
 # If there's an activated virtualenv, use that. Otherwise, make one in the cwd.
 VIRTUAL_ENV ?= $(CURDIR)/venv
+PYTHON3 ?= python3
 PATH := $(CURDIR)/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
 
 JS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs/\.js/')
@@ -52,9 +53,9 @@ clean:
 # Make a virtualenv at $VIRTUAL_ENV if there isn't one or if requirements have
 # changed. Install the dev requirements and the actual requirements.
 $(VIRTUAL_ENV)/pyvenv.cfg: tooling/dev-requirements.txt cli/setup.py
-	python3 -m venv $(VIRTUAL_ENV)
 	pip install -r tooling/dev-requirements.txt
 	pip install -e cli
+	$(PYTHON3) -m venv $(VIRTUAL_ENV)
 
 # Install the doc-building requirements.
 $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/pyvenv.cfg tooling/doc-building-requirements.txt
