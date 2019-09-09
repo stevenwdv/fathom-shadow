@@ -53,13 +53,13 @@ clean:
 # Make a virtualenv at $VIRTUAL_ENV if there isn't one or if requirements have
 # changed. Install the dev requirements and the actual requirements.
 $(VIRTUAL_ENV)/pyvenv.cfg: tooling/dev-requirements.txt cli/setup.py
-	pip install -r tooling/dev-requirements.txt
-	pip install -e cli
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
+	pip3 install -r tooling/dev-requirements.txt
+	pip3 install -e cli
 
 # Install the doc-building requirements.
 $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/pyvenv.cfg tooling/doc-building-requirements.txt
-	pip install -r tooling/doc-building-requirements.txt
+	pip3 install -r tooling/doc-building-requirements.txt
 
 # .npm_installed is an empty file we touch whenever we run npm install. This
 # target redoes the install if package.json is newer than that file:
