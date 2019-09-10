@@ -57,7 +57,7 @@ clean:
 $(VIRTUAL_ENV)/pyvenv.cfg: tooling/dev-requirements.txt cli/setup.py
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
 	pip3 install -r tooling/dev-requirements.txt
-	pip3 install -e cli
+	pip3 install -e cli -f https://download.pytorch.org/whl/torch_stable.html
 
 # Install the doc-building requirements.
 $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/pyvenv.cfg tooling/doc-building-requirements.txt
