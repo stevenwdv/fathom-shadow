@@ -1,7 +1,9 @@
 # If there's an activated virtualenv, use that. Otherwise, make one in the cwd.
-VIRTUAL_ENV ?= $(CURDIR)/venv
+# We avoid $(CURDIR) because it spits out /cygdrive/c/... on Windows Cygwin
+# installs and leads to things that don't work.
+VIRTUAL_ENV ?= ./venv
 PYTHON3 ?= python3
-PATH := $(CURDIR)/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
+PATH := ./node_modules/.bin:$(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
 
 JS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs/\.js/')
 
