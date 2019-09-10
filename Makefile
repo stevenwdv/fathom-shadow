@@ -25,7 +25,7 @@ py_lint: $(VIRTUAL_ENV)/pyvenv.cfg
 test: js_test py_test
 
 js_test: $(JS)
-	@node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- --recursive
+	@node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --recursive
 
 py_test: $(VIRTUAL_ENV)/pyvenv.cfg
 	pytest cli/fathom_web/test
