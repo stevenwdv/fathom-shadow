@@ -34,14 +34,14 @@ def test_html_string_has_right_angle_bracket_as_attribute_value():
 
 def test_html_string_is_multiline():
     """Some HTML tags may span multiple lines"""
-    input_string ='<html\n' + \
-                'class="foo"\n' + \
-                'id="bar"\n' + \
-                '>'
+    input_string = '<html\n' + \
+        'class="foo"\n' + \
+        'id="bar"\n' + \
+        '>'
     expected_string = f'<html data-fathom="{IN_TYPE}"\n' + \
-                'class="foo"\n' + \
-                'id="bar"\n' + \
-                '>'
+        'class="foo"\n' + \
+        'id="bar"\n' + \
+        '>'
     assert label_html_tags_in_html_string(input_string, IN_TYPE) == expected_string
 
 
@@ -50,7 +50,7 @@ def test_html_string_has_extra_spaces():
     Some HTML tags may have extra spaces inside the HTML tag. Note that having a space
     between the '<' and the tag name (e.g. 'html') is not valid HTML.
     """
-    input_string ='<html   >'
+    input_string = '<html   >'
     expected_string = f'<html data-fathom="{IN_TYPE}"   >'
     assert label_html_tags_in_html_string(input_string, IN_TYPE) == expected_string
 
@@ -61,7 +61,7 @@ def test_html_string_has_comments():
     occur within a tag.
     """
     input_string = '<!-- this is a comment --><html lang="en">\n' + \
-    '<!-- this is another comment --></html><!-- this is yet another comment -->'
+        '<!-- this is another comment --></html><!-- this is yet another comment -->'
     expected_string = f'<!-- this is a comment --><html data-fathom="{IN_TYPE}" lang="en">\n' + \
-    '<!-- this is another comment --></html><!-- this is yet another comment -->'
+        '<!-- this is another comment --></html><!-- this is yet another comment -->'
     assert label_html_tags_in_html_string(input_string, IN_TYPE) == expected_string

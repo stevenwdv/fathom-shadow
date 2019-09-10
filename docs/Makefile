@@ -1,6 +1,9 @@
 # Makefile for Sphinx documentation
 #
 
+# Let us find jsdoc:
+PATH := ../node_modules/.bin:$(PATH)
+
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build

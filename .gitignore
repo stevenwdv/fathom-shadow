@@ -1,3 +1,4 @@
+/.npm_installed
 /node_modules
 /*.log
 /coverage
@@ -11,3 +12,4 @@
 /cli/dist
 **/__pycache__
 /cli/*.egg-info
+/venv
