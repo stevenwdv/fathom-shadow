@@ -47,8 +47,8 @@ def main(in_directory, in_type, preserve_originals, number_of_workers):
     task = partial(label_task, in_directory, in_type, originals_dir, preserve_originals)
 
     with progressbar(pool.imap_unordered(task, list_of_items),
-                        label='Labeling pages',
-                        length=len(list_of_items)) as bar:
+                     label='Labeling pages',
+                     length=len(list_of_items)) as bar:
         for result in bar:
             if result is not None:
                 print_statements.append(result)
