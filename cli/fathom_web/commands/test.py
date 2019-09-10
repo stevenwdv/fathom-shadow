@@ -53,7 +53,7 @@ def main(testing_file, weights):
     testing vectors.
 
     WEIGHTS should be a JSON-formatted object like this. You can paste it
-    directly from the output of fathom-trainer.
+    directly from the output of fathom-train.
 
         {"coeffs": [["nextAnchorIsJavaScript", 1.1627885103225708],
         ["nextButtonTypeSubmit", 4.613410949707031],

@@ -2,6 +2,15 @@
 Version History
 ===============
 
+3.2
+===
+* Add :command:`fathom-test` tool for computing test-corpus accuracies.
+* Add :command:`fathom-extract` to break down frozen pages into small enough pieces to check into GitHub.
+* Add :command:`fathom-serve` to dodge the CORS errors that otherwise happen when loading extracted pages.
+* Add a test harness for the Python code.
+* Make :func:`isVisible` more correct and 13% less janky.
+* Add in-browser test harness for routines that need a real DOM.
+
 3.1
 ===
 * Make BAD-element-labeling reliable when using FathomFox to debug rulesets.

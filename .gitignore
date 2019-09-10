@@ -10,4 +10,6 @@
 !/test/browser/*
 /cli/build
 /cli/dist
+**/__pycache__
+/cli/*.egg-info
 /venv
