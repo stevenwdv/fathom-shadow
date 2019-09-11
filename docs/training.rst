@@ -71,6 +71,15 @@ We've mentioned a number of items to check into version control. Here is a direc
     runs/             -- TensorBoard data emitted by the trainer
     samples/
         negative/     -- Samples that do NOT contain what we're looking for
+            resources/
+                n4/
+                    1.css
+                    2.png
+                    3.css
+                    ...
+                n7/
+                n11/
+                ...
             n4.html
             n7.html
             n11.html
@@ -95,6 +104,68 @@ A few notes:
 
 * The negative examples' numerical IDs are in the same namespace as the positive ones, but we prefix them with an n. This is so that, when the trainer says it assumed a sample was negative because it had no labeled target elements, we can tell at a glance whether it was correct.
 * Samples start in the ``positive`` and ``negative`` folders. From there, they should be divided among the training, validation, and testing ones using :command:`fathom-pick`, which randomly moves a given number of files from one directory to another.
+
+Storing Large Corpora in Version Control
+========================================
+
+If you find that you need a large number of samples, you may bump up against the repository size limits imposed by your hosting service. In this scenario, we recommend using `Git Large File Storage (LFS) <https://git-lfs.github.com/>`_ to store the resources files created by :command:`fathom-extract`.
+
+Using fathom-extract
+--------------------
+
+:command:`fathom-extract` is a command line tool that pulls the inlined data URLs representing images and CSS files out of your samples, converts them into images and CSS files, places them in a newly created sample-specific directory within a newly created resources directory, and replaces the data URLs with references to the new files. This greatly decreases the size of each HTML file, and allows you to use Git-LFS to store the resources files.
+
+For example, if you have this directory of samples:
+
+.. code-block:: none
+
+    samples/
+        negative/
+            n4.html
+            n7.html
+            n11.html
+            ...
+
+Running... ::
+
+    fathom-extract samples/negative
+
+will change your directory to:
+
+.. code-block:: none
+
+    samples/
+        negative/
+            resources/
+                n4/
+                    1.png
+                    2.css
+                    3.css
+                    ...
+                n7/
+                    1.css
+                    2.jpg
+                    3.jpg
+                    ...
+                n11/
+                    1.css
+                    2.png
+                    3.jpg
+                    ...
+                ...
+            n4.html
+            n7.html
+            n11.html
+            ...
+
+Configuring Git-LFS
+-------------------
+
+With your extracted samples directory, you can follow the `Git-LFS Getting Started steps <https://git-lfs.github.com/>`_ to track your new resources directory. In step 2, instead of running the `git lfs track` command, you may find it easier to directly edit the `.gitattributes` file. For our resources directory, you would add the line: ::
+
+    samples/negative/resources/** filter=lfs diff=lfs merge=lfs -text
+
+The `/**` ensures the subdirectories are tracked.
 
 Running the Trainer
 ===================
