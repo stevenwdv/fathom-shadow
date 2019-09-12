@@ -20,7 +20,7 @@ js_lint: $(JS)
 	@node_modules/.bin/eslint test/browser
 
 py_lint: $(VIRTUAL_ENV)/pyvenv.cfg
-	flake8 cli
+	@flake8 cli
 
 test: js_test py_test
 
@@ -28,7 +28,7 @@ js_test: $(JS)
 	@node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --recursive
 
 py_test: $(VIRTUAL_ENV)/pyvenv.cfg
-	pytest cli/fathom_web/test
+	@pytest cli/fathom_web/test
 
 coveralls:
 	cat ./coverage/lcov.info | coveralls
