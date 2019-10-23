@@ -79,7 +79,7 @@ def test_no_files_to_list(tmp_path):
     )
     assert result.exit_code == 0
 
-    expected_file_contents = ""
+    expected_file_contents = ''
     actual_file_contents = out_file.read_text()
     assert expected_file_contents == actual_file_contents
 
@@ -140,7 +140,7 @@ def test_without_recursive(tmp_path):
     )
     assert result.exit_code == 0
 
-    expected_file_contents = ""
+    expected_file_contents = ''
     actual_file_contents = out_file.read_text()
     assert expected_file_contents == actual_file_contents
 
