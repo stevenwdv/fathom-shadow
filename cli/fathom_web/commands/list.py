@@ -41,7 +41,6 @@ def main(in_directory, base_dir, recursive, out_file):
         if out_file is not None:
             filenames_to_save.append(relative_path.as_posix() + '\n')
 
-
     if out_file is not None:
         if there_were_no_files:
             print(f'No .html files found in {in_directory}. Did not create {out_file}.')
