@@ -20,20 +20,22 @@ def test_end_to_end(tmp_path):
         list_main,
         [
             in_directory.as_posix(),
-            f'-b{base_dir.as_posix()}',
+            '-b',
+            f'{base_dir.as_posix()}',
             '-r',
-            f'-o{out_file.as_posix()}',
+            '-o',
+            f'{out_file.as_posix()}',
         ],
     )
     assert result.exit_code == 0
 
-    expected_file_contents = [
+    expected_file_contents = {
         a1.relative_to(base_dir).as_posix(),
         a2.relative_to(base_dir).as_posix(),
         b1.relative_to(base_dir).as_posix(),
         b2.relative_to(base_dir).as_posix(),
-    ]
-    actual_file_contents = out_file.read_text().splitlines()
+    }
+    actual_file_contents = set(out_file.read_text().splitlines())
     assert expected_file_contents == actual_file_contents
 
 
@@ -74,14 +76,13 @@ def test_no_files_to_list(tmp_path):
         list_main,
         [
             in_directory.as_posix(),
-            f'-o{out_file.as_posix()}',
+            '-o',
+            f'{out_file.as_posix()}',
         ],
     )
     assert result.exit_code == 0
 
-    expected_file_contents = ''
-    actual_file_contents = out_file.read_text()
-    assert expected_file_contents == actual_file_contents
+    assert 'No .html files found' in result.output
 
 
 def test_without_base_dir(tmp_path):
@@ -102,18 +103,19 @@ def test_without_base_dir(tmp_path):
         [
             in_directory.as_posix(),
             '-r',
-            f'-o{out_file.as_posix()}',
+            '-o',
+            f'{out_file.as_posix()}',
         ],
     )
     assert result.exit_code == 0
 
-    expected_file_contents = [
+    expected_file_contents = {
         a1.relative_to(in_directory).as_posix(),
         a2.relative_to(in_directory).as_posix(),
         b1.relative_to(in_directory).as_posix(),
         b2.relative_to(in_directory).as_posix(),
-    ]
-    actual_file_contents = out_file.read_text().splitlines()
+    }
+    actual_file_contents = set(out_file.read_text().splitlines())
     assert expected_file_contents == actual_file_contents
 
 
@@ -134,15 +136,15 @@ def test_without_recursive(tmp_path):
         list_main,
         [
             in_directory.as_posix(),
-            f'-b{base_dir.as_posix()}',
-            f'-o{out_file.as_posix()}',
+            '-b',
+            f'{base_dir.as_posix()}',
+            '-o',
+            f'{out_file.as_posix()}',
         ],
     )
     assert result.exit_code == 0
 
-    expected_file_contents = ''
-    actual_file_contents = out_file.read_text()
-    assert expected_file_contents == actual_file_contents
+    assert 'No .html files found' in result.output
 
 
 def test_in_directory_does_not_exist():
@@ -168,7 +170,8 @@ def test_base_dir_does_not_exist(tmp_path):
         list_main,
         [
             in_directory.as_posix(),
-            '-bfake_base_dir',
+            '-b',
+            'fake_base_dir',
         ],
     )
     # Assert the program exited with an error message about base_dir not existing
