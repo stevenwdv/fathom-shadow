@@ -52,8 +52,7 @@ def configure_firefox(fathom_fox, fathom_trainees, headless_browser):
     options = webdriver.FirefoxOptions()
     options.headless = headless_browser
     firefox = webdriver.Firefox(options=options)
-#   profile = webdriver.FirefoxProfile()
-#   firefox.install_addon('C:/Users/Daniel/code/fathom-fox/fathom-fox.xpi')
+    firefox.install_addon(r'C:\Users\Daniel\code\fathom-fox\addon\fathom-fox.xpi', temporary=True)
     return firefox
 
 
