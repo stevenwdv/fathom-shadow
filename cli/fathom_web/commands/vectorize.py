@@ -1,5 +1,7 @@
 import subprocess
 
+from selenium import webdriver
+
 
 def main(trainees_file, samples_directory, output_directory, headless_browser):
     sample_filenames = run_fathom_list(samples_directory)
@@ -11,11 +13,12 @@ def main(trainees_file, samples_directory, output_directory, headless_browser):
     else:
 #       fathom_fox, fathom_trainees = build_fathom_addons(trainees_file)
         file_server = set_up_file_server(samples_directory)
-#       firefox = configure_firefox(fathom_fox, fathom_trainees, headless_browser)
-#       firefox = set_up_vectorizer(firefox, sample_filenames)
-#       vector_file, firefox = run_vectorizer(firefox)
         # TODO: Delete this!!!
-        firefox = None
+        fathom_fox = None
+        fathom_trainees = None
+        firefox = configure_firefox(fathom_fox, fathom_trainees, headless_browser)
+#       firefox = set_up_vectorizer(firefox, sample_filenames)
+        vector_file, firefox = run_vectorizer(firefox)
         teardown(firefox, file_server)
 #   output_vector_file(vector_file, output_directory)
 
@@ -44,24 +47,34 @@ def set_up_file_server(samples_directory):
     return file_server
 
 
-#def configure_firefox(fathom_fox, fathom_trainees, headless_browser):
-#    # TODO: Use a profile with page caching disabled
-#    return firefox
-#
-#
+def configure_firefox(fathom_fox, fathom_trainees, headless_browser):
+    # TODO: Use a profile with page caching disabled
+    options = webdriver.FirefoxOptions()
+    options.headless = headless_browser
+    firefox = webdriver.Firefox(options=options)
+#   profile = webdriver.FirefoxProfile()
+#   firefox.install_addon('C:/Users/Daniel/code/fathom-fox/fathom-fox.xpi')
+    return firefox
+
+
 #def set_up_vectorizer(firefox, sample_filenames):
 #    return firefox
 #
 #
-#def run_vectorizer(firefox):
-#    return vector_file, firefox
-#
-#
+def run_vectorizer(firefox):
+    # TODO: Make this do real stuff!!!
+    firefox.get('https://www.mozilla.org/en-US/')
+    # TODO: Delete this!!!
+    vector_file = None
+    return vector_file, firefox
+
+
 def teardown(firefox, file_server):
     # TODO: This doesn't actually stop fathom-serve from running on my machine???
     file_server.terminate()
     file_server.kill()
     file_server.wait()
+    firefox.quit()
 
 
 #def output_vector_file(vector_file, output_directory):
@@ -70,4 +83,9 @@ def teardown(firefox, file_server):
 
 if __name__ == '__main__':
     # TODO: Real CLI arguments
-    main(None, 'C:/Users/Daniel/code/fathom-smoot/shopping/samples/training', None, None)
+    main(
+        trainees_file=None,
+        samples_directory='C:/Users/Daniel/code/fathom-smoot/shopping/samples/training',
+        output_directory=None,
+        headless_browser=False,
+    )
