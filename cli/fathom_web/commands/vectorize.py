@@ -1,17 +1,24 @@
+import os
 import pathlib
 import shutil
 import subprocess
 import time
 import zipfile
 
+from click import argument, command, option, Path
 from selenium import webdriver
 
 
-def main(trainees_file, samples_directory, output_directory, headless_browser):
+@command()
+@argument('trainees_file', type=str)
+@argument('samples_directory', type=Path(exists=True, file_okay=False))
+@option('--output-directory', '-o', type=Path(exists=True, file_okay=False), default=os.getcwd())
+@option('--show-browser', '-h', default=False, is_flag=True)
+def main(trainees_file, samples_directory, output_directory, show_browser):
     sample_filenames = run_fathom_list(samples_directory)
     fathom_fox, fathom_trainees = build_fathom_addons(trainees_file)
     file_server = run_file_server(samples_directory)
-    firefox = configure_firefox(fathom_fox, fathom_trainees, output_directory, headless_browser)
+    firefox = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
     firefox = set_up_vectorizer(firefox, sample_filenames)
     firefox = run_vectorizer(firefox)
     teardown(firefox, file_server)
@@ -23,6 +30,7 @@ def run_fathom_list(samples_directory):
     return sample_filenames
 
 
+# TODO: Get rid of these paths
 def build_fathom_addons(trainees_file):
     fathom_fox = create_xpi_for(pathlib.Path('C:/Users/Daniel/code/fathom-fox/addon'), 'fathom-fox')
     # TODO: Standardize the naming of trainees/ruleset?
@@ -50,12 +58,13 @@ def run_file_server(samples_directory):
     return file_server
 
 
-def configure_firefox(fathom_fox, fathom_trainees, output_directory, headless_browser):
+def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser):
     options = webdriver.FirefoxOptions()
-    options.headless = headless_browser
+    options.headless = not show_browser
     # TODO: Use a profile with page caching disabled
+    # TODO: Put this profile in a more appropriate location
     profile = webdriver.FirefoxProfile(r'C:\Users\Daniel\code\fathom\cli\fathom_web')
-    profile.set_preference("browser.download.dir", output_directory)
+    profile.set_preference("browser.download.dir", str(pathlib.Path(output_directory).absolute()))
     firefox = webdriver.Firefox(options=options, firefox_profile=profile)
     firefox.install_addon(fathom_fox, temporary=True)
     firefox.install_addon(fathom_trainees, temporary=True)
@@ -112,11 +121,6 @@ def teardown(firefox, file_server):
     file_server.wait()
 
 
+# TODO: Delete this!!!
 if __name__ == '__main__':
-    # TODO: Real CLI arguments
-    main(
-        trainees_file='C:/Users/Daniel/code/fathom-smoot/shopping/ruleset_factory.js',
-        samples_directory='C:/Users/Daniel/code/fathom-smoot/shopping/samples/training',
-        output_directory=r'C:\Users\Daniel\temp_vectors',
-        headless_browser=True,
-    )
+    main()
