@@ -1,4 +1,5 @@
 import pathlib
+import shutil
 import subprocess
 import time
 import zipfile
@@ -24,7 +25,11 @@ def run_fathom_list(samples_directory):
 
 def build_fathom_addons(trainees_file):
     fathom_fox = create_xpi_for(pathlib.Path('C:/Users/Daniel/code/fathom-fox/addon'), 'fathom-fox')
-    # TODO: Copy the trainees file into the trainees repo
+    # TODO: Standardize the naming of trainees/ruleset?
+    shutil.copyfile(trainees_file, 'C:/Users/Daniel/code/fathom-trainees/src/ruleset_factory.js')
+    # TODO: How to ensure `yarn` is available
+    # TODO: Cannot get this to run without using `shell=True`
+    subprocess.run('yarn --cwd C:/Users/Daniel/code/fathom-trainees/ build', shell=True)
     fathom_trainees = create_xpi_for(pathlib.Path('C:/Users/Daniel/code/fathom-trainees/addon'), 'fathom-trainees')
     return fathom_fox, fathom_trainees
 
@@ -98,7 +103,7 @@ def teardown(firefox, file_server):
 if __name__ == '__main__':
     # TODO: Real CLI arguments
     main(
-        trainees_file=None,
+        trainees_file='C:/Users/Daniel/code/fathom-smoot/shopping/ruleset_factory.js',
         samples_directory='C:/Users/Daniel/code/fathom-smoot/shopping/samples/training',
         output_directory=r'C:\Users\Daniel\temp_vectors',
         headless_browser=False,
