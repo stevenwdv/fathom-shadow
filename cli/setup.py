@@ -25,6 +25,7 @@ setup(
         'fathom-test = fathom_web.commands.test:main',
         'fathom-train = fathom_web.commands.train:main',
         'fathom-unzip = fathom_web.commands.unzip:main',
+        'fathom-vectorize = fathom_web.commands.vectorize:main',
     ]},
     package_data={
         'fathom_web': ['cert.pem'],
