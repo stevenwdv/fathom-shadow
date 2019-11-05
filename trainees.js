@@ -2,7 +2,6 @@
  * Boilerplate factored out of fathom-trainees so, as much as possible, the
  * only thing left in that web extension is the ruleset developer's code
  */
-import {setDefault} from './utilsForFrontend';
 import {type} from './side';
 
 /** Handle messages that come in from the FathomFox webext. */
