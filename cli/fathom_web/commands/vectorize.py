@@ -73,12 +73,16 @@ def set_up_vectorizer(firefox, sample_filenames):
 
 
 def run_vectorizer(firefox):
+    # TODO: This filename won't work all the time
+    file_to_look_for = pathlib.Path(firefox.profile.default_preferences['browser.download.dir']) / 'vectors.json'
+
     vectorize_button = firefox.find_element_by_id('freeze')
     vectorize_button.click()
 
-    # TODO: Monitor progress
-    # TODO: Wait until the vector file appears
-    time.sleep(10)
+    # TODO: Also stop if there is an error
+    while not file_to_look_for.exists():
+        # TODO: Monitor progress
+        time.sleep(1)
 
     return firefox
 
@@ -86,7 +90,6 @@ def run_vectorizer(firefox):
 def teardown(firefox, file_server):
     firefox.quit()
     # TODO: This doesn't actually stop fathom-serve from running on my machine???
-    # TODO: Try to Popen something else (while True) and then kill it
     file_server.terminate()
     file_server.kill()
     file_server.wait()
