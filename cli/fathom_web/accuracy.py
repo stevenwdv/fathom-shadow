@@ -148,7 +148,9 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positive=Non
     if false_positive is not None:
         fp_ci_low, fp_ci_high = confidence_interval(false_positive, number_of_positives)
         fn_ci_low, fn_ci_high = confidence_interval(false_negative, number_of_samples - number_of_positives)
-        falses = f'  FP: {false_positive:.3f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})  FN: {false_negative:.3f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})'
+        falses = ('\n'
+                  f'                         FP:  {false_positive:.5f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})\n'
+                  f'                         FN:  {false_negative:.5f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})')
     else:
         falses = ''
     return f'{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'
