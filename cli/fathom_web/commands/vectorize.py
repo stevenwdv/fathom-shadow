@@ -81,15 +81,27 @@ def run_vectorizer(firefox):
     # TODO: This filename won't work all the time
     file_to_look_for = pathlib.Path(firefox.profile.default_preferences['browser.download.dir']) / 'vectors.json'
 
+    status_box = firefox.find_element_by_id('status')
     vectorize_button = firefox.find_element_by_id('freeze')
     vectorize_button.click()
 
-    # TODO: Also stop if there is an error
     while not file_to_look_for.exists():
+        if 'failed:' in status_box.text:
+            error = extract_error_from(status_box.text)
+            print(f'Vectorization failed with error:\n{error}')
+            break
         # TODO: Monitor progress
         time.sleep(1)
 
     return firefox
+
+
+def extract_error_from(status_text):
+    lines = status_text.splitlines()
+    for line in lines:
+        if 'failed:' in line:
+            return line
+    raise RuntimeError(f'There was a vectorizer error, but we could not find it in {status_text}')
 
 
 def teardown(firefox, file_server):
@@ -106,5 +118,5 @@ if __name__ == '__main__':
         trainees_file='C:/Users/Daniel/code/fathom-smoot/shopping/ruleset_factory.js',
         samples_directory='C:/Users/Daniel/code/fathom-smoot/shopping/samples/training',
         output_directory=r'C:\Users\Daniel\temp_vectors',
-        headless_browser=False,
+        headless_browser=True,
     )
