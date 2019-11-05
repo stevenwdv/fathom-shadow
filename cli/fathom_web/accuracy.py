@@ -100,7 +100,7 @@ def success_on_page(model, page):
 
 def thermometer(ratio):
     """Return a graphical representation of a decimal with linear scale."""
-    text = '{ratio:.8f}'.format(ratio=ratio)
+    text = f'{ratio:.8f}'
     tenth = min(floor(ratio * 10), 9)  # bucket to [0..9]
     return (style(text[:tenth], bg='white', fg='black') +
             style(text[tenth:], bg='bright_white', fg='black'))
@@ -148,9 +148,7 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positive=Non
     if false_positive is not None:
         fp_ci_low, fp_ci_high = confidence_interval(false_positive, number_of_positives)
         fn_ci_low, fn_ci_high = confidence_interval(false_negative, number_of_samples - number_of_positives)
-        falses = '  FP: {false_positive:.3f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})  FN: {false_negative:.3f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})'.format(false_positive=false_positive, fp_ci_low=fp_ci_low, fp_ci_high=fp_ci_high, false_negative=false_negative, fn_ci_low=fn_ci_low, fn_ci_high=fn_ci_high)
+        falses = f'  FP: {false_positive:.3f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})  FN: {false_negative:.3f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})'
     else:
         falses = ''
-    return '{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'.format(description=description, accuracy=accuracy, ci_low=ci_low, ci_high=ci_high, falses=falses)
-
-
+    return f'{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'

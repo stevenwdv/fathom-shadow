@@ -43,7 +43,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
             loss.backward()  # Compute gradients.
             optimizer.step()
     if stopped_early:
-        print('Stopping early at iteration {t}, just before validation error rose.'.format(t=t))
+        print(f'Stopping early at iteration {t}, just before validation error rose.')
 
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
@@ -60,7 +60,7 @@ def pretty_coeffs(model, feature_names):
     dict_params = {}
     for name, param in model.named_parameters():
         dict_params[name] = param.data.tolist()
-    pretty = ',\n        '.join('["{k}", {v}]'.format(k=k, v=v) for k, v in zip(feature_names, dict_params['0.weight'][0]))
+    pretty = ',\n        '.join(f'["{k}", {v}]' for k, v in zip(feature_names, dict_params['0.weight'][0]))
     return ("""{{"coeffs": [
         {coeffs}
     ],
