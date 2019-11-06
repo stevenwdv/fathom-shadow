@@ -1,5 +1,6 @@
 import os
 import pathlib
+from pkg_resources import resource_filename
 import shutil
 import subprocess
 import time
@@ -71,9 +72,10 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     print('Configuring Firefox...', end='', flush=True)
     options = webdriver.FirefoxOptions()
     options.headless = not show_browser
-    # TODO: Use a profile with page caching disabled
-    # TODO: Put this profile in a more appropriate location
-    profile = webdriver.FirefoxProfile(r'C:\Users\Daniel\code\fathom\cli\fathom_web')
+    # TODO: Put the profile in the repo
+    profile_path = resource_filename('fathom_web', 'vectorize_profile')
+    profile = webdriver.FirefoxProfile(profile_path)
+    profile.set_preference("browser.download.folderList", 2)
     profile.set_preference("browser.download.dir", str(pathlib.Path(output_directory).absolute()))
     firefox = webdriver.Firefox(options=options, firefox_profile=profile)
     firefox.install_addon(fathom_fox, temporary=True)
