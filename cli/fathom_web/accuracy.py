@@ -143,16 +143,35 @@ def accuracy_per_page(model, pages):
     return (successes / len(pages)), '\n'.join(report_lines)
 
 
-def pretty_accuracy(description, accuracy, number_of_samples, false_positives=None, false_negatives=None, number_of_positives=None):
+def pretty_accuracy(description, accuracy, number_of_samples, false_positives=None, false_negatives=None, positives=None):
+    """Return a big printable block of numbers describing the accuracy and
+    error bars of a model.
+
+    :arg accuracy: The accuracy of the model, expressed as a ratio 0..1
+    :arg number_of_samples: The number of tags considered while training or
+        testing the model
+    :arg false_positives: The number of positives the model yielded that should
+        have been negative
+    :arg false_negatives: The number of negatives the model yielded that should
+        have been positive
+    :arg positives: The number of real positive tags in the corpus
+
+    """
     ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
     if false_positives is not None:
         false_positive_ratio = false_positives / number_of_samples
         false_negative_ratio = false_negatives / number_of_samples
-        fp_ci_low, fp_ci_high = confidence_interval(false_positive_ratio, number_of_positives)
-        fn_ci_low, fn_ci_high = confidence_interval(false_negative_ratio, number_of_samples - number_of_positives)
+        fp_ci_low, fp_ci_high = confidence_interval(false_positive_ratio, positives)
+        fn_ci_low, fn_ci_high = confidence_interval(false_negative_ratio, number_of_samples - positives)
+        # https://en.wikipedia.org/wiki/Precision_and_recall#/media/File:Precisionrecall.svg
+        # really helps when thinking about the Venn diagrams of these values.
+        true_positives = positives - false_negatives
+        precision = true_positives / (true_positives + false_positives)
+        recall = true_positives / positives
         falses = ('\n'
                   f'                         FP:  {false_positive_ratio:.5f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})\n'
-                  f'                         FN:  {false_negative_ratio:.5f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})\n')
+                  f'                         FN:  {false_negative_ratio:.5f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})\n'
+                  f'                  Precision:  {precision:.5f}    Recall: {recall:.5f}\n')
     else:
         falses = ''
     return f'{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'
