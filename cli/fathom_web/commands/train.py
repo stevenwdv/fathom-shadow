@@ -122,18 +122,38 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         validation_arg = validation_ins, validation_outs
     else:
         validation_arg = None
-    model = learn(learning_rate, iterations, x, y, validation=validation_arg, stop_early=stop_early, run_comment=full_comment)
+    model = learn(learning_rate,
+                  iterations,
+                  x,
+                  y,
+                  validation=validation_arg,
+                  stop_early=stop_early,
+                  run_comment=full_comment)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positive, false_negative = accuracy_per_tag(y, model(x))
-    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ', accuracy, len(x), false_positive, false_negative, num_yes))
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
+    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ',
+                          accuracy,
+                          len(x),
+                          false_positives,
+                          false_negatives,
+                          num_yes))
     if validation_file:
-        accuracy, false_positive, false_negative = accuracy_per_tag(validation_outs, model(validation_ins))
-        print(pretty_accuracy('Validation accuracy per tag: ', accuracy, len(validation_ins), false_positive, false_negative, validation_yes))
+        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins))
+        print(pretty_accuracy('Validation accuracy per tag: ',
+                              accuracy,
+                              len(validation_ins),
+                              false_positives,
+                              false_negatives,
+                              validation_yes))
     accuracy, training_report = accuracy_per_page(model, training_data['pages'])
-    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per page:', accuracy, len(training_data['pages'])))
+    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per page:',
+                          accuracy,
+                          len(training_data['pages'])))
     if validation_file:
         accuracy, validation_report = accuracy_per_page(model, validation_data['pages'])
-        print(pretty_accuracy('Validation accuracy per page:', accuracy, len(validation_data['pages'])))
+        print(pretty_accuracy('Validation accuracy per page:',
+                              accuracy,
+                              len(validation_data['pages'])))
 
     if not quiet:
         print('\nTraining per-page results:\n', training_report, sep='')

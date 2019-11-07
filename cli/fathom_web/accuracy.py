@@ -25,7 +25,7 @@ def accuracy_per_tag(y, y_pred):
         false_negatives = ((absolute_confidence_error >= 0.5) & (y == 1)).sum()
         number_of_tags = len(y)
         false_positives = number_of_tags - successes - false_negatives
-        return (successes / number_of_tags), (false_positives / number_of_tags), (false_negatives / number_of_tags)
+        return (successes / number_of_tags), false_positives, false_negatives
 
 
 def confidence_interval(success_ratio, number_of_samples):
@@ -143,14 +143,16 @@ def accuracy_per_page(model, pages):
     return (successes / len(pages)), '\n'.join(report_lines)
 
 
-def pretty_accuracy(description, accuracy, number_of_samples, false_positive=None, false_negative=None, number_of_positives=None):
+def pretty_accuracy(description, accuracy, number_of_samples, false_positives=None, false_negatives=None, number_of_positives=None):
     ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
-    if false_positive is not None:
-        fp_ci_low, fp_ci_high = confidence_interval(false_positive, number_of_positives)
-        fn_ci_low, fn_ci_high = confidence_interval(false_negative, number_of_samples - number_of_positives)
+    if false_positives is not None:
+        false_positive_ratio = false_positives / number_of_samples
+        false_negative_ratio = false_negatives / number_of_samples
+        fp_ci_low, fp_ci_high = confidence_interval(false_positive_ratio, number_of_positives)
+        fn_ci_low, fn_ci_high = confidence_interval(false_negative_ratio, number_of_samples - number_of_positives)
         falses = ('\n'
-                  f'                         FP:  {false_positive:.5f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})\n'
-                  f'                         FN:  {false_negative:.5f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})')
+                  f'                         FP:  {false_positive_ratio:.5f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})\n'
+                  f'                         FN:  {false_negative_ratio:.5f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})\n')
     else:
         falses = ''
     return f'{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'
