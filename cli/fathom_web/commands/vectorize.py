@@ -1,6 +1,5 @@
 import os
 import pathlib
-from pkg_resources import resource_filename
 import shutil
 import subprocess
 import time
