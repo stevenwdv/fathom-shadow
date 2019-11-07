@@ -26,9 +26,6 @@ setup(
         'fathom-train = fathom_web.commands.train:main',
         'fathom-unzip = fathom_web.commands.unzip:main',
     ]},
-    package_data={
-        'fathom_web': ['cert.pem'],
-    },
     classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',
