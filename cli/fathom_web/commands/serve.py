@@ -12,14 +12,14 @@ from click import command, option, Path
         help='The directory to serve files from (default: current working directory')
 def main(directory, port):
     """
-    Serves the files in DIRECTORY over a local HTTP server: https://localhost:PORT.
+    Serves the files in DIRECTORY over a local HTTP server: http://localhost:PORT.
 
     This is useful for vectorizing samples using FathomFox. FathomFox expects you to provide,
     in the vectorizer page, an address to an HTTP server that is serving your samples.
     """
     with cd(directory):
         server = HTTPServer(('localhost', port), SimpleHTTPRequestHandler)
-        print(f'Serving {directory} over https://localhost:{port}.')
+        print(f'Serving {directory} over http://localhost:{port}.')
         print('Press Ctrl+C to stop.')
         server.serve_forever()
 
