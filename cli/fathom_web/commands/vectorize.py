@@ -37,9 +37,8 @@ def run_fathom_list(samples_directory):
 def build_fathom_addons(trainees_file):
     print('Building fathom addons for Firefox...', end='', flush=True)
     fathom_fox = create_xpi_for(pathlib.Path('C:/Users/Daniel/code/fathom-fox/addon'), 'fathom-fox')
-    # TODO: Standardize the naming of trainees/ruleset?
+    # TODO: Assume the file is called ruleset.js
     shutil.copyfile(trainees_file, 'C:/Users/Daniel/code/fathom-trainees/src/ruleset_factory.js')
-    # TODO: How to ensure `yarn` is available
     # TODO: Cannot get this to run without using `shell=True`
     subprocess.run('yarn --cwd C:/Users/Daniel/code/fathom-trainees/ build', shell=True, capture_output=True)
     fathom_trainees = create_xpi_for(pathlib.Path('C:/Users/Daniel/code/fathom-trainees/addon'), 'fathom-trainees')
@@ -57,7 +56,7 @@ def create_xpi_for(directory, name):
 
 def run_file_server(samples_directory):
     print('Starting HTTPS file server...', end='', flush=True)
-    # TODO: Any use in capturing the output here?
+    # TODO: Refactor the serving code to a thread and use the thread here
     file_server = subprocess.Popen(
         ['fathom-serve', '-d', samples_directory],
         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
@@ -72,11 +71,12 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     print('Configuring Firefox...', end='', flush=True)
     options = webdriver.FirefoxOptions()
     options.headless = not show_browser
-    # TODO: Put the profile in the repo
-    profile_path = resource_filename('fathom_web', 'vectorize_profile')
-    profile = webdriver.FirefoxProfile(profile_path)
+    profile = webdriver.FirefoxProfile()
     profile.set_preference("browser.download.folderList", 2)
     profile.set_preference("browser.download.dir", str(pathlib.Path(output_directory).absolute()))
+    profile.set_preference("browser.cache.disk.enable", False)
+    profile.set_preference("browser.cache.memory.enable", False)
+    profile.set_preference("browser.cache.offline.enable", False)
     firefox = webdriver.Firefox(options=options, firefox_profile=profile)
     firefox.install_addon(fathom_fox, temporary=True)
     firefox.install_addon(fathom_trainees, temporary=True)
@@ -97,7 +97,7 @@ def run_vectorizer(firefox, sample_filenames):
     pages_text_area = firefox.find_element_by_id('pages')
     pages_text_area.send_keys(sample_filenames)
 
-    # TODO: This filename won't work all the time
+    # TODO: Look for new vector*.json file
     file_to_look_for = pathlib.Path(firefox.profile.default_preferences['browser.download.dir']) / 'vectors.json'
     number_of_samples = len(sample_filenames.splitlines())
     status_box = firefox.find_element_by_id('status')

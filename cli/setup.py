@@ -28,7 +28,7 @@ setup(
         'fathom-vectorize = fathom_web.commands.vectorize:main',
     ]},
     package_data={
-        'fathom_web': ['cert.pem', 'vectorize_profile/**'],
+        'fathom_web': ['cert.pem'],
     },
     classifiers=[
         'Intended Audience :: Developers',
