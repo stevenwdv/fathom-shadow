@@ -1,27 +1,64 @@
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
 import pathlib
 import shutil
 import subprocess
+from threading import Event, Thread
 import time
 import zipfile
 
 from click import argument, command, option, Path, progressbar
 from selenium import webdriver
 
+from fathom_web.commands.serve import cd
 
-# TODO: ctrl+c'ing out of this on the command prompt doesn't stop the subprocesses???
+
+class QuiteRequestHandler(SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        pass
+
+
+class StoppableThread(Thread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._stop_event = Event()
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
+
+
+class StoppableHTTPServer(StoppableThread):
+    def __init__(self, directory, port, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.directory = directory
+        self.port = port
+
+    def run(self):
+        with cd(self.directory):
+            server = HTTPServer(('localhost', self.port), QuiteRequestHandler)
+            while not self.stopped():
+                server.handle_request()
+
+
 @command()
 @argument('trainees_file', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
 @option('--output-directory', '-o', type=Path(exists=True, file_okay=False), default=os.getcwd())
 @option('--show-browser', '-s', default=False, is_flag=True)
 def main(trainees_file, samples_directory, output_directory, show_browser):
-    sample_filenames = run_fathom_list(samples_directory)
-    fathom_fox, fathom_trainees = build_fathom_addons(trainees_file)
-    file_server = run_file_server(samples_directory)
-    firefox = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
-    firefox = run_vectorizer(firefox, sample_filenames)
-    teardown(firefox, file_server)
+    firefox = None
+    file_server = None
+    try:
+        sample_filenames = run_fathom_list(samples_directory)
+        fathom_fox, fathom_trainees = build_fathom_addons(trainees_file)
+        file_server = run_file_server(samples_directory)
+        firefox = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
+        firefox = run_vectorizer(firefox, sample_filenames)
+    finally:
+        teardown(firefox, file_server)
 
 
 def run_fathom_list(samples_directory):
@@ -39,6 +76,7 @@ def build_fathom_addons(trainees_file):
     # TODO: Assume the file is called ruleset.js
     shutil.copyfile(trainees_file, 'C:/Users/Daniel/code/fathom-trainees/src/ruleset_factory.js')
     # TODO: Cannot get this to run without using `shell=True`
+    # TODO: Handle KeyboardInterrupt on this command. Perhaps getting rid of the shell part would do it?
     subprocess.run('yarn --cwd C:/Users/Daniel/code/fathom-trainees/ build', shell=True, capture_output=True)
     fathom_trainees = create_xpi_for(pathlib.Path('C:/Users/Daniel/code/fathom-trainees/addon'), 'fathom-trainees')
     print('Done')
@@ -55,13 +93,9 @@ def create_xpi_for(directory, name):
 
 def run_file_server(samples_directory):
     print('Starting HTTPS file server...', end='', flush=True)
-    # TODO: Refactor the serving code to a thread and use the thread here
-    file_server = subprocess.Popen(
-        ['fathom-serve', '-d', samples_directory],
-        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    # TODO: Allow user to specify port?
+    file_server = StoppableHTTPServer(directory=samples_directory, port=8000)
+    file_server.start()
     print('Done')
     return file_server
 
@@ -128,8 +162,8 @@ def extract_error_from(status_text):
 
 
 def teardown(firefox, file_server):
-    firefox.quit()
-    # TODO: This doesn't actually stop fathom-serve from running on my machine???
-    file_server.terminate()
-    file_server.kill()
-    file_server.wait()
+    if firefox:
+        # TODO: ctrl+c is being passed to the server :( :( :(
+        firefox.quit()
+    if file_server:
+        file_server.stop()
