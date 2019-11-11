@@ -1,47 +1,15 @@
+from functools import partial
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
 import pathlib
 import shutil
 import subprocess
-from threading import Event, Thread
+from threading import Thread
 import time
 import zipfile
 
 from click import argument, command, option, Path, progressbar
 from selenium import webdriver
-
-from fathom_web.commands.serve import cd
-
-
-class QuiteRequestHandler(SimpleHTTPRequestHandler):
-    def log_message(self, format, *args):
-        pass
-
-
-class StoppableThread(Thread):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._stop_event = Event()
-
-    def stop(self):
-        self._stop_event.set()
-
-    def stopped(self):
-        return self._stop_event.is_set()
-
-
-class StoppableHTTPServer(StoppableThread):
-    def __init__(self, directory, port, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.directory = directory
-        self.port = port
-
-    def run(self):
-        with cd(self.directory):
-            server = HTTPServer(('localhost', self.port), QuiteRequestHandler)
-            while not self.stopped():
-                # TODO: Add some timeout
-                server.handle_request()
 
 
 @command()
@@ -98,7 +66,8 @@ def create_xpi_for(directory, name):
 def run_file_server(samples_directory):
     print('Starting HTTP file server...', end='', flush=True)
     # TODO: Allow user to specify port?
-    server = HTTPServer(('localhost', 8000), SimpleHTTPRequestHandler)
+    RequestHandler = partial(SimpleHTTPRequestHandler, directory=samples_directory)
+    server = HTTPServer(('localhost', 8000), RequestHandler)
     server_thread = Thread(target=server.serve_forever)
     server_thread.start()
     print('Done')
@@ -143,10 +112,6 @@ def run_vectorizer(firefox, sample_filenames):
     completed_samples = 0
     print('Done')
 
-    firefox.close()
-    firefox.quit()
-    return firefox
-
     with progressbar(length=number_of_samples, label='Running Vectorizer...') as bar:
         vectorize_button.click()
         while not file_to_look_for.exists():
@@ -171,14 +136,13 @@ def extract_error_from(status_text):
 
 
 def teardown(firefox, server, server_thread):
-#   if firefox:
-#       # TODO: ctrl+c is being passed to the server :( :( :(
-#       firefox.quit()
+    if firefox:
+        # TODO: ctrl+c is being passed to the server :( :( :(
+        firefox.quit()
     print('a')
     if server:
         server.shutdown()
         server_thread.join()
-
     print('b')
 
 
