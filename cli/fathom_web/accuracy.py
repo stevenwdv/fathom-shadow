@@ -25,7 +25,7 @@ def accuracy_per_tag(y, y_pred):
         false_negatives = ((absolute_confidence_error >= 0.5) & (y == 1)).sum()
         number_of_tags = len(y)
         false_positives = number_of_tags - successes - false_negatives
-        return (successes / number_of_tags), (false_positives / number_of_tags), (false_negatives / number_of_tags)
+        return (successes / number_of_tags), false_positives, false_negatives
 
 
 def confidence_interval(success_ratio, number_of_samples):
@@ -100,7 +100,7 @@ def success_on_page(model, page):
 
 def thermometer(ratio):
     """Return a graphical representation of a decimal with linear scale."""
-    text = '{ratio:.8f}'.format(ratio=ratio)
+    text = f'{ratio:.8f}'
     tenth = min(floor(ratio * 10), 9)  # bucket to [0..9]
     return (style(text[:tenth], bg='white', fg='black') +
             style(text[tenth:], bg='bright_white', fg='black'))
@@ -143,14 +143,35 @@ def accuracy_per_page(model, pages):
     return (successes / len(pages)), '\n'.join(report_lines)
 
 
-def pretty_accuracy(description, accuracy, number_of_samples, false_positive=None, false_negative=None, number_of_positives=None):
+def pretty_accuracy(description, accuracy, number_of_samples, false_positives=None, false_negatives=None, positives=None):
+    """Return a big printable block of numbers describing the accuracy and
+    error bars of a model.
+
+    :arg accuracy: The accuracy of the model, expressed as a ratio 0..1
+    :arg number_of_samples: The number of tags considered while training or
+        testing the model
+    :arg false_positives: The number of positives the model yielded that should
+        have been negative
+    :arg false_negatives: The number of negatives the model yielded that should
+        have been positive
+    :arg positives: The number of real positive tags in the corpus
+
+    """
     ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
-    if false_positive is not None:
-        fp_ci_low, fp_ci_high = confidence_interval(false_positive, number_of_positives)
-        fn_ci_low, fn_ci_high = confidence_interval(false_negative, number_of_samples - number_of_positives)
-        falses = '  FP: {false_positive:.3f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})  FN: {false_negative:.3f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})'.format(false_positive=false_positive, fp_ci_low=fp_ci_low, fp_ci_high=fp_ci_high, false_negative=false_negative, fn_ci_low=fn_ci_low, fn_ci_high=fn_ci_high)
+    if false_positives is not None:
+        false_positive_ratio = false_positives / number_of_samples
+        false_negative_ratio = false_negatives / number_of_samples
+        fp_ci_low, fp_ci_high = confidence_interval(false_positive_ratio, positives)
+        fn_ci_low, fn_ci_high = confidence_interval(false_negative_ratio, number_of_samples - positives)
+        # https://en.wikipedia.org/wiki/Precision_and_recall#/media/File:Precisionrecall.svg
+        # really helps when thinking about the Venn diagrams of these values.
+        true_positives = positives - false_negatives
+        precision = true_positives / (true_positives + false_positives)
+        recall = true_positives / positives
+        falses = ('\n'
+                  f'                         FP:  {false_positive_ratio:.5f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})\n'
+                  f'                         FN:  {false_negative_ratio:.5f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})\n'
+                  f'                  Precision:  {precision:.5f}    Recall: {recall:.5f}\n')
     else:
         falses = ''
-    return '{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'.format(description=description, accuracy=accuracy, ci_low=ci_low, ci_high=ci_high, falses=falses)
-
-
+    return f'{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'
