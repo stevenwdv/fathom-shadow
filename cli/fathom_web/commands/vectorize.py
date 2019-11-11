@@ -40,25 +40,30 @@ class StoppableHTTPServer(StoppableThread):
         with cd(self.directory):
             server = HTTPServer(('localhost', self.port), QuiteRequestHandler)
             while not self.stopped():
+                # TODO: Add some timeout
                 server.handle_request()
 
 
 @command()
 @argument('trainees_file', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
+@argument('fathom_fox_dir', type=Path(exists=True, file_okay=False))
+@argument('fathom_trainees_dir', type=Path(exists=True, file_okay=False))
 @option('--output-directory', '-o', type=Path(exists=True, file_okay=False), default=os.getcwd())
 @option('--show-browser', '-s', default=False, is_flag=True)
-def main(trainees_file, samples_directory, output_directory, show_browser):
+def main(trainees_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, output_directory, show_browser):
     firefox = None
-    file_server = None
+    server = None
+    server_thread = None
     try:
         sample_filenames = run_fathom_list(samples_directory)
-        fathom_fox, fathom_trainees = build_fathom_addons(trainees_file)
-        file_server = run_file_server(samples_directory)
+        fathom_fox, fathom_trainees = build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir)
+        server, server_thread = run_file_server(samples_directory)
         firefox = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
         firefox = run_vectorizer(firefox, sample_filenames)
     finally:
-        teardown(firefox, file_server)
+        teardown(firefox, server, server_thread)
+    print('c')
 
 
 def run_fathom_list(samples_directory):
@@ -69,16 +74,15 @@ def run_fathom_list(samples_directory):
     return sample_filenames
 
 
-# TODO: Get rid of these paths
-def build_fathom_addons(trainees_file):
+def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
     print('Building fathom addons for Firefox...', end='', flush=True)
-    fathom_fox = create_xpi_for(pathlib.Path('C:/Users/Daniel/code/fathom-fox/addon'), 'fathom-fox')
+    fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox')
     # TODO: Assume the file is called ruleset.js
-    shutil.copyfile(trainees_file, 'C:/Users/Daniel/code/fathom-trainees/src/ruleset_factory.js')
+    shutil.copyfile(trainees_file, f'{fathom_trainees_dir}/src/ruleset_factory.js')
     # TODO: Cannot get this to run without using `shell=True`
     # TODO: Handle KeyboardInterrupt on this command. Perhaps getting rid of the shell part would do it?
-    subprocess.run('yarn --cwd C:/Users/Daniel/code/fathom-trainees/ build', shell=True, capture_output=True)
-    fathom_trainees = create_xpi_for(pathlib.Path('C:/Users/Daniel/code/fathom-trainees/addon'), 'fathom-trainees')
+    subprocess.run(f'yarn --cwd {fathom_trainees_dir} build', shell=True, capture_output=True)
+    fathom_trainees = create_xpi_for(pathlib.Path(fathom_trainees_dir) / 'addon', 'fathom-trainees')
     print('Done')
     return fathom_fox, fathom_trainees
 
@@ -92,12 +96,13 @@ def create_xpi_for(directory, name):
 
 
 def run_file_server(samples_directory):
-    print('Starting HTTPS file server...', end='', flush=True)
+    print('Starting HTTP file server...', end='', flush=True)
     # TODO: Allow user to specify port?
-    file_server = StoppableHTTPServer(directory=samples_directory, port=8000)
-    file_server.start()
+    server = HTTPServer(('localhost', 8000), SimpleHTTPRequestHandler)
+    server_thread = Thread(target=server.serve_forever)
+    server_thread.start()
     print('Done')
-    return file_server
+    return server, server_thread
 
 
 def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser):
@@ -138,6 +143,10 @@ def run_vectorizer(firefox, sample_filenames):
     completed_samples = 0
     print('Done')
 
+    firefox.close()
+    firefox.quit()
+    return firefox
+
     with progressbar(length=number_of_samples, label='Running Vectorizer...') as bar:
         vectorize_button.click()
         while not file_to_look_for.exists():
@@ -161,9 +170,17 @@ def extract_error_from(status_text):
     raise RuntimeError(f'There was a vectorizer error, but we could not find it in {status_text}')
 
 
-def teardown(firefox, file_server):
-    if firefox:
-        # TODO: ctrl+c is being passed to the server :( :( :(
-        firefox.quit()
-    if file_server:
-        file_server.stop()
+def teardown(firefox, server, server_thread):
+#   if firefox:
+#       # TODO: ctrl+c is being passed to the server :( :( :(
+#       firefox.quit()
+    print('a')
+    if server:
+        server.shutdown()
+        server_thread.join()
+
+    print('b')
+
+
+if __name__ == '__main__':
+    main()
