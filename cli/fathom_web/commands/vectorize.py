@@ -3,6 +3,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
 import pathlib
 import shutil
+import signal
 import subprocess
 from threading import Thread
 import time
@@ -21,17 +22,24 @@ from selenium import webdriver
 @option('--show-browser', '-s', default=False, is_flag=True)
 def main(trainees_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, output_directory, show_browser):
     firefox = None
+    firefox_pid = None
+    geckoview_pid = None
     server = None
     server_thread = None
+    graceful_shutdown = False
     try:
         sample_filenames = run_fathom_list(samples_directory)
         fathom_fox, fathom_trainees = build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir)
         server, server_thread = run_file_server(samples_directory)
-        firefox = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
+        firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
         firefox = run_vectorizer(firefox, sample_filenames)
+        graceful_shutdown = True
+    except KeyboardInterrupt:
+        # Swallow the KeyboardInterrupt here so we can perform our teardown
+        # instead of letting Click do something with it.
+        pass
     finally:
-        teardown(firefox, server, server_thread)
-    print('c')
+        teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown)
 
 
 def run_fathom_list(samples_directory):
@@ -88,7 +96,7 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     firefox.install_addon(fathom_fox, temporary=True)
     firefox.install_addon(fathom_trainees, temporary=True)
     print('Done')
-    return firefox
+    return firefox, firefox.capabilities['moz:processID'], firefox.service.process.pid
 
 
 def run_vectorizer(firefox, sample_filenames):
@@ -135,16 +143,19 @@ def extract_error_from(status_text):
     raise RuntimeError(f'There was a vectorizer error, but we could not find it in {status_text}')
 
 
-def teardown(firefox, server, server_thread):
-    if firefox:
-        # TODO: ctrl+c is being passed to the server :( :( :(
+def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown):
+    if graceful_shutdown:
         firefox.quit()
-    print('a')
-    if server:
         server.shutdown()
         server_thread.join()
-    print('b')
-
-
-if __name__ == '__main__':
-    main()
+    else:
+        # This is the only way I could get killing the program with ctrl+c to work properly.
+        if server:
+            server.shutdown()
+            server_thread.join()
+        if firefox:
+            try:
+                os.kill(firefox_pid, signal.CTRL_C_EVENT)
+            except SystemError:
+                pass
+            os.kill(geckoview_pid, signal.CTRL_C_EVENT)
