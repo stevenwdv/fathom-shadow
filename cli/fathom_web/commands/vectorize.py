@@ -59,8 +59,7 @@ def run_fathom_list(samples_directory):
 def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
     print('Building fathom addons for Firefox...', end='', flush=True)
     fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox')
-    # TODO: Assume the file is called ruleset.js
-    shutil.copyfile(trainees_file, f'{fathom_trainees_dir}/src/ruleset_factory.js')
+    shutil.copyfile(trainees_file, f'{fathom_trainees_dir}/src/ruleset.js')
     # TODO: Cannot get this to run without using `shell=True`
     # TODO: Handle KeyboardInterrupt on this command. Perhaps getting rid of the shell part would do it?
     subprocess.run(f'yarn --cwd {fathom_trainees_dir} build', shell=True, capture_output=True)
