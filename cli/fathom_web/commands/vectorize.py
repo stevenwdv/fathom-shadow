@@ -13,6 +13,11 @@ from click import argument, command, option, Path, progressbar
 from selenium import webdriver
 
 
+class SetupError(RuntimeError):
+    """Raised when encountering error during setup that allows for a graceful shutudown."""
+    pass
+
+
 class SilentRequestHandler(SimpleHTTPRequestHandler):
     """This request handler will not output log each request to the terminal"""
     def log_message(self, format, *args):
@@ -44,6 +49,9 @@ def main(trainees_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, 
         # Swallow the KeyboardInterrupt here so we can perform our teardown
         # instead of letting Click do something with it.
         pass
+    except SetupError as e:
+        print(f'\n\nEncountered error during setup: {e}')
+        graceful_shutdown = True
     finally:
         teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown)
 
@@ -107,12 +115,7 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
 def run_vectorizer(firefox, sample_filenames):
     print('Configuring Vectorizer...', end='', flush=True)
     # Navigate to the vectorizer page
-    # This sleep gives the prefs.js file time to update with the fathom addon info
-    # TODO: Is there a less fragile way to ensure the file has been updated?
-    time.sleep(1)
-    prefs = (pathlib.Path(firefox.capabilities.get('moz:profile')) / 'prefs.js').read_text().split(';')
-    uuids = next((line for line in prefs if 'extensions.webextensions.uuids' in line)).split(',')
-    fathom_fox_uuid = next((line for line in uuids if 'fathomfox@mozilla.com' in line)).split('\\"')[3]
+    fathom_fox_uuid = get_fathom_fox_uuid(firefox)
     firefox.get(f'moz-extension://{fathom_fox_uuid}/pages/vector.html')
 
     pages_text_area = firefox.find_element_by_id('pages')
@@ -141,6 +144,26 @@ def run_vectorizer(firefox, sample_filenames):
     new_file = (vector_files_after - vector_files_before).pop()
     print(f'Vectors saved to {str(new_file)}')
     return firefox
+
+
+def get_fathom_fox_uuid(firefox):
+    """
+    Try to get the internal UUID for FathomFox from `prefs.js`.
+
+    We use a loop to try multiple times because the `prefs.js` file needs a
+    little time to update before the fathom addon information appears. Five
+    seconds seems adequate since one second has always worked for me (Daniel).
+    """
+    for _ in range(5):
+        prefs = (pathlib.Path(firefox.capabilities.get('moz:profile')) / 'prefs.js').read_text().split(';')
+        uuids = next((line for line in prefs if 'extensions.webextensions.uuids' in line)).split(',')
+        try:
+            fathom_fox_uuid = next((line for line in uuids if 'fathomfox@mozilla.com' in line)).split('\\"')[3]
+            return fathom_fox_uuid
+        except StopIteration:
+            time.sleep(1)
+    else:
+        raise SetupError('Could not find UUID for FathomFox. No entry in the pres.js file.')
 
 
 def vector_files_present(firefox):
