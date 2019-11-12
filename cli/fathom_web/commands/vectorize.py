@@ -118,8 +118,8 @@ def run_vectorizer(firefox, sample_filenames):
     pages_text_area = firefox.find_element_by_id('pages')
     pages_text_area.send_keys(sample_filenames)
 
-    # TODO: Look for new vector*.json file
-    file_to_look_for = pathlib.Path(firefox.profile.default_preferences['browser.download.dir']) / 'vectors.json'
+    downloads_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
+    vector_files_before = set(downloads_dir.glob('vector*.json'))
     number_of_samples = len(sample_filenames.splitlines())
     status_box = firefox.find_element_by_id('status')
     vectorize_button = firefox.find_element_by_id('freeze')
@@ -128,7 +128,7 @@ def run_vectorizer(firefox, sample_filenames):
 
     with progressbar(length=number_of_samples, label='Running Vectorizer...') as bar:
         vectorize_button.click()
-        while not file_to_look_for.exists():
+        while completed_samples < number_of_samples:
             if 'failed:' in status_box.text:
                 error = extract_error_from(status_box.text)
                 print(f'Vectorization failed with error:\n{error}')
@@ -137,8 +137,16 @@ def run_vectorizer(firefox, sample_filenames):
             bar.update(now_completed_samples - completed_samples)
             completed_samples = now_completed_samples
 
-    print(f'Vectors saved to {str(file_to_look_for)}')
+    vector_files_after = set(downloads_dir.glob('vector*.json'))
+    new_file = (vector_files_after - vector_files_before).pop()
+    print(f'Vectors saved to {str(new_file)}')
     return firefox
+
+
+def vector_files_present(firefox):
+    download_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
+    vector_files = download_dir.glob('vector*.json')
+    return len(list(vector_files))
 
 
 def extract_error_from(status_text):
@@ -165,3 +173,7 @@ def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, gracefu
             except SystemError:
                 pass
             os.kill(geckoview_pid, signal.CTRL_C_EVENT)
+
+
+if __name__ == '__main__':
+    main()
