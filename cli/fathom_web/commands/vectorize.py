@@ -13,6 +13,12 @@ from click import argument, command, option, Path, progressbar
 from selenium import webdriver
 
 
+class SilentRequestHandler(SimpleHTTPRequestHandler):
+    """This request handler will not output log each request to the terminal"""
+    def log_message(self, format, *args):
+        pass
+
+
 @command()
 @argument('trainees_file', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
@@ -74,7 +80,7 @@ def create_xpi_for(directory, name):
 def run_file_server(samples_directory):
     print('Starting HTTP file server...', end='', flush=True)
     # TODO: Allow user to specify port?
-    RequestHandler = partial(SimpleHTTPRequestHandler, directory=samples_directory)
+    RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
     server = HTTPServer(('localhost', 8000), RequestHandler)
     server_thread = Thread(target=server.serve_forever)
     server_thread.start()
