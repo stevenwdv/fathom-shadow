@@ -102,7 +102,8 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
 def run_vectorizer(firefox, sample_filenames):
     print('Configuring Vectorizer...', end='', flush=True)
     # Navigate to the vectorizer page
-    # TODO: Give the prefs.js file time to update with the fathom addon info
+    # This sleep gives the prefs.js file time to update with the fathom addon info
+    # TODO: Is there a less fragile way to ensure the file has been updated?
     time.sleep(1)
     prefs = (pathlib.Path(firefox.capabilities.get('moz:profile')) / 'prefs.js').read_text().split(';')
     uuids = next((line for line in prefs if 'extensions.webextensions.uuids' in line)).split(',')
