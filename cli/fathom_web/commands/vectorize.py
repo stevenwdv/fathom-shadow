@@ -76,9 +76,10 @@ def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
     # through node using yarn.js. To find this file we use `which`, but on
     # Windows, if the user is using cygwin, this command returns a cygwin path,
     # so we need to transform this into a real Windows path.
-    yarn_dir = subprocess.run(['which', 'yarn'], capture_output=True).stdout.decode().strip()
+    # See: https://stackoverflow.com/questions/39085380/how-can-i-suppress-terminate-batch-job-y-n-confirmation-in-powershell
+    yarn_dir = subprocess.run(['which', 'yarn'], capture_output=True).stdout.decode().strip()[:-4]
     if 'cygdrive' in yarn_dir:
-        yarn_dir = subprocess.run(['cygpath', '-w', yarn_dir], capture_output=True).stdout.decode().strip()[:-4]
+        yarn_dir = subprocess.run(['cygpath', '-w', yarn_dir], capture_output=True).stdout.decode().strip()
     subprocess.run(['node', f'{yarn_dir}/yarn.js', '--cwd', fathom_trainees_dir, 'build'])
 
     fathom_trainees = create_xpi_for(pathlib.Path(fathom_trainees_dir) / 'addon', 'fathom-trainees')
