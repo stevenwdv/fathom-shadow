@@ -25,13 +25,29 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
 
 
 @command()
-@argument('ruleset_file', type=str)
-@argument('samples_directory', type=Path(exists=True, file_okay=False))
-@argument('fathom_fox_dir', type=Path(exists=True, file_okay=False))
-@argument('fathom_trainees_dir', type=Path(exists=True, file_okay=False))
-@option('--output-directory', '-o', type=Path(exists=True, file_okay=False), default=os.getcwd())
-@option('--show-browser', '-s', default=False, is_flag=True)
+@argument('ruleset_file', type=str,
+          help='Path to the ruleset.js file')
+@argument('samples_directory', type=Path(exists=True, file_okay=False),
+          help='Path to the directory containing the sample pages')
+@argument('fathom_fox_dir', type=Path(exists=True, file_okay=False),
+          help='Path to the FathomFox source directory')
+@argument('fathom_trainees_dir', type=Path(exists=True, file_okay=False),
+          help='Path to the Fathom Trainees source directory')
+@option('--output-directory', '-o', type=Path(exists=True, file_okay=False), default=os.getcwd(),
+        help='Directory to save the vector file in (default: current working directory')
+@option('--show-browser', '-s', default=False, is_flag=True,
+        help='Flag to show browser window while running. Browser is run in headless mode by default.')
 def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, output_directory, show_browser):
+    """
+    Create feature vectors for a directory of training samples using a Fathom Ruleset.
+
+    This tool will run an instance of Firefox to use the Vectorizer within the
+    FathomFox adddon. Required for this tool to work are:
+      * node
+      * yarn
+      * A FathomFox repository checkout
+      * A Fathom Trainees repository checkout
+    """
     firefox = None
     firefox_pid = None
     geckoview_pid = None
