@@ -14,12 +14,12 @@ from selenium import webdriver
 
 
 class SetupError(RuntimeError):
-    """Raised when encountering error during setup that allows for a graceful shutudown."""
+    """Raised when encountering error during setup that allows for a graceful shutdown."""
     pass
 
 
 class SilentRequestHandler(SimpleHTTPRequestHandler):
-    """This request handler will not output log each request to the terminal"""
+    """A request handler that will not output the log for each request to the terminal."""
     def log_message(self, format, *args):
         pass
 
@@ -57,6 +57,7 @@ def main(trainees_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, 
 
 
 def run_fathom_list(samples_directory):
+    """Use fathom-list to get a string of the filenames to run through the vectorizer."""
     print('Running fathom-list to get list of sample filenames...', end='', flush=True)
     result = subprocess.run(['fathom-list', samples_directory, '-r'], capture_output=True)
     sample_filenames = result.stdout.decode()
@@ -65,6 +66,13 @@ def run_fathom_list(samples_directory):
 
 
 def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
+    """
+    Create .xpi files for fathom addons to load into Firefox.
+
+    The Firefox webdriver requires we load custom addons using .xpi files. We
+    need to load both FathomFox and Fathom Trainees. For Fathom Trainees, we
+    also need to run yarn to package up the addon with the user's ruleset.js.
+    """
     print('Building fathom addons for Firefox...', end='', flush=True)
     fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox')
     shutil.copyfile(trainees_file, f'{fathom_trainees_dir}/src/ruleset.js')
@@ -88,6 +96,7 @@ def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
 
 
 def create_xpi_for(directory, name):
+    """Create an .xpi archive for a directory and returns its absolute path."""
     xpi_path = pathlib.Path(f'{name}.xpi')
     with zipfile.ZipFile(xpi_path, 'w', compression=zipfile.ZIP_DEFLATED) as xpi:
         for file in directory.rglob('*'):
@@ -96,6 +105,12 @@ def create_xpi_for(directory, name):
 
 
 def run_file_server(samples_directory):
+    """
+    Create a local HTTP server for the samples.
+
+    We return both the server and the thread to handle a graceful or forced
+    shutdown.
+    """
     print('Starting HTTP file server...', end='', flush=True)
     # TODO: Allow user to specify port?
     RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
@@ -107,6 +122,17 @@ def run_file_server(samples_directory):
 
 
 def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser):
+    """
+    Configures and launches Firefox to run the vectorizer with.
+
+    Sets headless mode, sets the download directory to the desired output
+    directory, turns off page caching, and installs FathomFox and Fathom
+    Trainees.
+
+    We return the webdriver object, and the process IDs for both the Firefox
+    process and the geckoview driver process so we can shutdown either
+    gracefully or ungracefully.
+    """
     print('Configuring Firefox...', end='', flush=True)
     options = webdriver.FirefoxOptions()
     options.headless = not show_browser
@@ -124,6 +150,15 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
 
 
 def run_vectorizer(firefox, sample_filenames):
+    """
+    Set up the vectorizer and run it, creating the vectors file.
+
+    Navigate to the vectorizer page of FathomFox, paste the sample filenames
+    into the text area and hit the vectorize button.
+
+    We monitor the status text area for errors and to see how many samples
+    have been vectorized, so we know when the vectorizer has stopped running.
+    """
     print('Configuring Vectorizer...', end='', flush=True)
     # Navigate to the vectorizer page
     fathom_fox_uuid = get_fathom_fox_uuid(firefox)
@@ -178,20 +213,34 @@ def get_fathom_fox_uuid(firefox):
 
 
 def vector_files_present(firefox):
+    """Return the number of vector-y files present in Firefox's download dir."""
     download_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
     vector_files = download_dir.glob('vector*.json')
     return len(list(vector_files))
 
 
 def extract_error_from(status_text):
+    """
+    Look for errors in the vectorizer's status text.
+
+    If there is an error, raise an exception causing an ungraceful shutdown.
+    """
     lines = status_text.splitlines()
     for line in lines:
         if 'failed:' in line:
             return line
+    # TODO: Add ungraceful shutdown error
     raise RuntimeError(f'There was a vectorizer error, but we could not find it in {status_text}')
 
 
 def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown):
+    """
+    Close Firefox and the HTTP server.
+
+    There is a graceful shutdown path and an ungraceful shutdown path. If the
+    vectorizer has started running, we use the ungraceful shutdown path. This
+    is because Firefox becomes unresponsive to the call to `quit()`.
+    """
     if graceful_shutdown:
         firefox.quit()
         server.shutdown()
