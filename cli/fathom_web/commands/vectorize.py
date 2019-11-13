@@ -13,8 +13,13 @@ from click import argument, command, option, Path, progressbar
 from selenium import webdriver
 
 
-class SetupError(RuntimeError):
-    """Raised when encountering error during setup that allows for a graceful shutdown."""
+class GracefulError(RuntimeError):
+    """Raised when encountering error that allows for a graceful shutdown."""
+    pass
+
+
+class UngracefulError(RuntimeError):
+    """Raised when encountering error that does not allow for a graceful shutdown."""
     pass
 
 
@@ -61,11 +66,11 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
         firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
         firefox = run_vectorizer(firefox, sample_filenames)
         graceful_shutdown = True
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, UngracefulError):
         # Swallow the KeyboardInterrupt here so we can perform our teardown
         # instead of letting Click do something with it.
         pass
-    except SetupError as e:
+    except GracefulError as e:
         print(f'\n\nEncountered error during setup: {e}')
         graceful_shutdown = True
     finally:
@@ -128,7 +133,6 @@ def run_file_server(samples_directory):
     shutdown.
     """
     print('Starting HTTP file server...', end='', flush=True)
-    # TODO: Allow user to specify port?
     RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
     server = HTTPServer(('localhost', 8000), RequestHandler)
     server_thread = Thread(target=server.serve_forever)
@@ -225,7 +229,7 @@ def get_fathom_fox_uuid(firefox):
         except StopIteration:
             time.sleep(1)
     else:
-        raise SetupError('Could not find UUID for FathomFox. No entry in the pres.js file.')
+        raise GracefulError('Could not find UUID for FathomFox. No entry in the pres.js file.')
 
 
 def vector_files_present(firefox):
@@ -245,8 +249,7 @@ def extract_error_from(status_text):
     for line in lines:
         if 'failed:' in line:
             return line
-    # TODO: Add ungraceful shutdown error
-    raise RuntimeError(f'There was a vectorizer error, but we could not find it in {status_text}')
+    raise UngracefulError(f'There was a vectorizer error, but we could not find it in {status_text}')
 
 
 def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown):
