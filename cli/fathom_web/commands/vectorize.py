@@ -25,13 +25,13 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
 
 
 @command()
-@argument('trainees_file', type=str)
+@argument('ruleset_file', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
 @argument('fathom_fox_dir', type=Path(exists=True, file_okay=False))
 @argument('fathom_trainees_dir', type=Path(exists=True, file_okay=False))
 @option('--output-directory', '-o', type=Path(exists=True, file_okay=False), default=os.getcwd())
 @option('--show-browser', '-s', default=False, is_flag=True)
-def main(trainees_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, output_directory, show_browser):
+def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, output_directory, show_browser):
     firefox = None
     firefox_pid = None
     geckoview_pid = None
@@ -40,7 +40,7 @@ def main(trainees_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, 
     graceful_shutdown = False
     try:
         sample_filenames = run_fathom_list(samples_directory)
-        fathom_fox, fathom_trainees = build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir)
+        fathom_fox, fathom_trainees = build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir)
         server, server_thread = run_file_server(samples_directory)
         firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
         firefox = run_vectorizer(firefox, sample_filenames)
@@ -65,7 +65,7 @@ def run_fathom_list(samples_directory):
     return sample_filenames
 
 
-def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
+def build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir):
     """
     Create .xpi files for fathom addons to load into Firefox.
 
@@ -75,7 +75,7 @@ def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
     """
     print('Building fathom addons for Firefox...', end='', flush=True)
     fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox')
-    shutil.copyfile(trainees_file, f'{fathom_trainees_dir}/src/ruleset.js')
+    shutil.copyfile(ruleset_file, f'{fathom_trainees_dir}/src/ruleset.js')
 
     # This is because of Windows. Running yarn through the Command Prompt will
     # cause a cancellation prompt to appear if the user presses ctrl+c during
@@ -88,7 +88,7 @@ def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
     yarn_dir = subprocess.run(['which', 'yarn'], capture_output=True).stdout.decode().strip()[:-4]
     if 'cygdrive' in yarn_dir:
         yarn_dir = subprocess.run(['cygpath', '-w', yarn_dir], capture_output=True).stdout.decode().strip()
-    subprocess.run(['node', f'{yarn_dir}/yarn.js', '--cwd', fathom_trainees_dir, 'build'])
+    subprocess.run(['node', f'{yarn_dir}/yarn.js', '--cwd', fathom_trainees_dir, 'build'], capture_output=True)
 
     fathom_trainees = create_xpi_for(pathlib.Path(fathom_trainees_dir) / 'addon', 'fathom-trainees')
     print('Done')
