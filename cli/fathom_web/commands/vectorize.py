@@ -69,14 +69,13 @@ def build_fathom_addons(trainees_file, fathom_fox_dir, fathom_trainees_dir):
     fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox')
     shutil.copyfile(trainees_file, f'{fathom_trainees_dir}/src/ruleset.js')
 
-    # This is because of Windows, again. Running yarn through the Command
-    # Prompt will cause a cancellation prompt to appear if the user presses
-    # ctrl+c during yarn's execution. We do not want this. We want this program
-    # to stop immediately when a user hits ctrl+c. The work around is to
-    # execute yarn through node using yarn.js. To find this file we use
-    # `which`, but on Windows, if the user is using cygwin, this command
-    # returns a cygwin path, so we need to transform this into a real Windows
-    # path.
+    # This is because of Windows. Running yarn through the Command Prompt will
+    # cause a cancellation prompt to appear if the user presses ctrl+c during
+    # yarn's execution. We do not want this. We want this program to stop
+    # immediately when a user hits ctrl+c. The work around is to execute yarn
+    # through node using yarn.js. To find this file we use `which`, but on
+    # Windows, if the user is using cygwin, this command returns a cygwin path,
+    # so we need to transform this into a real Windows path.
     yarn_dir = subprocess.run(['which', 'yarn'], capture_output=True).stdout.decode().strip()
     if 'cygdrive' in yarn_dir:
         yarn_dir = subprocess.run(['cygpath', '-w', yarn_dir], capture_output=True).stdout.decode().strip()[:-4]
