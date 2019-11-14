@@ -97,7 +97,7 @@ def build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir):
     """
     print('Building fathom addons for Firefox...', end='', flush=True)
     fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox')
-    shutil.copyfile(ruleset_file, f'{fathom_trainees_dir}/src/ruleset.js')
+    shutil.copyfile(ruleset_file, f'{fathom_trainees_dir}/src/trainees.js')
 
     # This is because of Windows. Running yarn through the Command Prompt will
     # cause a cancellation prompt to appear if the user presses ctrl+c during
@@ -276,6 +276,7 @@ def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, gracefu
             except SystemError:
                 pass
             os.kill(geckoview_pid, signal.CTRL_C_EVENT)
+    # TODO: Remove .xpi files
 
 
 if __name__ == '__main__':
