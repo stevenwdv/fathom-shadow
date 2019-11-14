@@ -67,6 +67,7 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
         firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
         firefox = run_vectorizer(firefox, sample_filenames)
         graceful_shutdown = True
+    # TODO: How to set the exit code here?
     except (KeyboardInterrupt, UngracefulError):
         # Swallow the KeyboardInterrupt here so we can perform our teardown
         # instead of letting Click do something with it.
@@ -207,8 +208,7 @@ def run_vectorizer(firefox, sample_filenames):
             bar.update(now_completed_samples - completed_samples)
             completed_samples = now_completed_samples
 
-    vector_files_after = set(downloads_dir.glob('vector*.json'))
-    new_file = (vector_files_after - vector_files_before).pop()
+    new_file = look_for_new_vector_file(downloads_dir, vector_files_before)
     print(f'Vectors saved to {str(new_file)}')
     return firefox
 
@@ -251,6 +251,25 @@ def extract_error_from(status_text):
         if 'failed:' in line:
             return line
     raise UngracefulError(f'There was a vectorizer error, but we could not find it in {status_text}')
+
+
+def look_for_new_vector_file(downloads_dir, vector_files_before):
+    """
+    Look for a new vector file in the downloads directory.
+
+    We use a loop to try multiple times because the file system needs a little
+    little time to update before the file appears. Five seconds seems adequate
+    since one second has always worked for me (Daniel).
+    """
+    for _ in range(5):
+        vector_files_after = set(downloads_dir.glob('vector*.json'))
+        try:
+            new_file = (vector_files_after - vector_files_before).pop()
+            return new_file
+        except KeyError:
+            time.sleep(1)
+    else:
+        raise GracefulError(f'Could not find vectors file in {downloads_dir.as_posix()}.\n{vector_files_before} were already present.')
 
 
 def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown):
