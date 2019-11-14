@@ -5,6 +5,7 @@
 /docs/_build
 /dist
 **/*.js
+!/cli/fathom_web/test/resources/vectorize/vectorize_ruleset.js
 !/rollup.config.js
 !/trainees.js
 !/test/browser/*
