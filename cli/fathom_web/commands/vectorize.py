@@ -5,6 +5,7 @@ import pathlib
 import shutil
 import signal
 import subprocess
+from tempfile import TemporaryDirectory
 from threading import Thread
 import time
 import zipfile
@@ -60,11 +61,12 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
     server = None
     server_thread = None
     graceful_shutdown = False
+    temp_dir = TemporaryDirectory()
     try:
         sample_filenames = run_fathom_list(samples_directory)
-        fathom_fox, fathom_trainees = build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir)
+        fathom_fox, fathom_trainees = build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir, temp_dir)
         server, server_thread = run_file_server(samples_directory)
-        firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser)
+        firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser, temp_dir)
         firefox = run_vectorizer(firefox, sample_filenames)
         graceful_shutdown = True
     # TODO: How to set the exit code here?
@@ -89,7 +91,7 @@ def run_fathom_list(samples_directory):
     return sample_filenames
 
 
-def build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir):
+def build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir, temp_dir):
     """
     Create .xpi files for fathom addons to load into Firefox.
 
@@ -98,7 +100,7 @@ def build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir):
     also need to run yarn to package up the addon with the user's ruleset.js.
     """
     print('Building fathom addons for Firefox...', end='', flush=True)
-    fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox')
+    fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox', temp_dir)
     shutil.copyfile(ruleset_file, f'{fathom_trainees_dir}/src/trainees.js')
 
     # This is because of Windows. Running yarn through the Command Prompt will
@@ -116,14 +118,14 @@ def build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir):
     # TODO: Better error message for not having node or rollup
     subprocess.run(['node', f'{yarn_dir}/yarn.js', '--cwd', fathom_trainees_dir, 'build'], capture_output=True)
 
-    fathom_trainees = create_xpi_for(pathlib.Path(fathom_trainees_dir) / 'addon', 'fathom-trainees')
+    fathom_trainees = create_xpi_for(pathlib.Path(fathom_trainees_dir) / 'addon', 'fathom-trainees', temp_dir)
     print('Done')
     return fathom_fox, fathom_trainees
 
 
-def create_xpi_for(directory, name):
+def create_xpi_for(directory, name, dest_dir):
     """Create an .xpi archive for a directory and returns its absolute path."""
-    xpi_path = pathlib.Path(f'{name}.xpi')
+    xpi_path = pathlib.Path(dest_dir.name) / f'{name}.xpi'
     with zipfile.ZipFile(xpi_path, 'w', compression=zipfile.ZIP_DEFLATED) as xpi:
         for file in directory.rglob('*'):
             xpi.write(file, file.relative_to(directory))
@@ -146,7 +148,7 @@ def run_file_server(samples_directory):
     return server, server_thread
 
 
-def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser):
+def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser, temp_dir):
     """
     Configures and launches Firefox to run the vectorizer with.
 
@@ -167,7 +169,7 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     profile.set_preference('browser.cache.disk.enable', False)
     profile.set_preference('browser.cache.memory.enable', False)
     profile.set_preference('browser.cache.offline.enable', False)
-    firefox = webdriver.Firefox(options=options, firefox_profile=profile)
+    firefox = webdriver.Firefox(options=options, firefox_profile=profile, service_log_path=f'{temp_dir.name}/geckodriver.log')
     firefox.install_addon(fathom_fox, temporary=True)
     firefox.install_addon(fathom_trainees, temporary=True)
     print('Done')
@@ -298,7 +300,6 @@ def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, gracefu
             except SystemError:
                 pass
             os.kill(geckoview_pid, signal.CTRL_C_EVENT)
-    # TODO: Remove .xpi files
 
 
 if __name__ == '__main__':
