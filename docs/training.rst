@@ -167,7 +167,7 @@ Once your samples are collected and at least several rules are written, you're r
 
 Training is done for one type at a time. If you have types that depend on other types, train the other types first.
 
-As the first step of the training loop, use FathomFox's Vectorizer or :command:`fathom-vectorize` to emit feature vectors for all your training samples. It's a good idea to check these JSON files into the same repository as your samples and ruleset code, for later reproducibility. If you have validation samples ready, vectorize them, too, into a separate file.
+As the first step of the training loop, use FathomFox's Vectorizer to emit feature vectors for all your training samples. It's a good idea to check these JSON files into the same repository as your samples and ruleset code, for later reproducibility. If you have validation samples ready, vectorize them, too, into a separate file.
 
 Next, invoke the trainer. Here is its online help, to give you a sense of its capabilities:
 
