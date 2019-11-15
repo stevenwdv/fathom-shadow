@@ -82,6 +82,7 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
 def run_fathom_list(samples_directory):
     """Use fathom-list to get a string of the filenames to run through the vectorizer."""
     print('Running fathom-list to get list of sample filenames...', end='', flush=True)
+    # TODO: Better error message for not having fathom-list
     result = subprocess.run(['fathom-list', samples_directory, '-r'], capture_output=True)
     sample_filenames = result.stdout.decode()
     print('Done')
@@ -108,9 +109,11 @@ def build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir):
     # Windows, if the user is using cygwin, this command returns a cygwin path,
     # so we need to transform this into a real Windows path.
     # See: https://stackoverflow.com/questions/39085380/how-can-i-suppress-terminate-batch-job-y-n-confirmation-in-powershell
+    # TODO: Better error message for not having which or yarn
     yarn_dir = subprocess.run(['which', 'yarn'], capture_output=True).stdout.decode().strip()[:-4]
     if 'cygdrive' in yarn_dir:
         yarn_dir = subprocess.run(['cygpath', '-w', yarn_dir], capture_output=True).stdout.decode().strip()
+    # TODO: Better error message for not having node or rollup
     subprocess.run(['node', f'{yarn_dir}/yarn.js', '--cwd', fathom_trainees_dir, 'build'], capture_output=True)
 
     fathom_trainees = create_xpi_for(pathlib.Path(fathom_trainees_dir) / 'addon', 'fathom-trainees')
