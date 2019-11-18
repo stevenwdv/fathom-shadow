@@ -25,6 +25,7 @@ jobs:
       addons:
         firefox: latest
       before_script:
+        - which firefox
         - git clone https://github.com/mozilla/fathom-fox.git
         - export FATHOM_FOX=$TRAVIS_BUILD_DIR/fathom-fox
         - echo $FATHOM_FOX
