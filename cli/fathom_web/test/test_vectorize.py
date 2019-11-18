@@ -21,6 +21,5 @@ def test_end_to_end(tmp_path):
             '-s',
         ]
     )
-    print(result.output)
     assert result.exit_code == 0
     assert (tmp_path / 'vectors.json').exists()

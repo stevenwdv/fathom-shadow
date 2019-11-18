@@ -32,6 +32,10 @@ jobs:
         - npm install
         - yarn build
         - cd ..
+        - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
+        - unzip geckodriver-v0.26.0-linux64.tar.gz
+        - ls
+        - export PATH=$PATH:geckodriver-v0.26.0-linux64
       script:
         - make py_lint py_test
     - stage: docs
