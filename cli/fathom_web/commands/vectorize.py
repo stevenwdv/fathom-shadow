@@ -176,7 +176,7 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     profile.set_preference('browser.cache.memory.enable', False)
     profile.set_preference('browser.cache.offline.enable', False)
     print('making driver')
-    firefox = webdriver.Firefox(options=options, firefox_profile=profile, service_log_path=f'{temp_dir.name}/geckodriver.log')
+    firefox = webdriver.Firefox(firefox_binary='/home/travis/firefox-latest/firefox/firefox', options=options, firefox_profile=profile, service_log_path=f'{temp_dir.name}/geckodriver.log')
     print('installing fathomfox')
     firefox.install_addon(fathom_fox, temporary=True)
     print('installing fathomtrainees')
