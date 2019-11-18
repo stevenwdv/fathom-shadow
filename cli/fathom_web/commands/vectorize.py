@@ -166,7 +166,8 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     """
     print('Configuring Firefox...', end='', flush=True)
     options = webdriver.FirefoxOptions()
-    options.headless = not show_browser
+    if not show_browser:
+        options.add_argument('-headless')
     profile = webdriver.FirefoxProfile()
     print('Making profile')
     profile.set_preference('browser.download.folderList', 2)
@@ -175,7 +176,7 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     profile.set_preference('browser.cache.memory.enable', False)
     profile.set_preference('browser.cache.offline.enable', False)
     print('making driver')
-    firefox = webdriver.Firefox(options=options, firefox_profile=profile, service_log_path=f'{temp_dir.name}/geckodriver.log')
+    firefox = webdriver.Firefox(firefox_options=options, firefox_profile=profile, service_log_path=f'{temp_dir.name}/geckodriver.log')
     print('installing fathomfox')
     firefox.install_addon(fathom_fox, temporary=True)
     print('installing fathomtrainees')
