@@ -22,6 +22,7 @@ jobs:
         - git clone https://github.com/mozilla/fathom-fox.git
         - git clone https://github.com/mozilla/fathom-trainees.git
         - ls
+        - echo $(pwd)/fathom-fox
       script:
         - make py_test
     - stage: test
