@@ -20,7 +20,7 @@ jobs:
         - "3.6"
       before_script:
         - git clone https://github.com/mozilla/fathom-fox.git
-        - export FATHOM-FOX=$(pwd)/fathom-fox
+        - export FATHOM-FOX=`$(pwd)`/fathom-fox
         - git clone https://github.com/mozilla/fathom-trainees.git
         - export FATHOM-TRAINEES=$(pwd)/fathom-trainees
         - cd fathom-fox
