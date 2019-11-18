@@ -28,7 +28,7 @@ js_test: $(JS)
 	@node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --recursive
 
 py_test: $(VIRTUAL_ENV)/pyvenv.cfg
-	@pytest cli/fathom_web/test
+	@pytest -s cli/fathom_web/test
 
 coveralls:
 	cat ./coverage/lcov.info | coveralls
