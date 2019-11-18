@@ -18,7 +18,6 @@ def test_end_to_end(tmp_path):
             os.environ['FATHOM_TRAINEES'],
             '-o',
             f'{tmp_path.as_posix()}',
-            '-s',
         ]
     )
     print(result.output)
