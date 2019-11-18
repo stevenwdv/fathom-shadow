@@ -18,12 +18,12 @@ jobs:
       language: python
       python:
         - "3.6"
-      env:
-        - FATHOM_FOX=$TRAVIS_BUILD_DIR/fathom-fox
-        - FATHOM_TRAINEES=$TRAVIS_BUILD_DIR/fathom-trainees
       before_script:
         - git clone https://github.com/mozilla/fathom-fox.git
+        - FATHOM_FOX=$TRAVIS_BUILD_DIR/fathom-fox
+        - echo $FATHOM_FOX
         - git clone https://github.com/mozilla/fathom-trainees.git
+        - FATHOM_TRAINEES=$TRAVIS_BUILD_DIR/fathom-trainees
         - cd fathom-fox
         - npm install
         - yarn build
