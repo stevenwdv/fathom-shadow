@@ -64,6 +64,7 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
     temp_dir = TemporaryDirectory()
     try:
         sample_filenames = run_fathom_list(samples_directory)
+        print(sample_filenames)
         fathom_fox, fathom_trainees = build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir, temp_dir)
         server, server_thread = run_file_server(samples_directory)
         firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser, temp_dir)
@@ -112,11 +113,14 @@ def build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir, temp_
     # so we need to transform this into a real Windows path.
     # See: https://stackoverflow.com/questions/39085380/how-can-i-suppress-terminate-batch-job-y-n-confirmation-in-powershell
     # TODO: Better error message for not having which or yarn
-    yarn_dir = subprocess.run(['which', 'yarn'], capture_output=True).stdout.decode().strip()[:-4]
+    result = subprocess.run(['which', 'yarn'], capture_output=True)
+    print(result.stdout)
+    yarn_dir = result.stdout.decode().strip()[:-4]
     if 'cygdrive' in yarn_dir:
         yarn_dir = subprocess.run(['cygpath', '-w', yarn_dir], capture_output=True).stdout.decode().strip()
     # TODO: Better error message for not having node or rollup
-    subprocess.run(['node', f'{yarn_dir}/yarn.js', '--cwd', fathom_trainees_dir, 'build'], capture_output=True)
+    result = subprocess.run(['node', f'{yarn_dir}/yarn.js', '--cwd', fathom_trainees_dir, 'build'], capture_output=True)
+    print(result.stdout)
 
     fathom_trainees = create_xpi_for(pathlib.Path(fathom_trainees_dir) / 'addon', 'fathom-trainees', temp_dir)
     print('Done')
@@ -164,13 +168,17 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     options = webdriver.FirefoxOptions()
     options.headless = not show_browser
     profile = webdriver.FirefoxProfile()
+    print('Making profile')
     profile.set_preference('browser.download.folderList', 2)
     profile.set_preference('browser.download.dir', str(pathlib.Path(output_directory).absolute()))
     profile.set_preference('browser.cache.disk.enable', False)
     profile.set_preference('browser.cache.memory.enable', False)
     profile.set_preference('browser.cache.offline.enable', False)
+    print('making driver')
     firefox = webdriver.Firefox(options=options, firefox_profile=profile, service_log_path=f'{temp_dir.name}/geckodriver.log')
+    print('installing fathomfox')
     firefox.install_addon(fathom_fox, temporary=True)
+    print('installing fathomtrainees')
     firefox.install_addon(fathom_trainees, temporary=True)
     print('Done')
     return firefox, firefox.capabilities['moz:processID'], firefox.service.process.pid
