@@ -34,7 +34,6 @@ jobs:
         - cd ..
         - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
         - tar xzf geckodriver-v0.26.0-linux64.tar.gz
-        - ls -l
         - export PATH=$PATH:geckodriver
       script:
         - make py_lint py_test
