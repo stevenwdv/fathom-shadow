@@ -20,9 +20,6 @@ def test_end_to_end(tmp_path):
             f'{tmp_path.as_posix()}',
         ]
     )
-    print('a')
-    print(result.output)
-    print(result.exception)
-    print('b')
     assert result.exit_code == 0
     assert (tmp_path / 'vectors.json').exists()
+    print((tmp_path / 'vectors.json').read_text())
