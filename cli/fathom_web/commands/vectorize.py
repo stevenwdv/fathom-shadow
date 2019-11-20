@@ -41,11 +41,13 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
     """
     Create feature vectors for a directory of training samples using a Fathom Ruleset.
 
-    RULESET_FILE: Path to the ruleset.js file
+    \b
+    RULESET_FILE: Path to the ruleset.js file. The file must be pre-bundled, if necessary (containing no import statements).
     SAMPLES_DIRECTORY: Path to the directory containing the sample pages
     FATHOM_FOX_DIR: Path to the FathomFox source directory
     FATHOM_TRAINEES_DIR: Path to the Fathom Trainees source directory
 
+    \b
     This tool will run an instance of Firefox to use the Vectorizer within the
     FathomFox adddon. Required for this tool to work are:
       * node
