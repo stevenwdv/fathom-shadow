@@ -16,7 +16,6 @@ function caselessIncludes(haystack, needle) {
 }
 
 function hasSecretParagraph(fnode) {
-    console.log('this is running');
     return caselessIncludes(fnode.element.innerText, 'secret');
 }
 
