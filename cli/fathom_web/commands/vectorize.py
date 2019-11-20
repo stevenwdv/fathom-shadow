@@ -12,6 +12,7 @@ import zipfile
 
 from click import argument, command, option, Path, progressbar
 from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 
 
 class GracefulError(RuntimeError):
@@ -30,6 +31,7 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
 
 @command()
 @argument('ruleset_file', type=str)
+@argument('fathom_type', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
 @argument('fathom_fox_dir', type=Path(exists=True, file_okay=False))
 @argument('fathom_trainees_dir', type=Path(exists=True, file_okay=False))
@@ -37,12 +39,13 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
         help='Directory to save the vector file in (default: current working directory')
 @option('--show-browser', '-s', default=False, is_flag=True,
         help='Flag to show browser window while running. Browser is run in headless mode by default.')
-def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, output_directory, show_browser):
+def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, fathom_trainees_dir, output_directory, show_browser):
     """
     Create feature vectors for a directory of training samples using a Fathom Ruleset.
 
     \b
     RULESET_FILE: Path to the ruleset.js file. The file must be pre-bundled, if necessary (containing no import statements).
+    FATHOM_TYPE: The Fathom type to create vectors for
     SAMPLES_DIRECTORY: Path to the directory containing the sample pages
     FATHOM_FOX_DIR: Path to the FathomFox source directory
     FATHOM_TRAINEES_DIR: Path to the Fathom Trainees source directory
@@ -70,7 +73,7 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
         fathom_fox, fathom_trainees = build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir, temp_dir)
         server, server_thread = run_file_server(samples_directory)
         firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser, temp_dir)
-        firefox = run_vectorizer(firefox, sample_filenames)
+        firefox = run_vectorizer(firefox, fathom_type, sample_filenames)
         graceful_shutdown = True
     # TODO: How to set the exit code here?
     except KeyboardInterrupt:
@@ -188,7 +191,7 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     return firefox, firefox.capabilities['moz:processID'], firefox.service.process.pid
 
 
-def run_vectorizer(firefox, sample_filenames):
+def run_vectorizer(firefox, fathom_type, sample_filenames):
     """
     Set up the vectorizer and run it, creating the vectors file.
 
@@ -205,6 +208,9 @@ def run_vectorizer(firefox, sample_filenames):
 
     pages_text_area = firefox.find_element_by_id('pages')
     pages_text_area.send_keys(sample_filenames)
+
+    ruleset_dropdown_selector = Select(firefox.find_element_by_id('ruleset'))
+    ruleset_dropdown_selector.select_by_visible_text(fathom_type)
 
     downloads_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
     vector_files_before = set(downloads_dir.glob('vector*.json'))
