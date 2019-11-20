@@ -13,6 +13,7 @@ def test_end_to_end(tmp_path):
         vectorize_main,
         [
             f'{test_dir}/resources/vectorize/vectorize_ruleset.js',
+            'secret',
             f'{test_dir}/resources/vectorize/',
             os.environ['FATHOM_FOX'],
             os.environ['FATHOM_TRAINEES'],
