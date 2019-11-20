@@ -54,6 +54,8 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
       * yarn
       * A FathomFox repository checkout
       * A Fathom Trainees repository checkout
+      * A copy of Firefox
+      * A geckoview driver downloaded and accessible in your PATH environment variable
     """
     # TODO: Try a class based approach so I don't need these =None statements or need to pass the temp_dir around
     firefox = None
