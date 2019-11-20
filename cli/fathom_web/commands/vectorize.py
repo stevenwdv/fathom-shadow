@@ -285,7 +285,11 @@ def look_for_new_vector_file(downloads_dir, vector_files_before):
         except KeyError:
             time.sleep(1)
     else:
-        raise GracefulError(f'Could not find vectors file in {downloads_dir.as_posix()}.\n{vector_files_before} were already present.')
+        error_string = f'Cound not find vectors file in {downloads_dir.as_posix()}.'
+        if vector_files_before:
+            files_present = '\n'.join(file.as_posix() for file in vector_files_before)
+            error_string += f' Files present were:\n{files_present}'
+        raise GracefulError(error_string)
 
 
 def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown):
