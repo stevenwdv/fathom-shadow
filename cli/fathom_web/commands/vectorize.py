@@ -73,12 +73,14 @@ def main(ruleset_file, samples_directory, fathom_fox_dir, fathom_trainees_dir, o
         firefox = run_vectorizer(firefox, sample_filenames)
         graceful_shutdown = True
     # TODO: How to set the exit code here?
-    except (KeyboardInterrupt, UngracefulError):
+    except KeyboardInterrupt:
         # Swallow the KeyboardInterrupt here so we can perform our teardown
         # instead of letting Click do something with it.
         pass
+    except UngracefulError as e:
+        print(f'\n\n{e}')
     except GracefulError as e:
-        print(f'\n\nEncountered error during setup: {e}')
+        print(f'\n\n{e}')
         graceful_shutdown = True
     finally:
         teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown)
@@ -217,8 +219,7 @@ def run_vectorizer(firefox, sample_filenames):
         while completed_samples < number_of_samples:
             if 'failed:' in status_box.text:
                 error = extract_error_from(status_box.text)
-                print(f'Vectorization failed with error:\n{error}')
-                break
+                raise UngracefulError(f'Vectorization failed with error:\n{error}')
             now_completed_samples = len([line for line in status_box.text.splitlines() if line.endswith(': vectorized')])
             bar.update(now_completed_samples - completed_samples)
             completed_samples = now_completed_samples
