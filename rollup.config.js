@@ -22,4 +22,5 @@ export default {
       include: ['node_modules/**'],
     }),
   ],
+  treeshake: false
 };
