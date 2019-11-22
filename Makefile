@@ -43,6 +43,8 @@ publish: $(JS)
 cli:
 	cd cli && python setup.py sdist bdist_wheel
 
+bundle: dist/fathom.js
+
 doc: $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py
 	$(MAKE) -C docs clean html
 
@@ -69,4 +71,8 @@ $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/pyvenv.cf
 	npm install
 	touch $@
 
-.PHONY: all lint js_lint py_lint test js_test py_test all_js_test coveralls debugtest publish cli doc clean
+dist/fathom.js: rollup.config.js .npm_installed
+	@node_modules/.bin/rollup -c
+
+
+.PHONY: all lint js_lint py_lint test js_test py_test all_js_test coveralls debugtest publish cli bundle doc clean
