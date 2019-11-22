@@ -7,7 +7,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
 
 export default {
-  input: 'index.js',
+  input: 'index.mjs',
   name: 'fathom',
   output: {
     file: 'dist/fathom.js',
@@ -19,7 +19,7 @@ export default {
       main: true
     }),
     commonjs({
-      include: ['node_modules/**', './*'],
+      include: ['node_modules/**'],
     }),
   ],
 };
