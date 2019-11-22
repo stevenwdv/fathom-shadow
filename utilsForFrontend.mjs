@@ -1,5 +1,3 @@
-import wu from 'wu';
-
 import {CycleError} from './exceptions';
 
 
@@ -23,7 +21,7 @@ export function identity(x) {
 export function best(iterable, by, isBetter) {
     let bestSoFar, bestKeySoFar;
     let isFirst = true;
-    wu.forEach(
+    forEach(
         function (item) {
             const key = by(item);
             if (isBetter(key, bestKeySoFar) || isFirst) {
@@ -61,7 +59,7 @@ export function maxes(iterable, by = identity) {
     let bests = [];
     let bestKeySoFar;
     let isFirst = true;
-    wu.forEach(
+    forEach(
         function (item) {
             const key = by(item);
             if (key > bestKeySoFar || isFirst) {
@@ -91,7 +89,7 @@ export function min(iterable, by = identity) {
 export function sum(iterable) {
     let total;
     let isFirst = true;
-    wu.forEach(
+    forEach(
         function assignOrAdd(addend) {
             if (isFirst) {
                 total = addend;
@@ -181,8 +179,8 @@ export function *inlineTexts(element, shouldTraverse = element => true) {
  *     returning false
  */
 export function inlineTextLength(element, shouldTraverse = element => true) {
-    return sum(wu.map(text => collapseWhitespace(text).length,
-                      inlineTexts(element, shouldTraverse)));
+    return sum(map(text => collapseWhitespace(text).length,
+                   inlineTexts(element, shouldTraverse)));
 }
 
 /**
@@ -557,4 +555,43 @@ export function linearScale(number, zeroAt, oneAt) {
     }
     const slope = 1 / (oneAt - zeroAt);
     return slope * (number - zeroAt);
+}
+
+// -------- Routines below this point are private to the framework. --------
+
+/**
+ * Flatten out an iterable of iterables into a single iterable of non-
+ * iterables. Does not consider strings to be iterable.
+ */
+export function *flatten(iterable) {
+    for (const i of iterable) {
+        if (typeof i !== 'string' && isIterable(i)) {
+            yield *(flatten(i));
+        } else {
+            yield i;
+        }
+    }
+}
+
+/**
+ * A lazy, top-level ``Array.map()`` workalike that works on anything iterable
+ */
+export function *map(fn, iterable) {
+    for (const i of iterable) {
+        yield fn(i);
+    }
+}
+
+/**
+ * A lazy, top-level ``Array.forEach()`` workalike that works on anything
+ * iterable
+ */
+export function forEach(fn, iterable) {
+    for (const i of iterable) {
+        fn(i);
+    }
+}
+
+function isIterable(thing) {
+    return thing && typeof thing[Symbol.iterator] === 'function';
 }
