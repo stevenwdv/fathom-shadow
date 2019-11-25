@@ -224,13 +224,18 @@ def run_vectorizer(firefox, fathom_type, sample_filenames):
     with progressbar(length=number_of_samples, label='Running Vectorizer...') as bar:
         vectorize_button.click()
         while completed_samples < number_of_samples:
-            if 'failed:' in status_box.text:
-                error = extract_error_from(status_box.text)
-                raise UngracefulError(f'Vectorization failed with error:\n{error}')
             try:
-                now_completed_samples = len([line for line in status_box.text.splitlines() if line.endswith(': vectorized')])
+                status_box_text = status_box.text
             except NoSuchWindowException:
-                raise UngracefulError('Vectorization aborted: Vectorizer window closed during execution')
+                raise UngracefulError('Vectorization aborted: Firefox window closed during vectorization')
+            try:
+                failure_detected = 'failed' in status_box_text
+            except TypeError:
+                raise UngracefulError('Vectorization aborted: Firefox window closed during vectorization')
+            if failure_detected:
+                error = extract_error_from(status_box_text)
+                raise UngracefulError(f'Vectorization failed with error:\n{error}')
+            now_completed_samples = len([line for line in status_box_text.splitlines() if line.endswith(': vectorized')])
             bar.update(now_completed_samples - completed_samples)
             completed_samples = now_completed_samples
 
