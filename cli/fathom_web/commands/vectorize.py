@@ -316,11 +316,15 @@ def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, gracefu
             server.shutdown()
             server_thread.join()
         if firefox:
+            if os.name == 'nt':
+                signal_for_killing = signal.CTRL_C_EVENT
+            else:
+                signal_for_killing = signal.SIGTERM
             try:
-                os.kill(firefox_pid, signal.CTRL_C_EVENT)
+                os.kill(firefox_pid, signal_for_killing)
             except SystemError:
                 pass
-            os.kill(geckoview_pid, signal.CTRL_C_EVENT)
+            os.kill(geckoview_pid, signal_for_killing)
 
 
 if __name__ == '__main__':
