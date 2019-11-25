@@ -12,6 +12,7 @@ import zipfile
 
 from click import argument, command, option, Path, progressbar
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.support.ui import Select
 
 
@@ -226,7 +227,10 @@ def run_vectorizer(firefox, fathom_type, sample_filenames):
             if 'failed:' in status_box.text:
                 error = extract_error_from(status_box.text)
                 raise UngracefulError(f'Vectorization failed with error:\n{error}')
-            now_completed_samples = len([line for line in status_box.text.splitlines() if line.endswith(': vectorized')])
+            try:
+                now_completed_samples = len([line for line in status_box.text.splitlines() if line.endswith(': vectorized')])
+            except NoSuchWindowException:
+                raise UngracefulError('Vectorization aborted: Vectorizer window closed during execution')
             bar.update(now_completed_samples - completed_samples)
             completed_samples = now_completed_samples
 
