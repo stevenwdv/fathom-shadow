@@ -8,10 +8,10 @@ import resolve from 'rollup-plugin-node-resolve';
 
 export default {
   input: 'index.mjs',
-  name: 'fathom',
   output: {
     file: 'dist/fathom.js',
     format: 'umd',
+    name: 'fathom',
   },
   plugins: [
     resolve({
@@ -21,6 +21,5 @@ export default {
     commonjs({
       include: ['node_modules/**'],
     }),
-  ],
-  treeshake: false
+  ]
 };
