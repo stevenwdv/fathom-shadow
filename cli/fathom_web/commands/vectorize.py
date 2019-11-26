@@ -59,12 +59,12 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, fathom_tr
       * A FathomFox repository checkout
       * A Fathom Trainees repository checkout
       * A copy of Firefox
-      * A geckoview driver downloaded and accessible in your PATH environment variable
+      * geckodriver downloaded and accessible in your PATH environment variable
     """
     # TODO: Try a class based approach so I don't need these =None statements or need to pass the temp_dir around
     firefox = None
     firefox_pid = None
-    geckoview_pid = None
+    geckodriver_pid = None
     server = None
     server_thread = None
     graceful_shutdown = False
@@ -73,7 +73,7 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, fathom_tr
         sample_filenames = run_fathom_list(samples_directory)
         fathom_fox, fathom_trainees = build_fathom_addons(ruleset_file, fathom_fox_dir, fathom_trainees_dir, temp_dir)
         server, server_thread = run_file_server(samples_directory)
-        firefox, firefox_pid, geckoview_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser, temp_dir)
+        firefox, firefox_pid, geckodriver_pid = configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browser, temp_dir)
         firefox = run_vectorizer(firefox, fathom_type, sample_filenames)
         graceful_shutdown = True
     # TODO: How to set the exit code here?
@@ -87,7 +87,7 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, fathom_tr
         print(f'\n\n{e}')
         graceful_shutdown = True
     finally:
-        teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown)
+        teardown(firefox, firefox_pid, geckodriver_pid, server, server_thread, graceful_shutdown)
 
 
 def run_fathom_list(samples_directory):
@@ -166,7 +166,7 @@ def configure_firefox(fathom_fox, fathom_trainees, output_directory, show_browse
     Trainees.
 
     We return the webdriver object, and the process IDs for both the Firefox
-    process and the geckoview driver process so we can shutdown either
+    process and the geckodriver process so we can shutdown either
     gracefully or ungracefully.
     """
     print('Configuring Firefox...', end='', flush=True)
@@ -307,7 +307,7 @@ def look_for_new_vector_file(downloads_dir, vector_files_before):
         raise GracefulError(error_string)
 
 
-def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, graceful_shutdown):
+def teardown(firefox, firefox_pid, geckodriver_pid, server, server_thread, graceful_shutdown):
     """
     Close Firefox and the HTTP server.
 
@@ -333,7 +333,7 @@ def teardown(firefox, firefox_pid, geckoview_pid, server, server_thread, gracefu
                 os.kill(firefox_pid, signal_for_killing)
             except SystemError:
                 pass
-            os.kill(geckoview_pid, signal_for_killing)
+            os.kill(geckodriver_pid, signal_for_killing)
 
 
 if __name__ == '__main__':
