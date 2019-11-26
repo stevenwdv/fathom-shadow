@@ -7,13 +7,14 @@ import signal
 import subprocess
 from tempfile import TemporaryDirectory
 from threading import Thread
-import time
 import zipfile
 
 from click import argument, command, option, Path, progressbar
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.support.ui import Select
+
+from ..utils import wait_for_function
 
 
 class GracefulError(RuntimeError):
@@ -252,16 +253,14 @@ def get_fathom_fox_uuid(firefox):
     little time to update before the fathom addon information appears. Five
     seconds seems adequate since one second has always worked for me (Daniel).
     """
-    for _ in range(5):
+    def get_uuid():
         prefs = (pathlib.Path(firefox.capabilities.get('moz:profile')) / 'prefs.js').read_text().split(';')
         uuids = next((line for line in prefs if 'extensions.webextensions.uuids' in line)).split(',')
-        try:
-            fathom_fox_uuid = next((line for line in uuids if 'fathomfox@mozilla.com' in line)).split('\\"')[3]
-            return fathom_fox_uuid
-        except StopIteration:
-            time.sleep(1)
-    else:
-        raise GracefulError('Could not find UUID for FathomFox. No entry in the pres.js file.')
+        fathom_fox_uuid = next((line for line in uuids if 'fathomfox@mozilla.com' in line)).split('\\"')[3]
+        return fathom_fox_uuid
+
+    error = GracefulError('Could not find UUID for FathomFox. No entry in the pres.js file.')
+    return wait_for_function(get_uuid, error, max_tries=5)
 
 
 def vector_files_present(firefox):
@@ -292,19 +291,17 @@ def look_for_new_vector_file(downloads_dir, vector_files_before):
     little time to update before the file appears. Five seconds seems adequate
     since one second has always worked for me (Daniel).
     """
-    for _ in range(5):
+    def get_vector_file():
         vector_files_after = set(downloads_dir.glob('vector*.json'))
-        try:
-            new_file = (vector_files_after - vector_files_before).pop()
-            return new_file
-        except KeyError:
-            time.sleep(1)
-    else:
-        error_string = f'Could not find vectors file in {downloads_dir.as_posix()}.'
-        if vector_files_before:
-            files_present = '\n'.join(file.as_posix() for file in vector_files_before)
-            error_string += f' Files present were:\n{files_present}'
-        raise GracefulError(error_string)
+        new_file = (vector_files_after - vector_files_before).pop()
+        return new_file
+
+    error_string = f'Could not find vectors file in {downloads_dir.as_posix()}.'
+    if vector_files_before:
+        files_present = '\n'.join(file.as_posix() for file in vector_files_before)
+        error_string += f' Files present were:\n{files_present}'
+    error = GracefulError(error_string)
+    return wait_for_function(get_vector_file, error, max_tries=5)
 
 
 def teardown(firefox, firefox_pid, geckodriver_pid, server, server_thread, graceful_shutdown):
