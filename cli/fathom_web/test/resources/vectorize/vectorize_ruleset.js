@@ -36,7 +36,6 @@ const VIEWPORT_SIZE = {width: 1680, height: 950};
 
 const FEATURES = ['secret'];
 for (const feature of FEATURES) {
-    console.log(feature);
     const ruleset = {
         coeffs: new Map(coefficients[feature]),
         viewportSize: VIEWPORT_SIZE,
@@ -49,7 +48,6 @@ for (const feature of FEATURES) {
         ),
     };
     trainees.set(feature, ruleset);
-    console.log(trainees);
 }
 
 export default trainees;
