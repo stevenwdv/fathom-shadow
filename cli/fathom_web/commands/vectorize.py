@@ -300,7 +300,7 @@ def look_for_new_vector_file(downloads_dir, vector_files_before):
         except KeyError:
             time.sleep(1)
     else:
-        error_string = f'Cound not find vectors file in {downloads_dir.as_posix()}.'
+        error_string = f'Could not find vectors file in {downloads_dir.as_posix()}.'
         if vector_files_before:
             files_present = '\n'.join(file.as_posix() for file in vector_files_before)
             error_string += f' Files present were:\n{files_present}'
