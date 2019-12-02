@@ -7,14 +7,12 @@ import {ruleset} from './ruleset';
 import {dom} from './lhs';
 import {out} from './rhs';
 import {and, atMost, nearest, note, props, score, type, typeIn} from './side';
-import {clusters} from './clusters';
+
+export * as clusters from './clusters';
 export * as utils from './utilsForFrontend';
-
-
 export {
     and,
     atMost,
-    clusters,
     dom,
     nearest,
     note,

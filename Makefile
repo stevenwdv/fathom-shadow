@@ -45,7 +45,7 @@ cli:
 
 bundle: dist/fathom.js
 
-doc: $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py
+doc: $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py .npm_installed
 	$(MAKE) -C docs clean html
 
 clean:
