@@ -9,7 +9,7 @@ JS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs
 
 # It's faster to invoke Babel once and compile everything than to invoke it
 # separately on even 2 individual files that changed.
-%.js: %.mjs .npm_installed; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir .
+%.js: %.mjs .npm_installed .babelrc; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir . --relative
 
 all: $(JS)
 
