@@ -25,6 +25,7 @@ rules:
   indent: [error, 4, {ObjectExpression: first, ArrayExpression: first, CallExpression: {arguments: first}, FunctionDeclaration: {parameters: first}}]
   max-len: [off, {code: 100, ignoreComments: true, ignoreStrings: true, ignoreTemplateLiterals: true}]
   node/exports-style: [error, module.exports]
+  node/no-missing-import: [error, {tryExtensions: [".js", ".mjs"]}]
   node/no-unpublished-require: off
   no-console: off
   no-dupe-class-members: error
