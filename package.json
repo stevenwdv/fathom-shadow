@@ -31,7 +31,7 @@
     "selenium-webdriver": "^4.0.0-alpha.4"
   },
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 7.6.0"
   },
   "homepage": "https://github.com/mozilla/fathom",
   "keywords": [
