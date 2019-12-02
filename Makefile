@@ -45,11 +45,11 @@ cli:
 
 bundle: dist/fathom.js
 
-doc: $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py .npm_installed
+doc: .doc_tools_installed .npm_installed
 	$(MAKE) -C docs clean html
 
 clean:
-	rm -rf $(JS) venv .npm_installed
+	rm -rf $(JS) venv .doc_tools_installed .npm_installed
 
 
 # Private targets:
@@ -62,8 +62,9 @@ $(VIRTUAL_ENV)/pyvenv.cfg: tooling/dev-requirements.txt cli/setup.py
 	pip3 install -e cli -f https://download.pytorch.org/whl/torch_stable.html
 
 # Install the doc-building requirements.
-$(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/pyvenv.cfg tooling/doc-building-requirements.txt
+.doc_tools_installed: $(VIRTUAL_ENV)/pyvenv.cfg tooling/doc-building-requirements.txt
 	pip3 install -r tooling/doc-building-requirements.txt
+	touch $@
 
 # .npm_installed is an empty file we touch whenever we run npm install. This
 # target redoes the install if package.json is newer than that file:
