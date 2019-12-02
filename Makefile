@@ -15,7 +15,7 @@ all: $(JS)
 
 lint: js_lint py_lint
 
-js_lint: $(JS)
+js_lint:
 	@node_modules/.bin/eslint --ext mjs .
 	@node_modules/.bin/eslint test/browser
 
