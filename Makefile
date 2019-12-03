@@ -9,13 +9,13 @@ JS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs
 
 # It's faster to invoke Babel once and compile everything than to invoke it
 # separately on even 2 individual files that changed.
-%.js: %.mjs .npm_installed; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir .
+%.js: %.mjs .npm_installed .babelrc; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir . --relative
 
 all: $(JS)
 
 lint: js_lint py_lint
 
-js_lint: $(JS)
+js_lint:
 	@node_modules/.bin/eslint --ext mjs .
 	@node_modules/.bin/eslint test/browser
 
@@ -25,13 +25,13 @@ py_lint: $(VIRTUAL_ENV)/pyvenv.cfg
 test: js_test py_test
 
 js_test: $(JS)
-	@node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --recursive
+	@node_modules/.bin/nyc --reporter=text-summary node_modules/mocha/bin/_mocha --recursive
 
 py_test: $(VIRTUAL_ENV)/pyvenv.cfg
 	@pytest cli/fathom_web/test
 
 coveralls:
-	cat ./coverage/lcov.info | coveralls
+	node_modules/.bin/nyc report --reporter=text-lcov | coveralls
 
 debugtest: $(JS)
 	# This is known to work on node 7.6.0.
@@ -43,11 +43,13 @@ publish: $(JS)
 cli:
 	cd cli && python setup.py sdist bdist_wheel
 
-doc: $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py
+bundle: dist/fathom.js
+
+doc: .doc_tools_installed .npm_installed
 	$(MAKE) -C docs clean html
 
 clean:
-	rm -rf $(JS) venv .npm_installed
+	rm -rf $(JS) venv .doc_tools_installed .npm_installed
 
 
 # Private targets:
@@ -60,8 +62,9 @@ $(VIRTUAL_ENV)/pyvenv.cfg: tooling/dev-requirements.txt cli/setup.py
 	pip3 install -e cli -f https://download.pytorch.org/whl/torch_stable.html
 
 # Install the doc-building requirements.
-$(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/pyvenv.cfg tooling/doc-building-requirements.txt
+.doc_tools_installed: $(VIRTUAL_ENV)/pyvenv.cfg tooling/doc-building-requirements.txt
 	pip3 install -r tooling/doc-building-requirements.txt
+	touch $@
 
 # .npm_installed is an empty file we touch whenever we run npm install. This
 # target redoes the install if package.json is newer than that file:
@@ -69,4 +72,8 @@ $(VIRTUAL_ENV)/lib/site-packages/sphinx_js/__init__.py: $(VIRTUAL_ENV)/pyvenv.cf
 	npm install
 	touch $@
 
-.PHONY: all lint js_lint py_lint test js_test py_test all_js_test coveralls debugtest publish cli doc clean
+dist/fathom.js: rollup.config.js .npm_installed
+	@node_modules/.bin/rollup -c
+
+
+.PHONY: all lint js_lint py_lint test js_test py_test all_js_test coveralls debugtest publish cli bundle doc clean
