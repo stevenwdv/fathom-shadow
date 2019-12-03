@@ -62,7 +62,7 @@ def wait_for_function(function, error, max_tries):
     for _ in range(max_tries):
         try:
             return function()
-        except:  # noqa: E722
+        except Exception:  # noqa: E722
             sleep(1)
     else:
         raise error
