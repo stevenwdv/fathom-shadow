@@ -1,4 +1,6 @@
-// eslint-disable-next-line import/extensions
+// TODO: Address node rules evaluating against browser only files
+/* eslint-disable node/no-unsupported-features/es-syntax */
+// eslint-disable-next-line import/extensions, node/no-missing-import
 import {dom, out, rule, ruleset, score, type} from 'fathom-web';
 
 let coefficients = {
