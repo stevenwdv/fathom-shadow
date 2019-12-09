@@ -1,4 +1,4 @@
-/* eslint-disable import/no-unresolved */
+// eslint-disable-next-line import/extensions
 import {dom, out, rule, ruleset, score, type} from 'fathom-web';
 
 let coefficients = {

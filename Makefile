@@ -18,6 +18,7 @@ lint: js_lint py_lint
 js_lint: $(JS)
 	@node_modules/.bin/eslint --ext mjs .
 	@node_modules/.bin/eslint test/browser
+	@node_modules/.bin/eslint cli/fathom_web/test/resources
 
 py_lint: $(VIRTUAL_ENV)/pyvenv.cfg
 	@flake8 cli
