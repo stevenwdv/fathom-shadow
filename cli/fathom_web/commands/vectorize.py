@@ -61,6 +61,10 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, fathom_tr
       * A Fathom Trainees repository checkout
       * A copy of Firefox
       * geckodriver downloaded and accessible in your PATH environment variable
+
+    Please note that this utility is considered experimental due to the use of os.kill() when shutting down while the
+    vectorization is occurring. We are working on fixing this. Repeatedly stopping this program while vectorization is
+    happening may cause problems with other currently running Firefox processes.
     """
     # TODO: Try a class based approach so I don't need these =None statements or need to pass the temp_dir around
     firefox = None
