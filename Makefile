@@ -15,7 +15,7 @@ all: $(JS)
 
 lint: js_lint py_lint
 
-js_lint: $(JS)
+js_lint: $(JS) .npm_installed
 	@node_modules/.bin/eslint --ext mjs .
 	@node_modules/.bin/eslint test/browser
 	@node_modules/.bin/eslint cli/fathom_web/test/resources
