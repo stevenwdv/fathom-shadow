@@ -212,11 +212,12 @@ def run_vectorizer(firefox, fathom_type, sample_filenames):
     fathom_fox_uuid = get_fathom_fox_uuid(firefox)
     firefox.get(f'moz-extension://{fathom_fox_uuid}/pages/vector.html')
 
-    pages_text_area = firefox.find_element_by_id('pages')
-    pages_text_area.send_keys(sample_filenames)
-
+    # TODO: Before selecting, check if the page is reporting an error about no ruleset present. If there is, raise a GracefulError.
     ruleset_dropdown_selector = Select(firefox.find_element_by_id('ruleset'))
     ruleset_dropdown_selector.select_by_visible_text(fathom_type)
+
+    pages_text_area = firefox.find_element_by_id('pages')
+    pages_text_area.send_keys(sample_filenames)
 
     downloads_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
     vector_files_before = set(downloads_dir.glob('vector*.json'))
