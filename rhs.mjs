@@ -244,6 +244,9 @@ export class InwardRhs {
                 if (~haveSubfacts & call.possibleSubfacts) {
                     // This call might provide a subfact we are missing.
                     const newSubfacts = call(fnode);
+
+                    // We start with an empty object, so we're okay here.
+                    // eslint-disable-next-line guard-for-in
                     for (let subfact in newSubfacts) {
                         // A props() callback could insert arbitrary keys into
                         // the result, but it shouldn't matter, because nothing

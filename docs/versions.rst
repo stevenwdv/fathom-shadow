@@ -2,6 +2,11 @@
 Version History
 ===============
 
+unreleased
+==========
+.. warning::
+   Backward-incompatible change: The ``clusters`` symbol exported from Fathom's top level is now a module containing all the :doc:`clustering` routines, not :func:`clusters` itself. The :func:`clusters` function is now at ``clusters.clusters``.
+
 3.2
 ===
 * Add :command:`fathom-test` tool for computing test-corpus accuracies.

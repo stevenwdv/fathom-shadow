@@ -67,8 +67,8 @@ def main(testing_file, weights):
     x, y, num_yes = tensors_from(pages)
     model = model_from_json(weights, len(y[0]), testing_data['header']['featureNames'])
 
-    accuracy, false_positive, false_negative = accuracy_per_tag(y, model(x))
-    print(pretty_accuracy('\nTesting accuracy per tag: ', accuracy, len(x), false_positive, false_negative))
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
+    print(pretty_accuracy('\n   Testing accuracy per tag: ', accuracy, len(x), false_positives, false_negatives, num_yes))
 
     accuracy, report = accuracy_per_page(model, pages)
     print(pretty_accuracy('Testing accuracy per page:', accuracy, len(pages)))

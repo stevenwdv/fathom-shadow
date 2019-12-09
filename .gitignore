@@ -1,7 +1,8 @@
+/.doc_tools_installed
 /.npm_installed
 /node_modules
 /*.log
-/coverage
+/.nyc_output
 /docs/_build
 /dist
 **/*.js

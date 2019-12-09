@@ -9,6 +9,8 @@ const url = require('url');
 
 const PORT = 8000;
 const server = http.createServer((request, response) => {
+    // TODO: Replace url.parse with url.URL.
+    // eslint-disable-next-line node/no-deprecated-api
     const path = url.parse(request.url).pathname;
     fs.readFile(__dirname + path, 'utf8', (error, data) => {
         if (error) {

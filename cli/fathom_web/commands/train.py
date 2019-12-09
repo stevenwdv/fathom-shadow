@@ -43,7 +43,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
             loss.backward()  # Compute gradients.
             optimizer.step()
     if stopped_early:
-        print('Stopping early at iteration {t}, just before validation error rose.'.format(t=t))
+        print(f'Stopping early at iteration {t}, just before validation error rose.')
 
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
@@ -60,7 +60,7 @@ def pretty_coeffs(model, feature_names):
     dict_params = {}
     for name, param in model.named_parameters():
         dict_params[name] = param.data.tolist()
-    pretty = ',\n        '.join('["{k}", {v}]'.format(k=k, v=v) for k, v in zip(feature_names, dict_params['0.weight'][0]))
+    pretty = ',\n        '.join(f'["{k}", {v}]' for k, v in zip(feature_names, dict_params['0.weight'][0]))
     return ("""{{"coeffs": [
         {coeffs}
     ],
@@ -122,18 +122,38 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         validation_arg = validation_ins, validation_outs
     else:
         validation_arg = None
-    model = learn(learning_rate, iterations, x, y, validation=validation_arg, stop_early=stop_early, run_comment=full_comment)
+    model = learn(learning_rate,
+                  iterations,
+                  x,
+                  y,
+                  validation=validation_arg,
+                  stop_early=stop_early,
+                  run_comment=full_comment)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positive, false_negative = accuracy_per_tag(y, model(x))
-    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ', accuracy, len(x), false_positive, false_negative, num_yes))
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
+    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ',
+                          accuracy,
+                          len(x),
+                          false_positives,
+                          false_negatives,
+                          num_yes))
     if validation_file:
-        accuracy, false_positive, false_negative = accuracy_per_tag(validation_outs, model(validation_ins))
-        print(pretty_accuracy('Validation accuracy per tag: ', accuracy, len(validation_ins), false_positive, false_negative, validation_yes))
+        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins))
+        print(pretty_accuracy('Validation accuracy per tag: ',
+                              accuracy,
+                              len(validation_ins),
+                              false_positives,
+                              false_negatives,
+                              validation_yes))
     accuracy, training_report = accuracy_per_page(model, training_data['pages'])
-    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per page:', accuracy, len(training_data['pages'])))
+    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per page:',
+                          accuracy,
+                          len(training_data['pages'])))
     if validation_file:
         accuracy, validation_report = accuracy_per_page(model, validation_data['pages'])
-        print(pretty_accuracy('Validation accuracy per page:', accuracy, len(validation_data['pages'])))
+        print(pretty_accuracy('Validation accuracy per page:',
+                              accuracy,
+                              len(validation_data['pages'])))
 
     if not quiet:
         print('\nTraining per-page results:\n', training_report, sep='')

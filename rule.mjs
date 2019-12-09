@@ -1,9 +1,7 @@
-import wu from 'wu';
-
 import {Fnode} from './fnode';
 import {out, OutwardRhs} from './rhs';
 import {NiceSet, setDefault} from './utilsForFrontend';
-import {identity} from './utilsForFrontend';
+import {forEach, identity, map} from './utilsForFrontend';
 
 
 /**
@@ -172,7 +170,7 @@ export class InwardRule extends Rule {
         const returnedFnodes = new Set();
 
         // Merge facts into fnodes:
-        wu.forEach(
+        forEach(
             // leftResult can be either a fnode or a {fnode, rhsTransformer} pair.
             function updateFnode(leftResult) {
                 const leftType = self.lhs.guaranteedType();
@@ -309,7 +307,7 @@ export class OutwardRule extends Rule {
             return (fnodeOrStruct instanceof Fnode) ? fnodeOrStruct : fnodeOrStruct.fnode;
         }
 
-        return this.rhs.allCallback(wu.map(this.rhs.callback, wu.map(justFnode, this.lhs.fnodes(ruleset))));
+        return this.rhs.allCallback(map(this.rhs.callback, map(justFnode, this.lhs.fnodes(ruleset))));
     }
 
     /**
