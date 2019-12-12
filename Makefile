@@ -30,6 +30,9 @@ js_test: $(JS) .npm_installed
 py_test: $(VIRTUAL_ENV)/pyvenv.cfg
 	@pytest cli/fathom_web/test
 
+coverage: .npm_installed js_test
+	@node_modules/.bin/nyc report --reporter=html
+
 coveralls: .npm_installed
 	node_modules/.bin/nyc report --reporter=text-lcov | coveralls
 

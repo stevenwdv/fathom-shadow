@@ -3,6 +3,7 @@
 /node_modules
 /*.log
 /.nyc_output
+/coverage
 /docs/_build
 /dist
 **/*.js
