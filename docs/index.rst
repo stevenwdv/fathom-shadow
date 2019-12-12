@@ -31,6 +31,7 @@ Documentation
    clustering
    fnodes
    utilities
+   zoo
    development
    versions
 
