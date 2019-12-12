@@ -21,6 +21,21 @@ Recognizers
 
 This application predates our modern, GitHub-compatible corpus storage format. A repo link will follow once we get files down to a size that GitHub will accept.
 
+Smoot: Page Classification
+==========================
+
+An upcoming Firefox metrics effort, Project Smoot will use a set of whole-page classifiers to characterize user tasks in a privacy-preserving way. 
+
+Recognizers
+-----------
+* **Shopping.** A page is a shopping page iff a user would seek it out in the process of choosing or buying things. This is a very challenging rubric, as it almost demands the model reach inside the head of the user to determine intent. A page about Amazon's affiliate program is not a shopping page, even though it appears on a shopping-focused domain. A forum thread on Reddit discussing the merits of competing products is a shopping page, even though it’s not near any actual Buy buttons.
+
+  Despite the difficulty of the task, our model, still under development, scores over 90% in validation on a corpus of 100 pages.
+* **Article.** A page whose main attraction is prose to read. It’s too early to measure accuracy.
+* **“Techie” Article.** An article aimed at a computer-savvy audience. This is intended for audience segmentation. It’s too early for numbers here as well.
+
+`Smoot ruleset source <https://github.com/mozilla-services/fathom-smoot>`_
+
 Price Tracker
 =============
 
@@ -38,21 +53,6 @@ Price Tracker’s accuracy numbers are unusually noisy, partly due to the rules 
 More metrics are available on `the pull request that merged the Fathom 3 upgrade <https://github.com/mozilla/price-tracker/pull/317>`_, but they mostly serve as a warning that a more diverse corpus is necessary for confident measurement. Take Price Tracker as an example of coding practices and product-market fit, not corpus design.
 
 `The Fathom-related bits of the source <https://github.com/mozilla/price-tracker/blob/master/src/extraction/fathom/ruleset_factory.js>`_
-
-Smoot: Page Classification
-==========================
-
-An upcoming Firefox metrics effort, Project Smoot will use a set of whole-page classifiers to characterize user tasks in a privacy-preserving way. 
-
-Recognizers
------------
-* **Shopping.** A page is a shopping page iff a user would seek it out in the process of choosing or buying things. This is a very challenging rubric, as it almost demands the model reach inside the head of the user to determine intent. A page about Amazon's affiliate program is not a shopping page, even though it appears on a shopping-focused domain. A forum thread on Reddit discussing the merits of competing products is a shopping page, even though it’s not near any actual Buy buttons.
-
-  Despite the difficulty of the task, our model, still under development, scores over 90% in validation on a corpus of 100 pages.
-* **Article.** A page whose main attraction is prose to read. It’s too early to measure accuracy.
-* **“Techie” Article.** An article aimed at a computer-savvy audience. This is intended for audience segmentation. It’s too early for numbers here as well.
-
-`Smoot ruleset source <https://github.com/mozilla-services/fathom-smoot>`_
 
 Pop-up Detector
 ===============
