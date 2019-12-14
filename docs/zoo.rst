@@ -4,7 +4,8 @@ Examples
 
 Welcome to the Fathom Ruleset Zoo, a bestiary of Fathom real-world examples. Each gives an overview and links to a repository with full source code.
 
-Note that some repos are private because they contain copyrighted training samples. While we believe this is fair use, we don't wish to provoke cease-and-desist bots. If you work for Mozilla, just ask, and we’ll grant you access. Otherwise, enjoy!
+.. note::
+   Some repos are private because they contain copyrighted training samples. While we believe this is fair use, we don't wish to provoke cease-and-desist bots. If you work for Mozilla, just ask, and we’ll grant you access. Otherwise, enjoy!
 
 Login Forms
 ===========
@@ -61,4 +62,4 @@ Pop-up “windows” on the web have migrated from actual windows to in-page ele
 
 Results were encouraging, hovering around 85% on a blind testing corpus. Revamped for a modern Fathom, it might give higher numbers with little effort. In the meantime, it serves as a good example of perceptive rules. But don't lean overmuch on the ranges of numbers returned from scoring callbacks; that all changed in Fathom 3.
 
-`Pop-up Detector Source <https://github.com/capstone-2018873/fathom-trainees/tree/master/src/models>`_
+`Pop-up Detector source <https://github.com/capstone-2018873/fathom-trainees/tree/master/src/models>`_
