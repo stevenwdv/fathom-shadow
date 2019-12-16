@@ -20,7 +20,7 @@ Recognizers
 * **Username field.** This is the username or (as is increasingly the case) email field of the login form. The ruleset finds the precise ``<input>`` element for form fill. Validation accuracy: 99.38% of 162 candidate tags across 64 pages, including ones with no login forms or with adversarial constructs like password-change, credit-card, and shipping forms.
 * **Next button.** The Log In button or, for multi-page login flows, whatever you click to advance to the next step. This was the more challenging recognizer, since there is a wider diversity of both markup and text for these constructs. Validation accuracy: 97.14% of 490 candidate tags across 64 pages. There is plenty of signal left on the table, so more invested time should give us another percentage point or two. (The whole project was timeboxed to about 3 weeks.)
 
-This application predates our modern, GitHub-compatible corpus storage format. A repo link will follow once we get files down to a size that GitHub will accept.
+`Login Forms ruleset source <https://github.com/mozilla-services/fathom-login-forms/blob/master/trainees.js>`_
 
 Smoot: Page Classification
 ==========================
@@ -35,7 +35,7 @@ Recognizers
 * **Article.** A page whose main attraction is prose to read. It’s too early to measure accuracy.
 * **“Techie” Article.** An article aimed at a computer-savvy audience. This is intended for audience segmentation. It’s too early for numbers here as well.
 
-`Smoot ruleset source <https://github.com/mozilla-services/fathom-smoot>`_
+`Smoot source <https://github.com/mozilla-services/fathom-smoot>`_
 
 Price Tracker
 =============
