@@ -1,7 +1,6 @@
 from contextlib import contextmanager
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import os
-from socketserver import ThreadingMixIn
 
 from click import command, option, Path
 
@@ -33,7 +32,3 @@ def cd(path):
         yield
     finally:
         os.chdir(previous_directory)
-
-
-class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
-    pass
