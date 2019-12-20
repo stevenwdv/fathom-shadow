@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
+from socketserver import ThreadingMixIn
 
 from click import command, option, Path
 
@@ -18,7 +19,7 @@ def main(directory, port):
     in the vectorizer page, an address to an HTTP server that is serving your samples.
     """
     with cd(directory):
-        server = HTTPServer(('localhost', port), SimpleHTTPRequestHandler)
+        server = ThreadingHTTPServer(('localhost', port), SimpleHTTPRequestHandler)
         print(f'Serving {directory} over http://localhost:{port}.')
         print('Press Ctrl+C to stop.')
         server.serve_forever()
@@ -32,3 +33,7 @@ def cd(path):
         yield
     finally:
         os.chdir(previous_directory)
+
+
+class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
+    pass
