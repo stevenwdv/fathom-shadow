@@ -1,4 +1,4 @@
-import contextlib
+from contextlib import contextmanager
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import os
 
@@ -24,7 +24,7 @@ def main(directory, port):
         server.serve_forever()
 
 
-@contextlib.contextmanager
+@contextmanager
 def cd(path):
     previous_directory = os.getcwd()
     os.chdir(path)
