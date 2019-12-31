@@ -32,7 +32,7 @@ Recognizers
 * **Shopping.** A page is a shopping page iff a user would seek it out in the process of choosing or buying things. This is a very challenging rubric, as it almost demands the model reach inside the head of the user to determine intent. A page about Amazon's affiliate program is not a shopping page, even though it appears on a shopping-focused domain. A forum thread on Reddit discussing the merits of competing products is a shopping page, even though it’s not near any actual Buy buttons.
 
   Despite the difficulty of the task, our model, still under development, scores over 90% in validation on a corpus of 100 pages.
-* **Article.** A page whose main attraction is prose to read. It’s too early to measure accuracy.
+* **Article.** A page whose main attraction is prose to read. Though still under development, this model scores 90% in validation on a corpus of 60 pages.
 * **“Techie” Article.** An article aimed at a computer-savvy audience. This is intended for audience segmentation. It’s too early for numbers here as well.
 
 `Smoot source <https://github.com/mozilla-services/fathom-smoot>`_
@@ -41,6 +41,8 @@ Price Tracker
 =============
 
 Originally designed for Fathom 2.0 but ported to 3.0 as a team familiarization exercise, Firefox Price Tracker is a now-retired web extension that periodically polled the prices of a wishlist of products and notified the user of price drops. Fathom provided the recognition of products for sale: their names, images, and prices. Out of an abundance of caution, Price Tracker underutilized Fathom’s ability to generalize, artificially limiting itself to the 5 top commerce sites in the U.S. However, its compact example is easy to digest in a sitting, and it’s a fine instance of Fathom increasing the agency of thousands of users when wrapped in a quality, lightweight UI.
+
+.. image:: img/price_tracker_screenshot.png
 
 Recognizers
 -----------
