@@ -10,7 +10,7 @@ Training is the process by which Fathom considers your rules against a labeled c
 Collecting Samples
 ==================
 
-Use `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox's developer tools. See the documentation on its Add-Ons page for details.
+Use `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox's developer tools. See the documentation on the aforementioned page for details.
 
 The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with the ruleset-containing trainees.js file from your fork of `fathom-trainees <https://github.com/mozilla/fathom-trainees>`_. (Hard linking from fathom-trainees to your sample repo is helpful.) Having your ruleset versioned along with your samples is invaluable for reproducing results and maintaining your sanity.
 
