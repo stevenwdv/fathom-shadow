@@ -1,5 +1,5 @@
-import contextlib
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from contextlib import contextmanager
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import os
 
 from click import command, option, Path
@@ -18,13 +18,13 @@ def main(directory, port):
     in the vectorizer page, an address to an HTTP server that is serving your samples.
     """
     with cd(directory):
-        server = HTTPServer(('localhost', port), SimpleHTTPRequestHandler)
+        server = ThreadingHTTPServer(('localhost', port), SimpleHTTPRequestHandler)
         print(f'Serving {directory} over http://localhost:{port}.')
         print('Press Ctrl+C to stop.')
         server.serve_forever()
 
 
-@contextlib.contextmanager
+@contextmanager
 def cd(path):
     previous_directory = os.getcwd()
     os.chdir(path)
