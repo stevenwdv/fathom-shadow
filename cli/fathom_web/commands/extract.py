@@ -6,7 +6,7 @@ import re
 from urllib.parse import unquote
 from urllib.request import pathname2url
 
-from click import argument, command, option, Path
+from click import argument, command, option, Path, progressbar
 
 
 BASE64_DATA_PATTERN = re.compile(r'(data:(?P<mime>[a-zA-Z0-9]+/[a-zA-Z0-9\-.+]+);(\s?charset=utf-8;)?base64,(?P<string>(?:[a-zA-Z0-9+/=]|%3D)+))')
@@ -53,23 +53,24 @@ def main(in_directory, preserve_originals):
     else:
         originals_dir = None
 
-    for file in pathlib.Path(in_directory).iterdir():
-        if file == originals_dir:
-            continue
-        if file.is_dir():
-            print(f'Skipping directory {file.name}/')
-            continue
-        if file.suffix != '.html':
-            print(f'Skipping {file.name}; not an HTML file')
-            continue
+    with progressbar(list(pathlib.Path(in_directory).iterdir())) as bar:
+        for file in bar:
+            if file == originals_dir:
+                continue
+            if file.is_dir():
+                print(f'Skipping directory {file.name}/')
+                continue
+            if file.suffix != '.html':
+                print(f'Skipping {file.name}; not an HTML file')
+                continue
 
-        html = extract_base64_data_from_html_page(file)
+            html = extract_base64_data_from_html_page(file)
 
-        if preserve_originals:
-            shutil.move(file, originals_dir / file.name)
+            if preserve_originals:
+                shutil.move(file, originals_dir / file.name)
 
-        with file.open('w', encoding='utf-8') as fp:
-            fp.write(html)
+            with file.open('w', encoding='utf-8') as fp:
+                fp.write(html)
 
 
 def extract_base64_data_from_html_page(file: pathlib.Path):
