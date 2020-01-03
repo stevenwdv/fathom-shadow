@@ -12,7 +12,7 @@ Collecting Samples
 
 Use `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox's developer tools. See the documentation on the aforementioned page for details.
 
-The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with the ruleset-containing trainees.js file from your fork of `fathom-trainees <https://github.com/mozilla/fathom-trainees>`_. (Hard linking from fathom-trainees to your sample repo is helpful.) Having your ruleset versioned along with your samples is invaluable for reproducing results and maintaining your sanity.
+The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with your application and a rulesets.js file you create to hold your rulesets. (This file can later be hard-linked into `your source checkout of FathomFox <https://github.com/mozilla/fathom-fox>`_ to extract feature vectors for the trainer.)
 
 So far, a training corpus on the order of 50-100 samples has been sufficient to push validation accuracy above 99%. You'll want additional samples for a validation corpus (to let the trainer know when it's begun to overfit) and a test corpus (to come up with final accuracy numbers).
 
@@ -88,7 +88,7 @@ We've mentioned a number of items to check into version control. Here is a direc
         testing/
         rubric.txt
         urls.csv      -- A mapping of sample numbers to URLs, in case we ever need them
-    trainees.js       -- Ruleset code, symlinked into your fathom-trainees fork
+    rulesets.js       -- Ruleset code, hard-linked into your FathomFox checkout
     vectors/          -- Feature vectors from FathomFox's Vectorizer
 
 A few notes:
@@ -260,4 +260,4 @@ A sane authoring process is a feedback loop something like this:
 5. Go to 3, making sure to re-vectorize if you have added or changed rules.
 6. Once *validation accuracy* is sufficient, copy the coefficients into your ruleset, and use the :command:`fathom-test` tool on a fresh set of vectorized *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
 7. If testing accuracy is too low, imbibe the testing pages into your training corpus, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
-8. If testing accuracy is sufficient, you're done! Copy the ruleset and coefficients out of fathom-trainees into your finished product, and ship it.
+8. If testing accuracy is sufficient, you're done! Make sure the latest ruleset and coefficients are in your finished product, and ship it.
