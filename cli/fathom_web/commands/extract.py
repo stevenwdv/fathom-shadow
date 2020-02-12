@@ -25,6 +25,19 @@ MIME_TYPE_TO_FILE_EXTENSION = {
     'font/woff2': '.woff2',
     'image/jpeg': '.jpg',
     'image/webp': '.webp',
+    # From https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types:
+    'audio/aac': '.aac',
+    'application/gzip': '.gz',
+    'text/javascript': '.js',
+    'application/ld+json': '.jsonld',
+    'audio/midi audio/x-midi': '.midi',
+    'audio/opus': '.opus',
+    'application/php': '.php',
+    'application/vnd.rar': '.rar',
+    'audio/wav': '.wav',
+    # From sample pages we've collected:
+    'application/x-font-ttf': '.ttf',
+    'image/jpg': '.jpg',
 }
 
 
@@ -40,8 +53,8 @@ def main(in_directory, preserve_originals):
     resources for each page in a newly created page-specific directory
     within a newly created resources directory in IN_DIRECTORY.
     For example, the resources for ``example.html`` would be stored in
-    ``resources/example_resources/``. This tool is used to prepare your
-    samples for a git-LFS enabled repository.
+    ``resources/example/``. This tool is used to prepare your samples for a
+    git-LFS-enabled repository.
     """
     if preserve_originals:
         originals_dir = pathlib.Path(in_directory) / 'originals'
@@ -159,6 +172,11 @@ def generate_filename(mime_type: str, filename: str) -> str:
         extension = MIME_TYPE_TO_FILE_EXTENSION[mime_type]
     except KeyError:
         extension = mimetypes.guess_extension(mime_type, strict=True)
+        if extension is None:
+            extension = input(f'\nWhat file extension should I use for a resource of type {mime_type}? ')
+            if not extension.startswith('.'):
+                extension = '.' + extension
+            MIME_TYPE_TO_FILE_EXTENSION[mime_type] = extension
     return f'{filename}{extension}'
 
 
