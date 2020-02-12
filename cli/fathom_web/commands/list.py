@@ -13,12 +13,14 @@ from click import argument, command, File, option, Path
         help='A file for saving the printed filenames for easy future reference.')
 def main(in_directory, base_dir, recursive, out_file):
     """
-    Lists relative paths of HTML files in a IN_DIRECTORY relative to BASE_DIR, one filename per line.
-    If BASE_DIR is not specified, paths are relative to IN_DIRECTORY. Optionally saves output to OUT_FILE.
-    Optionally performs the listing recursively.
+    Lists relative paths of HTML files in a IN_DIRECTORY relative to BASE_DIR,
+    one filename per line. If BASE_DIR is not specified, paths are relative to
+    IN_DIRECTORY. Optionally saves output to OUT_FILE. Optionally performs the
+    listing recursively.
 
-    This is useful for vectorizing samples using FathomFox. FathomFox expects input filenames copied into a text box
-    with one filename per line and relative to some path you are serving files from using fathom-serve.
+    This is useful for vectorizing samples using FathomFox. FathomFox expects
+    input filenames copied into a text box with one filename per line and
+    relative to some path you are serving files from using fathom-serve.
     """
     if base_dir is None:
         base_dir = in_directory
