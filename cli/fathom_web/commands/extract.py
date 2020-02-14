@@ -38,7 +38,11 @@ MIME_TYPE_TO_FILE_EXTENSION = {
     # From sample pages we've collected:
     'application/x-font-ttf': '.ttf',
     'image/jpg': '.jpg',
+    'image/xicon': '.ico',
+    'application/fontwoff2': '.woff2',
+    'application/fontwoff': '.woff',
     'application/x-font-woff': '.woff',
+    'application/font-ttf': '.ttf',
 }
 
 
