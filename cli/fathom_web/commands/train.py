@@ -2,6 +2,7 @@ from json import load
 
 from click import argument, command, File, option, progressbar
 from tensorboardX import SummaryWriter
+from torch import tensor
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 
@@ -9,11 +10,11 @@ from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
 from ..utils import classifier, tensors_from
 
 
-def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment=''):
+def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment='', pos_weight=None):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = classifier(len(x[0]), len(y[0]))
-    loss_fn = BCEWithLogitsLoss(reduction='sum')  # reduction=mean converges slower.
+    loss_fn = BCEWithLogitsLoss(reduction='sum', pos_weight=pos_weight)  # reduction=mean converges slower.
     # TODO: Add an option to twiddle pos_weight, which lets us trade off precision and recall. Maybe also graph using add_pr_curve(), which can show how that tradeoff is going.
     optimizer = Adam(model.parameters(), lr=learning_rate)
 
@@ -116,6 +117,8 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         c=(',' + comment) if comment else '')
     training_data = load(training_file)
     x, y, num_yes = tensors_from(training_data['pages'], shuffle=True)
+    total_samples = y.shape[0]
+    positive_weighting_ratio = tensor([(total_samples - num_yes) / num_yes])
     if validation_file:
         validation_data = load(validation_file)
         validation_ins, validation_outs, validation_yes = tensors_from(validation_data['pages'])
@@ -128,7 +131,8 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
                   y,
                   validation=validation_arg,
                   stop_early=stop_early,
-                  run_comment=full_comment)
+                  run_comment=full_comment,
+                  pos_weight=positive_weighting_ratio)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
     accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ',
