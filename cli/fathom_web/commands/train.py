@@ -14,6 +14,8 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = classifier(len(x[0]), len(y[0]))
+    if pos_weight:
+        pos_weight = tensor([pos_weight])
     loss_fn = BCEWithLogitsLoss(reduction='sum', pos_weight=pos_weight)  # reduction=mean converges slower.
     # TODO: Maybe also graph using add_pr_curve(), which can show how that tradeoff is going.
     optimizer = Adam(model.parameters(), lr=learning_rate)
@@ -86,6 +88,11 @@ def pretty_coeffs(model, feature_names):
         default=1000,
         show_default=True,
         help='The number of training iterations to run through')
+@option('--pos-weight', '-p',
+        type=float,
+        default=None,
+        show_default=True,
+        help='The weighting factor given to all positive samples by the loss function. See: https://pytorch.org/docs/stable/nn.html#bcewithlogitsloss')
 @option('--comment', '-c',
         default='',
         help='Additional comment to append to the Tensorboard run name, for display in the web UI')
@@ -93,7 +100,7 @@ def pretty_coeffs(model, feature_names):
         default=False,
         is_flag=True,
         help='Hide per-page diagnostics that may help with ruleset debugging.')
-def main(training_file, validation_file, stop_early, learning_rate, iterations, comment, quiet):
+def main(training_file, validation_file, stop_early, learning_rate, iterations, pos_weight, comment, quiet):
     """Compute optimal coefficients for a Fathom ruleset, based on a set of
     labeled pages exported by the FathomFox Vectorizer.
 
@@ -117,8 +124,6 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         c=(',' + comment) if comment else '')
     training_data = load(training_file)
     x, y, num_yes = tensors_from(training_data['pages'], shuffle=True)
-    total_samples = y.shape[0]
-    positive_weighting_ratio = tensor([(total_samples - num_yes) / num_yes])
     if validation_file:
         validation_data = load(validation_file)
         validation_ins, validation_outs, validation_yes = tensors_from(validation_data['pages'])
@@ -132,7 +137,7 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
                   validation=validation_arg,
                   stop_early=stop_early,
                   run_comment=full_comment,
-                  pos_weight=positive_weighting_ratio)
+                  pos_weight=pos_weight)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
     accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ',
