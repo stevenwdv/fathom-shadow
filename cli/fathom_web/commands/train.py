@@ -15,7 +15,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
     writer = SummaryWriter(comment=run_comment)
     model = classifier(len(x[0]), len(y[0]))
     loss_fn = BCEWithLogitsLoss(reduction='sum', pos_weight=pos_weight)  # reduction=mean converges slower.
-    # TODO: Add an option to twiddle pos_weight, which lets us trade off precision and recall. Maybe also graph using add_pr_curve(), which can show how that tradeoff is going.
+    # TODO: Maybe also graph using add_pr_curve(), which can show how that tradeoff is going.
     optimizer = Adam(model.parameters(), lr=learning_rate)
 
     if validation:
