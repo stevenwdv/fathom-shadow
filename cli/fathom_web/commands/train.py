@@ -1,4 +1,5 @@
 from json import load
+from pprint import pformat
 
 from click import argument, command, File, option, progressbar
 from tensorboardX import SummaryWriter
@@ -9,10 +10,10 @@ from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
 from ..utils import classifier, tensors_from
 
 
-def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment=''):
+def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment='', layers=[]):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
-    model = classifier(len(x[0]), len(y[0]))
+    model = classifier(len(x[0]), len(y[0]), layers)
     loss_fn = BCEWithLogitsLoss(reduction='sum')  # reduction=mean converges slower.
     # TODO: Add an option to twiddle pos_weight, which lets us trade off precision and recall. Maybe also graph using add_pr_curve(), which can show how that tradeoff is going.
     optimizer = Adam(model.parameters(), lr=learning_rate)
@@ -60,11 +61,14 @@ def pretty_coeffs(model, feature_names):
     dict_params = {}
     for name, param in model.named_parameters():
         dict_params[name] = param.data.tolist()
-    pretty = ',\n        '.join(f'["{k}", {v}]' for k, v in zip(feature_names, dict_params['0.weight'][0]))
-    return ("""{{"coeffs": [
-        {coeffs}
-    ],
- "bias": {bias}}}""".format(coeffs=pretty, bias=dict_params['0.bias'][0]))
+    if '2.weight' in dict_params:  # There are hidden layers.
+        return pformat(dict_params, compact=True)
+    else:
+        pretty = ',\n        '.join(f'["{k}", {v}]' for k, v in zip(feature_names, dict_params['0.weight'][0]))
+        return ("""{{"coeffs": [
+            {coeffs}
+        ],
+     "bias": {bias}}}""".format(coeffs=pretty, bias=dict_params['0.bias'][0]))
 
 
 @command()
@@ -92,7 +96,11 @@ def pretty_coeffs(model, feature_names):
         default=False,
         is_flag=True,
         help='Hide per-page diagnostics that may help with ruleset debugging.')
-def main(training_file, validation_file, stop_early, learning_rate, iterations, comment, quiet):
+@option('layers', '--layer', '-y',
+        type=int,
+        multiple=True,
+        help='Add a hidden layer of the given size. You can specify more than one, and they will be connected in the given order. EXPERIMENTAL.')
+def main(training_file, validation_file, stop_early, learning_rate, iterations, comment, quiet, layers):
     """Compute optimal coefficients for a Fathom ruleset, based on a set of
     labeled pages exported by the FathomFox Vectorizer.
 
@@ -110,6 +118,7 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
       the recognizer into a false-positive choice
 
     """
+    layers = list(layers)  # Comes in as tuple
     full_comment = '.LR={l},i={i}{c}'.format(
         l=learning_rate,
         i=iterations,
@@ -128,7 +137,8 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
                   y,
                   validation=validation_arg,
                   stop_early=stop_early,
-                  run_comment=full_comment)
+                  run_comment=full_comment,
+                  layers=layers)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
     accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ',
