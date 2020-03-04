@@ -4,8 +4,9 @@ has yet emerged"""
 
 from random import sample
 
+from more_itertools import pairwise
 import torch
-from torch.nn import Sequential, Linear
+from torch.nn import Sequential, Linear, ReLU
 
 
 def tensor(some_list):
@@ -33,7 +34,7 @@ def tensors_from(pages, shuffle=False):
     return tensor(xs), tensor(ys), num_targets
 
 
-def classifier(num_inputs, num_outputs):
+def classifier(num_inputs, num_outputs, hidden_layer_sizes=[]):
     """Return a new model of the type Fathom uses.
 
     At present, this is a linear binary classifier modeled as a perceptron.
@@ -41,8 +42,16 @@ def classifier(num_inputs, num_outputs):
     :arg num_inputs: The number of input nodes (layer 0 of the net)
     :arg num_outputs: The number of outputs. So far, always 1 since it's a
         binary classifier. We may expand to multiclass someday, however.
+    :arg hidden_layer_sizes: For each hidden layer, the number of nodes in it.
+        Fully-connectedness is assumed.
 
     """
-    return Sequential(
-        Linear(num_inputs, num_outputs, bias=True)
-    )
+    sizes = [num_inputs] + hidden_layer_sizes
+
+    layers = []
+    for i, o in pairwise(sizes):
+        layers.append(Linear(i, o, bias=True))
+        layers.append(ReLU())  # Sigmoid does worse, Tanh about the same.
+    layers.append(Linear(sizes[-1], num_outputs, bias=True))
+
+    return Sequential(*layers)

@@ -12,7 +12,12 @@ setup(
     license='MPL',
     packages=find_packages(exclude=['*.test']),
     url='https://mozilla.github.io/fathom/',
-    install_requires=['click>=7.0,<8.0', 'tensorboardX>=1.6,<2.0', 'torch>=1.0,<2.0'],
+    install_requires=[
+        'click>=7.0,<8.0',
+        'more-itertools>=8.2,<9.0',
+        'tensorboardX>=1.6,<2.0',
+        'torch>=1.0,<2.0'
+    ],
     dependency_links=[
         'https://download.pytorch.org/whl/torch_stable.html'
     ],
