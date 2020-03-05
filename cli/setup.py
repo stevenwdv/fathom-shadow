@@ -15,6 +15,8 @@ setup(
     install_requires=[
         'click>=7.0,<8.0',
         'more-itertools>=8.2,<9.0',
+        'numpy>=1.18.1,<2.0',
+        'scikit-learn>=0.22.2',
         'tensorboardX>=1.6,<2.0',
         'torch>=1.0,<2.0'
     ],
