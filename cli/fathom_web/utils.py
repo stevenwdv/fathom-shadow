@@ -5,6 +5,8 @@ has yet emerged"""
 from random import sample
 
 from more_itertools import pairwise
+from numpy import array, histogram
+from sklearn.preprocessing import minmax_scale
 import torch
 from torch.nn import Sequential, Linear, ReLU
 
@@ -55,3 +57,16 @@ def classifier(num_inputs, num_outputs, hidden_layer_sizes=[]):
     layers.append(Linear(sizes[-1], num_outputs, bias=True))
 
     return Sequential(*layers)
+
+
+def mini_histogram(data):
+    """Return a histogram of a list of numbers with min and max numbers
+    labeled."""
+    chars = ' ▁▂▃▄▅▆▇█'
+    data_array = array(data)
+    counts, _ = histogram(data_array, bins=10)
+    indices = minmax_scale(counts, feature_range=(0, 8)).round()
+    chart = ''.join(chars[int(i)] for i in indices)
+    return '{min} {chart} {max}'.format(min=data_array.min(),
+                                        chart=chart,
+                                        max=data_array.max())
