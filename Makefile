@@ -44,7 +44,7 @@ debugtest: $(JS) .npm_installed
 publish: $(JS)
 	npm publish
 
-cli:
+cli: $(VIRTUAL_ENV)/pyvenv.cfg
 	cd cli && python setup.py sdist bdist_wheel
 
 bundle: dist/fathom.js
