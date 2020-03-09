@@ -7,6 +7,17 @@ This is the commandline trainer for `Fathom <https://mozilla.github.io/fathom/>`
 Version History
 ===============
 
+3.2
+  * Add ``fathom-test`` tool for computing test-corpus accuracies.
+  * Add ``fathom-extract`` to break down frozen pages into small enough pieces to check into GitHub.
+  * Add ``fathom-serve`` to dodge the CORS errors that otherwise happen when loading extracted pages.
+  * Add a test harness for the Python code.
+  * Add confidence intervals for false positives and false negatives in trainer.
+  * Add precision and recall numbers to trainer.
+  * Add optional positive-sample weighting in trainer, for trading off between precision and recall.
+  * Add experimental support for deeper neural networks in trainer.
+  * Add recognition-time speed metrics to trainer.
+
 3.1
   * Add ``fathom-list`` tool.
   * Further optimize trainer: about 17x faster for a 60-sample corpus, with superlinear improvements for larger ones.
