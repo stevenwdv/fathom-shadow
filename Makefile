@@ -5,7 +5,8 @@ VIRTUAL_ENV ?= ./venv
 PYTHON3 ?= python3
 PATH := ./node_modules/.bin:$(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
 
-JS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs/\.js/')
+JS  := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*' | sed 's/\.mjs/\.js/')
+MJS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*')
 
 # It's faster to invoke Babel once and compile everything than to invoke it
 # separately on even 2 individual files that changed.
@@ -75,7 +76,7 @@ $(VIRTUAL_ENV)/pyvenv.cfg: tooling/dev-requirements.txt cli/setup.py
 	npm install
 	touch $@
 
-dist/fathom.js: rollup.config.js .npm_installed
+dist/fathom.js: rollup.config.js .npm_installed $(MJS)
 	@node_modules/.bin/rollup -c
 
 
