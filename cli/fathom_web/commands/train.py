@@ -69,7 +69,7 @@ def pretty_coeffs(model, feature_names):
     else:
         pretty = ',\n        '.join(f'["{k}", {v}]' for k, v in zip(feature_names, dict_params['0.weight'][0]))
         return ("""{{"coeffs": [
-            {coeffs}
+        {coeffs}
         ],
      "bias": {bias}}}""".format(coeffs=pretty, bias=dict_params['0.bias'][0]))
 
