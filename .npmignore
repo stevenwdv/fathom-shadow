@@ -1,14 +1,18 @@
-.babelrc
-.eslintignore
-.eslintrc.yml
-.travis.yml
+/.npm_installed
+/.doc_tools_installed
+/.babelrc
+/.eslintignore
+/.eslintrc.yml
+/.travis.yml
+/.nyc_output
 /cli
 /docs
 /examples
 /Makefile
+/rollup.config.js
+/tooling
 /test
-
-# npm pack doesn't seem to get these from .gitignore:
 /coverage
 /*.log
 /dist
+/venv

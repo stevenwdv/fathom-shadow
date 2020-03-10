@@ -111,7 +111,7 @@ class BoundRuleset {
         // Private, for the use of only helper classes:
         this.biases = biases;
         this._clearCaches();
-        this.elementCache = new Map();  // DOM element => fnode about it
+        this.elementCache = new WeakMap();  // DOM element => fnode about it
         this.doneRules = new Set();  // InwardRules that have been executed. OutwardRules can be executed more than once because they don't change any fnodes and are thus idempotent.
     }
 
