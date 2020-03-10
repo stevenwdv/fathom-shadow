@@ -2,6 +2,10 @@
 Version History
 ===============
 
+unreleased
+==========
+* Make the cache that powers :func:`fnodeForElement` a ``WeakMap`` instead of a ``Map``. This will save memory if you keep a :class:`BoundRuleset` around a long time and DOM elements it has recognized get deleted from the page.
+
 3.2
 ===
 * Add :command:`fathom-test` tool for computing test-corpus accuracies.
