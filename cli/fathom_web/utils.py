@@ -71,3 +71,11 @@ def mini_histogram(data):
     return '{min} {chart} {max}'.format(min=data_array.min(),
                                         chart=style(chart, bg='white'),
                                         max=data_array.max())
+
+
+def speed_readout(pages):
+    """Return human-readable metrics on ruleset-running speed based on
+    benchmarks taken by the Vectorizer."""
+    average = sum(p['time'] for p in pages) / sum(len(p['nodes']) for p in pages)
+    histogram = mini_histogram([p['time'] for p in pages])
+    return f'\nTime per page (ms): {histogram}    Average per tag: {average:.1f}'

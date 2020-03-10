@@ -8,7 +8,7 @@ from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 
 from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
-from ..utils import classifier, mini_histogram, tensors_from
+from ..utils import classifier, mini_histogram, speed_readout, tensors_from
 
 
 def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
@@ -178,10 +178,7 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
         all_pages = training_data['pages']
         if validation_file and validation_data['pages'] and 'time' in validation_data['pages'][0]:
             all_pages.extend(validation_data['pages'])
-        average = sum(p['time'] for p in all_pages) / sum(len(p['nodes']) for p in all_pages)
-        print('\nTime per page (ms):',
-              mini_histogram([p['time'] for p in all_pages]),
-              f'   Average per tag: {average:.1f}')
+        print(speed_readout(all_pages))
 
     if not quiet:
         print('\nTraining per-page results:\n', training_report, sep='')
