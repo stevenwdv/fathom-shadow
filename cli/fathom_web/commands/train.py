@@ -7,7 +7,7 @@ from torch import tensor
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 
-from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
+from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
 from ..utils import classifier, mini_histogram, tensors_from
 
 
@@ -103,7 +103,7 @@ def pretty_coeffs(model, feature_names):
 @option('--quiet', '-q',
         default=False,
         is_flag=True,
-        help='Hide per-page diagnostics that may help with ruleset debugging.')
+        help='Hide per-tag diagnostics that may help with ruleset debugging.')
 @option('layers', '--layer', '-y',
         type=int,
         multiple=True,
@@ -164,16 +164,8 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
                               false_positives,
                               false_negatives,
                               validation_yes))
-    accuracy, training_report = accuracy_per_page(model, training_data['pages'])
-    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per page:',
-                          accuracy,
-                          len(training_data['pages'])))
-    if validation_file:
-        accuracy, validation_report = accuracy_per_page(model, validation_data['pages'])
-        print(pretty_accuracy('Validation accuracy per page:',
-                              accuracy,
-                              len(validation_data['pages'])))
 
+    # Print timing information:
     if training_data['pages'] and 'time' in training_data['pages'][0]:
         times = [p['time'] for p in training_data['pages']]
         if validation_file and validation_data['pages'] and 'time' in validation_data['pages'][0]:
@@ -182,7 +174,9 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
               mini_histogram(times))
 
     if not quiet:
-        print('\nTraining per-page results:\n', training_report, sep='')
+        print('\nTraining per-tag results:')
+        print_per_tag_report([per_tag_metrics(page, model) for page in training_data['pages']])
         if validation_file:
-            print('\nValidation per-page results:\n', validation_report, sep='')
+            print('\nValidation per-tag results:')
+            print_per_tag_report([per_tag_metrics(page, model) for page in validation_data['pages']])
     # TODO: Print "8000 elements. 7900 successes. 50 false positive. 50 false negatives."
