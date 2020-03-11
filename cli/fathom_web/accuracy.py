@@ -77,8 +77,9 @@ def print_per_tag_report(metricses):
     style_reset = style('', reset=True)
     for metrics in metricses:
         first = True
+        true_negative_count = metrics['true_negative_count']
         all_right = not any(t['error_type'] for t in metrics['tags'])
-        any_right = not all(t['error_type'] for t in metrics['tags'])
+        any_right = not all(t['error_type'] for t in metrics['tags']) or true_negative_count
         file_color = 'good' if all_right else ('medium' if any_right else 'bad')
         for tag in metrics['tags']:
             print(template.format(
@@ -100,6 +101,17 @@ def print_per_tag_report(metricses):
                 tag_style=style('', fg='green', reset=False),
                 error_type='',
                 score=''))
+        else:
+            # We printed some tags. Also show the TNs so we get credit for them.
+            if true_negative_count:
+                print(template.format(
+                    file='',
+                    file_style=style('', **FAT_COLORS[file_color], reset=False),
+                    style_reset=style_reset,
+                    tag=f'...and {true_negative_count} correct negative' + ('s' if true_negative_count > 1 else ''),
+                    tag_style=style('', fg='green', reset=False),
+                    error_type='',
+                    score=''))
 
 
 def confidence_interval(success_ratio, number_of_samples):
