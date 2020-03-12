@@ -150,19 +150,23 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positives=No
     """
     ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
     if false_positives is not None:
-        false_positive_ratio = false_positives / number_of_samples
-        false_negative_ratio = false_negatives / number_of_samples
-        fp_ci_low, fp_ci_high = confidence_interval(false_positive_ratio, positives)
-        fn_ci_low, fn_ci_high = confidence_interval(false_negative_ratio, number_of_samples - positives)
+        true_positives = positives - false_negatives
+        negatives = number_of_samples - positives
+        false_positive_rate = false_positives / negatives
+        false_negative_rate = false_negatives / positives
+        fpr_ci_low, fpr_ci_high = confidence_interval(false_positive_rate, negatives)
+        fnr_ci_low, fnr_ci_high = confidence_interval(false_negative_rate, positives)
+        precision = true_positives / (true_positives + false_positives)
+        # recall is the same as the true positive rate
+        recall = 1 - false_negative_rate
+        f1score = 2.0 * (precision * recall) / (precision + recall)
         # https://en.wikipedia.org/wiki/Precision_and_recall#/media/File:Precisionrecall.svg
         # really helps when thinking about the Venn diagrams of these values.
-        true_positives = positives - false_negatives
-        precision = true_positives / (true_positives + false_positives)
-        recall = true_positives / positives
         falses = ('\n'
-                  f'                         FP:  {false_positive_ratio:.5f}    95% CI: ({fp_ci_low:.5f}, {fp_ci_high:.5f})\n'
-                  f'                         FN:  {false_negative_ratio:.5f}    95% CI: ({fn_ci_low:.5f}, {fn_ci_high:.5f})\n'
-                  f'                  Precision:  {precision:.5f}    Recall: {recall:.5f}\n')
+                  f'                        FPR:  {false_positive_rate:.5f}    95% CI: ({fpr_ci_low:.5f}, {fpr_ci_high:.5f})\n'
+                  f'                        FNR:  {false_negative_rate:.5f}    95% CI: ({fnr_ci_low:.5f}, {fnr_ci_high:.5f})\n'
+                  f'                  Precision:  {precision:.5f}    Recall: {recall:.5f}\n'
+                  f'                   F1 Score:  {f1score:.5f}\n')
     else:
         falses = ''
     return f'{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'
