@@ -28,6 +28,11 @@ def accuracy_per_tag(y, y_pred):
         return (successes / number_of_tags), false_positives, false_negatives
 
 
+# Max chars from a start tag we're willing to display in the per-tag metrics
+# report:
+MARKUP_MAX_WIDTH = 36
+
+
 def per_tag_metrics(page, model):
     """Return the per-tag numbers to be templated into a human-readable report
     by ``print_per_tag_report``."""
@@ -55,7 +60,7 @@ def per_tag_metrics(page, model):
             elif is_target and predicted:
                 tag_metric['error_type'] = ''
             tag_metric['score'] = score
-            tag_metric['markup'] = tag.get('markup', 'Use a newer FathomFox to see markup.')
+            tag_metric['markup'] = tag.get('markup', 'Use a newer FathomFox to see markup.')[:MARKUP_MAX_WIDTH]
             tag_metrics.append(tag_metric)
         else:  # not is_target and not is_error: TNs
             true_negatives += 1
@@ -73,7 +78,7 @@ def print_per_tag_report(metricses):
     THIN_COLORS = {True: {'fg': 'green'},
                    False: {'fg': 'red'}}
     max_filename_len = max(len(metrics['filename']) for metrics in metricses)
-    template = '{file_style}{file: >' + str(max_filename_len) + '}{style_reset}  {tag_style}{tag: <34}   {error_type: >2}{style_reset}   {score}'
+    template = '{file_style}{file: >' + str(max_filename_len) + '}{style_reset}  {tag_style}{tag: <' + str(MARKUP_MAX_WIDTH) + '}   {error_type: >2}{style_reset}   {score}'
     style_reset = style('', reset=True)
     for metrics in metricses:
         first = True
@@ -108,7 +113,7 @@ def print_per_tag_report(metricses):
                     file='',
                     file_style=style('', **FAT_COLORS[file_color], reset=False),
                     style_reset=style_reset,
-                    tag=f'...and {true_negative_count} correct negative' + ('s' if true_negative_count > 1 else ''),
+                    tag=f'   ...and {true_negative_count} correct negative' + ('s' if true_negative_count > 1 else ''),
                     tag_style=style('', fg='green', reset=False),
                     error_type='',
                     score=''))
