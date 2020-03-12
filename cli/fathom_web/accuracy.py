@@ -3,7 +3,7 @@
 
 from math import floor, sqrt
 
-from click import style
+from click import get_terminal_size, style
 import numpy as np
 import torch
 
@@ -26,11 +26,6 @@ def accuracy_per_tag(y, y_pred):
         number_of_tags = len(y)
         false_positives = number_of_tags - successes - false_negatives
         return (successes / number_of_tags), false_positives, false_negatives
-
-
-# Max chars from a start tag we're willing to display in the per-tag metrics
-# report:
-MARKUP_MAX_WIDTH = 36
 
 
 def per_tag_metrics(page, model):
@@ -60,7 +55,7 @@ def per_tag_metrics(page, model):
             elif is_target and predicted:
                 tag_metric['error_type'] = ''
             tag_metric['score'] = score
-            tag_metric['markup'] = tag.get('markup', 'Use a newer FathomFox to see markup.')[:MARKUP_MAX_WIDTH]
+            tag_metric['markup'] = tag.get('markup', 'Use a newer FathomFox to see markup.')
             tag_metrics.append(tag_metric)
         else:  # not is_target and not is_error: TNs
             true_negatives += 1
@@ -77,8 +72,13 @@ def print_per_tag_report(metricses):
                   'bad': {'fg': 'white', 'bg': 'red', 'bold': True}}
     THIN_COLORS = {True: {'fg': 'green'},
                    False: {'fg': 'red'}}
+
     max_filename_len = max(len(metrics['filename']) for metrics in metricses)
-    template = '{file_style}{file: >' + str(max_filename_len) + '}{style_reset}  {tag_style}{tag: <' + str(MARKUP_MAX_WIDTH) + '}   {error_type: >2}{style_reset}   {score}'
+    max_tag_len = max(len(tag['markup']) for metrics in metricses for tag in metrics['tags'])
+    template_width_minus_tag = max_filename_len + 2 + 3 + 2 + 3 + 10
+    tag_max_width = min(get_terminal_size()[0] - template_width_minus_tag, max_tag_len)
+
+    template = '{file_style}{file: >' + str(max_filename_len) + '}{style_reset}  {tag_style}{tag: <' + str(tag_max_width) + '}   {error_type: >2}{style_reset}   {score}'
     style_reset = style('', reset=True)
     for metrics in metricses:
         first = True
@@ -91,7 +91,7 @@ def print_per_tag_report(metricses):
                 file=metrics['filename'] if first else '',
                 file_style=style('', **FAT_COLORS[file_color], reset=False),
                 style_reset=style_reset,
-                tag=tag['markup'],
+                tag=tag['markup'][:tag_max_width],
                 tag_style=style('', **THIN_COLORS[not bool(tag['error_type'])], reset=False),
                 error_type=tag['error_type'],
                 score=thermometer(tag['score'])))
