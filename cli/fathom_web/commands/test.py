@@ -3,7 +3,7 @@ from json import JSONDecodeError, load, loads
 from click import argument, BadParameter, command, File
 
 from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
-from ..utils import classifier, mini_histogram, tensor, tensors_from
+from ..utils import classifier, speed_readout, tensor, tensors_from
 
 
 def decode_weights(ctx, param, value):
@@ -74,7 +74,6 @@ def main(testing_file, weights):
     print(pretty_accuracy('Testing accuracy per page:', accuracy, len(pages)))
 
     if testing_data['pages'] and 'time' in testing_data['pages'][0]:
-        print('\nTime per page (ms):',
-              mini_histogram([p['time'] for p in testing_data['pages']]))
+        print(speed_readout(testing_data['pages']))
 
     print('\nTesting per-page results:\n', report, sep='')
