@@ -2,7 +2,7 @@ from json import JSONDecodeError, load, loads
 
 from click import argument, BadParameter, command, File
 
-from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
+from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
 from ..utils import classifier, speed_readout, tensor, tensors_from
 
 
@@ -70,10 +70,8 @@ def main(testing_file, weights):
     accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
     print(pretty_accuracy('\n   Testing accuracy per tag: ', accuracy, len(x), false_positives, false_negatives, num_yes))
 
-    accuracy, report = accuracy_per_page(model, pages)
-    print(pretty_accuracy('Testing accuracy per page:', accuracy, len(pages)))
-
     if testing_data['pages'] and 'time' in testing_data['pages'][0]:
         print(speed_readout(testing_data['pages']))
 
-    print('\nTesting per-page results:\n', report, sep='')
+    print('\nTesting per-tag results:')
+    print_per_tag_report([per_tag_metrics(page, model) for page in testing_data['pages']])

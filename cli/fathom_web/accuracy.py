@@ -3,11 +3,11 @@
 
 from math import floor, sqrt
 
-from click import style
+from click import get_terminal_size, style
 import numpy as np
 import torch
 
-from .utils import tensor
+from .utils import tensors_from
 
 
 def accuracy_per_tag(y, y_pred):
@@ -28,74 +28,102 @@ def accuracy_per_tag(y, y_pred):
         return (successes / number_of_tags), false_positives, false_negatives
 
 
+def per_tag_metrics(page, model):
+    """Return the per-tag numbers to be templated into a human-readable report
+    by ``print_per_tag_report``."""
+    # Get scores for all tags:
+    inputs, correct_outputs, _ = tensors_from([page])
+    with torch.no_grad():
+        try:
+            scores = model(inputs).sigmoid().numpy().flatten()
+        except RuntimeError:  # TODO: Figure out why we're having a mismatched-matrix-size error on pages with no tags, and do something that doesn't require a branch.
+            scores = []
+
+    cutoff = 0.5  # confidence cutoff
+    true_negatives = 0
+    tag_metrics = []
+    for tag, score in zip(page['nodes'], scores):
+        tag_metric = {}  # {filename: '123.html', markup: '<input id=', error_type='FP'|'FN'|'', score: 0.534876}
+        is_target = tag['isTarget']
+        predicted = score >= cutoff
+        is_error = is_target ^ predicted
+        if is_target or is_error:  # Otherwise, it's too boring to print.
+            if not is_target and predicted:
+                tag_metric['error_type'] = 'FP'
+            elif is_target and not predicted:
+                tag_metric['error_type'] = 'FN'
+            elif is_target and predicted:
+                tag_metric['error_type'] = ''
+            tag_metric['score'] = score
+            tag_metric['markup'] = tag.get('markup', 'Use a newer FathomFox to see markup.')
+            tag_metrics.append(tag_metric)
+        else:  # not is_target and not is_error: TNs
+            true_negatives += 1
+    return {'filename': page['filename'],
+            'tags': tag_metrics,
+            'true_negative_count': true_negatives}
+
+
+def print_per_tag_report(metricses):
+    """Given a list of results from multiple ``per_tag_metrics()`` calls,
+    return a human-readable report."""
+    FAT_COLORS = {'good': {'fg': 'black', 'bg': 'bright_green', 'bold': True},
+                  'medium': {'fg': 'black', 'bg': 'bright_yellow'},
+                  'bad': {'fg': 'white', 'bg': 'red', 'bold': True}}
+    THIN_COLORS = {True: {'fg': 'green'},
+                   False: {'fg': 'red'}}
+
+    max_filename_len = max(len(metrics['filename']) for metrics in metricses)
+    max_tag_len = max(len(tag['markup']) for metrics in metricses for tag in metrics['tags'])
+    template_width_minus_tag = max_filename_len + 2 + 3 + 2 + 3 + 10
+    tag_max_width = min(get_terminal_size()[0] - template_width_minus_tag, max_tag_len)
+
+    template = '{file_style}{file: >' + str(max_filename_len) + '}{style_reset}  {tag_style}{tag: <' + str(tag_max_width) + '}   {error_type: >2}{style_reset}   {score}'
+    style_reset = style('', reset=True)
+    for metrics in metricses:
+        first = True
+        true_negative_count = metrics['true_negative_count']
+        all_right = not any(t['error_type'] for t in metrics['tags'])
+        any_right = not all(t['error_type'] for t in metrics['tags']) or true_negative_count
+        file_color = 'good' if all_right else ('medium' if any_right else 'bad')
+        for tag in metrics['tags']:
+            print(template.format(
+                file=metrics['filename'] if first else '',
+                file_style=style('', **FAT_COLORS[file_color], reset=False),
+                style_reset=style_reset,
+                tag=tag['markup'][:tag_max_width],
+                tag_style=style('', **THIN_COLORS[not bool(tag['error_type'])], reset=False),
+                error_type=tag['error_type'],
+                score=thermometer(tag['score'])))
+            first = False
+        if first:
+            # There were no targets and no errors, so we didn't print tags.
+            print(template.format(
+                file=metrics['filename'],
+                file_style=style('', **FAT_COLORS['good'], reset=False),
+                style_reset=style_reset,
+                tag='No targets found.',
+                tag_style=style('', fg='green', reset=False),
+                error_type='',
+                score=''))
+        else:
+            # We printed some tags. Also show the TNs so we get credit for them.
+            if true_negative_count:
+                print(template.format(
+                    file='',
+                    file_style=style('', **FAT_COLORS[file_color], reset=False),
+                    style_reset=style_reset,
+                    tag=f'   ...and {true_negative_count} correct negative' + ('s' if true_negative_count > 1 else ''),
+                    tag_style=style('', fg='green', reset=False),
+                    error_type='',
+                    score=''))
+
+
 def confidence_interval(success_ratio, number_of_samples):
     """Return a 95% binomial proportion confidence interval."""
     z_for_95_percent = 1.96
     addend = z_for_95_percent * sqrt(success_ratio * (1 - success_ratio) / number_of_samples)
     return max(0., success_ratio - addend), min(1., success_ratio + addend)
-
-
-def first_target_prediction(predictions):
-    for i, p in enumerate(predictions):
-        if p['isTarget']:
-            return i, p['prediction']
-    return None
-
-
-def success_on_page(model, page):
-    """Return whether the model succeeded on the given page, along with lots of
-    metadata to help diagnose how the model is doing.
-
-    Return a tuple of...
-
-    * color_scheme: 'good', 'bad', or 'medium', reflecting the goodness of the
-      result
-    * is_success: Whether the model should be said to have succeeded on the
-      page
-    * reason: Explanation of why a page succeeded or failed
-    * confidence: The score of the top-scoring node. None if no nodes at all
-      were extracted from the page.
-    * first_target: If the top-scoring node is not a target, a tuple of (the
-      index of the highest-scoring actual target on the stack (so we can see
-      how far off we were), the score of that target). If the top-scoring node
-      is a target or no candidates were extracted at all, None.
-
-    """
-    predictions = [{'prediction': model(tensor(tag['features'])).sigmoid().item(),
-                    'isTarget': tag['isTarget']} for tag in page['nodes']]
-    predictions.sort(key=lambda x: x['prediction'], reverse=True)
-
-    first_target = None
-    is_success = False
-    reason = ''
-    if predictions:  # We found a candidate...
-        candidate = predictions[0]
-        confidence = predictions[0]['prediction']
-        if candidate['isTarget']:  # ...and our top one is a target.
-            is_success = True
-            if candidate['prediction'] >= .5:
-                color_scheme = 'good'
-            else:  # a low-confidence success
-                color_scheme = 'medium'
-        else:  # Our surest candidate isn't a target.
-            first_target = first_target_prediction(predictions)
-            if first_target:  # There was a target to hit.
-                color_scheme = 'bad'
-                reason = ' Highest-scoring element was a wrong choice.'
-            else:  # There were no targets.
-                if candidate['prediction'] < .5:
-                    color_scheme = 'good'
-                    is_success = True
-                    reason = ' No target nodes. Assumed negative sample.'
-                else:  # a high-confidence non-target
-                    color_scheme = 'bad'
-                    reason = ' There were no right choices, but highest-scorer had high confidence anyway.'
-    else:  # We did not find a candidate.
-        confidence = None
-        color_scheme = 'good'
-        is_success = True
-        reason = ' Assumed negative sample.'
-    return color_scheme, is_success, reason, confidence, first_target
 
 
 def thermometer(ratio):
@@ -104,43 +132,6 @@ def thermometer(ratio):
     tenth = min(floor(ratio * 10), 9)  # bucket to [0..9]
     return (style(text[:tenth], bg='white', fg='black') +
             style(text[tenth:], bg='bright_white', fg='black'))
-
-
-def accuracy_per_page(model, pages):
-    """Return the accuracy 0..1 of the model on a per-page basis. A page is
-    considered a success if...
-
-        * The top-scoring node found is a target
-        * No candidate scoring >0.5 is found and there are no targets labeled
-
-    We may later tighten this to require that all targets are found >0.5.
-
-    """
-    if not pages:
-        return 1  # just to keep max() from crashing
-    successes = 0
-    COLOR_SCHEMES = {'good': {'fg': 'black', 'bg': 'bright_green'},
-                     'medium': {'fg': 'black', 'bg': 'bright_yellow'},
-                     'bad': {'fg': 'white', 'bg': 'red', 'bold': True}}
-    report_lines = []
-    max_filename_len = max(len(page['filename']) for page in pages)
-    for page in pages:
-        color_scheme, is_success, reason, confidence, first_target = success_on_page(model, page)
-        if is_success:
-            successes += 1
-
-        # Build pretty report:
-        report_lines.append(('{success_or_failure} on {file: >' + str(max_filename_len) + '}. Confidence: {confidence}{reason}').format(
-            file=page['filename'],
-            confidence=thermometer(confidence) if confidence is not None else 'no candidate nodes.',
-            reason=reason,
-            success_or_failure=style(' success ' if is_success else ' failure ', **COLOR_SCHEMES[color_scheme])))
-        if first_target:
-            index, score = first_target
-            report_lines.append('    First target at index {index}: {confidence}'.format(
-                index=index,
-                confidence=thermometer(score)))
-    return (successes / len(pages)), '\n'.join(report_lines)
 
 
 def pretty_accuracy(description, accuracy, number_of_samples, false_positives=None, false_negatives=None, positives=None):
