@@ -150,18 +150,18 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positives=No
     """
     ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
     if false_positives is not None:
-        true_positives = positives - false_negatives
         negatives = number_of_samples - positives
         false_positive_rate = false_positives / negatives
         false_negative_rate = false_negatives / positives
         fpr_ci_low, fpr_ci_high = confidence_interval(false_positive_rate, negatives)
         fnr_ci_low, fnr_ci_high = confidence_interval(false_negative_rate, positives)
+        # https://en.wikipedia.org/wiki/Precision_and_recall#/media/File:Precisionrecall.svg
+        # really helps when thinking about the Venn diagrams of these values.
+        true_positives = positives - false_negatives
         precision = true_positives / (true_positives + false_positives)
         # recall is the same as the true positive rate
         recall = 1 - false_negative_rate
         f1score = 2.0 * (precision * recall) / (precision + recall)
-        # https://en.wikipedia.org/wiki/Precision_and_recall#/media/File:Precisionrecall.svg
-        # really helps when thinking about the Venn diagrams of these values.
         falses = ('\n'
                   f'                        FPR:  {false_positive_rate:.5f}    95% CI: ({fpr_ci_low:.5f}, {fpr_ci_high:.5f})\n'
                   f'                        FNR:  {false_negative_rate:.5f}    95% CI: ({fnr_ci_low:.5f}, {fnr_ci_high:.5f})\n'
