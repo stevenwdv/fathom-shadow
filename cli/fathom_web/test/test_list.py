@@ -158,7 +158,9 @@ def test_in_directory_does_not_exist():
     )
     # Assert the program exited with an error message about in directory not existing
     assert result.exit_code == 2
-    assert '"fake_in_dir" does not exist.' in result.output
+    # Different versions of click use different quotes:
+    assert ('"fake_in_dir" does not exist.' in result.output or
+            "'fake_in_dir' does not exist." in result.output)
 
 
 def test_base_dir_does_not_exist(tmp_path):
@@ -176,4 +178,5 @@ def test_base_dir_does_not_exist(tmp_path):
     )
     # Assert the program exited with an error message about base_dir not existing
     assert result.exit_code == 2
-    assert '"fake_base_dir" does not exist.' in result.output
+    assert ('"fake_base_dir" does not exist.' in result.output or
+            "'fake_base_dir' does not exist." in result.output)
