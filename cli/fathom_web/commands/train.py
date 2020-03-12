@@ -8,7 +8,7 @@ from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 
 from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
-from ..utils import classifier, mini_histogram, speed_readout, tensors_from
+from ..utils import classifier, speed_readout, tensors_from
 
 
 def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):

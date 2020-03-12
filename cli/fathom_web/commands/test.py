@@ -3,7 +3,7 @@ from json import JSONDecodeError, load, loads
 from click import argument, BadParameter, command, File
 
 from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
-from ..utils import classifier, mini_histogram, speed_readout, tensor, tensors_from
+from ..utils import classifier, speed_readout, tensor, tensors_from
 
 
 def decode_weights(ctx, param, value):
