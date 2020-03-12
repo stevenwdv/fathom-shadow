@@ -2,9 +2,11 @@
 Version History
 ===============
 
-unreleased
-==========
+3.2.1
+=====
 * Make the cache that powers :func:`fnodeForElement` a ``WeakMap`` instead of a ``Map``. This will save memory if you keep a :class:`BoundRuleset` around a long time and DOM elements it has recognized get deleted from the page.
+* Tweak some indentation in the trainer coefficient output.
+* Upgrade Jinja to fix a security bug during doc build.
 
 3.2
 ===
