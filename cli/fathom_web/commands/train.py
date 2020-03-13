@@ -11,7 +11,7 @@ from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print
 from ..utils import classifier, speed_readout, tensors_from
 
 
-def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
+def learn(learning_rate, iterations, x, y, decision_threshold, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = classifier(len(x[0]), len(y[0]), layers)
@@ -41,7 +41,7 @@ def learn(learning_rate, iterations, x, y, validation=None, stop_early=False, ru
                         previous_validation_loss = validation_loss
                         previous_model = model.state_dict()
                 writer.add_scalar('validation_loss', validation_loss, t)
-            accuracy, _, _ = accuracy_per_tag(y, y_pred)
+            accuracy, _, _ = accuracy_per_tag(y, y_pred, decision_threshold)
             writer.add_scalar('training_accuracy_per_tag', accuracy, t)
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
@@ -104,11 +104,15 @@ def pretty_coeffs(model, feature_names):
         default=False,
         is_flag=True,
         help='Hide per-tag diagnostics that may help with ruleset debugging.')
+@option('--decision-threshold', '-t',
+        default=0.5,
+        show_default=True,
+        help='Threshold used to decide between positive and negative classification. This is a knob to tune the false positive rate (in exchange for the true positive rate).')
 @option('layers', '--layer', '-y',
         type=int,
         multiple=True,
         help='Add a hidden layer of the given size. You can specify more than one, and they will be connected in the given order. EXPERIMENTAL.')
-def main(training_file, validation_file, stop_early, learning_rate, iterations, pos_weight, comment, quiet, layers):
+def main(training_file, validation_file, stop_early, learning_rate, iterations, pos_weight, comment, quiet, decision_threshold, layers):
     """Compute optimal coefficients for a Fathom ruleset, based on a set of
     labeled pages exported by the FathomFox Vectorizer.
 
@@ -143,13 +147,14 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
                   iterations,
                   x,
                   y,
+                  decision_threshold,
                   validation=validation_arg,
                   stop_early=stop_early,
                   run_comment=full_comment,
                   pos_weight=pos_weight,
                   layers=layers)
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), decision_threshold)
     print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ',
                           accuracy,
                           len(x),
@@ -157,7 +162,7 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
                           false_negatives,
                           num_yes))
     if validation_file:
-        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins))
+        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), decision_threshold)
         print(pretty_accuracy('Validation accuracy per tag: ',
                               accuracy,
                               len(validation_ins),
@@ -174,8 +179,8 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
 
     if not quiet:
         print('\nTraining per-tag results:')
-        print_per_tag_report([per_tag_metrics(page, model) for page in training_data['pages']])
+        print_per_tag_report([per_tag_metrics(page, model, decision_threshold) for page in training_data['pages']])
         if validation_file:
             print('\nValidation per-tag results:')
-            print_per_tag_report([per_tag_metrics(page, model) for page in validation_data['pages']])
+            print_per_tag_report([per_tag_metrics(page, model, decision_threshold) for page in validation_data['pages']])
     # TODO: Print "8000 elements. 7900 successes. 50 false positive. 50 false negatives."
