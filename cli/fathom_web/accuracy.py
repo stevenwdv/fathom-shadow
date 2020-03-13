@@ -80,7 +80,7 @@ def print_per_tag_report(metricses):
 
     template = '{file_style}{file: >' + str(max_filename_len) + '}{style_reset}  {tag_style}{tag: <' + str(tag_max_width) + '}   {error_type: >2}{style_reset}   {score}'
     style_reset = style('', reset=True)
-    for metrics in metricses:
+    for metrics in sorted(metricses, key=lambda m: m['filename']):
         first = True
         true_negative_count = metrics['true_negative_count']
         all_right = not any(t['error_type'] for t in metrics['tags'])
