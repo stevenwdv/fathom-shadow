@@ -167,10 +167,10 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
 
     # Print timing information:
     if training_data['pages'] and 'time' in training_data['pages'][0]:
-        all_pages = training_data['pages']
         if validation_file and validation_data['pages'] and 'time' in validation_data['pages'][0]:
-            all_pages.extend(validation_data['pages'])
-        print(speed_readout(all_pages))
+            print(speed_readout(training_data['pages'] + validation_data['pages']))
+        else:
+            print(speed_readout(training_data['pages']))
 
     if not quiet:
         print('\nTraining per-tag results:')
