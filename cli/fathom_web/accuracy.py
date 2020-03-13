@@ -4,13 +4,12 @@
 from math import floor, sqrt
 
 from click import get_terminal_size, style
-import numpy as np
 import torch
 
 from .utils import tensors_from
 
 
-def accuracy_per_tag(y, y_pred):
+def accuracy_per_tag(y, y_pred, cutoff):
     """Return the accuracy 0..1 of the model on a per-tag basis, given the
     correct output tensors and the prediction tensors from the model for the
     same samples."""
@@ -20,15 +19,15 @@ def accuracy_per_tag(y, y_pred):
         y = y.numpy().flatten()
         y_pred_confidence = y_pred.sigmoid().numpy().flatten()
 
-        absolute_confidence_error = np.abs(y_pred_confidence - y)
-        successes = (absolute_confidence_error < 0.5).sum()
-        false_negatives = ((absolute_confidence_error >= 0.5) & (y == 1)).sum()
+        predicted_positives = y_pred_confidence >= cutoff
+        successes = (predicted_positives == y).sum()
+        false_positives = (predicted_positives & (y == 0)).sum()
         number_of_tags = len(y)
-        false_positives = number_of_tags - successes - false_negatives
+        false_negatives = number_of_tags - successes - false_positives
         return (successes / number_of_tags), false_positives, false_negatives
 
 
-def per_tag_metrics(page, model):
+def per_tag_metrics(page, model, cutoff):
     """Return the per-tag numbers to be templated into a human-readable report
     by ``print_per_tag_report``."""
     # Get scores for all tags:
@@ -39,7 +38,6 @@ def per_tag_metrics(page, model):
         except RuntimeError:  # TODO: Figure out why we're having a mismatched-matrix-size error on pages with no tags, and do something that doesn't require a branch.
             scores = []
 
-    cutoff = 0.5  # confidence cutoff
     true_negatives = 0
     tag_metrics = []
     for tag, score in zip(page['nodes'], scores):
