@@ -9,7 +9,8 @@ import {maxes, getDefault, max, NiceSet, setDefault, sum, min} from './utilsForF
  * ``dom('meta[property="og:title"]')``
  *
  * Every ruleset has at least one ``dom`` rule, as that is where nodes begin to
- * flow into the system.
+ * flow into the system. If run against a subtree of a document, the root of
+ * the subtree is not considered as a possible match.
  */
 export function dom(selector) {
     return new DomLhs(selector);
@@ -160,7 +161,12 @@ class DomLhs extends Lhs {
 
     fnodes(ruleset) {
         const ret = [];
-        const matches = ruleset.doc.querySelectorAll(this.selector);
+        let matches;
+        if (ruleset.matchesOneElementOnly) {
+            matches = ruleset.doc.matches(this.selector) ? [ruleset.doc] : [];
+        } else {
+            matches = ruleset.doc.querySelectorAll(this.selector);
+        }
         for (let i = 0; i < matches.length; i++) {
             ret.push(ruleset.fnodeForElement(matches[i]));
         }
