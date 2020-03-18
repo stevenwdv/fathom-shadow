@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
 import {distance} from '../clusters';
-import {and, dom, nearest, props, rule, ruleset, score, type} from '../index';
+import {and, dom, element, nearest, props, rule, ruleset, score, type} from '../index';
 import {domSort, sigmoid, staticDom} from '../utils';
 
 
@@ -297,10 +297,10 @@ describe('Ruleset', function () {
                 </div>
             `);
             const rules = ruleset([
-                rule(dom('.target'), type('smoo'))
+                rule(element('.target'), type('smoo'))
             ]);
             const subtree = doc.getElementById('middle');
-            const facts = rules.againstElement(subtree);
+            const facts = rules.against(subtree);
             const fnodes = facts.get(type('smoo'));
             assert.equal(fnodes.length, 1);
             assert.equal(fnodes[0].element.id, 'middle');
@@ -311,10 +311,10 @@ describe('Ruleset', function () {
                 <div id=thing class=target></div>
             `);
             const rules = ruleset([
-                rule(dom('.tarrrrrrrget'), type('smoo'))
+                rule(element('.tarrrrrrrget'), type('smoo'))
             ]);
             const subtree = doc.getElementById('thing');
-            assert.equal(rules.againstElement(subtree).get(type('smoo')).length, 0);
+            assert.equal(rules.against(subtree).get(type('smoo')).length, 0);
         });
     });
 

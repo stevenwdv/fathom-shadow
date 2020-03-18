@@ -78,29 +78,7 @@ class Ruleset {
                                 this._rulesThatCouldEmit,
                                 this._rulesThatCouldAdd,
                                 this._coeffs,
-                                this.biases,
-                                false);
-    }
-
-    /**
-     * Commit this ruleset to running against a single DOM element, without
-     * looking through its descendents or ancestors.
-     *
-     * This is useful for applications in which you want Fathom to classify an
-     * element the user has selected, rather than scanning the whole page for
-     * candidates.
-     *
-     * Like :func:`against`, this returns a new :class:`BoundRuleset`.
-     */
-    againstElement(element) {
-        return new BoundRuleset(element,
-                                this._inRules,
-                                this._outRules,
-                                this._rulesThatCouldEmit,
-                                this._rulesThatCouldAdd,
-                                this._coeffs,
-                                this.biases,
-                                true);
+                                this.biases);
     }
 
     /**
@@ -125,7 +103,7 @@ class BoundRuleset {
      * @arg inRules {Array} Non-out() rules
      * @arg outRules {Map} Output key -> out() rule
      */
-    constructor(doc, inRules, outRules, rulesThatCouldEmit, rulesThatCouldAdd, coeffs, biases, matchesOneElementOnly) {
+    constructor(doc, inRules, outRules, rulesThatCouldEmit, rulesThatCouldAdd, coeffs, biases) {
         this.doc = doc;
         this._inRules = inRules;
         this._outRules = outRules;
@@ -138,7 +116,6 @@ class BoundRuleset {
         this._clearCaches();
         this.elementCache = new WeakMap();  // DOM element => fnode about it
         this.doneRules = new Set();  // InwardRules that have been executed. OutwardRules can be executed more than once because they don't change any fnodes and are thus idempotent.
-        this.matchesOneElementOnly = matchesOneElementOnly;
     }
 
     /**

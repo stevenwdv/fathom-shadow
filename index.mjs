@@ -5,7 +5,7 @@
 const version = '3.2.1';
 import {rule} from './rule';
 import {ruleset} from './ruleset';
-import {dom} from './lhs';
+import {dom, element} from './lhs';
 import {out} from './rhs';
 import {and, atMost, nearest, note, props, score, type, typeIn} from './side';
 
@@ -15,6 +15,7 @@ export {
     and,
     atMost,
     dom,
+    element,
     nearest,
     note,
     out,
