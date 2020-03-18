@@ -52,7 +52,7 @@ describe('LHS', function () {
         assert.equal(best.length, 1);
     });
 
-    it('testing when() on type()', function () {
+    it('filters using when() on type()', function () {
         const doc = staticDom('<p id="fat"></p><p id="bat"></p>');
         const rules = ruleset([
             rule(dom('p'), type('bar')),
@@ -65,7 +65,7 @@ describe('LHS', function () {
         assert.equal(best[0].element.id, 'fat');
     });
 
-    it('testing when() on dom()', function () {
+    it('filters using when() on dom()', function () {
         const doc = staticDom('<p id="fat"></p><p id="bat"></p>');
         const rules = ruleset([
             rule(dom('p').when(fnode => fnode.element.id === 'bat'), type('when')),
@@ -76,5 +76,4 @@ describe('LHS', function () {
         assert.equal(best.length, 1);
         assert.equal(best[0].element.id, 'bat');
     });
-
 });
