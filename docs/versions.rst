@@ -2,6 +2,13 @@
 Version History
 ===============
 
+3.3
+===
+* Add to the trainer a readout of the average time per candidate tag examined.
+* Replace trainer's per-page metrics, which were increasingly incoherent in Fathom 3, with per-tag ones. Per-page results were most useful back before Fathom could emit confidences. Now, most problems are concerned with per-tag accuracy, and problems that innately concern the page as a whole model it by scoring the ``<html>`` tag. Thus, we swap out the old per-page report for a per-tag one. This is a superset of the per-page report.
+* Add a confidence-threshold customization option to fathom-train.
+* Add :func:`element`, which lets you efficiently classify a single element. This is useful for applications in which you want Fathom to classify an element the user has selected, rather than scanning the whole page for candidates.
+
 3.2.1
 =====
 * Make the cache that powers :func:`fnodeForElement` a ``WeakMap`` instead of a ``Map``. This will save memory if you keep a :class:`BoundRuleset` around a long time and DOM elements it has recognized get deleted from the page.
