@@ -193,7 +193,7 @@ class DomLhs extends Lhs {
         for (let i = 0; i < domNodes.length; i++) {
             ret.push(ruleset.fnodeForElement(domNodes[i]));
         }
-        return super.fnodesSatisfyingWhen(ret);
+        return this.fnodesSatisfyingWhen(ret);
     }
 
     checkFact(fact) {
@@ -243,7 +243,7 @@ class TypeLhs extends Lhs {
 
     fnodes(ruleset) {
         const cached = getDefault(ruleset.typeCache, this._type, () => []);
-        return super.fnodesSatisfyingWhen(cached);
+        return this.fnodesSatisfyingWhen(cached);
     }
 
     /** Override the type previously specified by this constraint. */
