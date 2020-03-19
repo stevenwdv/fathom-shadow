@@ -8,13 +8,26 @@ import {maxes, getDefault, max, NiceSet, setDefault, sum, min} from './utilsForF
  * Take nodes that match a given DOM selector. Example:
  * ``dom('meta[property="og:title"]')``
  *
- * Every ruleset has at least one ``dom`` rule, as that is where nodes begin to
- * flow into the system.
+ * Every ruleset has at least one ``dom`` or :func:`element` rule, as that is
+ * where nodes begin to flow into the system. If run against a subtree of a
+ * document, the root of the subtree is not considered as a possible match.
  */
 export function dom(selector) {
     return new DomLhs(selector);
 }
 
+/**
+ * Take a single given node if it matches a given DOM selector, without looking
+ * through its descendents or ancestors. Otherwise, take no nodes. Example:
+ * ``element(someNodeTheUserClicked)``
+ *
+ * This is useful for applications in which you want Fathom to classify an
+ * element the user has selected, rather than scanning the whole page for
+ * candidates.
+ */
+export function element(selector) {
+    return new ElementLhs(selector);
+}
 
 /**
  * Rules and the LHSs and RHSs that comprise them have no mutable state. This
@@ -149,9 +162,16 @@ class DomLhs extends Lhs {
     constructor(selector) {
         super();
         if (selector === undefined) {
-            throw new Error('A querySelector()-style selector is required as the argument to dom().');
+            throw new Error('A querySelector()-style selector is required as the argument to ' + this._callName() + '().');
         }
         this.selector = selector;
+    }
+
+    /**
+     * Return the name of this kind of LHS, for use in error messages.
+     */
+    _callName() {
+        return 'dom';
     }
 
     clone() {
@@ -159,17 +179,26 @@ class DomLhs extends Lhs {
     }
 
     fnodes(ruleset) {
-        const ret = [];
-        const matches = ruleset.doc.querySelectorAll(this.selector);
-        for (let i = 0; i < matches.length; i++) {
-            ret.push(ruleset.fnodeForElement(matches[i]));
+        return this._domNodesToFilteredFnodes(
+            ruleset,
+            ruleset.doc.querySelectorAll(this.selector));
+    }
+
+    /**
+     * Turn a NodeList of DOM nodes into an array of fnodes, and filter out
+     * those that don't match the :func:`when()` clause.
+     */
+    _domNodesToFilteredFnodes(ruleset, domNodes) {
+        let ret = [];
+        for (let i = 0; i < domNodes.length; i++) {
+            ret.push(ruleset.fnodeForElement(domNodes[i]));
         }
         return super.fnodesSatisfyingWhen(ret);
     }
 
     checkFact(fact) {
         if (fact.type === undefined) {
-            throw new Error(`The right-hand side of a dom() rule failed to specify a type. This means there is no way for its output to be used by later rules. All it specified was ${fact}.`);
+            throw new Error(`The right-hand side of a ${this._callName()}() rule failed to specify a type. This means there is no way for its output to be used by later rules. All it specified was ${fact}.`);
         }
     }
 
@@ -183,6 +212,18 @@ class DomLhs extends Lhs {
 
     typesMentioned() {
         return new NiceSet();
+    }
+}
+
+class ElementLhs extends DomLhs {
+    _callName() {
+        return 'element';
+    }
+
+    fnodes(ruleset) {
+        return this._domNodesToFilteredFnodes(
+            ruleset,
+            ruleset.doc.matches(this.selector) ? [ruleset.doc] : []);
     }
 }
 
