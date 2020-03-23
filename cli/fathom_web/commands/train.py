@@ -100,9 +100,9 @@ def exclude_features(exclude, vector_data):
 
 @command()
 @argument('training_file',
-          type=File('r'))
+          type=File('r', encoding='utf-8'))
 @option('validation_file', '-a',
-        type=File('r'),
+        type=File('r', encoding='utf-8'),
         help="A file of validation samples from FathomFox's Vectorizer, used to graph validation loss so you can see when you start to overfit")
 @option('--stop-early', '-s',
         default=False,
