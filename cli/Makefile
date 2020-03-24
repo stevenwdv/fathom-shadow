@@ -9,8 +9,10 @@ release: venv
 
 lint: venv
 	pwd
+	ls -l $(VIRTUAL_ENV)
 	ls -l $(VIRTUAL_ENV)/bin
-	echo $PATH
+	echo $(PATH)
+	which python
 	@$(VIRTUAL_ENV)/bin/flake8 --exclude $(VIRTUAL_ENV) .
 
 test: venv
@@ -28,8 +30,8 @@ venv: $(VIRTUAL_ENV)/pyvenv.cfg
 # changed. Install the dev requirements and the actual requirements.
 $(VIRTUAL_ENV)/pyvenv.cfg: dev-requirements.txt setup.py
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
-	pip3 install -r dev-requirements.txt
-	pip3 install -e . -f https://download.pytorch.org/whl/torch_stable.html
+	$(VIRTUAL_ENV)/bin/pip3 install -r dev-requirements.txt
+	$(VIRTUAL_ENV)/bin/pip3 install -e . -f https://download.pytorch.org/whl/torch_stable.html
 
 
 .PHONY: release lint test clean venv

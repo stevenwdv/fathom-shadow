@@ -18,14 +18,14 @@ venv: $(VIRTUAL_ENV)/pyvenv.cfg
 # changed. Install the doc-building requirements.
 $(VIRTUAL_ENV)/pyvenv.cfg: doc-building-requirements.txt
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
-	pip3 install -r doc-building-requirements.txt
+	$(VIRTUAL_ENV)/bin/pip3 install -r doc-building-requirements.txt
 
 
 # --------- The rest of this is from the stock Sphinx makefile: -----------
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
+SPHINXBUILD   = $(VIRTUAL_ENV)/bin/sphinx-build
 PAPER         =
 BUILDDIR      = _build
 
