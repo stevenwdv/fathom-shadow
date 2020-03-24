@@ -8,11 +8,6 @@ release: venv
 	python setup.py sdist bdist_wheel
 
 lint: venv
-	pwd
-	ls -l $(VIRTUAL_ENV)
-	ls -l $(VIRTUAL_ENV)/bin
-	echo $(PATH)
-	which flake8
 	@flake8 --exclude $(VIRTUAL_ENV) .
 
 test: venv
