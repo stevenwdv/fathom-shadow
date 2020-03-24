@@ -27,6 +27,8 @@ debugtest: $(JS) .npm_installed
 	@node_modules/.bin/mocha --inspect-brk
 
 publish: $(JS)
+	cp ../LICENSE ./
+	cp ../README.md ./
 	npm publish
 
 bundle: dist/fathom.js
@@ -38,7 +40,7 @@ bundle: dist/fathom.js
 	touch $@
 
 clean:
-	rm -rf $(JS) node_modules .npm_installed
+	rm -rf $(JS) node_modules .npm_installed LICENSE README.md
 
 
 # Private targets:

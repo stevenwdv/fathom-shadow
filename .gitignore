@@ -10,6 +10,8 @@
 /fathom/.nyc_output
 /fathom/coverage
 /fathom/dist
+/fathom/LICENSE
+/fathom/README.md
 /fathom/**/*.js
 !/fathom/rollup.config.js
 !/fathom/test/browser/*
