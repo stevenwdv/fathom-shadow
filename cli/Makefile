@@ -30,8 +30,8 @@ venv: $(VIRTUAL_ENV)/pyvenv.cfg
 # changed. Install the dev requirements and the actual requirements.
 $(VIRTUAL_ENV)/pyvenv.cfg: dev-requirements.txt setup.py
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
-	$(VIRTUAL_ENV)/bin/pip3 install -r dev-requirements.txt
-	$(VIRTUAL_ENV)/bin/pip3 install -e . -f https://download.pytorch.org/whl/torch_stable.html
+	$(PYTHON3) -m pip install -r dev-requirements.txt
+	$(PYTHON3) -m pip install -e . -f https://download.pytorch.org/whl/torch_stable.html
 
 
 .PHONY: release lint test clean venv
