@@ -1,0 +1,3 @@
+addon/contentScript.js
+addon/evaluate.js
+addon/simmer.js

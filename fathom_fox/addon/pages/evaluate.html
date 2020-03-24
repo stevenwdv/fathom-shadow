@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="chrome://browser/content/extension.css">
+    <style type="text/css">
+      .uiGrid {
+          display: grid;
+          grid-template-columns: 10em 30em;
+          grid-gap: 6px;
+      }
+
+      .uiGrid .label,
+      .uiGrid p {
+        text-align: right;
+      }
+
+      .uiGrid select,
+      .uiGrid meter {
+        width: 100%;
+      }
+
+      .uiGrid div.bottommost {
+        margin-bottom: 2em;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #caveats {
+        color: #666;
+        font-size: 9pt;
+        text-align: left;
+      }
+
+      p.warning {
+        background-color: #FFFFBE;
+        border: 1px solid #FFE446;
+        padding: 1em;
+      }
+
+      #goodBad {
+        display: grid;
+        grid-gap: 2px;
+        grid-template-columns: repeat(8, 1fr);
+      }
+
+      #goodBad > div {
+        text-align: center;
+        padding: 3px;
+      }
+
+      #goodBad > .good {
+        background-color: rgb(173, 245, 175);
+      }
+
+      #goodBad > .bad {
+        background-color: rgb(255, 174, 186);
+      }
+
+      #goodBad > .bad:hover {
+        background-color: rgb(225, 144, 156);
+        box-shadow: inset 0px 0px 3px 1px red;
+      }
+
+      #goodBad > .good:hover {
+        background-color: rgb(143, 215, 145);
+        box-shadow: inset 0px 0px 3px 1px green;
+      }
+
+      /* Button styles based on https://github.com/FirefoxUX/photon-extension-kit/blob/master/extension.css */
+      button.browser-style {
+        background-color: #fbfbfb;
+        border: 1px solid #b1b1b1;
+        box-shadow: 0 0 0 0 transparent;
+        font: caption;
+        height: 24px;
+        outline: 0 !important;
+        padding: 0 8px 0;
+        transition-duration: 250ms;
+        transition-property: box-shadow, border;
+      }
+
+      button.browser-style::-moz-focus-inner {
+        border: 0;
+        outline: 0;
+      }
+
+      button.browser-style:hover {
+        background-color: #ebebeb;
+        border: 1px solid #b1b1b1;
+      }
+
+      button.browser-style:active {
+        background-color: #d4d4d4;
+        border: 1px solid #858585;
+      }
+
+      button.browser-style:disabled {
+        color: #999;
+        opacity: .5;
+      }
+
+      button.browser-style:focus {
+        border-color: #fff;
+        box-shadow: 0 0 0 2px rgba(97, 181, 255, 0.75);
+      }
+
+      button.browser-style:hover:not(:active):not(:disabled):not(:focus) {
+        background-color: #ebebeb;
+        border: 1px solid #b1b1b1;
+      }
+
+      button.browser-style:hover:active:not(:hover):not(:disabled):not(:focus) {
+        background-color: #d4d4d4;
+        border: 1px solid #858585;
+      }
+
+      button.browser-style:focus:not(:disabled) {
+        border-color: #fff !important;
+        box-shadow: 0 0 0 2px rgba(97, 181, 255, 0.75);
+      }
+
+      button#evaluate {
+        float: right;
+      }
+    </style>
+  </head>
+  <body class="browser-style" style="padding: 0 20px">
+    <h1>Evaluator</h1>
+    <p id="please-install" class="warning hidden">
+      No rulesets found. Please download a source checkout of FathomFox, and define one in rulesets.js.
+    </p>
+    <p>
+      Evaluate your ruleset based on the samples you’ve loaded as tabs in this window.
+    </p>
+    <div class="uiGrid">
+      <div class="label">
+        <label for="ruleset">Ruleset:</label>
+      </div>
+      <div>
+        <select id="ruleset"></select>
+      </div>
+      <div>
+      </div>
+      <div>
+        <button type="button" id="evaluate" class="browser-style">Evaluate</button>
+      </div>
+      <div>
+      </div>
+      <div>
+      </div>
+      <div id="output" class="hidden uiGrid">
+          <div class="label">
+            Coefficients:
+          </div>
+          <div id="coeffs"></div>
+          <div class="label">
+            Accuracy:
+          </div>
+          <div id="accuracy"></div>
+          <div class="label">
+            Accuracy (95% CI):
+          </div>
+          <div id="ci"></div>
+          <div class="label">
+            Cost:
+          </div>
+          <div id="cost"></div>
+          <div class="label">
+            Good/Bad:
+          </div>
+          <div id="goodBad"></div>
+          <div></div>
+          <div id="caveats" class="bottommost">
+            Click a Bad cell to temporarily label any wrongly chosen element. Then, examine it using the Fathom devtools panel.
+          </div>
+      </div>
+    </div>
+    <script src="../rulesets.js"></script>
+    <script src="../utils.js"></script>
+    <script src="../evaluate.js"></script>
+  </body>
+</html>

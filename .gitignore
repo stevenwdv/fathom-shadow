@@ -13,4 +13,10 @@
 /fathom/**/*.js
 !/fathom/rollup.config.js
 !/fathom/test/browser/*
+/fathom_fox/node_modules
+/fathom_fox/addon/contentScript.js
+/fathom_fox/addon/web-ext-artifacts
+/fathom_fox/addon/evaluate.js
+/fathom_fox/addon/simmer.js
+/fathom_fox/addon/rulesets.js
 **/__pycache__

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="chrome://browser/content/extension.css">
+    <style>
+      body {
+        padding: 0 20px;
+      }
+      #options {
+        float: right;
+        padding-right: 10px;
+      }
+      #options div {
+        text-align: right;
+      }
+      #options input[class="number"] {
+        text-align: right;
+      }
+      #status li.error {
+        color: darkred;
+      }
+      p.warning {
+        background-color: #FFFFBE;
+        border: 1px solid #FFE446;
+        padding: 1em;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="browser-style">
+    <h1>Vectorizer</h1>
+    <p id="please-install" class="warning hidden">
+      No rulesets found. Please download a source checkout of FathomFox, and define one in rulesets.js.
+    </p>
+    <p>
+      This turns a series of frozen, labeled pages into feature vectors for use with <code>fathom-train</code>. The feature vectors land in a file in your usual downloads folder. Because web extensions aren't allowed to load <code>file://</code> URLs, you might find it necessary to run a local web server like <code>fathom-serve</code> in the directory where your local samples live. <code>fathom-list</code> can help you get a list of filenames to paste here.
+    </p>
+    <div class="label">
+      <label for="ruleset">Ruleset:</label>
+    </div>
+    <div>
+      <select id="ruleset"></select>
+    </div>
+    <label for="pages">Enter the pages to vectorize, one per line:</label>
+    <textarea id="pages" placeholder="1.html
+2.html" rows=10 class="browser-style"></textarea>
+    <form id="vectorizeForm">
+      <button id="freeze" disabled>Vectorize</button>
+      <div id="options">
+        <div>
+          <label for="wait" title="Wait this long before vectorizing the page. Sometimes this provides the necessary time for stylesheets to apply, for instance.">Delay:</label>
+          <input class="number" type="text" required pattern="[0-9]+" min="0" size="2" id="wait" value="5"> sec
+        </div>
+        <div>
+          <label for="baseUrl" title="This gets prepended to each page title to make a URL.">Base URL:</label>
+          <input type="text" size="30" id="baseUrl" value="http://localhost:8000/">
+        </div>
+        <div>
+          <input type="checkbox" id="retryOnError" checked="checked">
+          <label for="retryOnError" title="If there is an error in the ruleset or in in-browser communication, retry up to 10 times.">Retry on Error</label>
+        </div>
+      </div>
+    </form>
+    <ul id="status"></ul>
+    <script src="../download.js"></script>
+    <script src="../rulesets.js"></script>
+    <script src="../utils.js"></script>
+    <script src="../visit.js"></script>
+    <script src="../vector.js"></script>
+  </body>
+</html>
