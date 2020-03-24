@@ -1,6 +1,6 @@
 # We avoid $(CURDIR) because it spits out /cygdrive/c/... on Windows Cygwin
 # installs and leads to things that don't work.
-VIRTUAL_ENV = venv
+VIRTUAL_ENV ?= venv
 PYTHON3 ?= python3
 
 # Let us find jsdoc and sphinx:
@@ -18,14 +18,14 @@ venv: $(VIRTUAL_ENV)/pyvenv.cfg
 # changed. Install the doc-building requirements.
 $(VIRTUAL_ENV)/pyvenv.cfg: doc-building-requirements.txt
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
-	$(VIRTUAL_ENV)/bin/pip3 install -r doc-building-requirements.txt
+	pip3 install -r doc-building-requirements.txt
 
 
 # --------- The rest of this is from the stock Sphinx makefile: -----------
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = $(VIRTUAL_ENV)/bin/sphinx-build
+SPHINXBUILD   = sphinx-build
 PAPER         =
 BUILDDIR      = _build
 
