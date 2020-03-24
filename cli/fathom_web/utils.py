@@ -3,6 +3,7 @@ has yet emerged"""
 
 
 from random import sample
+from unicodedata import east_asian_width
 
 from click import style
 from more_itertools import pairwise
@@ -79,3 +80,18 @@ def speed_readout(pages):
     average = sum(p['time'] for p in pages) / sum(len(p['nodes']) for p in pages)
     histogram = mini_histogram([p['time'] for p in pages])
     return f'\nTime per page (ms): {histogram}    Average per tag: {average:.1f}'
+
+
+def fit_unicode(string, width):
+    """Truncate or pad a string to width, taking into account that some unicode
+    chars are double-width."""
+    width_so_far = 0
+    for num_chars, char in enumerate(string, start=1):
+        width_so_far += 2 if east_asian_width(char) == 'W' else 1
+        if width_so_far == width:
+            break
+        elif width_so_far > width:
+            num_chars -= 1
+            width_so_far -= 2
+            break
+    return string[:num_chars] + (' ' * (width - width_so_far))

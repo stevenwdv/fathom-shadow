@@ -6,7 +6,7 @@ from math import floor, sqrt
 from click import get_terminal_size, style
 import torch
 
-from .utils import tensors_from
+from .utils import tensors_from, fit_unicode
 
 
 def accuracy_per_tag(y, y_pred, cutoff):
@@ -76,7 +76,7 @@ def print_per_tag_report(metricses):
     template_width_minus_tag = max_filename_len + 2 + 3 + 2 + 3 + 10
     tag_max_width = min(get_terminal_size()[0] - template_width_minus_tag, max_tag_len)
 
-    template = '{file_style}{file: >' + str(max_filename_len) + '}{style_reset}  {tag_style}{tag: <' + str(tag_max_width) + '}   {error_type: >2}{style_reset}   {score}'
+    template = '{file_style}{file: >' + str(max_filename_len) + '}{style_reset}  {tag_style}{tag_and_padding}   {error_type: >2}{style_reset}   {score}'
     style_reset = style('', reset=True)
     for metrics in sorted(metricses, key=lambda m: m['filename']):
         first = True
@@ -89,7 +89,7 @@ def print_per_tag_report(metricses):
                 file=metrics['filename'] if first else '',
                 file_style=style('', **FAT_COLORS[file_color], reset=False),
                 style_reset=style_reset,
-                tag=tag['markup'][:tag_max_width],
+                tag_and_padding=fit_unicode(tag['markup'], tag_max_width),
                 tag_style=style('', **THIN_COLORS[not bool(tag['error_type'])], reset=False),
                 error_type=tag['error_type'],
                 score=thermometer(tag['score'])))
@@ -100,7 +100,7 @@ def print_per_tag_report(metricses):
                 file=metrics['filename'],
                 file_style=style('', **FAT_COLORS['good'], reset=False),
                 style_reset=style_reset,
-                tag='No targets found.',
+                tag_and_padding=fit_unicode('No targets found.', tag_max_width),
                 tag_style=style('', fg='green', reset=False),
                 error_type='',
                 score=''))
@@ -111,7 +111,10 @@ def print_per_tag_report(metricses):
                     file='',
                     file_style=style('', **FAT_COLORS[file_color], reset=False),
                     style_reset=style_reset,
-                    tag=f'   ...and {true_negative_count} correct negative' + ('s' if true_negative_count > 1 else ''),
+                    tag_and_padding=fit_unicode(
+                        f'   ...and {true_negative_count} correct negative'
+                        + ('s' if true_negative_count > 1 else ''),
+                        tag_max_width),
                     tag_style=style('', fg='green', reset=False),
                     error_type='',
                     score=''))
