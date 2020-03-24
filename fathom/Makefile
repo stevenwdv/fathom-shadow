@@ -53,7 +53,7 @@ doc: .doc_tools_installed .npm_installed
 	$(MAKE) -C docs clean html
 
 clean:
-	rm -rf $(JS) venv .doc_tools_installed .npm_installed
+	rm -rf $(JS) node_modules venv .doc_tools_installed .npm_installed
 
 
 # Private targets:
