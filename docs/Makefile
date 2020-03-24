@@ -1,8 +1,27 @@
-# Makefile for Sphinx documentation
-#
+# We avoid $(CURDIR) because it spits out /cygdrive/c/... on Windows Cygwin
+# installs and leads to things that don't work.
+VIRTUAL_ENV = venv
+PYTHON3 ?= python3
 
-# Let us find jsdoc:
-PATH := ../node_modules/.bin:$(PATH)
+# Let us find jsdoc and sphinx:
+PATH := ../fathom/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
+
+# Generate .js files from .mjs so jsdoc can parse them, and install jsdoc:
+.PHONY: js
+js:
+	$(MAKE) -C ../fathom js .npm_installed
+
+.PHONY: venv
+venv: $(VIRTUAL_ENV)/pyvenv.cfg
+
+# Make a virtualenv at $VIRTUAL_ENV if there isn't one or if requirements have
+# changed. Install the doc-building requirements.
+$(VIRTUAL_ENV)/pyvenv.cfg: doc-building-requirements.txt
+	$(PYTHON3) -m venv $(VIRTUAL_ENV)
+	pip3 install -r doc-building-requirements.txt
+
+
+# --------- The rest of this is from the stock Sphinx makefile: -----------
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
@@ -16,11 +35,6 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
-
-# Generate .js files from .mjs so jsdoc can parse them:
-.PHONY: js
-js:
-	$(MAKE) -C ../
 
 .PHONY: help
 help:
@@ -57,7 +71,7 @@ clean:
 	rm -rf $(BUILDDIR)/*
 
 .PHONY: html
-html: js
+html: js venv
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
