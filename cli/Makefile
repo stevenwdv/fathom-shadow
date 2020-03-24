@@ -8,6 +8,9 @@ release: venv
 	python setup.py sdist bdist_wheel
 
 lint: venv
+	pwd
+	ls -l $(VIRTUAL_ENV)/bin
+	echo $PATH
 	@$(VIRTUAL_ENV)/bin/flake8 --exclude $(VIRTUAL_ENV) .
 
 test: venv
