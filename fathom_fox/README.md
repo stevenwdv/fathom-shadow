@@ -8,8 +8,8 @@ Here is an example of how you might use FathomFox to develop a Fathom ruleset th
 
 ### Get FathomFox Running
 
-1. Clone the [FathomFox repository](https://github.com/mozilla/fathom-fox/). (This is needed to author rulesets. If you wish merely to collect a corpus, you may install FathomFox from [addons.mozilla.org](https://addons.mozilla.org/en-US/firefox/addon/fathomfox/).)
-2. From within the checkout, install dependencies: `yarn run build`.
+1. Clone the [Fathom repository](https://github.com/mozilla/fathom/). (This is needed to author rulesets. If you wish merely to collect a corpus, you may install FathomFox from [addons.mozilla.org](https://addons.mozilla.org/en-US/firefox/addon/fathomfox/).)
+2. From within the checkout, inside the `fathom_fox` folder, install dependencies: `yarn run build`.
 3. Run a clean copy of Firefox with FathomFox installed: `yarn run browser`.
 4. Run `yarn run watch` in a separate terminal. This will keep your running copy of FathomFox up to date as you edit your ruleset.
 
@@ -22,7 +22,7 @@ Here is an example of how you might use FathomFox to develop a Fathom ruleset th
 
 ### Write and Train a Ruleset
 
-1. Take a first pass at [writing a ruleset](https://mozilla.github.io/fathom/using.html) to recognize the overlays, and put it in `fathom-fox/src/rulesets.js`, replacing the example ruleset. (Ultimately, you should keep `rulesets.js` with your own project and hard-link it into FathomFox.)
+1. Take a first pass at [writing a ruleset](https://mozilla.github.io/fathom/using.html) to recognize the overlays, and put it in `fathom_fox/src/rulesets.js`, replacing the example ruleset. (Ultimately, you should keep `rulesets.js` with your own project and hard-link it into FathomFox.)
 2. Click the FathomFox icon in the main toolbar, and choose Vectorizer.
 3. Use the Vectorizer to boil down your labeled pages into vectors of floats and save them as a JSON file.
 4. [Use the commandline trainer](https://mozilla.github.io/fathom/training.html#running-the-trainer) to imbibe the vectors and come up with an optimal set of coefficients.
