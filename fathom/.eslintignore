@@ -1,3 +1,2 @@
-docs
 # eslint will trip over the export statements herein until https://github.com/eslint/eslint/issues/12629 is fixed:
 index.mjs
