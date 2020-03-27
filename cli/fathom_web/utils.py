@@ -5,7 +5,6 @@ has yet emerged"""
 from random import sample
 from unicodedata import east_asian_width
 
-from click import style
 from more_itertools import pairwise
 from numpy import array, histogram
 from sklearn.preprocessing import minmax_scale
@@ -69,9 +68,9 @@ def mini_histogram(data):
     counts, _ = histogram(data_array, bins=10)
     indices = minmax_scale(counts, feature_range=(0, 8)).round()
     chart = ''.join(chars[int(i)] for i in indices)
-    return '{min} {chart} {max}'.format(min=data_array.min(),
-                                        chart=style(chart, bg='white'),
-                                        max=data_array.max())
+    return '{min} |{chart}| {max}'.format(min=data_array.min(),
+                                          chart=chart,
+                                          max=data_array.max())
 
 
 def speed_readout(pages):
