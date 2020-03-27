@@ -38,7 +38,7 @@ def tensors_from(pages, shuffle=False):
     return tensor(xs), tensor(ys), num_targets
 
 
-def classifier(num_inputs, num_outputs, hidden_layer_sizes=[]):
+def classifier(num_inputs, num_outputs, hidden_layer_sizes=None):
     """Return a new model of the type Fathom uses.
 
     At present, this is a linear binary classifier modeled as a perceptron.
@@ -50,6 +50,8 @@ def classifier(num_inputs, num_outputs, hidden_layer_sizes=[]):
         Fully-connectedness is assumed.
 
     """
+    if hidden_layer_sizes is None:
+        hidden_layer_sizes = []
     sizes = [num_inputs] + hidden_layer_sizes
 
     layers = []
