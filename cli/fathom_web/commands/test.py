@@ -1,6 +1,6 @@
 from json import JSONDecodeError, load, loads
 
-from click import argument, BadParameter, command, File
+from click import argument, BadParameter, command, File, option
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
 from ..utils import classifier, speed_readout, tensor, tensors_from
@@ -50,7 +50,11 @@ def model_from_json(weights, num_outputs, feature_names):
 @argument('confidence-threshold',
           type=float)
 @argument('weights', callback=decode_weights)
-def main(testing_file, confidence_threshold, weights):
+@option('--verbose', '-v',
+        default=False,
+        is_flag=True,
+        help="Show per-tag diagnostics, even though that could ruin blinding for the test set.")
+def main(testing_file, confidence_threshold, weights, verbose):
     """Compute the accuracy of the given coefficients and biases on a file of
     testing vectors.
 
@@ -75,5 +79,6 @@ def main(testing_file, confidence_threshold, weights):
     if testing_pages and 'time' in testing_pages[0]:
         print(speed_readout(testing_pages))
 
-    print('\nTesting per-tag results:')
-    print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in testing_pages])
+    if verbose:
+        print('\nTesting per-tag results:')
+        print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in testing_pages])
