@@ -238,7 +238,7 @@ The simplest possible trainer invocation is... ::
 
 ...yielding something like...
 
-.. code-block:: js
+.. code-block::
 
     {"coeffs": [
             ['nextAnchorIsJavaScript', 1.1627885103225708],
