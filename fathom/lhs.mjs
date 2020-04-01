@@ -19,7 +19,7 @@ export function dom(selector) {
 /**
  * Take a single given node if it matches a given DOM selector, without looking
  * through its descendents or ancestors. Otherwise, take no nodes. Example:
- * ``element(someNodeTheUserClicked)``
+ * ``element('input')``
  *
  * This is useful for applications in which you want Fathom to classify an
  * element the user has selected, rather than scanning the whole page for
