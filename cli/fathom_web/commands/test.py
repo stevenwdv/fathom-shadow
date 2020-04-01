@@ -53,7 +53,7 @@ def model_from_json(weights, num_outputs, feature_names):
 @option('--verbose', '-v',
         default=False,
         is_flag=True,
-        help="Show per-tag diagnostics, even though that could ruin blinding for the test set.")
+        help='Show per-tag diagnostics, even though that could ruin blinding for the test set.')
 def main(testing_file, confidence_threshold, weights, verbose):
     """Compute the accuracy of the given coefficients and biases on a file of
     testing vectors.
