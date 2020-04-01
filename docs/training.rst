@@ -256,6 +256,16 @@ The simplest possible trainer invocation is... ::
                     Precision:  0.96154    Recall: 0.91912
                      F1 Score:  0.93985
 
+    Time per page (ms): 2 |▁▃█▅▂▁    | 34    Average per tag: 8.3
+
+    Training per-tag results:
+       AR_534.html  <input type="password" class="form-control pass" autocomplete="off" id="password        1.00000000
+       CS_474.html  <input type="password" data-placeholder="register.password1" placeholder="Heslo"        1.00000000
+                    <input type="password" data-placeholder="register.password2" placeholder="Heslo         1.00000000
+       CZ_36n.html  No targets found.
+       DA_177.html  <input data-validation-match="#UserModel_VerifyPassword" id="UserModel_ActionMod        0.99999964
+       ...
+
 Viewing the TensorBoard graphs with ``tensorboard --logdir runs/`` will quickly show you whether the loss function is oscillating. If you see oscilloscope-like wiggles rather than a smooth descent, the learning rate is too high: the trainer is taking steps that are too big and overshooting the optimum it's chasing. Decrease the learning rate by a factor of 10 until the graph becomes smooth::
 
     fathom-train initialTrainingVectors.json --learning-rate 0.1 -c tryingToRemoveOscillations
@@ -280,7 +290,7 @@ A sane authoring process is a feedback loop something like this:
 1. Collect samples. Observe patterns in the :term:`target` nodes as you do.
 2. Write a few rules based on your observations.
 3. Run the trainer. Start with 10-20 training pages and an equal number of validation ones.
-4. If accuracy is insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their excerpts. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
+4. If accuracy is insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their tag excerpts. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
 5. Go to 3, making sure to re-vectorize if you have added or changed rules.
 6. Once *validation accuracy* is sufficient, use the :command:`fathom-test` tool on a fresh set of vectorized *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
 7. If testing accuracy is too low, imbibe the testing pages into your training corpus, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
