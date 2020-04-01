@@ -1,4 +1,4 @@
-from contextlib import contextmanager
+from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import os
 
@@ -19,18 +19,7 @@ def main(directory, port):
     you to provide, in the vectorizer page, an address to an HTTP server that
     is serving your samples.
     """
-    with cd(directory):
-        server = ThreadingHTTPServer(('localhost', port), SimpleHTTPRequestHandler)
-        print(f'Serving {directory} over http://localhost:{port}.')
-        print('Press Ctrl+C to stop.')
-        server.serve_forever()
-
-
-@contextmanager
-def cd(path):
-    previous_directory = os.getcwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(previous_directory)
+    server = ThreadingHTTPServer(('localhost', port), partial(SimpleHTTPRequestHandler, directory=directory))
+    print(f'Serving {directory} over http://localhost:{port}.')
+    print('Press Ctrl+C to stop.')
+    server.serve_forever()
