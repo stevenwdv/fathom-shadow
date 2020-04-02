@@ -236,9 +236,7 @@ The simplest possible trainer invocation is... ::
 
     fathom-train initialTrainingVectors.json
 
-...yielding something like...
-
-.. code-block::
+...yielding something like... ::
 
     {"coeffs": [
             ['nextAnchorIsJavaScript', 1.1627885103225708],
