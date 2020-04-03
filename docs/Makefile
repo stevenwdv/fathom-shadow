@@ -1,10 +1,10 @@
 # We avoid $(CURDIR) because it spits out /cygdrive/c/... on Windows Cygwin
 # installs and leads to things that don't work.
-VIRTUAL_ENV ?= venv
+VIRTUAL_ENV = ./venv
 PYTHON3 ?= python3
 
 # Let us find jsdoc and sphinx:
-PATH := ../fathom/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
+export PATH := ../fathom/node_modules/.bin:$(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
 
 # Generate .js files from .mjs so jsdoc can parse them, and install jsdoc:
 .PHONY: js
@@ -18,7 +18,7 @@ venv: $(VIRTUAL_ENV)/pyvenv.cfg
 # changed. Install the doc-building requirements.
 $(VIRTUAL_ENV)/pyvenv.cfg: doc-building-requirements.txt
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
-	pip3 install -r doc-building-requirements.txt
+	PATH=$(PATH) pip3 install -r doc-building-requirements.txt
 
 
 # --------- The rest of this is from the stock Sphinx makefile: -----------
@@ -74,7 +74,7 @@ docs_clean:
 
 .PHONY: clean
 clean: docs_clean
-	rm -rf venv  # Don't delete a venv outside our folder.
+	rm -rf $(VIRTUAL_ENV)
 
 .PHONY: html
 html: js venv
