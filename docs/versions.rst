@@ -2,6 +2,15 @@
 Version History
 ===============
 
+unreleased
+==========
+* Add an ``--exclude`` option to the trainer to help with feature ablation.
+* Fix an issue where the trainer would read vectors as non-UTF-8 on Windows.
+* Merge FathomFox into the Fathom repo.
+* In the trainer output, make tag excerpts that contain wide Unicode chars fit in their columns.
+* Don't show tag excerpts in ``fathom-test`` by default.
+* Always use in-project virtualenvs. Drop support for external ones.
+
 3.3
 ===
 * Add to the trainer a readout of the average time per candidate tag examined.

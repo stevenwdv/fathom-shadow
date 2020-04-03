@@ -221,7 +221,8 @@ Next, invoke the trainer. Here is its online help, to give you a sense of its ca
       -q, --quiet                     Hide per-tag diagnostics that may help with
                                       ruleset debugging.
 
-      -t, --decision-threshold FLOAT  Threshold used to decide between positive
+      -t, --confidence-threshold FLOAT
+                                      Threshold used to decide between positive
                                       and negative classification. This is a knob
                                       to tune the false positive rate (in exchange
                                       for the true positive rate).  [default: 0.5]
@@ -229,6 +230,10 @@ Next, invoke the trainer. Here is its online help, to give you a sense of its ca
       -y, --layer INTEGER             Add a hidden layer of the given size. You
                                       can specify more than one, and they will be
                                       connected in the given order. EXPERIMENTAL.
+
+      -x, --exclude TEXT              Exclude a rule while training. This helps
+                                      with before-and-after tests to see if a rule
+                                      is effective.
 
       --help                          Show this message and exit.
 
