@@ -10,9 +10,9 @@ Training is the process by which Fathom considers your rules against a labeled c
 Collecting Samples
 ==================
 
-Use `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox's developer tools. See the documentation on its Add-Ons page for details.
+Use `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox's developer tools. See the documentation on the aforementioned page for details.
 
-The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with the ruleset-containing trainees.js file from your fork of `fathom-trainees <https://github.com/mozilla/fathom-trainees>`_. (Hard linking from fathom-trainees to your sample repo is helpful.) Having your ruleset versioned along with your samples is invaluable for reproducing results and maintaining your sanity.
+The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with your application and a rulesets.js file you create to hold your rulesets. (This file can later be hard-linked into `your source checkout of FathomFox <https://github.com/mozilla/fathom/tree/master/fathom_fox>`_ to extract feature vectors for the trainer.)
 
 So far, a training corpus on the order of 50-100 samples has been sufficient to push validation accuracy above 99%. You'll want additional samples for a validation corpus (to let the trainer know when it's begun to overfit) and a test corpus (to come up with final accuracy numbers).
 
@@ -70,15 +70,14 @@ We've mentioned a number of items to check into version control. Here is a direc
 
     runs/             -- TensorBoard data emitted by the trainer
     samples/
-        negative/     -- Samples that do NOT contain what we're looking for
-            n4.html
+        unused/
+            3.html   -- A positive sample, which contains an example of what we're looking for
+            10.html
+            14.html
+            n4.html  -- A negative sample: one that does NOT contain what we're looking for
             n7.html
             n11.html
             ...
-        positive/     -- Samples that DO contain what we're looking for
-            3.html
-            10.html
-            14.html
         training/
             1.html
             n2.html
@@ -87,14 +86,16 @@ We've mentioned a number of items to check into version control. Here is a direc
         validation/
         testing/
         rubric.txt
-        urls.csv      -- A mapping of sample numbers to URLs, in case we ever need them
-    trainees.js       -- Ruleset code, symlinked into your fathom-trainees fork
+    rulesets.js       -- Ruleset code, hard-linked into your FathomFox checkout
     vectors/          -- Feature vectors from FathomFox's Vectorizer
+        training.json
+        validation.json
+        testing.json
 
 A few notes:
 
-* The negative examples' numerical IDs are in the same namespace as the positive ones, but we prefix them with an n. This is so that, when the trainer says it assumed a sample was negative because it had no labeled target elements, we can tell at a glance whether it was correct.
-* Samples start in the ``positive`` and ``negative`` folders. From there, they should be divided among the training, validation, and testing ones using :command:`fathom-pick`, which randomly moves a given number of files from one directory to another.
+* The negative samples' numerical IDs are in the same namespace as the positive ones, but we prefix them with an n. This is so that, when the trainer says it assumed a sample was negative because it had no labeled target elements, we can tell at a glance whether it was correct.
+* Samples start in the ``unused`` folder. From there, they should be divided among the training, validation, and testing ones using :command:`fathom-pick`, which randomly moves a given number of files from one directory to another to keep the sets mutually representative.
 
 Storing Large Corpora in Version Control
 ========================================
@@ -109,40 +110,40 @@ Using fathom-extract
 For example, if you have this directory of samples: ::
 
     samples/
-        negative/
-            n4.html
-            n7.html
-            n11.html
+        unused/
+            3.html
+            10.html
+            14.html
             ...
 
 Running... ::
 
-    fathom-extract samples/negative
+    fathom-extract samples/unused
 
 will change your directory to: ::
 
     samples/
-        negative/
+        unused/
             resources/
-                n4/
+                3/
                     1.png
                     2.css
                     3.css
                     ...
-                n7/
+                10/
                     1.css
                     2.jpg
                     3.jpg
                     ...
-                n11/
+                14/
                     1.css
                     2.png
                     3.jpg
                     ...
                 ...
-            n4.html
-            n7.html
-            n11.html
+            3.html
+            10.html
+            14.html
             ...
 
 Configuring Git-LFS
@@ -152,7 +153,7 @@ With your extracted samples directory, you can follow the `Git-LFS Getting Start
 
     samples/**/resources/** filter=lfs diff=lfs merge=lfs -text
 
-The first `/**` ensures all sample directories (`positive`, `negative`, `training`, etc) are tracked, and the second `/**` ensures the subdirectories are tracked.
+The first `/**` ensures all sample directories (`unused`, `training`, etc.) are tracked, and the second `/**` ensures the subdirectories are tracked.
 
 Running the Trainer
 ===================
@@ -192,45 +193,81 @@ Next, invoke the trainer. Here is its online help, to give you a sense of its ca
         the recognizer into a false-positive choice
 
     Options:
-      -a FILENAME                A file of validation samples from FathomFox's
-                                 Vectorizer, used to graph validation loss so you
-                                 can see when you start to overfit
-      -s, --stop-early           Stop 1 iteration before validation loss begins to
-                                 rise, to avoid overfitting. Before using this,
-                                 make sure validation loss is monotonically
-                                 decreasing.
-      -l, --learning-rate FLOAT  The learning rate to start from  [default: 1.0]
-      -i, --iterations INTEGER   The number of training iterations to run through
-                                 [default: 1000]
-      -c, --comment TEXT         Additional comment to append to the Tensorboard
-                                 run name, for display in the web UI
-      -v, --verbose              Show additional diagnostics that may help with
-                                 ruleset debugging
-      --help                     Show this message and exit.
+      -a FILENAME                     A file of validation samples from
+                                      FathomFox's Vectorizer, used to graph
+                                      validation loss so you can see when you
+                                      start to overfit
+
+      -s, --stop-early                Stop 1 iteration before validation loss
+                                      begins to rise, to avoid overfitting. Before
+                                      using this, make sure validation loss is
+                                      monotonically decreasing.
+
+      -l, --learning-rate FLOAT       The learning rate to start from  [default:
+                                      1.0]
+
+      -i, --iterations INTEGER        The number of training iterations to run
+                                      through  [default: 1000]
+
+      -p, --pos-weight FLOAT          The weighting factor given to all positive
+                                      samples by the loss function. See: https://p
+                                      ytorch.org/docs/stable/nn.html#bcewithlogits
+                                      loss
+
+      -c, --comment TEXT              Additional comment to append to the
+                                      Tensorboard run name, for display in the web
+                                      UI
+
+      -q, --quiet                     Hide per-tag diagnostics that may help with
+                                      ruleset debugging.
+
+      -t, --confidence-threshold FLOAT
+                                      Threshold used to decide between positive
+                                      and negative classification. This is a knob
+                                      to tune the false positive rate (in exchange
+                                      for the true positive rate).  [default: 0.5]
+
+      -y, --layer INTEGER             Add a hidden layer of the given size. You
+                                      can specify more than one, and they will be
+                                      connected in the given order. EXPERIMENTAL.
+
+      -x, --exclude TEXT              Exclude a rule while training. This helps
+                                      with before-and-after tests to see if a rule
+                                      is effective.
+
+      --help                          Show this message and exit.
 
 The simplest possible trainer invocation is... ::
 
     fathom-train initialTrainingVectors.json
 
-...yielding something like...
+...yielding something like... ::
 
-.. code-block:: js
-
-    Coeffs: [
+    {"coeffs": [
             ['nextAnchorIsJavaScript', 1.1627885103225708],
             ['nextButtonTypeSubmit', 4.613410949707031],
             ['nextInputTypeSubmit', 4.374269008636475],
             ['nextInputTypeImage', 6.867544174194336],
             ['nextLoginAttrs', 0.07278082519769669],
             ['nextButtonContentContainsLogIn', -0.6560719609260559],
-        ]
-    Bias: -8.645608901977539
-      Training accuracy per tag:  0.98312    95% CI: (0.97153, 0.99472)  FP: 0.000  FN: 0.017
-    Validation accuracy per tag:  0.97143    95% CI: (0.95668, 0.98618)  FP: 0.000  FN: 0.029
-      Training accuracy per page: 1.00000    95% CI: (1.00000, 1.00000)
-    Validation accuracy per page: 0.96875    95% CI: (0.92612, 1.00000)
+            ],
+         "bias": -3.9029786586761475}
 
-If you pass ``--verbose``, you will also get handy per-sample diagnostics.
+    Training accuracy per tag:  0.97173    95% CI: (0.95808, 0.98539)
+                          FPR:  0.01163    95% CI: (0.00150, 0.02176)
+                          FNR:  0.08088    95% CI: (0.03506, 0.12671)
+                    Precision:  0.96154    Recall: 0.91912
+                     F1 Score:  0.93985
+
+    Time per page (ms): 2 |▁▃█▅▂▁    | 34    Average per tag: 8.3
+
+    Training per-tag results:
+       AR_534.html  <input type="password" class="form-control pass" autocomplete="off" id="password        1.00000000
+       CS_474.html  <input type="password" data-placeholder="register.password1" placeholder="Heslo"        1.00000000
+                    <input type="password" data-placeholder="register.password2" placeholder="Heslo         1.00000000
+       CZ_36n.html  No targets found.
+       DA_177.html  <input data-validation-match="#UserModel_VerifyPassword" id="UserModel_ActionMod        0.99999964
+       ...
 
 Viewing the TensorBoard graphs with ``tensorboard --logdir runs/`` will quickly show you whether the loss function is oscillating. If you see oscilloscope-like wiggles rather than a smooth descent, the learning rate is too high: the trainer is taking steps that are too big and overshooting the optimum it's chasing. Decrease the learning rate by a factor of 10 until the graph becomes smooth::
 
@@ -256,8 +293,8 @@ A sane authoring process is a feedback loop something like this:
 1. Collect samples. Observe patterns in the :term:`target` nodes as you do.
 2. Write a few rules based on your observations.
 3. Run the trainer. Start with 10-20 training pages and an equal number of validation ones.
-4. If accuracy is insufficient, examine the failing pages. FathomFox's Evaluator page is invaluable for this, as it will show you the element Fathom spuriously picked. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
+4. If accuracy is insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their tag excerpts. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
 5. Go to 3, making sure to re-vectorize if you have added or changed rules.
-6. Once *validation accuracy* is sufficient, copy the coefficients into your ruleset, and use the :command:`fathom-test` tool on a fresh set of vectorized *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
+6. Once *validation accuracy* is sufficient, use the :command:`fathom-test` tool on a fresh set of vectorized *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
 7. If testing accuracy is too low, imbibe the testing pages into your training corpus, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
-8. If testing accuracy is sufficient, you're done! Copy the ruleset and coefficients out of fathom-trainees into your finished product, and ship it.
+8. If testing accuracy is sufficient, you're done! Make sure the latest ruleset and coefficients are in your finished product, and ship it.

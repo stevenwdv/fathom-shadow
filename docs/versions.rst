@@ -4,8 +4,25 @@ Version History
 
 unreleased
 ==========
-.. warning::
-   Backward-incompatible change: The ``clusters`` symbol exported from Fathom's top level is now a module containing all the :doc:`clustering` routines, not :func:`clusters` itself. The :func:`clusters` function is now at ``clusters.clusters``.
+* Add an ``--exclude`` option to the trainer to help with feature ablation.
+* Fix an issue where the trainer would read vectors as non-UTF-8 on Windows.
+* Merge FathomFox into the Fathom repo.
+* In the trainer output, make tag excerpts that contain wide Unicode chars fit in their columns.
+* Don't show tag excerpts in ``fathom-test`` by default.
+* Always use in-project virtualenvs. Drop support for external ones.
+
+3.3
+===
+* Add to the trainer a readout of the average time per candidate tag examined.
+* Replace trainer's per-page metrics, which were increasingly incoherent in Fathom 3, with per-tag ones. Per-page results were most useful back before Fathom could emit confidences. Now, most problems are concerned with per-tag accuracy, and problems that innately concern the page as a whole model it by scoring the ``<html>`` tag. Thus, we swap out the old per-page report for a per-tag one. This is a superset of the per-page report.
+* Add a confidence-threshold customization option to fathom-train.
+* Add :func:`element`, which lets you efficiently classify a single element. This is useful for applications in which you want Fathom to classify an element the user has selected, rather than scanning the whole page for candidates.
+
+3.2.1
+=====
+* Make the cache that powers :func:`fnodeForElement` a ``WeakMap`` instead of a ``Map``. This will save memory if you keep a :class:`BoundRuleset` around a long time and DOM elements it has recognized get deleted from the page.
+* Tweak some indentation in the trainer coefficient output.
+* Upgrade Jinja to fix a security bug during doc build.
 
 3.2
 ===
@@ -13,8 +30,35 @@ unreleased
 * Add :command:`fathom-extract` to break down frozen pages into small enough pieces to check into GitHub.
 * Add :command:`fathom-serve` to dodge the CORS errors that otherwise happen when loading extracted pages.
 * Add a test harness for the Python code.
-* Make :func:`isVisible` more correct and 13% less janky.
+* Make :func:`isVisible` more correct and, in Firefox, 13% less janky.
 * Add in-browser test harness for routines that need a real DOM.
+* Revamp build process.
+    * The makefile is now the One True Entrypoint for build stuff. There are no more npm scripts.
+    * ``make test`` now runs all the tests, even the browser ones.
+    * The browser tests now work on Windows.
+    * ``make lint`` lints all languages. ``make py_lint`` and ``make js_lint`` lint 1 each.
+    * ``make py_test`` and ``make js_test`` test 1 language each.
+    * ``make`` takes care of making a venv for you (in the top level of the checkout) whenever it needs one. If you have an existing one activated before you make, it'll use yours instead.
+    * New Python dependencies are automatically installed at the next ``make`` whenever they're added to requirements files or setup.py. Note that you'll see occasional spurious package installation attempts after you change branches, because the branch change causes the mod dates of files to be reset to the current time. But the attempts are reasonably quick and idempotent.
+    * ``npm install`` is run automatically whenever package.json has been updated.
+    * ``make doc`` from the top level now builds the docs.
+    * A failing doc build will now fail the CI tests, so we don't get surprised on master anymore.
+    * As a bonus, pip-installing fathom-web now works on Windows.
+* Remove the Readability tests, which were too slow for their small utility.
+* Remove the old optimizer, which was used only by the Readability tests.
+* Add confidence intervals for false positives and false negatives in trainer.
+* Add precision and recall numbers to trainer.
+* Redesign Fathom bundle.
+    * It now works as a part of Firefox itself.
+    * It provides a way to access submodules like ``utils`` and ``clusters``, which node would typically import via filesystem paths.
+    * Removed wu, the sole runtime dependency.
+    * Drop unminified size from 237K to 105K.
+* Add optional positive-sample weighting in trainer, for trading off between precision and recall.
+* Add experimental support for deeper neural networks in trainer.
+* Add recognition-time speed metrics to trainer.
+
+.. warning::
+   Backward-incompatible change: The ``clusters`` symbol exported from Fathom's top level is now a module containing all the :doc:`clustering` routines, not :func:`clusters` itself. The :func:`clusters` function is now at ``clusters.clusters``.
 
 3.1
 ===

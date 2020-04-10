@@ -27,3 +27,6 @@ Glossary
 
    type
        A string-typed category assigned to a :term:`fnode`. Types are the boolean, hard-edged, enumerated parts of fnode state. They also largely determine inter-rule dependencies and thus which rules get run in response to a query.
+
+   vectorize
+       To turn a collection of sample HTML pages into vectors of numbers which the trainer then imbibes.

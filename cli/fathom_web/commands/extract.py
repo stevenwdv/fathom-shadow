@@ -6,7 +6,7 @@ import re
 from urllib.parse import unquote
 from urllib.request import pathname2url
 
-from click import argument, command, option, Path
+from click import argument, command, option, Path, progressbar
 
 
 BASE64_DATA_PATTERN = re.compile(r'(data:(?P<mime>[a-zA-Z0-9]+/[a-zA-Z0-9\-.+]+);(\s?charset=utf-8;)?base64,(?P<string>(?:[a-zA-Z0-9+/=]|%3D)+))')
@@ -25,6 +25,26 @@ MIME_TYPE_TO_FILE_EXTENSION = {
     'font/woff2': '.woff2',
     'image/jpeg': '.jpg',
     'image/webp': '.webp',
+    # From https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types:
+    'audio/aac': '.aac',
+    'application/gzip': '.gz',
+    'text/javascript': '.js',
+    'application/ld+json': '.jsonld',
+    'audio/midi audio/x-midi': '.midi',
+    'audio/opus': '.opus',
+    'application/php': '.php',
+    'application/vnd.rar': '.rar',
+    'audio/wav': '.wav',
+    # From sample pages we've collected:
+    'application/x-font-ttf': '.ttf',
+    'image/jpg': '.jpg',
+    'image/xicon': '.ico',
+    'application/fontwoff2': '.woff2',
+    'application/fontwoff': '.woff',
+    'application/x-font-woff': '.woff',
+    'application/font-ttf': '.ttf',
+    'application/x-javascript': '.js',
+    'application/font-sfnt': '.sfnt',
 }
 
 
@@ -40,8 +60,8 @@ def main(in_directory, preserve_originals):
     resources for each page in a newly created page-specific directory
     within a newly created resources directory in IN_DIRECTORY.
     For example, the resources for ``example.html`` would be stored in
-    ``resources/example_resources/``. This tool is used to prepare your
-    samples for a git-LFS enabled repository.
+    ``resources/example/``. This tool is used to prepare your samples for a
+    git-LFS-enabled repository.
     """
     if preserve_originals:
         originals_dir = pathlib.Path(in_directory) / 'originals'
@@ -53,23 +73,24 @@ def main(in_directory, preserve_originals):
     else:
         originals_dir = None
 
-    for file in pathlib.Path(in_directory).iterdir():
-        if file == originals_dir:
-            continue
-        if file.is_dir():
-            print(f'Skipping directory {file.name}/')
-            continue
-        if file.suffix != '.html':
-            print(f'Skipping {file.name}; not an HTML file')
-            continue
+    with progressbar(list(pathlib.Path(in_directory).iterdir())) as bar:
+        for file in bar:
+            if file == originals_dir:
+                continue
+            if file.is_dir():
+                print(f'Skipping directory {file.name}/')
+                continue
+            if file.suffix != '.html':
+                print(f'Skipping {file.name}; not an HTML file')
+                continue
 
-        html = extract_base64_data_from_html_page(file)
+            html = extract_base64_data_from_html_page(file)
 
-        if preserve_originals:
-            shutil.move(file, originals_dir / file.name)
+            if preserve_originals:
+                shutil.move(file, originals_dir / file.name)
 
-        with file.open('w', encoding='utf-8') as fp:
-            fp.write(html)
+            with file.open('w', encoding='utf-8') as fp:
+                fp.write(html)
 
 
 def extract_base64_data_from_html_page(file: pathlib.Path):
@@ -158,6 +179,11 @@ def generate_filename(mime_type: str, filename: str) -> str:
         extension = MIME_TYPE_TO_FILE_EXTENSION[mime_type]
     except KeyError:
         extension = mimetypes.guess_extension(mime_type, strict=True)
+        if extension is None:
+            extension = input(f'\nWhat file extension should I use for a resource of type {mime_type}? ')
+            if not extension.startswith('.'):
+                extension = '.' + extension
+            MIME_TYPE_TO_FILE_EXTENSION[mime_type] = extension
     return f'{filename}{extension}'
 
 

@@ -1,9 +1,9 @@
 from json import JSONDecodeError, load, loads
 
-from click import argument, BadParameter, command, File
+from click import argument, BadParameter, command, File, option
 
-from ..accuracy import accuracy_per_tag, accuracy_per_page, pretty_accuracy
-from ..utils import classifier, tensor, tensors_from
+from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
+from ..utils import classifier, speed_readout, tensor, tensors_from
 
 
 def decode_weights(ctx, param, value):
@@ -47,8 +47,14 @@ def model_from_json(weights, num_outputs, feature_names):
 @command()
 @argument('testing_file',
           type=File('r'))
+@argument('confidence-threshold',
+          type=float)
 @argument('weights', callback=decode_weights)
-def main(testing_file, weights):
+@option('--verbose', '-v',
+        default=False,
+        is_flag=True,
+        help='Show per-tag diagnostics, even though that could ruin blinding for the test set.')
+def main(testing_file, confidence_threshold, weights, verbose):
     """Compute the accuracy of the given coefficients and biases on a file of
     testing vectors.
 
@@ -63,14 +69,16 @@ def main(testing_file, weights):
 
     """
     testing_data = load(testing_file)
-    pages = testing_data['pages']
-    x, y, num_yes = tensors_from(pages)
+    testing_pages = testing_data['pages']
+    x, y, num_yes = tensors_from(testing_pages)
     model = model_from_json(weights, len(y[0]), testing_data['header']['featureNames'])
 
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x))
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold)
     print(pretty_accuracy('\n   Testing accuracy per tag: ', accuracy, len(x), false_positives, false_negatives, num_yes))
 
-    accuracy, report = accuracy_per_page(model, pages)
-    print(pretty_accuracy('Testing accuracy per page:', accuracy, len(pages)))
+    if testing_pages and 'time' in testing_pages[0]:
+        print(speed_readout(testing_pages))
 
-    print('\nTesting per-page results:\n', report, sep='')
+    if verbose:
+        print('\nTesting per-tag results:')
+        print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in testing_pages])

@@ -1,5 +1,5 @@
-import contextlib
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import os
 
 from click import command, option, Path
@@ -12,23 +12,14 @@ from click import command, option, Path
         help='The directory to serve files from (default: current working directory')
 def main(directory, port):
     """
-    Serves the files in DIRECTORY over a local HTTP server: http://localhost:PORT.
+    Serves the files in DIRECTORY over a local HTTP server:
+    http://localhost:PORT.
 
-    This is useful for vectorizing samples using FathomFox. FathomFox expects you to provide,
-    in the vectorizer page, an address to an HTTP server that is serving your samples.
+    This is useful for vectorizing samples using FathomFox. FathomFox expects
+    you to provide, in the vectorizer page, an address to an HTTP server that
+    is serving your samples.
     """
-    with cd(directory):
-        server = HTTPServer(('localhost', port), SimpleHTTPRequestHandler)
-        print(f'Serving {directory} over http://localhost:{port}.')
-        print('Press Ctrl+C to stop.')
-        server.serve_forever()
-
-
-@contextlib.contextmanager
-def cd(path):
-    previous_directory = os.getcwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(previous_directory)
+    server = ThreadingHTTPServer(('localhost', port), partial(SimpleHTTPRequestHandler, directory=directory))
+    print(f'Serving {directory} over http://localhost:{port}.')
+    print('Press Ctrl+C to stop.')
+    server.serve_forever()

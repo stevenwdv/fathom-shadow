@@ -10,9 +10,9 @@ jobs:
       addons:
         firefox: latest
       script:
-        - make js_lint js_test
+        - make -C fathom lint test
       after_success:
-        - make coveralls
+        - make -C fathom coveralls
     - stage: test
       name: "Python 3.7 tests"
       dist: bionic
@@ -24,23 +24,8 @@ jobs:
           - MOZ_HEADLESS=1
       addons:
         firefox: latest
-      before_script:
-        - git clone https://github.com/mozilla/fathom-fox.git
-        - export FATHOM_FOX=$TRAVIS_BUILD_DIR/fathom-fox
-        - git clone https://github.com/mozilla/fathom-trainees.git
-        - export FATHOM_TRAINEES=$TRAVIS_BUILD_DIR/fathom-trainees
-        - cd fathom-fox
-        - npm install
-        - yarn build
-        - cd ../fathom-trainees
-        - npm install
-        - yarn build
-        - cd ..
-        - wget https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz
-        - tar xzf geckodriver-v0.26.0-linux64.tar.gz
-        - export PATH=$PATH:$TRAVIS_BUILD_DIR
       script:
-        - make py_lint py_test
+        - make -C cli lint test
     - stage: docs
       name: "Doc build and deployment"
       dist: bionic
@@ -48,10 +33,10 @@ jobs:
       python:
         - "3.7"
       script:
-        - make doc
+        - make docs
       deploy:
         provider: script
-        script: tooling/travis-deploy-docs
+        script: docs/travis-deploy-docs
         on:
           branch: master
         skip_cleanup: true

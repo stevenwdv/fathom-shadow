@@ -1,0 +1,12 @@
+/.npm_installed
+/.babelrc
+/.eslintignore
+/.eslintrc.yml
+/.nyc_output
+/Makefile
+/rollup.config.js
+/test
+/coverage
+/*.log
+/dist
+/venv

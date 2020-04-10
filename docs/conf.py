@@ -37,6 +37,8 @@ extensions = [
     'sphinx_js'
 ]
 
+js_source_path = '../fathom'
+
 primary_domain = 'js'
 
 # Add any paths that contain templates here, relative to this directory.
@@ -65,7 +67,7 @@ author = u'Erik Rose'
 # built documents.
 #
 # The short X.Y version.
-version = u'3.1'
+version = u'3.3'
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -88,7 +90,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'venv']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

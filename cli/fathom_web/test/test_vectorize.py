@@ -15,7 +15,7 @@ def test_end_to_end(tmp_path):
             f'{test_dir}/resources/vectorize/vectorize_ruleset.js',
             'secret',
             f'{test_dir}/resources/vectorize/',
-            os.environ['FATHOM_FOX'],
+            f'{test_dir}/../../../fathom_fox',
             os.environ['FATHOM_TRAINEES'],
             '-o',
             f'{tmp_path.as_posix()}',

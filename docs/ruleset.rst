@@ -31,6 +31,9 @@ Left-hand sides are currently a few special forms which select nodes to be fed t
 
 .. autofunction:: dom
 
+.. autofunction:: lhs.element
+   :short-name:
+
 .. function:: type(theType)
 
    Take nodes that have the given type. Example: ``type('titley')``

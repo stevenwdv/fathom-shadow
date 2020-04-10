@@ -62,10 +62,13 @@ class Ruleset {
     }
 
     /**
-     * Commit this ruleset to running against a specific DOM tree.
+     * Commit this ruleset to running against a specific DOM tree or subtree.
+     *
+     * When run against a subtree, the root of the subtree is not considered as
+     * a possible match.
      *
      * This doesn't actually modify the Ruleset but rather returns a fresh
-     * BoundRuleset, which contains caches and other stateful, per-DOM
+     * :class:`BoundRuleset`, which contains caches and other stateful, per-DOM
      * bric-a-brac.
      */
     against(doc) {
@@ -93,7 +96,7 @@ class Ruleset {
  * A ruleset that is earmarked to analyze a certain DOM
  *
  * Carries a cache of rule results on that DOM. Typically comes from
- * :func:`Ruleset.against`.
+ * :func:`against`.
  */
 class BoundRuleset {
     /**
@@ -111,7 +114,7 @@ class BoundRuleset {
         // Private, for the use of only helper classes:
         this.biases = biases;
         this._clearCaches();
-        this.elementCache = new Map();  // DOM element => fnode about it
+        this.elementCache = new WeakMap();  // DOM element => fnode about it
         this.doneRules = new Set();  // InwardRules that have been executed. OutwardRules can be executed more than once because they don't change any fnodes and are thus idempotent.
     }
 
