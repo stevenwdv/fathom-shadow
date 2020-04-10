@@ -43,6 +43,8 @@ MIME_TYPE_TO_FILE_EXTENSION = {
     'application/fontwoff': '.woff',
     'application/x-font-woff': '.woff',
     'application/font-ttf': '.ttf',
+    'application/x-javascript': '.js',
+    'application/font-sfnt': '.sfnt',
 }
 
 
