@@ -16,6 +16,7 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.support.ui import Select
 
+from .list import samples_from_dir
 from ..utils import wait_for_function
 
 
@@ -75,7 +76,8 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
     server_thread = None
     graceful_shutdown = False
     try:
-        sample_filenames = run_fathom_list(samples_directory)
+        sample_filenames = [str(sample.relative_to(samples_directory))
+                            for sample in samples_from_dir(samples_directory)]
         with TemporaryDirectory() as temp_dir:
             temp_dir = pathlib.Path(temp_dir)
             fathom_fox = build_fathom_addons(ruleset_file, fathom_fox_dir, temp_dir)
@@ -95,16 +97,6 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
         graceful_shutdown = True
     finally:
         teardown(firefox, firefox_pid, geckodriver_pid, server, server_thread, graceful_shutdown)
-
-
-def run_fathom_list(samples_directory):
-    """Use fathom-list to get a string of the filenames to run through the vectorizer."""
-    print('Running fathom-list to get list of sample filenames...', end='', flush=True)
-    # TODO: Better error message for not having fathom-list
-    result = subprocess.run(['fathom-list', samples_directory, '-r'], capture_output=True)
-    sample_filenames = result.stdout.decode()
-    print('Done')
-    return sample_filenames
 
 
 def build_fathom_addons(ruleset_file, fathom_fox_dir, temp_dir):
@@ -223,11 +215,11 @@ def run_vectorizer(firefox, fathom_type, sample_filenames):
     ruleset_dropdown_selector.select_by_visible_text(fathom_type)
 
     pages_text_area = firefox.find_element_by_id('pages')
-    pages_text_area.send_keys(sample_filenames)
+    pages_text_area.send_keys('\n'.join(sample_filenames))
 
     downloads_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
     vector_files_before = set(downloads_dir.glob('vector*.json'))
-    number_of_samples = len(sample_filenames.splitlines())
+    number_of_samples = len(sample_filenames)
     status_box = firefox.find_element_by_id('status')
     vectorize_button = firefox.find_element_by_id('freeze')
     completed_samples = 0
