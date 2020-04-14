@@ -9,6 +9,7 @@ import subprocess
 import sys
 from tempfile import TemporaryDirectory
 from threading import Thread
+from time import sleep
 import zipfile
 
 from click import argument, command, option, Path, progressbar
@@ -239,7 +240,7 @@ def run_vectorizer(firefox, fathom_type, sample_filenames):
             now_completed_samples = len([line for line in status_box_text.splitlines() if line.endswith(': vectorized')])
             bar.update(now_completed_samples - completed_samples)
             completed_samples = now_completed_samples
-            # TODO: Is this a busy loop? Sleep.
+            sleep(.25)
 
     new_file = look_for_new_vector_file(downloads_dir, vector_files_before)
     print(f'Vectors saved to {str(new_file)}')
