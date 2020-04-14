@@ -1,16 +1,19 @@
+from contextlib import contextmanager
 from functools import partial
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from importlib.resources import open_binary
 import os
+from os.path import join
 import pathlib
 import platform
-import shutil
+from shutil import copyfile
 import signal
-import subprocess
+from subprocess import run
 import sys
 from tempfile import TemporaryDirectory
 from threading import Thread
 from time import sleep
-import zipfile
+from zipfile import ZipFile, ZIP_DEFLATED
 
 from click import argument, ClickException, command, option, Path, progressbar
 from selenium import webdriver
@@ -45,7 +48,6 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
 @argument('ruleset_file', type=Path(exists=True, dir_okay=False))
 @argument('fathom_type', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
-@argument('fathom_fox_dir', type=Path(exists=True, file_okay=False))
 @option('--output-directory', '-o',
         type=Path(exists=True, file_okay=False),
         default=os.getcwd(),
@@ -54,7 +56,7 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
         default=False,
         is_flag=True,
         help='Flag to show browser window while running. Browser is run in headless mode by default.')
-def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_directory, show_browser):
+def main(ruleset_file, fathom_type, samples_directory, output_directory, show_browser):
     """Create feature vectors for a directory of training samples using a
     Fathom ruleset.
 
@@ -63,16 +65,12 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
         necessary (containing no import statements).
     FATHOM_TYPE: The Fathom type to create vectors for
     SAMPLES_DIRECTORY: Path to the directory containing the sample pages
-    FATHOM_FOX_DIR: Path to the FathomFox source directory
 
     \b
     This tool will run an instance of Firefox to use the Vectorizer within the
     FathomFox adddon. Required for this tool to work are...
-      * node
-      * yarn
-      * A FathomFox repository checkout
-      * A copy of Firefox
-      * geckodriver downloaded and accessible in your PATH environment variable
+      * node (and npm, which ships with it)
+      * Firefox
 
     Please note that this utility is considered experimental due to the use of
     os.kill() when shutting down during vectorization. We are working on fixing
@@ -87,10 +85,11 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
                             for sample in samples_from_dir(samples_directory)]
         with TemporaryDirectory() as temp_dir:
             temp_dir = pathlib.Path(temp_dir)
-            fathom_fox = build_fathom_addons(ruleset_file, fathom_fox_dir, temp_dir)
-            server = run_file_server(samples_directory)
-            firefox, firefox_pid, geckodriver_pid = configure_firefox(fathom_fox, output_directory, show_browser, temp_dir)
-            firefox = run_vectorizer(firefox, fathom_type, sample_filenames)
+            with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
+                addon_path, geckodriver_path = addon_and_geckodriver
+                server = run_file_server(samples_directory)
+                firefox, firefox_pid, geckodriver_pid = configure_firefox(addon_path, output_directory, show_browser, temp_dir, geckodriver_path)
+                firefox = run_vectorizer(firefox, fathom_type, sample_filenames)
         graceful_shutdown = True
     except KeyboardInterrupt:
         # Swallow the KeyboardInterrupt here so we can perform our teardown
@@ -103,51 +102,82 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
         teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown)
 
 
-def build_fathom_addons(ruleset_file, fathom_fox_dir, temp_dir):
-    """
-    Create .xpi files for fathom addons to load into Firefox.
+@contextmanager
+def fathom_fox_addon(ruleset_file):
+    """Return a Path to a FathomFox extension containing your ruleset and
+    another to the geckodriver executable."""
+    print('Building FathomFox with your ruleset...', end='', flush=True)
+    with TemporaryDirectory() as temp:
+        temp_dir = pathlib.Path(temp)
 
-    The Firefox webdriver requires we load custom addons using .xpi files. We
-    need to load both FathomFox and Fathom Trainees. For Fathom Trainees, we
-    also need to run yarn to package up the addon with the user's ruleset.js.
+        # Extract a fresh copy of FathomFox and Fathom (which it needs to build
+        # your ruleset) from resources stored in this Python package. By
+        # including it directly from the source tree, we save downloading it
+        # afterward (and figuring out where to put it), and FathomFox can
+        # continue to refer to Fathom as file:../fathom for easy development.
+        with open_binary('fathom_web', 'fathom.zip') as fathom_zip:
+            zip = ZipFile(fathom_zip)
+            zip.extractall(temp_dir)
 
-    """
-    print('Building fathom addons for Firefox...', end='', flush=True)
-    shutil.copyfile(ruleset_file, f'{fathom_fox_dir}/src/rulesets.js')  # XXX: escape fathom_fox_dir
+        # Copy in your ruleset:
+        fathom_fox = temp_dir / 'fathom_fox'
+        copyfile(ruleset_file, fathom_fox / 'src' / 'rulesets.js')
 
-    if platform.system() == 'Windows':
-        # This is because of Windows. Running yarn through the Command Prompt will
-        # cause a cancellation prompt to appear if the user presses ctrl+c during
-        # yarn's execution. We do not want this. We want this program to stop
-        # immediately when a user hits ctrl+c. The work around is to execute yarn
-        # through node using yarn.js. To find this file we use `which`.
-        # See: https://stackoverflow.com/questions/39085380/how-can-i-suppress-terminate-batch-job-y-n-confirmation-in-powershell
-        # TODO: Better error message for not having which or yarn
-        # TODO: Do we need to call `which` on plain, Cygwin-less Windows? We
-        #       don't on the Mac.
-        yarn_dir = subprocess.run(['which', 'yarn'], capture_output=True).stdout.decode().strip()[:-4]
-        if sys.platform == 'cygwin':
-            # Under cygwin, `where` returns a cygwin path, so we need to
-            # transform this into a proper Windows path:
-            yarn_dir = subprocess.run(['cygpath', '-w', yarn_dir], capture_output=True).stdout.decode().strip()
-        # TODO: Better error message for not having node or rollup
-        # XXX: escape yarn_dir. It could contain spaces, etc.
-        yarn_cmd = ['node', f'{yarn_dir}/yarn.js']
-    else:
-        yarn_cmd = ['yarn']
-    subprocess.run([*yarn_cmd, '--cwd', fathom_fox_dir, 'run', 'build'], capture_output=True, check=True)
-    fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox', temp_dir)
-    print('done.')
-    return fathom_fox
+        def run_in_fathom_fox(*args):
+            """Run a command using the FathomFox dir as the working dir."""
+            return run(args, cwd=fathom_fox, capture_output=True, check=True)
+
+        # Install yarn, because it installs FathomFox's dependencies in 15s
+        # rather than 30s. And once installed once, yarn itself takes only 1.5s
+        # to install again. Also, it has security advantages. Though this
+        # install itself isn't hashed, so we're just trusting NPM.
+        run_in_fathom_fox('npm', 'install', 'yarn@1.22.4')
+        # TODO: Better error message for not having node
+
+        # Figure out how to invoke yarn:
+        if platform.system() == 'Windows':
+            # Running yarn through the Command Prompt will cause a cancellation
+            # prompt to appear if the user presses ctrl+c during yarn's
+            # execution. We do not want this. We want this program to stop
+            # immediately when a user hits ctrl+c. The work around is to
+            # execute yarn through node using yarn.js. To find this file, we use
+            # `which`. See: https://stackoverflow.com/questions/39085380/how-
+            # can-i-suppress-terminate-batch-job-y-n-confirmation-in-powershell
+            # TODO: Better error message for not having which
+            # TODO: Do we need to call `which` on plain, Cygwin-less Windows? We
+            #       don't on the Mac.
+            yarn_dir = run_in_fathom_fox('which', 'yarn').stdout.decode().strip()[:-4]
+            if sys.platform == 'cygwin':
+                # Under cygwin, `where` returns a cygwin path, so we need to
+                # transform this into a proper Windows path:
+                yarn_dir = run_in_fathom_fox('cygpath', '-w', yarn_dir).stdout.decode().strip()
+            yarn_cmd = ['node', join(yarn_dir, 'yarn.js')]
+        else:
+            yarn_cmd = ['yarn']
+
+        # Pull in npm dependencies:
+        run_in_fathom_fox(*yarn_cmd, 'install')
+        # Should we cache the yarn-installed dir to save 15 seconds? We can
+        # hash fathom.zip and leave a turd in the cache to validate. But stay
+        # re-entrant; you might want to run 2 vectorizations at once.
+
+        # Build FathomFox:
+        run_in_fathom_fox(fathom_fox / 'node_modules' / '.bin' / 'rollup', '-c')
+
+        # Smoosh FathomFox down into an XPI. The Firefox webdriver requires we
+        # load custom addons using .xpi files.
+        addon_path = temp_dir / 'fathom-fox.xpi'
+        fathom_fox = zip_dir(fathom_fox / 'addon', addon_path)
+
+        print('done.')
+        yield addon_path, (temp_dir / 'fathom_fox' / 'node_modules' / '.bin' / 'geckodriver')
 
 
-def create_xpi_for(directory, name, dest_dir):
-    """Create an .xpi archive for a directory and returns its absolute path."""
-    xpi_path = dest_dir / f'{name}.xpi'
-    with zipfile.ZipFile(xpi_path, 'w', compression=zipfile.ZIP_DEFLATED) as xpi:
-        for file in directory.rglob('*'):
-            xpi.write(file, file.relative_to(directory))
-    return str(xpi_path.absolute())
+def zip_dir(dir, archive_path):
+    """Compress an entire dir, and write it to ``archive_path``."""
+    with ZipFile(archive_path, 'w', compression=ZIP_DEFLATED) as archive:
+        for file in dir.rglob('*'):
+            archive.write(file, file.relative_to(dir))
 
 
 def run_file_server(samples_directory):
@@ -160,7 +190,7 @@ def run_file_server(samples_directory):
     return server
 
 
-def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir):
+def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir, geckodriver_path):
     """Configure and launch Firefox to run the vectorizer with.
 
     Sets headless mode, sets the download directory to the desired output
@@ -182,12 +212,13 @@ def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir):
     profile.set_preference('browser.cache.offline.enable', False)
 
     firefox = webdriver.Firefox(
+        executable_path=str(geckodriver_path),
         options=options,
         firefox_profile=profile,
         service_log_path=temp_dir / 'geckodriver.log',
     )
 
-    firefox.install_addon(fathom_fox, temporary=True)
+    firefox.install_addon(str(fathom_fox), temporary=True)
     print('done.')
     return firefox, firefox.capabilities['moz:processID'], firefox.service.process.pid
 
