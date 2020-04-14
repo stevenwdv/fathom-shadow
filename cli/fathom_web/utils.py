@@ -100,14 +100,15 @@ def fit_unicode(string, width):
 
 
 def wait_for_function(function, error, max_tries):
-    """Try to execute a function some number of times before raising an error
+    """Try to execute a function some number of times before raising an error.
 
     :arg function: A function that likely has some time dependency and you want
         to try executing it multiple times to wait for the time dependency to
-        resolve.
-    :arg error: An exception to raise if the function fails too many times.
-    :arg max_tries: The number of time to try the function before raising the
-        error.
+        resolve
+    :arg error: An exception to raise if the function fails too many times
+    :arg max_tries: The number of times to try the function before raising the
+        error
+
     """
     for _ in range(max_tries):
         try:

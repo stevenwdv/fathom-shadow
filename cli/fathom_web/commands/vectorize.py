@@ -22,57 +22,65 @@ from ..utils import wait_for_function
 
 
 class GracefulError(RuntimeError):
-    """Raised when encountering error that allows for a graceful shutdown."""
+    """An error that allows for a graceful shutdown"""
 
 
 class UngracefulError(RuntimeError):
-    """Raised when encountering error that does not allow for a graceful shutdown."""
+    """An error that does not allow for a graceful shutdown"""
 
 
 class SilentRequestHandler(SimpleHTTPRequestHandler):
-    """A request handler that will not output the log for each request to the terminal."""
+    """A request handler that will not output the log for each request to the
+    terminal
+
+    Not only is this distracting but it also seems to prevent requests from
+    being served when using the ThreadingHTTPServer.
+
+    """
     def log_message(self, format, *args):
         pass
 
 
 @command()
-@argument('ruleset_file', type=str)
+@argument('ruleset_file', type=str)  # TODO: Make this a Path or File.
 @argument('fathom_type', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
 @argument('fathom_fox_dir', type=Path(exists=True, file_okay=False))
-@option('--output-directory', '-o', type=Path(exists=True, file_okay=False), default=os.getcwd(),
+@option('--output-directory', '-o',
+        type=Path(exists=True, file_okay=False),
+        default=os.getcwd(),
         help='Directory to save the vector file in (default: current working directory')
-@option('--show-browser', '-s', default=False, is_flag=True,
+@option('--show-browser', '-s',
+        default=False,
+        is_flag=True,
         help='Flag to show browser window while running. Browser is run in headless mode by default.')
 def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_directory, show_browser):
-    """
-    Create feature vectors for a directory of training samples using a Fathom Ruleset.
+    """Create feature vectors for a directory of training samples using a
+    Fathom ruleset.
 
     \b
-    RULESET_FILE: Path to the ruleset.js file. The file must be pre-bundled, if necessary (containing no import statements).
+    RULESET_FILE: Path to the ruleset.js file. The file must be pre-bundled, if
+        necessary (containing no import statements).
     FATHOM_TYPE: The Fathom type to create vectors for
     SAMPLES_DIRECTORY: Path to the directory containing the sample pages
     FATHOM_FOX_DIR: Path to the FathomFox source directory
 
     \b
     This tool will run an instance of Firefox to use the Vectorizer within the
-    FathomFox adddon. Required for this tool to work are:
+    FathomFox adddon. Required for this tool to work are...
       * node
       * yarn
       * A FathomFox repository checkout
-      * A Fathom Trainees repository checkout
       * A copy of Firefox
       * geckodriver downloaded and accessible in your PATH environment variable
 
-    Please note that this utility is considered experimental due to the use of os.kill() when shutting down while the
-    vectorization is occurring. We are working on fixing this. Repeatedly stopping this program while vectorization is
-    happening may cause problems with other currently running Firefox processes.
+    Please note that this utility is considered experimental due to the use of
+    os.kill() when shutting down during vectorization. We are working on fixing
+    this. Repeatedly stopping this program during vectorization may cause
+    problems with other currently running Firefox processes.
+
     """
-    firefox = None
-    firefox_pid = None
-    geckodriver_pid = None
-    server = None
-    server_thread = None
+    firefox = firefox_pid = geckodriver_pid = server = None
     graceful_shutdown = False
     try:
         sample_filenames = [str(sample.relative_to(samples_directory))
@@ -105,6 +113,7 @@ def build_fathom_addons(ruleset_file, fathom_fox_dir, temp_dir):
     The Firefox webdriver requires we load custom addons using .xpi files. We
     need to load both FathomFox and Fathom Trainees. For Fathom Trainees, we
     also need to run yarn to package up the addon with the user's ruleset.js.
+
     """
     print('Building fathom addons for Firefox...', end='', flush=True)
     shutil.copyfile(ruleset_file, f'{fathom_fox_dir}/src/rulesets.js')  # XXX: escape fathom_fox_dir
@@ -131,7 +140,7 @@ def build_fathom_addons(ruleset_file, fathom_fox_dir, temp_dir):
         yarn_cmd = ['yarn']
     subprocess.run([*yarn_cmd, '--cwd', fathom_fox_dir, 'run', 'build'], capture_output=True, check=True)
     fathom_fox = create_xpi_for(pathlib.Path(fathom_fox_dir) / 'addon', 'fathom-fox', temp_dir)
-    print('Done')
+    print('done.')
     return fathom_fox
 
 
@@ -145,29 +154,24 @@ def create_xpi_for(directory, name, dest_dir):
 
 
 def run_file_server(samples_directory):
-    """
-    Create a local HTTP server for the samples.
-    """
+    """Create a local HTTP server for the samples."""
     print('Starting HTTP file server...', end='', flush=True)
     RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
     server = ThreadingHTTPServer(('localhost', 8000), RequestHandler)
-    server_thread = Thread(target=server.serve_forever)
-    server_thread.start()
-    print('Done')
+    Thread(target=server.serve_forever).start()
+    print('done.')
     return server
 
 
 def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir):
-    """
-    Configures and launches Firefox to run the vectorizer with.
+    """Configure and launch Firefox to run the vectorizer with.
 
     Sets headless mode, sets the download directory to the desired output
-    directory, turns off page caching, and installs FathomFox and Fathom
-    Trainees.
+    directory, turns off page caching, and installs FathomFox.
 
-    We return the webdriver object, and the process IDs for both the Firefox
-    process and the geckodriver process so we can shutdown either
-    gracefully or ungracefully.
+    We return the webdriver object and the process IDs for both Firefox and the
+    geckodriver process so we can shutdown either gracefully or ungracefully.
+
     """
     print('Configuring Firefox...', end='', flush=True)
     options = webdriver.FirefoxOptions()
@@ -187,19 +191,19 @@ def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir):
     )
 
     firefox.install_addon(fathom_fox, temporary=True)
-    print('Done')
+    print('done.')
     return firefox, firefox.capabilities['moz:processID'], firefox.service.process.pid
 
 
 def run_vectorizer(firefox, fathom_type, sample_filenames):
-    """
-    Set up the vectorizer and run it, creating the vectors file.
+    """Set up the vectorizer and run it, creating the vectors file.
 
     Navigate to the vectorizer page of FathomFox, paste the sample filenames
     into the text area and hit the vectorize button.
 
     We monitor the status text area for errors and to see how many samples
     have been vectorized, so we know when the vectorizer has stopped running.
+
     """
     print('Configuring Vectorizer...', end='', flush=True)
     # Navigate to the vectorizer page
@@ -219,7 +223,7 @@ def run_vectorizer(firefox, fathom_type, sample_filenames):
     status_box = firefox.find_element_by_id('status')
     vectorize_button = firefox.find_element_by_id('freeze')
     completed_samples = 0
-    print('Done')
+    print('done.')
 
     with progressbar(length=number_of_samples, label='Running Vectorizer...') as bar:
         vectorize_button.click()
@@ -246,12 +250,12 @@ def run_vectorizer(firefox, fathom_type, sample_filenames):
 
 
 def get_fathom_fox_uuid(firefox):
-    """
-    Try to get the internal UUID for FathomFox from `prefs.js`.
+    """Try to get the internal UUID for FathomFox from `prefs.js`.
 
     We use a loop to try multiple times because the `prefs.js` file needs a
     little time to update before the fathom addon information appears. Five
     seconds seems adequate since one second has always worked for me (Daniel).
+
     """
     def get_uuid():
         prefs = (pathlib.Path(firefox.capabilities.get('moz:profile')) / 'prefs.js').read_text().split(';')
@@ -271,10 +275,10 @@ def vector_files_present(firefox):
 
 
 def extract_error_from(status_text):
-    """
-    Look for errors in the vectorizer's status text.
+    """Look for errors in the vectorizer's status text.
 
-    If there is an error, raise an exception causing an ungraceful shutdown.
+    If there is an error, raise an exception, causing an ungraceful shutdown.
+
     """
     lines = status_text.splitlines()
     for line in lines:
@@ -285,12 +289,12 @@ def extract_error_from(status_text):
 
 # TODO: Remove the need for this terrible thing.
 def look_for_new_vector_file(downloads_dir, vector_files_before):
-    """
-    Look for a new vector file in the downloads directory.
+    """Look for a new vector file in the downloads directory.
 
     We use a loop to try multiple times because the file system needs a little
     little time to update before the file appears. Five seconds seems adequate
     since one second has always worked for me (Daniel).
+
     """
     def get_vector_file():
         vector_files_after = set(downloads_dir.glob('vector*.json'))
@@ -306,17 +310,17 @@ def look_for_new_vector_file(downloads_dir, vector_files_before):
 
 
 def teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown):
-    """
-    Close Firefox and the HTTP server.
+    """Close Firefox and the HTTP server.
 
     There is a graceful shutdown path and an ungraceful shutdown path. If the
     vectorizer has started running, we use the ungraceful shutdown path. This
     is because Firefox becomes unresponsive to the call to `quit()`.
+
     """
     if graceful_shutdown:
         firefox.quit()
         server.shutdown()
-        server.server_close()  # joins threads in 
+        server.server_close()  # joins threads in ThreadingHTTPServer
     else:
         # This is the only way I could get killing the program with ctrl+c to work properly.
         if server:
@@ -332,7 +336,3 @@ def teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown):
             except (SystemError, ProcessLookupError):
                 pass
             os.kill(geckodriver_pid, signal_for_killing)
-
-
-if __name__ == '__main__':
-    main()
