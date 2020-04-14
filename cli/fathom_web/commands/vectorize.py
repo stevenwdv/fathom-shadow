@@ -1,5 +1,5 @@
 from functools import partial
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 import os
 import pathlib
 import platform
@@ -81,7 +81,7 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
         with TemporaryDirectory() as temp_dir:
             temp_dir = pathlib.Path(temp_dir)
             fathom_fox = build_fathom_addons(ruleset_file, fathom_fox_dir, temp_dir)
-            server, server_thread = run_file_server(samples_directory)
+            server = run_file_server(samples_directory)
             firefox, firefox_pid, geckodriver_pid = configure_firefox(fathom_fox, output_directory, show_browser, temp_dir)
             firefox = run_vectorizer(firefox, fathom_type, sample_filenames)
         graceful_shutdown = True
@@ -96,7 +96,7 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
         print(f'\n\n{e}')
         graceful_shutdown = True
     finally:
-        teardown(firefox, firefox_pid, geckodriver_pid, server, server_thread, graceful_shutdown)
+        teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown)
 
 
 def build_fathom_addons(ruleset_file, fathom_fox_dir, temp_dir):
@@ -148,17 +148,14 @@ def create_xpi_for(directory, name, dest_dir):
 def run_file_server(samples_directory):
     """
     Create a local HTTP server for the samples.
-
-    We return both the server and the thread to handle a graceful or forced
-    shutdown.
     """
     print('Starting HTTP file server...', end='', flush=True)
     RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
-    server = HTTPServer(('localhost', 8000), RequestHandler)
+    server = ThreadingHTTPServer(('localhost', 8000), RequestHandler)
     server_thread = Thread(target=server.serve_forever)
     server_thread.start()
     print('Done')
-    return server, server_thread
+    return server
 
 
 def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir):
@@ -309,7 +306,7 @@ def look_for_new_vector_file(downloads_dir, vector_files_before):
     return wait_for_function(get_vector_file, error, max_tries=5)
 
 
-def teardown(firefox, firefox_pid, geckodriver_pid, server, server_thread, graceful_shutdown):
+def teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown):
     """
     Close Firefox and the HTTP server.
 
@@ -320,12 +317,12 @@ def teardown(firefox, firefox_pid, geckodriver_pid, server, server_thread, grace
     if graceful_shutdown:
         firefox.quit()
         server.shutdown()
-        server_thread.join()
+        server.server_close()  # joins threads in 
     else:
         # This is the only way I could get killing the program with ctrl+c to work properly.
         if server:
             server.shutdown()
-            server_thread.join()
+            server.server_close()
         if firefox:
             if os.name == 'nt':
                 signal_for_killing = signal.CTRL_C_EVENT
