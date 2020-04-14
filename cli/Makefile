@@ -10,7 +10,7 @@ release: venv
 
 lint: venv npm_installed
 	@PATH=$(PATH) flake8 --exclude $(VIRTUAL_ENV) .
-	cd ../fathom && node_modules/.bin/eslint -c .eslintrc.yml ../cli/fathom_web/test/resources
+	@cd ../fathom && node_modules/.bin/eslint -c .eslintrc.yml ../cli/fathom_web/test/resources
 
 test: venv npm_installed
 	@PATH=$(PATH) pytest fathom_web/test
@@ -33,6 +33,6 @@ $(VIRTUAL_ENV)/pyvenv.cfg: dev-requirements.txt setup.py
 	PATH=$(PATH) pip3 install -e . -f https://download.pytorch.org/whl/torch_stable.html
 
 npm_installed:
-	$(MAKE) -C ../fathom .npm_installed
+	@$(MAKE) -C ../fathom .npm_installed
 
 .PHONY: release lint test clean venv npm_installed
