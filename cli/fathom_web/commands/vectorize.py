@@ -12,7 +12,7 @@ from threading import Thread
 from time import sleep
 import zipfile
 
-from click import argument, command, option, Path, progressbar
+from click import argument, ClickException, command, option, Path, progressbar
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.support.ui import Select
@@ -21,11 +21,11 @@ from .list import samples_from_dir
 from ..utils import wait_for_function
 
 
-class GracefulError(RuntimeError):
+class GracefulError(ClickException):
     """An error that allows for a graceful shutdown"""
 
 
-class UngracefulError(RuntimeError):
+class UngracefulError(ClickException):
     """An error that does not allow for a graceful shutdown"""
 
 
@@ -92,16 +92,13 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
             firefox, firefox_pid, geckodriver_pid = configure_firefox(fathom_fox, output_directory, show_browser, temp_dir)
             firefox = run_vectorizer(firefox, fathom_type, sample_filenames)
         graceful_shutdown = True
-    # TODO: How to set the exit code here?
     except KeyboardInterrupt:
         # Swallow the KeyboardInterrupt here so we can perform our teardown
         # instead of letting Click do something with it.
         pass
-    except UngracefulError as e:
-        print(f'\n\n{e}')
     except GracefulError as e:
-        print(f'\n\n{e}')
         graceful_shutdown = True
+        raise
     finally:
         teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown)
 
