@@ -53,7 +53,6 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
     FATHOM_TYPE: The Fathom type to create vectors for
     SAMPLES_DIRECTORY: Path to the directory containing the sample pages
     FATHOM_FOX_DIR: Path to the FathomFox source directory
-    FATHOM_TRAINEES_DIR: Path to the Fathom Trainees source directory
 
     \b
     This tool will run an instance of Firefox to use the Vectorizer within the
@@ -69,7 +68,6 @@ def main(ruleset_file, fathom_type, samples_directory, fathom_fox_dir, output_di
     vectorization is occurring. We are working on fixing this. Repeatedly stopping this program while vectorization is
     happening may cause problems with other currently running Firefox processes.
     """
-    # TODO: Try a class based approach so I don't need these =None statements or need to pass the temp_dir around
     firefox = None
     firefox_pid = None
     geckodriver_pid = None
