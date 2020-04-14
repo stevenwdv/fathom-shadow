@@ -42,7 +42,7 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
 
 
 @command()
-@argument('ruleset_file', type=str)  # TODO: Make this a Path or File.
+@argument('ruleset_file', type=Path(exists=True, dir_okay=False))
 @argument('fathom_type', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
 @argument('fathom_fox_dir', type=Path(exists=True, file_okay=False))
