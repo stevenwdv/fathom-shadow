@@ -360,7 +360,9 @@ def teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown):
             else:
                 signal_for_killing = signal.SIGTERM
             try:
-                os.kill(firefox_pid, signal_for_killing)
+                if firefox_pid:
+                    os.kill(firefox_pid, signal_for_killing)
             except (SystemError, ProcessLookupError):
                 pass
-            os.kill(geckodriver_pid, signal_for_killing)
+            if geckodriver_pid:
+                os.kill(geckodriver_pid, signal_for_killing)
