@@ -5,6 +5,8 @@ PYTHON3 ?= python3
 # PATH seems to be exported even without "export", but I kept it to be explicit.
 export PATH := $(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
 
+all: venv fathom.zip
+
 release: venv fathom.zip
 	PATH=$(PATH) python setup.py sdist bdist_wheel
 
