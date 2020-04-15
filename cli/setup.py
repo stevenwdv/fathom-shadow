@@ -35,6 +35,7 @@ setup(
         'fathom-unzip = fathom_web.commands.unzip:main',
         'fathom-vectorize = fathom_web.commands.vectorize:main',
     ]},
+    package_data={'': ['fathom.zip']},
     classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',
