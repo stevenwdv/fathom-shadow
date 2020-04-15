@@ -51,11 +51,11 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
 @option('--output-directory', '-o',
         type=Path(exists=True, file_okay=False),
         default=os.getcwd(),
-        help='Directory to save the vector file in (default: current working directory')
+        help='Directory to save the vector file in. Default: current working directory')
 @option('--show-browser', '-s',
         default=False,
         is_flag=True,
-        help='Flag to show browser window while running. Browser is run in headless mode by default.')
+        help='Show browser window while running. Browser is run in headless mode by default.')
 def main(ruleset_file, fathom_type, samples_directory, output_directory, show_browser):
     """Create feature vectors for a directory of training samples using a
     Fathom ruleset.
