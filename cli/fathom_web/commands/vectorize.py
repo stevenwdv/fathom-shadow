@@ -46,7 +46,7 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
 
 @command()
 @argument('ruleset_file', type=Path(exists=True, dir_okay=False))
-@argument('fathom_type', type=str)
+@argument('trainee_id', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
 @option('--output-directory', '-o',
         type=Path(exists=True, file_okay=False),
@@ -56,14 +56,15 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
         default=False,
         is_flag=True,
         help='Show browser window while running. Browser is run in headless mode by default.')
-def main(ruleset_file, fathom_type, samples_directory, output_directory, show_browser):
+def main(ruleset_file, trainee_id, samples_directory, output_directory, show_browser):
     """Create feature vectors for a directory of training samples using a
     Fathom ruleset.
 
     \b
     RULESET_FILE: Path to the ruleset.js file. The file must be pre-bundled, if
         necessary (containing no import statements).
-    FATHOM_TYPE: The Fathom type to create vectors for
+    TRAINEE_ID: The ID of the Fathom trainee in rulesets.js to create vectors
+        for
     SAMPLES_DIRECTORY: Path to the directory containing the sample pages
 
     \b
@@ -87,9 +88,9 @@ def main(ruleset_file, fathom_type, samples_directory, output_directory, show_br
             temp_dir = pathlib.Path(temp_dir)
             with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
                 addon_path, geckodriver_path = addon_and_geckodriver
-                server = run_file_server(samples_directory)
-                firefox, firefox_pid, geckodriver_pid = configure_firefox(addon_path, output_directory, show_browser, temp_dir, geckodriver_path)
-                firefox = run_vectorizer(firefox, fathom_type, sample_filenames)
+                with serving(samples_directory):
+                    firefox, firefox_pid, geckodriver_pid = configure_firefox(addon_path, output_directory, show_browser, temp_dir, geckodriver_path)
+                    run_vectorizer(firefox, trainee_id, sample_filenames)
         graceful_shutdown = True
     except KeyboardInterrupt:
         # Swallow the KeyboardInterrupt here so we can perform our teardown
@@ -223,7 +224,7 @@ def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir, geck
     return firefox, firefox.capabilities['moz:processID'], firefox.service.process.pid
 
 
-def run_vectorizer(firefox, fathom_type, sample_filenames):
+def run_vectorizer(firefox, trainee_id, sample_filenames):
     """Set up the vectorizer and run it, creating the vectors file.
 
     Navigate to the vectorizer page of FathomFox, paste the sample filenames
@@ -240,7 +241,7 @@ def run_vectorizer(firefox, fathom_type, sample_filenames):
 
     # TODO: Before selecting, check if the page is reporting an error about no ruleset present. If there is, raise a GracefulError.
     ruleset_dropdown_selector = Select(firefox.find_element_by_id('ruleset'))
-    ruleset_dropdown_selector.select_by_visible_text(fathom_type)
+    ruleset_dropdown_selector.select_by_visible_text(trainee_id)
 
     pages_text_area = firefox.find_element_by_id('pages')
     pages_text_area.send_keys('\n'.join(sample_filenames))
