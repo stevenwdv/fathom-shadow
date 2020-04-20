@@ -103,11 +103,11 @@ def exclude_features(exclude, vector_data):
           type=File('r', encoding='utf-8'))
 @option('validation_file', '-a',
         type=File('r', encoding='utf-8'),
-        help="A file of validation samples from FathomFox's Vectorizer, used to graph validation loss so you can see when you start to overfit")
+        help="A file of validation samples from FathomFox's Vectorizer, used to avoid overfitting.")
 @option('--stop-early', '-s',
         default=False,
         is_flag=True,
-        help='Stop 1 iteration before validation loss begins to rise, to avoid overfitting. Before using this, make sure validation loss is monotonically decreasing.')
+        help='Stop 1 iteration before validation loss begins to rise, to avoid overfitting. Before using this, check Tensorboard graphs to make sure validation loss is monotonically decreasing.')
 @option('--learning-rate', '-l',
         default=1.0,
         show_default=True,
@@ -131,7 +131,7 @@ def exclude_features(exclude, vector_data):
 @option('--confidence-threshold', '-t',
         default=0.5,
         show_default=True,
-        help='Threshold used to decide between positive and negative classification. This is a knob to tune the false positive rate (in exchange for the true positive rate).')
+        help='Threshold at which a sample is considered positive. Higher values decrease false positives and increase false negatives.')
 @option('layers', '--layer', '-y',
         type=int,
         multiple=True,
