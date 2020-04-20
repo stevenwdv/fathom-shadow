@@ -79,7 +79,7 @@ def main(ruleset_file, trainee_id, samples_directory, output_directory, show_bro
     problems with other currently running Firefox processes.
 
     """
-    firefox = firefox_pid = geckodriver_pid = server = None
+    firefox = firefox_pid = geckodriver_pid = None
     graceful_shutdown = False
     try:
         sample_filenames = [str(sample.relative_to(samples_directory))
@@ -100,7 +100,7 @@ def main(ruleset_file, trainee_id, samples_directory, output_directory, show_bro
         graceful_shutdown = True
         raise
     finally:
-        teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown)
+        teardown(firefox, firefox_pid, geckodriver_pid, graceful_shutdown)
 
 
 @contextmanager
@@ -181,14 +181,17 @@ def zip_dir(dir, archive_path):
             archive.write(file, file.relative_to(dir))
 
 
-def run_file_server(samples_directory):
+@contextmanager
+def serving(samples_directory):
     """Create a local HTTP server for the samples."""
     print('Starting HTTP file server...', end='', flush=True)
     RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
     server = ThreadingHTTPServer(('localhost', 8000), RequestHandler)
     Thread(target=server.serve_forever).start()
     print('done.')
-    return server
+    yield
+    server.shutdown()
+    server.server_close()  # joins threads in ThreadingHTTPServer
 
 
 def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir, geckodriver_path):
@@ -275,7 +278,6 @@ def run_vectorizer(firefox, trainee_id, sample_filenames):
 
     new_file = look_for_new_vector_file(downloads_dir, vector_files_before)
     print(f'Vectors saved to {str(new_file)}')
-    return firefox
 
 
 def get_fathom_fox_uuid(firefox):
@@ -338,8 +340,8 @@ def look_for_new_vector_file(downloads_dir, vector_files_before):
     return wait_for_function(get_vector_file, error, max_tries=5)
 
 
-def teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown):
-    """Close Firefox and the HTTP server.
+def teardown(firefox, firefox_pid, geckodriver_pid, graceful_shutdown):
+    """Close Firefox.
 
     There is a graceful shutdown path and an ungraceful shutdown path. If the
     vectorizer has started running, we use the ungraceful shutdown path. This
@@ -348,13 +350,8 @@ def teardown(firefox, firefox_pid, geckodriver_pid, server, graceful_shutdown):
     """
     if graceful_shutdown:
         firefox.quit()
-        server.shutdown()
-        server.server_close()  # joins threads in ThreadingHTTPServer
     else:
         # This is the only way I could get killing the program with ctrl+c to work properly.
-        if server:
-            server.shutdown()
-            server.server_close()
         if firefox:
             if os.name == 'nt':
                 signal_for_killing = signal.CTRL_C_EVENT
