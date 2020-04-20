@@ -137,13 +137,14 @@ function startTag(element) {
 function vectorizeTab(traineeId) {
     const trainee = trainees.get(traineeId);
     const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
+    const vectorType = trainee.vectorType || traineeId
     let time = performance.now()
-    const fnodes = boundRuleset.get(type(trainee.vectorType));
+    const fnodes = boundRuleset.get(type(vectorType));
     time = performance.now() - time;
     const path = window.location.pathname;
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
     const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
-        const scoreMap = fnode.scoresSoFarFor(trainee.vectorType);
+        const scoreMap = fnode.scoresSoFarFor(vectorType);
         return {
             isTarget: isTarget(fnode),
             // Loop over ruleset.coeffs in order, and spit out each score:
