@@ -2,6 +2,7 @@
 has yet emerged"""
 
 
+from pathlib import Path
 from random import sample
 from unicodedata import east_asian_width
 
@@ -96,3 +97,13 @@ def fit_unicode(string, width):
             width_so_far -= 2
             break
     return string[:num_chars] + (' ' * (width - width_so_far))
+
+
+def samples_from_dir(in_dir, recursive=False):
+    """Return an iterable of Paths to samples found in ``in_dir``, recursively
+    if requested."""
+    # This is factored out only as a single point of truth between fathom-list,
+    # fathom-train, and fathom-test. It will someday become less trivial as it
+    # learns to not recurse into "resources" dirs.
+    glob_method = getattr(Path(in_dir), 'rglob' if recursive else 'glob')
+    return glob_method('*.html')

@@ -3,6 +3,8 @@ import re
 
 from click import argument, command, File, option, Path
 
+from ..utils import samples_from_dir
+
 
 @command()
 @argument('in_directory', type=Path(exists=True, file_okay=False))
@@ -49,16 +51,6 @@ def main(in_directory, base_dir, recursive, out_file, show_urls):
             print(f'No .html files found in {in_directory}. Did not create {out_file.name}.')
         else:
             out_file.writelines(filenames_to_save)
-
-
-def samples_from_dir(in_dir, recursive=False):
-    """Return an iterable of Paths to samples found in ``in_dir``, recursively
-    if requested."""
-    # This is factored out only as a single point of truth between fathom-list
-    # and fathom-vectorize. It will someday become less trivial as it learns to
-    # not recurse into "resources" dirs.
-    glob_method = getattr(pathlib.Path(in_dir), 'rglob' if recursive else 'glob')
-    return glob_method('*.html')
 
 
 def original_url(open_file):

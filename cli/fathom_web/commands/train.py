@@ -1,14 +1,19 @@
-from json import load
+import hashlib
+import io
+from json import dump, JSONDecodeError, load
+from pathlib import Path
 from pprint import pformat
 
-from click import argument, command, File, option, progressbar
+import click
+from click import argument, BadOptionUsage, command, option, progressbar
 from tensorboardX import SummaryWriter
 from torch import tensor
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
-from ..utils import classifier, speed_readout, tensors_from
+from ..utils import classifier, samples_from_dir, speed_readout, tensors_from
+from ..vectorizer import vectorize
 
 
 def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
@@ -98,12 +103,127 @@ def exclude_features(exclude, vector_data):
     return vector_data
 
 
+def path_or_none(ctx, param, value):
+    return None if value is None else Path(value)
+
+
+def read_chunks(file, size=io.DEFAULT_BUFFER_SIZE):
+    """Yield pieces of data from a file-like object until EOF."""
+    while True:
+        chunk = file.read(size)
+        if not chunk:
+            break
+        yield chunk
+
+
+def hash_file(path):
+    """Return the hex digest of the SHA256 hash of a file."""
+    hash = hashlib.new('sha256')
+    with path.open('rb') as file:
+        for chunk in read_chunks(file):
+            hash.update(chunk)
+    return hash.hexdigest()
+
+
+def out_of_date(sample_cache, ruleset, sample_set):
+    """Determine whether the sample cache is out of date compared to the
+    ruleset and sample set.
+
+    If it is, return a dict of hashes we can add to the new sample cache. If
+    not, return False.
+
+    We use hashes to determine out-of-dateness because git sets the mod dates
+    to now whenever it changes branches. This way, you can check out somebody
+    else's branch from across the internet and still not have to revectorize,
+    as long as they checked their vectors in. And it takes only .2s for 250
+    samples on my 2020 SSD laptop.
+
+    :arg sample_cache: A Path to possibly-pre-existing vector file
+    :arg ruleset: A Path to a rulesets.js file. Can be None if ``sample_set``
+        is a file.
+    :arg sample_set: A Path to a folder full of samples
+
+    """
+    if sample_cache.exists():
+        with sample_cache.open(encoding='utf-8') as file:
+            try:
+                cache_header = load(file)['header']
+            except JSONDecodeError:
+                cache_header = {}
+    else:
+        cache_header = {}
+    ruleset_hash = hash_file(ruleset)
+    page_hashes = {}
+    for sample in samples_from_dir(sample_set):
+        # Hash each file separately. Otherwise, we can't tell the difference
+        # between file 1 that says "ab" and file 2 that says "c" vs. file 1
+        # that says "a" and file 2 "bc". Plus, if we store the hashes along
+        # with their sample-dir-relative paths, we can someday make this
+        # revectorize only the new samples if some are added—and delete the
+        # ones deleted.
+        page_hashes[str(sample.relative_to(sample_set))] = hash_file(sample)
+    if (ruleset_hash != cache_header.get('rulesetHash') or
+        page_hashes != cache_header.get('pageHashes')):
+        return {'pageHashes': page_hashes,
+                'rulesetHash': ruleset_hash}
+
+
+def make_or_read_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set):
+    """Return a Path to the vector file to use, building it first if necessary.
+
+    If passed a vector file for ``sample_set``, we return it verbatim. If
+    passed a folder rather than a vector file, we use the cache if it's fresh.
+    Otherwise, we build the vectors, based on the given ``ruleset`` and
+    ``trainee`` ID, and then cache them at Path ``sample_cache``.
+
+    :arg sample_cache: A Path to possibly-pre-existing vector files or None to
+        use the default location
+
+    """
+    if not sample_set.is_dir():
+        return sample_set  # It's just a vector file.
+    if not sample_cache:
+        sample_cache = ruleset.parent / 'vectors' / f'{kind_of_set}_{trainee}.json'
+    updated_hashes = out_of_date(sample_cache, ruleset, sample_set)
+    if updated_hashes:
+        # Make a vectors file, replacing it if already present:
+        vectorize(ruleset, trainee, sample_set, sample_cache, show_browser)
+        # Stick the new hashes in it:
+        with sample_cache.open(encoding='utf-8') as file:
+            json = load(file)
+        json['header'].update(updated_hashes)
+        with sample_cache.open('w', encoding='utf-8') as file:
+            dump(json, file)
+    return sample_cache
+
+
 @command()
-@argument('training_file',
-          type=File('r', encoding='utf-8'))
-@option('validation_file', '-a',
-        type=File('r', encoding='utf-8'),
-        help="A file of validation samples from FathomFox's Vectorizer, used to avoid overfitting.")
+@argument('training_set',
+          type=click.Path(exists=True, resolve_path=True),
+          metavar='TRAINING_SET_FOLDER')
+@option('--validation-set', '-a',
+        type=click.Path(exists=True, resolve_path=True),
+        callback=path_or_none,
+        metavar='FOLDER',
+        help="Either a folder of validation pages or a JSON file made manually by FathomFox's Vectorizer. Validation pages are used to avoid overfitting.")
+@option('--ruleset', '-r',
+        type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+        callback=path_or_none,
+        help='The rulesets.js file containing your rules. The file must have no imports except from fathom-web, so pre-bundle if necessary.')
+@option('--trainee',
+        type=str,
+        metavar='ID',
+        help='The trainee ID of the ruleset you want to train. Usually, this is the same as the type you are training for.')
+@option('--training-cache',
+        type=click.Path(dir_okay=False, resolve_path=True),
+        help='Where to cache training vectors to speed future training runs. Any existing file will be overwritten. [default: vectors/training_yourTraineeId.json next to your ruleset]')
+@option('--validation-cache',
+        type=click.Path(dir_okay=False, resolve_path=True),
+        help='Where to cache validation vectors to speed future training runs. Any existing file will be overwritten. [default: vectors/validation_yourTraineeId.json next to your ruleset]')
+@option('--show-browser',
+        default=False,
+        is_flag=True,
+        help='Show browser window while vectorizing. (Browser runs in headless mode by default.)')
 @option('--stop-early', '-s',
         default=False,
         is_flag=True,
@@ -140,12 +260,20 @@ def exclude_features(exclude, vector_data):
         type=str,
         multiple=True,
         help='Exclude a rule while training. This helps with before-and-after tests to see if a rule is effective.')
-def main(training_file, validation_file, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
-    """Compute optimal coefficients for a Fathom ruleset, based on a set of
-    labeled pages exported by the FathomFox Vectorizer.
+def main(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
+    """Compute optimal numerical parameters for a Fathom ruleset.
+
+    There are a lot of options, but the usual invocation is something like...
+
+      fathom-train samples/training --validation-set samples/validation --stop-early --ruleset rulesets.js --trainee new
+
+    TRAINING_SET_FOLDER is a directory of labeled training pages. It can also
+    be, for backward compatibility, a JSON file of vectors from FathomFox's
+    Vectorizer.
 
     To see graphs of the results, install TensorBoard, then run this:
-    tensorboard --logdir runs/.
+    tensorboard --logdir runs/. These will tell you whether you need to adjust
+    the --learning-rate.
 
     Some vocab used in the output messages:
 
@@ -158,20 +286,46 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
       the recognizer into a false-positive choice
 
     """
+    training_set = Path(training_set)
+
+    # If they pass in a dir for either the training or validation sets, we need
+    # a ruleset and a trainee for vectorizing:
+    if (validation_set and validation_set.is_dir()) or training_set.is_dir():
+        if not ruleset:
+            raise BadOptionUsage('ruleset', 'A --ruleset file must be specified when TRAINING_SET or --validation-set are passed a directory.')
+        if not trainee:
+            raise BadOptionUsage('trainee', 'A --trainee ID must be specified when TRAINING_SET or --validation-set are passed a directory.')
+
+    with open(make_or_read_vectors(ruleset,
+                                   trainee,
+                                   training_set,
+                                   training_cache,
+                                   show_browser,
+                                   'training'),
+              encoding='utf-8') as training_file:
+        training_data = exclude_features(exclude, load(training_file))
+    training_pages = training_data['pages']
+    x, y, num_yes = tensors_from(training_pages, shuffle=True)
+
+    if validation_set:
+        with open(make_or_read_vectors(ruleset,
+                                       trainee,
+                                       validation_set,
+                                       validation_cache,
+                                       show_browser,
+                                       'validation'),
+                  encoding='utf-8') as validation_file:
+            validation_pages = exclude_features(exclude, load(validation_file))['pages']
+        validation_ins, validation_outs, validation_yes = tensors_from(validation_pages)
+        validation_arg = validation_ins, validation_outs
+    else:
+        validation_arg = None
+
     layers = list(layers)  # Comes in as tuple
     full_comment = '.LR={l},i={i}{c}'.format(
         l=learning_rate,
         i=iterations,
         c=(',' + comment) if comment else '')
-    training_data = exclude_features(exclude, load(training_file))
-    training_pages = training_data['pages']
-    x, y, num_yes = tensors_from(training_pages, shuffle=True)
-    if validation_file:
-        validation_pages = exclude_features(exclude, load(validation_file))['pages']
-        validation_ins, validation_outs, validation_yes = tensors_from(validation_pages)
-        validation_arg = validation_ins, validation_outs
-    else:
-        validation_arg = None
     model = learn(learning_rate,
                   iterations,
                   x,
@@ -182,15 +336,16 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
                   run_comment=full_comment,
                   pos_weight=pos_weight,
                   layers=layers)
+
     print(pretty_coeffs(model, training_data['header']['featureNames']))
     accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold)
-    print(pretty_accuracy(('  ' if validation_file else '') + 'Training accuracy per tag: ',
+    print(pretty_accuracy(('  ' if validation_set else '') + 'Training accuracy per tag: ',
                           accuracy,
                           len(x),
                           false_positives,
                           false_negatives,
                           num_yes))
-    if validation_file:
+    if validation_set:
         accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold)
         print(pretty_accuracy('Validation accuracy per tag: ',
                               accuracy,
@@ -201,7 +356,7 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
 
     # Print timing information:
     if training_pages and 'time' in training_pages[0]:
-        if validation_file and validation_pages and 'time' in validation_pages[0]:
+        if validation_set and validation_pages and 'time' in validation_pages[0]:
             print(speed_readout(training_pages + validation_pages))
         else:
             print(speed_readout(training_pages))
@@ -209,7 +364,7 @@ def main(training_file, validation_file, stop_early, learning_rate, iterations, 
     if not quiet:
         print('\nTraining per-tag results:')
         print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in training_pages])
-        if validation_file:
+        if validation_set:
             print('\nValidation per-tag results:')
             print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in validation_pages])
     # TODO: Print "8000 elements. 7900 successes. 50 false positive. 50 false negatives."

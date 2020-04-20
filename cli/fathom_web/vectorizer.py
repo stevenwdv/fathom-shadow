@@ -7,7 +7,7 @@ from importlib.resources import open_binary
 import os
 from os import devnull, kill, makedirs
 from os.path import expanduser, expandvars, join
-import pathlib
+from pathlib import Path
 import platform
 from shutil import copyfile, move, rmtree
 import signal
@@ -18,13 +18,13 @@ from threading import Thread
 from time import sleep
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from click import argument, ClickException, command, option, Path, progressbar
+from click import ClickException, progressbar
 from filelock import FileLock
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.support.ui import Select
 
-from .list import samples_from_dir
+from .utils import samples_from_dir
 
 
 class GracefulError(ClickException):
@@ -51,40 +51,29 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
         pass
 
 
-@command()
-@argument('ruleset_file', type=Path(exists=True, dir_okay=False))
-@argument('trainee_id', type=str)
-@argument('samples_directory', type=Path(exists=True, file_okay=False))
-@argument('output_file', type=Path(exists=False, dir_okay=False))
-@option('--show-browser', '-s',
-        default=False,
-        is_flag=True,
-        help='Show browser window while running. Browser is run in headless mode by default.')
-def main(ruleset_file, trainee_id, samples_directory, output_file, show_browser):
-    """Create feature vectors for a directory of training samples using a
-    Fathom ruleset.
+def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_browser):
+    """Create feature vectors for a directory of training samples.
 
-    \b
-    RULESET_FILE: Path to the rulesets.js file. The file must be pre-bundled, if
-        necessary (containing no import statements).
-    TRAINEE_ID: The ID of the Fathom trainee in rulesets.js to create vectors
-        for
-    SAMPLES_DIRECTORY: Path to the directory containing the sample pages
-    OUTPUT_FILE: Where to save the resulting vector file
+    We unpack an embedded version of FathomFox, fetch its npm dependencies,
+    copy the ruleset into it, bundle it up, run it in a copy of Firefox, and
+    drive the Vectorizer with Selenium.
 
-    \b
-    This tool will run an instance of Firefox to use the Vectorizer within the
-    FathomFox adddon. Required for this tool to work are...
+    :arg ruleset_file: Path to the rulesets.js file
+    :arg trainee_id: The ID of the desired Fathom trainee in rulesets.js
+    :arg samples_directory: Path to the directory containing the sample pages
+    :arg output_file: Where to save the resulting vector file
+    :arg show_browser: Whether to show Firefox vs. running it in headless mode
+
+    Required for this to work are...
       * node (and npm, which ships with it)
       * Firefox
 
-    Please note that this utility is considered experimental due to the use of
-    os.kill() when shutting down during vectorization. We are working on fixing
-    this. Repeatedly stopping this program during vectorization may cause
-    problems with other currently running Firefox processes.
+    The use of os.kill() when shutting down during vectorization is unfortunate
+    but unavoidable due to a bug in geckodriver. We are working on fixing this.
+    Repeatedly stopping this program during vectorization may cause problems
+    with other currently running Firefox processes.
 
     """
-    output_file = pathlib.Path(output_file)
     with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
         addon_path, geckodriver_path = addon_and_geckodriver
         with serving(samples_directory):
@@ -93,7 +82,7 @@ def main(ruleset_file, trainee_id, samples_directory, output_file, show_browser)
                                  geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations. Just switch this with the serving() `with`.
                 sample_filenames = [str(sample.relative_to(samples_directory))
                                     for sample in samples_from_dir(samples_directory)]
-                vectorize(firefox, trainee_id, sample_filenames, output_file)
+                run_vectorizer(firefox, trainee_id, sample_filenames, output_file)
 
 
 @contextmanager
@@ -102,7 +91,7 @@ def fathom_fox_addon(ruleset_file):
     another to the geckodriver executable."""
     print('Building FathomFox with your ruleset...', end='', flush=True)
     with TemporaryDirectory() as temp:
-        temp_dir = pathlib.Path(temp)
+        temp_dir = Path(temp)
 
         with locked_cached_fathom() as source:
             fathom_fox = source / 'fathom_fox'
@@ -302,14 +291,15 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
                 kill(geckodriver_pid, signal_for_killing)
 
 
-def vectorize(firefox, trainee_id, sample_filenames, output_path):
-    """Set up the vectorizer and run it, creating the vectors file.
+def run_vectorizer(firefox, trainee_id, sample_filenames, output_path):
+    """Set up the vectorizer and run it, creating the vector file.
 
-    Navigate to the vectorizer page of FathomFox, paste the sample filenames
-    into the text area and hit the vectorize button.
+    Move the vector file to ``output_path``, replacing any file already there.
 
-    We monitor the status text area for errors and to see how many samples
-    have been vectorized, so we know when the vectorizer has stopped running.
+    We navigate to the vectorizer page of FathomFox, paste the sample filenames
+    into the text area, and hit the Vectorize button. We monitor the status
+    text area for errors and to see how many samples have been vectorized, so
+    we know when the Vectorizer has stopped running.
 
     """
     print('Configuring Vectorizer...', end='', flush=True)
@@ -348,9 +338,9 @@ def vectorize(firefox, trainee_id, sample_filenames, output_path):
             completed_samples = now_completed_samples
             sleep(.25)
 
-    download_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
+    download_dir = Path(firefox.profile.default_preferences['browser.download.dir'])
     new_file = wait_for_vectors_in(download_dir)
-    move(str(new_file.absolute()), str(output_path.absolute()))  # won't overwrite an existing file on Windows
+    move(str(new_file.absolute()), str(output_path.absolute()))  # won't overwrite an existing file on Windows. Get it to. Use copy() or remove() or something.
     print(f'Vectors saved to {str(output_path)}')
 
 
@@ -363,7 +353,7 @@ def get_fathom_fox_uuid(firefox):
 
     """
     def get_uuid():
-        prefs = (pathlib.Path(firefox.capabilities.get('moz:profile')) / 'prefs.js').read_text().split(';')
+        prefs = (Path(firefox.capabilities.get('moz:profile')) / 'prefs.js').read_text().split(';')
         uuids = next((line for line in prefs if 'extensions.webextensions.uuids' in line)).split(',')
         fathom_fox_uuid = next((line for line in uuids if '{954efd86-8f62-49e7-8a65-80016051e382}' in line)).split('\\"')[3]
         return fathom_fox_uuid
@@ -449,7 +439,7 @@ def cache_directory():
         dir = expanduser('~/Library/Caches/Fathom')
     else:
         dir = expanduser('~/.fathom/cache')
-    return pathlib.Path(dir)
+    return Path(dir)
 
 
 def unlink_if_exists(path):
