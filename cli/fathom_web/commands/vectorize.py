@@ -352,15 +352,11 @@ def teardown(firefox, firefox_pid, geckodriver_pid, graceful_shutdown):
         firefox.quit()
     else:
         # This is the only way I could get killing the program with ctrl+c to work properly.
-        if firefox:
-            if os.name == 'nt':
-                signal_for_killing = signal.CTRL_C_EVENT
-            else:
-                signal_for_killing = signal.SIGTERM
-            try:
-                if firefox_pid:
-                    os.kill(firefox_pid, signal_for_killing)
-            except (SystemError, ProcessLookupError):
-                pass
-            if geckodriver_pid:
-                os.kill(geckodriver_pid, signal_for_killing)
+        signal_for_killing = signal.CTRL_C_EVENT if os.name == 'nt' else signal.SIGTERM
+        try:
+            if firefox_pid:
+                os.kill(firefox_pid, signal_for_killing)
+        except (SystemError, ProcessLookupError):
+            pass
+        if geckodriver_pid:
+            os.kill(geckodriver_pid, signal_for_killing)
