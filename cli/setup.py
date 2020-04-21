@@ -16,6 +16,7 @@ setup(
         'click>=7.0,<8.0',
         'more-itertools>=8.2,<9.0',
         'numpy>=1.18.1,<2.0',
+        'filelock>=3.0.12',
         'scikit-learn>=0.22.2',
         'selenium>=3.141.0',
         'tensorboardX>=1.6,<2.0',

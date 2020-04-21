@@ -1,15 +1,17 @@
 from contextlib import contextmanager
 from functools import partial
+import hashlib
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+import io
 from importlib.resources import open_binary
 import os
-from os import devnull
-from os.path import join
+from os import devnull, kill, makedirs
+from os.path import expanduser, expandvars, join
 import pathlib
 import platform
-from shutil import copyfile, move
+from shutil import copyfile, move, rmtree
 import signal
-from subprocess import CalledProcessError, run
+from subprocess import run
 import sys
 from tempfile import TemporaryDirectory
 from threading import Thread
@@ -17,6 +19,7 @@ from time import sleep
 from zipfile import ZipFile, ZIP_DEFLATED
 
 from click import argument, ClickException, command, option, Path, progressbar
+from filelock import FileLock
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.support.ui import Select
@@ -101,69 +104,127 @@ def fathom_fox_addon(ruleset_file):
     with TemporaryDirectory() as temp:
         temp_dir = pathlib.Path(temp)
 
-        # Extract a fresh copy of FathomFox and Fathom (which it needs to build
-        # your ruleset) from resources stored in this Python package. By
-        # including it directly from the source tree, we save downloading it
-        # afterward (and figuring out where to put it), and FathomFox can
-        # continue to refer to Fathom as file:../fathom for easy development.
-        with open_binary('fathom_web', 'fathom.zip') as fathom_zip:
-            zip = ZipFile(fathom_zip)
-            zip.extractall(temp_dir)
+        with locked_cached_fathom() as source:
+            fathom_fox = source / 'fathom_fox'
 
-        # Copy in your ruleset:
-        fathom_fox = temp_dir / 'fathom_fox'
-        copyfile(ruleset_file, fathom_fox / 'src' / 'rulesets.js')
+            # Copy in your ruleset:
+            copyfile(ruleset_file, fathom_fox / 'src' / 'rulesets.js')
 
-        def run_in_fathom_fox(*args):
-            """Run a command using the FathomFox dir as the working dir."""
-            return run(args, cwd=fathom_fox, capture_output=True, check=True)
+            # Build FathomFox:
+            run([fathom_fox / 'node_modules' / '.bin' / 'rollup', '-c'],
+                cwd=fathom_fox,
+                capture_output=True,
+                check=True)
 
-        # Install yarn, because it installs FathomFox's dependencies in 15s
-        # rather than 30s. And once installed once, yarn itself takes only 1.5s
-        # to install again. Also, it has security advantages. Though this
-        # install itself isn't hashed, so we're just trusting NPM.
-        run_in_fathom_fox('npm', 'install', 'yarn@1.22.4')
-        # TODO: Better error message for not having node
-
-        # Figure out how to invoke yarn:
-        if platform.system() == 'Windows':
-            # Running yarn through the Command Prompt will cause a cancellation
-            # prompt to appear if the user presses ctrl+c during yarn's
-            # execution. We do not want this. We want this program to stop
-            # immediately when a user hits ctrl+c. The work around is to
-            # execute yarn through node using yarn.js. To find this file, we use
-            # `which`. See: https://stackoverflow.com/questions/39085380/how-
-            # can-i-suppress-terminate-batch-job-y-n-confirmation-in-powershell
-            # TODO: Better error message for not having which
-            # TODO: Do we need to call `which` on plain, Cygwin-less Windows? We
-            #       don't on the Mac.
-            yarn_dir = run_in_fathom_fox('which', 'yarn').stdout.decode().strip()[:-4]
-            if sys.platform == 'cygwin':
-                # Under cygwin, `where` returns a cygwin path, so we need to
-                # transform this into a proper Windows path:
-                yarn_dir = run_in_fathom_fox('cygpath', '-w', yarn_dir).stdout.decode().strip()
-            yarn_cmd = ['node', join(yarn_dir, 'yarn.js')]
-        else:
-            yarn_cmd = ['yarn']
-
-        # Pull in npm dependencies:
-        run_in_fathom_fox(*yarn_cmd, 'install')
-        # Should we cache the yarn-installed dir to save 15 seconds? We can
-        # hash fathom.zip and leave a turd in the cache to validate. But stay
-        # re-entrant; you might want to run 2 vectorizations at once. FWIW, I
-        # find the most common failure is a server-side 500 error while
-        # downloading geckodriver, which comes from GitHub rather than npm.
-
-        # Build FathomFox:
-        run_in_fathom_fox(fathom_fox / 'node_modules' / '.bin' / 'rollup', '-c')
-
-        # Smoosh FathomFox down into an XPI. The Firefox webdriver requires we
-        # load custom addons using .xpi files.
-        addon_path = temp_dir / 'fathom-fox.xpi'
-        fathom_fox = zip_dir(fathom_fox / 'addon', addon_path)
+            # Smoosh FathomFox down into an XPI. The Firefox webdriver requires
+            # we load custom addons using .xpi files.
+            addon_path = temp_dir / 'fathom-fox.xpi'
+            zip_dir(fathom_fox / 'addon', addon_path)
 
         print('done.')
-        yield addon_path, (temp_dir / 'fathom_fox' / 'node_modules' / '.bin' / 'geckodriver')
+
+        # It should be okay to reference geckodriver outside the
+        # locked_cached_fathom() lock, since that part of the cache is
+        # immutable:
+        yield addon_path, (fathom_fox / 'node_modules' / '.bin' / 'geckodriver')
+
+
+@contextmanager
+def locked_cached_fathom():
+    """Return a Path to a directory containing a copy of Fathom and FathomFox's
+    source, and reserve exclusive access to it while the context manager is
+    open.
+
+    We guarantee that the copy of FathomFox we provide will be brought to a
+    runnable state by copying a ruleset.js in and running rollup.
+
+    Caching this saves 15 seconds if your npm packages are already cached, more
+    otherwise. For simplicity, we cache only one copy of each version of
+    Fathom, as determined by a hash of fathom.zip. But the lock is held only
+    while we run rollup and zip up the result, so parallel invocations of the
+    vectorizer still basically work.
+
+    """
+    source_cache = cache_directory() / 'source'
+    makedirs(source_cache, exist_ok=True)
+    hash = hash_of_fathom()
+    with FileLock(source_cache / f'{hash}.lock', timeout=30):
+        # Ownership of 123abc.lock means we have sole dominion over the 123abc
+        # folder next to it.
+        hash_dir = (source_cache / hash)
+        finished_flag = (hash_dir / 'finished_flag')
+        fathom_fox = hash_dir / 'fathom_fox'
+        if not finished_flag.exists():
+            try:
+                # Remove any half-built failures lying around:
+                rmtree(hash_dir)
+            except FileNotFoundError:
+                pass
+            hash_dir.mkdir()
+
+            # Extract a fresh copy of FathomFox and Fathom (which it needs to build
+            # your ruleset) from resources stored in this Python package. By
+            # including it directly from the source tree, we save downloading it
+            # afterward (and figuring out where to put it), and FathomFox can
+            # continue to refer to Fathom as file:../fathom for easy development.
+            with open_binary('fathom_web', 'fathom.zip') as fathom_zip:
+                zip = ZipFile(fathom_zip)
+                zip.extractall(hash_dir)
+
+            def run_in_fathom_fox(*args):
+                """Run a command using the FathomFox dir as the working dir."""
+                return run(args, cwd=fathom_fox, capture_output=True, check=True)
+
+            # Install yarn, because it installs FathomFox's dependencies in 15s rather
+            # than 30s. And once installed once, yarn itself takes only 1.5s to install
+            # again. Also, it has security advantages. Though this install itself isn't
+            # hashed, so we're just trusting NPM.
+            run_in_fathom_fox('npm', 'install', 'yarn@1.22.4')
+            # TODO: Better error message for not having node
+
+            # Figure out how to invoke yarn:
+            if platform.system() == 'Windows':
+                # Running yarn through the Command Prompt will cause a cancellation
+                # prompt to appear if the user presses ctrl+c during yarn's execution.
+                # We do not want this. We want this program to stop immediately when a
+                # user hits ctrl+c. The work around is to execute yarn through node
+                # using yarn.js. To find this file, we use `which`. See:
+                # https://stackoverflow.com/questions/39085380/how- can-i-suppress-
+                # terminate-batch-job-y-n-confirmation-in-powershell
+                # TODO: Better error message for not having which
+                # TODO: Do we need to call `which` on plain, Cygwin-less Windows? We
+                #       don't on the Mac.
+                yarn_dir = run_in_fathom_fox('which', 'yarn').stdout.decode().strip()[:-4]
+                if sys.platform == 'cygwin':
+                    # Under cygwin, `where` returns a cygwin path, so we need to
+                    # transform this into a proper Windows path:
+                    yarn_dir = run_in_fathom_fox('cygpath', '-w', yarn_dir).stdout.decode().strip()
+                yarn_cmd = ['node', join(yarn_dir, 'yarn.js')]
+            else:
+                yarn_cmd = ['yarn']
+
+            # Pull in npm dependencies:
+            run_in_fathom_fox(*yarn_cmd, 'install')
+            # FWIW, I find the most common failure on `yarn install` is a server-side
+            # 500 error while downloading geckodriver, which comes from GitHub rather
+            # than npm. The output needed to distinguish this is not captured by
+            # subprocess.run(capture_output=True).
+
+            # Drop a little turd to declare that we finished building this
+            # cached copy entirely:
+            finished_flag.touch()
+
+        yield hash_dir
+
+        # Clean up project-specific build artifacts, just for peace of mind:
+        try:
+            (fathom_fox / 'src' / 'rulesets.js').unlink()
+        except FileNotFoundError:
+            pass
+        try:
+            (fathom_fox / 'addon' / 'rulesets.js').unlink()
+        except FileNotFoundError:
+            pass
 
 
 def zip_dir(dir, archive_path):
@@ -238,10 +299,10 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
                 signal_for_killing = (signal.CTRL_C_EVENT if os.name == 'nt'
                                       else signal.SIGTERM)
                 try:
-                    os.kill(firefox_pid, signal_for_killing)
+                    kill(firefox_pid, signal_for_killing)
                 except (SystemError, ProcessLookupError):
                     pass
-                os.kill(geckodriver_pid, signal_for_killing)
+                kill(geckodriver_pid, signal_for_killing)
 
 
 def vectorize(firefox, trainee_id, sample_filenames, output_path):
@@ -292,7 +353,7 @@ def vectorize(firefox, trainee_id, sample_filenames, output_path):
 
     download_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
     new_file = wait_for_vectors_in(download_dir)
-    move(str(new_file.absolute()), str(output_path.absolute()))  # won't overwrite an existing file
+    move(str(new_file.absolute()), str(output_path.absolute()))  # won't overwrite an existing file on Windows
     print(f'Vectors saved to {str(output_path)}')
 
 
@@ -362,3 +423,33 @@ def retry(function, max_tries=5):
             sleep(1)
     else:
         raise Timeout()
+
+
+def read_chunks(file, size=io.DEFAULT_BUFFER_SIZE):
+    """Yield pieces of data from a file-like object until EOF."""
+    while True:
+        chunk = file.read(size)
+        if not chunk:
+            break
+        yield chunk
+
+
+def hash_of_fathom():
+    """Return the first 8 chars of the hash of my embedded copy of the Fathom
+    source."""
+    hash = hashlib.new('sha256')
+    with open_binary('fathom_web', 'fathom.zip') as fathom_zip:
+        for chunk in read_chunks(fathom_zip):
+            hash.update(chunk)
+    return hash.hexdigest()[:8]
+
+
+def cache_directory():
+    """Return the directory where we can cache things on this OS."""
+    if os.name == 'nt':
+        dir = expandvars(r'%LOCALAPPDATA%\Fathom\Cache')
+    elif platform.system() == 'Darwin':
+        dir = expanduser('~/Library/Caches/Fathom')
+    else:
+        dir = expanduser('~/.fathom/cache')
+    return pathlib.Path(dir)
