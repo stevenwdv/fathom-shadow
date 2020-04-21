@@ -79,28 +79,19 @@ def main(ruleset_file, trainee_id, samples_directory, output_directory, show_bro
     problems with other currently running Firefox processes.
 
     """
-    firefox = firefox_pid = geckodriver_pid = None
-    graceful_shutdown = False
-    try:
-        sample_filenames = [str(sample.relative_to(samples_directory))
-                            for sample in samples_from_dir(samples_directory)]
-        with TemporaryDirectory() as temp_dir:
-            temp_dir = pathlib.Path(temp_dir)
-            with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
-                addon_path, geckodriver_path = addon_and_geckodriver
-                with serving(samples_directory):
-                    firefox, firefox_pid, geckodriver_pid = configure_firefox(addon_path, output_directory, show_browser, temp_dir, geckodriver_path)
+    sample_filenames = [str(sample.relative_to(samples_directory))
+                        for sample in samples_from_dir(samples_directory)]
+    with TemporaryDirectory() as temp_dir:  # TODO: Have the individual functions make their own temp dirs.
+        temp_dir = pathlib.Path(temp_dir)
+        with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
+            addon_path, geckodriver_path = addon_and_geckodriver
+            with serving(samples_directory):
+                with running_firefox(addon_path,
+                                     output_directory,
+                                     show_browser,
+                                     temp_dir,
+                                     geckodriver_path) as firefox:
                     run_vectorizer(firefox, trainee_id, sample_filenames)
-        graceful_shutdown = True
-    except KeyboardInterrupt:
-        # Swallow the KeyboardInterrupt here so we can perform our teardown
-        # instead of letting Click do something with it.
-        pass
-    except GracefulError as e:
-        graceful_shutdown = True
-        raise
-    finally:
-        teardown(firefox, firefox_pid, geckodriver_pid, graceful_shutdown)
 
 
 @contextmanager
@@ -194,7 +185,8 @@ def serving(samples_directory):
     server.server_close()  # joins threads in ThreadingHTTPServer
 
 
-def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir, geckodriver_path):
+@contextmanager
+def running_firefox(fathom_fox, output_directory, show_browser, temp_dir, geckodriver_path):
     """Configure and launch Firefox to run the vectorizer with.
 
     Sets headless mode, sets the download directory to the desired output
@@ -204,7 +196,7 @@ def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir, geck
     geckodriver process so we can shutdown either gracefully or ungracefully.
 
     """
-    print('Configuring Firefox...', end='', flush=True)
+    print('Running Firefox...', end='', flush=True)
     options = webdriver.FirefoxOptions()
     options.headless = not show_browser
 
@@ -223,8 +215,31 @@ def configure_firefox(fathom_fox, output_directory, show_browser, temp_dir, geck
     )
 
     firefox.install_addon(str(fathom_fox), temporary=True)
+    firefox_pid = firefox.capabilities['moz:processID']
+    geckodriver_pid = firefox.service.process.pid
     print('done.')
-    return firefox, firefox.capabilities['moz:processID'], firefox.service.process.pid
+
+    # There is a graceful shutdown path and an ungraceful shutdown path. If the
+    # vectorizer has started running, we use the ungraceful shutdown path. This
+    # is because Firefox becomes unresponsive to the call to `quit()`.
+    graceful_shutdown = False
+    try:
+        yield firefox
+        graceful_shutdown = True
+    except GracefulError:
+        graceful_shutdown = True
+        raise  # happens AFTER the finally
+    finally:
+        if graceful_shutdown:
+            firefox.quit()
+        else:
+            # This is the only way I could get killing the program with ctrl+c to work properly.
+            signal_for_killing = signal.CTRL_C_EVENT if os.name == 'nt' else signal.SIGTERM
+            try:
+                os.kill(firefox_pid, signal_for_killing)
+            except (SystemError, ProcessLookupError):
+                pass
+            os.kill(geckodriver_pid, signal_for_killing)
 
 
 def run_vectorizer(firefox, trainee_id, sample_filenames):
@@ -338,25 +353,3 @@ def look_for_new_vector_file(downloads_dir, vector_files_before):
         error_string += f' Files present were:\n{files_present}'
     error = GracefulError(error_string)
     return wait_for_function(get_vector_file, error, max_tries=5)
-
-
-def teardown(firefox, firefox_pid, geckodriver_pid, graceful_shutdown):
-    """Close Firefox.
-
-    There is a graceful shutdown path and an ungraceful shutdown path. If the
-    vectorizer has started running, we use the ungraceful shutdown path. This
-    is because Firefox becomes unresponsive to the call to `quit()`.
-
-    """
-    if graceful_shutdown:
-        firefox.quit()
-    else:
-        # This is the only way I could get killing the program with ctrl+c to work properly.
-        signal_for_killing = signal.CTRL_C_EVENT if os.name == 'nt' else signal.SIGTERM
-        try:
-            if firefox_pid:
-                os.kill(firefox_pid, signal_for_killing)
-        except (SystemError, ProcessLookupError):
-            pass
-        if geckodriver_pid:
-            os.kill(geckodriver_pid, signal_for_killing)
