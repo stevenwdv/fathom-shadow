@@ -3,7 +3,6 @@ has yet emerged"""
 
 
 from random import sample
-from time import sleep
 from unicodedata import east_asian_width
 
 from more_itertools import pairwise
@@ -97,24 +96,3 @@ def fit_unicode(string, width):
             width_so_far -= 2
             break
     return string[:num_chars] + (' ' * (width - width_so_far))
-
-
-def wait_for_function(function, error, max_tries):
-    """Try to execute a function some number of times before raising an error.
-
-    :arg function: A function that likely has some time dependency and you want
-        to try executing it multiple times to wait for the time dependency to
-        resolve
-    :arg error: An exception to raise if the function fails too many times
-    :arg max_tries: The number of times to try the function before raising the
-        error
-
-    """
-    for _ in range(max_tries):
-        try:
-            return function()
-        except Exception:  # noqa: E722
-            sleep(1)
-    else:
-        raise error
-

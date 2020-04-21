@@ -15,9 +15,8 @@ def test_end_to_end(tmp_path):
             f'{test_dir}/resources/vectorize/vectorize_ruleset.js',
             'secret',
             f'{test_dir}/resources/vectorize/',
-            '-o',
-            f'{tmp_path.as_posix()}',
+            f'{tmp_path.as_posix()}/my_vectors.json',
         ]
     )
     assert result.exit_code == 0
-    assert (tmp_path / 'vectors.json').exists()
+    assert (tmp_path / 'my_vectors.json').exists()

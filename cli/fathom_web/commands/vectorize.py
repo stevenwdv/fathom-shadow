@@ -3,12 +3,13 @@ from functools import partial
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from importlib.resources import open_binary
 import os
+from os import devnull
 from os.path import join
 import pathlib
 import platform
-from shutil import copyfile
+from shutil import copyfile, move
 import signal
-from subprocess import run
+from subprocess import CalledProcessError, run
 import sys
 from tempfile import TemporaryDirectory
 from threading import Thread
@@ -21,7 +22,6 @@ from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.support.ui import Select
 
 from .list import samples_from_dir
-from ..utils import wait_for_function
 
 
 class GracefulError(ClickException):
@@ -30,6 +30,10 @@ class GracefulError(ClickException):
 
 class UngracefulError(ClickException):
     """An error that does not allow for a graceful shutdown"""
+
+
+class Timeout(Exception):
+    """``retry()`` finished all its tries without succeeding."""
 
 
 class SilentRequestHandler(SimpleHTTPRequestHandler):
@@ -48,24 +52,22 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
 @argument('ruleset_file', type=Path(exists=True, dir_okay=False))
 @argument('trainee_id', type=str)
 @argument('samples_directory', type=Path(exists=True, file_okay=False))
-@option('--output-directory', '-o',
-        type=Path(exists=True, file_okay=False),
-        default=os.getcwd(),
-        help='Directory to save the vector file in. Default: current working directory')
+@argument('output_file', type=Path(exists=False, dir_okay=False))
 @option('--show-browser', '-s',
         default=False,
         is_flag=True,
         help='Show browser window while running. Browser is run in headless mode by default.')
-def main(ruleset_file, trainee_id, samples_directory, output_directory, show_browser):
+def main(ruleset_file, trainee_id, samples_directory, output_file, show_browser):
     """Create feature vectors for a directory of training samples using a
     Fathom ruleset.
 
     \b
-    RULESET_FILE: Path to the ruleset.js file. The file must be pre-bundled, if
+    RULESET_FILE: Path to the rulesets.js file. The file must be pre-bundled, if
         necessary (containing no import statements).
     TRAINEE_ID: The ID of the Fathom trainee in rulesets.js to create vectors
         for
     SAMPLES_DIRECTORY: Path to the directory containing the sample pages
+    OUTPUT_FILE: Where to save the resulting vector file
 
     \b
     This tool will run an instance of Firefox to use the Vectorizer within the
@@ -79,19 +81,19 @@ def main(ruleset_file, trainee_id, samples_directory, output_directory, show_bro
     problems with other currently running Firefox processes.
 
     """
+    output_file = pathlib.Path(output_file)
     sample_filenames = [str(sample.relative_to(samples_directory))
                         for sample in samples_from_dir(samples_directory)]
-    with TemporaryDirectory() as temp_dir:  # TODO: Have the individual functions make their own temp dirs.
-        temp_dir = pathlib.Path(temp_dir)
+    with TemporaryDirectory() as download_dir:  # TODO: Have the individual functions make their own temp dirs.
+        download_dir = pathlib.Path(download_dir)
         with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
             addon_path, geckodriver_path = addon_and_geckodriver
             with serving(samples_directory):
                 with running_firefox(addon_path,
-                                     output_directory,
+                                     download_dir,
                                      show_browser,
-                                     temp_dir,
                                      geckodriver_path) as firefox:
-                    run_vectorizer(firefox, trainee_id, sample_filenames)
+                    vectorize(firefox, trainee_id, sample_filenames, output_file)
 
 
 @contextmanager
@@ -186,14 +188,11 @@ def serving(samples_directory):
 
 
 @contextmanager
-def running_firefox(fathom_fox, output_directory, show_browser, temp_dir, geckodriver_path):
-    """Configure and launch Firefox to run the vectorizer with.
+def running_firefox(fathom_fox, download_dir, show_browser, geckodriver_path):
+    """Configure and return a running Firefox to run the vectorizer with.
 
     Sets headless mode, sets the download directory to the desired output
     directory, turns off page caching, and installs FathomFox.
-
-    We return the webdriver object and the process IDs for both Firefox and the
-    geckodriver process so we can shutdown either gracefully or ungracefully.
 
     """
     print('Running Firefox...', end='', flush=True)
@@ -202,16 +201,16 @@ def running_firefox(fathom_fox, output_directory, show_browser, temp_dir, geckod
 
     profile = webdriver.FirefoxProfile()
     profile.set_preference('browser.download.folderList', 2)
-    profile.set_preference('browser.download.dir', str(pathlib.Path(output_directory).absolute()))
+    profile.set_preference('browser.download.dir', str(pathlib.Path(download_dir).absolute()))
     profile.set_preference('browser.cache.disk.enable', False)
     profile.set_preference('browser.cache.memory.enable', False)
     profile.set_preference('browser.cache.offline.enable', False)
 
     firefox = webdriver.Firefox(
-        executable_path=str(geckodriver_path),
+        executable_path=str(geckodriver_path.absolute()),
         options=options,
         firefox_profile=profile,
-        service_log_path=temp_dir / 'geckodriver.log',
+        service_log_path=devnull,
     )
 
     firefox.install_addon(str(fathom_fox), temporary=True)
@@ -242,7 +241,7 @@ def running_firefox(fathom_fox, output_directory, show_browser, temp_dir, geckod
             os.kill(geckodriver_pid, signal_for_killing)
 
 
-def run_vectorizer(firefox, trainee_id, sample_filenames):
+def vectorize(firefox, trainee_id, sample_filenames, output_path):
     """Set up the vectorizer and run it, creating the vectors file.
 
     Navigate to the vectorizer page of FathomFox, paste the sample filenames
@@ -264,8 +263,6 @@ def run_vectorizer(firefox, trainee_id, sample_filenames):
     pages_text_area = firefox.find_element_by_id('pages')
     pages_text_area.send_keys('\n'.join(sample_filenames))
 
-    downloads_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
-    vector_files_before = set(downloads_dir.glob('vector*.json'))
     number_of_samples = len(sample_filenames)
     status_box = firefox.find_element_by_id('status')
     vectorize_button = firefox.find_element_by_id('freeze')
@@ -291,8 +288,10 @@ def run_vectorizer(firefox, trainee_id, sample_filenames):
             completed_samples = now_completed_samples
             sleep(.25)
 
-    new_file = look_for_new_vector_file(downloads_dir, vector_files_before)
-    print(f'Vectors saved to {str(new_file)}')
+    download_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
+    new_file = wait_for_vectors_in(download_dir)
+    move(str(new_file.absolute()), str(output_path.absolute()))  # won't overwrite an existing file
+    print(f'Vectors saved to {str(output_path)}')
 
 
 def get_fathom_fox_uuid(firefox):
@@ -309,15 +308,10 @@ def get_fathom_fox_uuid(firefox):
         fathom_fox_uuid = next((line for line in uuids if '{954efd86-8f62-49e7-8a65-80016051e382}' in line)).split('\\"')[3]
         return fathom_fox_uuid
 
-    error = GracefulError('Could not find UUID for FathomFox. No entry in the prefs.js file.')
-    return wait_for_function(get_uuid, error, max_tries=5)
-
-
-def vector_files_present(firefox):
-    """Return the number of vector-y files present in Firefox's download dir."""
-    download_dir = pathlib.Path(firefox.profile.default_preferences['browser.download.dir'])
-    vector_files = download_dir.glob('vector*.json')
-    return len(list(vector_files))
+    try:
+        return retry(get_uuid)
+    except Timeout:
+        raise GracefulError('Could not find UUID for FathomFox. No entry in the prefs.js file.')
 
 
 def extract_error_from(status_text):
@@ -333,23 +327,36 @@ def extract_error_from(status_text):
     raise UngracefulError(f'There was a vectorizer error, but we could not find it in {status_text}')
 
 
-# TODO: Remove the need for this terrible thing.
-def look_for_new_vector_file(downloads_dir, vector_files_before):
-    """Look for a new vector file in the downloads directory.
+def wait_for_vectors_in(download_dir):
+    """Wait for a vector file to appear in the downloads directory, and return
+    its Path.
 
-    We use a loop to try multiple times because the file system needs a little
-    little time to update before the file appears. Five seconds seems adequate
-    since one second has always worked for me (Daniel).
+    The file system needs a little little time to update before the file
+    appears. Five seconds seems adequate since one second has always worked for
+    me (Daniel).
 
     """
-    def get_vector_file():
-        vector_files_after = set(downloads_dir.glob('vector*.json'))
-        new_file = (vector_files_after - vector_files_before).pop()
-        return new_file
+    try:
+        return retry(lambda: next(download_dir.glob('vectors*.json')))
+    except Timeout:
+        contents = ', '.join(item.name for item in download_dir.iterdir())
+        raise GracefulError(f'Could not find vectors*.json in downloads folder. Present items were: {contents}.')
 
-    error_string = f'Could not find vectors file in {downloads_dir.as_posix()}.'
-    if vector_files_before:
-        files_present = '\n'.join(file.as_posix() for file in vector_files_before)
-        error_string += f' Files present were:\n{files_present}'
-    error = GracefulError(error_string)
-    return wait_for_function(get_vector_file, error, max_tries=5)
+
+def retry(function, max_tries=5):
+    """Try to execute a function some number of times before raising Timeout.
+
+    :arg function: A function that likely has some time dependency and you want
+        to try executing it multiple times to wait for the time dependency to
+        resolve
+    :arg max_tries: The number of times to try the function before raising
+        Timeout
+
+    """
+    for _ in range(max_tries):
+        try:
+            return function()
+        except Exception:  # noqa: E722
+            sleep(1)
+    else:
+        raise Timeout()
