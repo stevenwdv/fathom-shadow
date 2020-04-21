@@ -84,16 +84,13 @@ def main(ruleset_file, trainee_id, samples_directory, output_file, show_browser)
     output_file = pathlib.Path(output_file)
     sample_filenames = [str(sample.relative_to(samples_directory))
                         for sample in samples_from_dir(samples_directory)]
-    with TemporaryDirectory() as download_dir:  # TODO: Have the individual functions make their own temp dirs.
-        download_dir = pathlib.Path(download_dir)
-        with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
-            addon_path, geckodriver_path = addon_and_geckodriver
-            with serving(samples_directory):
-                with running_firefox(addon_path,
-                                     download_dir,
-                                     show_browser,
-                                     geckodriver_path) as firefox:
-                    vectorize(firefox, trainee_id, sample_filenames, output_file)
+    with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
+        addon_path, geckodriver_path = addon_and_geckodriver
+        with serving(samples_directory):
+            with running_firefox(addon_path,
+                                 show_browser,
+                                 geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations. Just switch this with the serving() `with`.
+                vectorize(firefox, trainee_id, sample_filenames, output_file)
 
 
 @contextmanager
@@ -153,7 +150,9 @@ def fathom_fox_addon(ruleset_file):
         run_in_fathom_fox(*yarn_cmd, 'install')
         # Should we cache the yarn-installed dir to save 15 seconds? We can
         # hash fathom.zip and leave a turd in the cache to validate. But stay
-        # re-entrant; you might want to run 2 vectorizations at once.
+        # re-entrant; you might want to run 2 vectorizations at once. FWIW, I
+        # find the most common failure is a server-side 500 error while
+        # downloading geckodriver, which comes from GitHub rather than npm.
 
         # Build FathomFox:
         run_in_fathom_fox(fathom_fox / 'node_modules' / '.bin' / 'rollup', '-c')
@@ -188,7 +187,7 @@ def serving(samples_directory):
 
 
 @contextmanager
-def running_firefox(fathom_fox, download_dir, show_browser, geckodriver_path):
+def running_firefox(fathom_fox, show_browser, geckodriver_path):
     """Configure and return a running Firefox to run the vectorizer with.
 
     Sets headless mode, sets the download directory to the desired output
@@ -199,46 +198,50 @@ def running_firefox(fathom_fox, download_dir, show_browser, geckodriver_path):
     options = webdriver.FirefoxOptions()
     options.headless = not show_browser
 
-    profile = webdriver.FirefoxProfile()
-    profile.set_preference('browser.download.folderList', 2)
-    profile.set_preference('browser.download.dir', str(pathlib.Path(download_dir).absolute()))
-    profile.set_preference('browser.cache.disk.enable', False)
-    profile.set_preference('browser.cache.memory.enable', False)
-    profile.set_preference('browser.cache.offline.enable', False)
+    with TemporaryDirectory() as download_dir:
+        profile = webdriver.FirefoxProfile()
+        profile.set_preference('browser.download.folderList', 2)
+        profile.set_preference('browser.download.dir', download_dir)
+        profile.set_preference('browser.cache.disk.enable', False)
+        profile.set_preference('browser.cache.memory.enable', False)
+        profile.set_preference('browser.cache.offline.enable', False)
 
-    firefox = webdriver.Firefox(
-        executable_path=str(geckodriver_path.absolute()),
-        options=options,
-        firefox_profile=profile,
-        service_log_path=devnull,
-    )
+        firefox = webdriver.Firefox(
+            executable_path=str(geckodriver_path.absolute()),
+            options=options,
+            firefox_profile=profile,
+            service_log_path=devnull,
+        )
 
-    firefox.install_addon(str(fathom_fox), temporary=True)
-    firefox_pid = firefox.capabilities['moz:processID']
-    geckodriver_pid = firefox.service.process.pid
-    print('done.')
+        firefox.install_addon(str(fathom_fox), temporary=True)
+        firefox_pid = firefox.capabilities['moz:processID']
+        geckodriver_pid = firefox.service.process.pid
+        print('done.')
 
-    # There is a graceful shutdown path and an ungraceful shutdown path. If the
-    # vectorizer has started running, we use the ungraceful shutdown path. This
-    # is because Firefox becomes unresponsive to the call to `quit()`.
-    graceful_shutdown = False
-    try:
-        yield firefox
-        graceful_shutdown = True
-    except GracefulError:
-        graceful_shutdown = True
-        raise  # happens AFTER the finally
-    finally:
-        if graceful_shutdown:
-            firefox.quit()
-        else:
-            # This is the only way I could get killing the program with ctrl+c to work properly.
-            signal_for_killing = signal.CTRL_C_EVENT if os.name == 'nt' else signal.SIGTERM
-            try:
-                os.kill(firefox_pid, signal_for_killing)
-            except (SystemError, ProcessLookupError):
-                pass
-            os.kill(geckodriver_pid, signal_for_killing)
+        # There is a graceful shutdown path and an ungraceful shutdown path. If
+        # the vectorizer has started running, we use the ungraceful shutdown
+        # path. This is because Firefox becomes unresponsive to the call to
+        # `quit()`.
+        graceful_shutdown = False
+        try:
+            yield firefox
+            graceful_shutdown = True
+        except GracefulError:
+            graceful_shutdown = True
+            raise  # happens AFTER the finally
+        finally:
+            if graceful_shutdown:
+                firefox.quit()
+            else:
+                # This is the only way I could get killing the program with
+                # ctrl+c to work properly.
+                signal_for_killing = (signal.CTRL_C_EVENT if os.name == 'nt'
+                                      else signal.SIGTERM)
+                try:
+                    os.kill(firefox_pid, signal_for_killing)
+                except (SystemError, ProcessLookupError):
+                    pass
+                os.kill(geckodriver_pid, signal_for_killing)
 
 
 def vectorize(firefox, trainee_id, sample_filenames, output_path):
@@ -256,7 +259,6 @@ def vectorize(firefox, trainee_id, sample_filenames, output_path):
     fathom_fox_uuid = get_fathom_fox_uuid(firefox)
     firefox.get(f'moz-extension://{fathom_fox_uuid}/pages/vector.html')
 
-    # TODO: Before selecting, check if the page is reporting an error about no ruleset present. If there is, raise a GracefulError.
     ruleset_dropdown_selector = Select(firefox.find_element_by_id('ruleset'))
     ruleset_dropdown_selector.select_by_visible_text(trainee_id)
 
