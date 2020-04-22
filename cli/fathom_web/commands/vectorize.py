@@ -85,14 +85,14 @@ def main(ruleset_file, trainee_id, samples_directory, output_file, show_browser)
 
     """
     output_file = pathlib.Path(output_file)
-    sample_filenames = [str(sample.relative_to(samples_directory))
-                        for sample in samples_from_dir(samples_directory)]
     with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
         addon_path, geckodriver_path = addon_and_geckodriver
         with serving(samples_directory):
             with running_firefox(addon_path,
                                  show_browser,
                                  geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations. Just switch this with the serving() `with`.
+                sample_filenames = [str(sample.relative_to(samples_directory))
+                                    for sample in samples_from_dir(samples_directory)]
                 vectorize(firefox, trainee_id, sample_filenames, output_file)
 
 
@@ -148,11 +148,13 @@ def locked_cached_fathom():
     source_cache = cache_directory() / 'source'
     makedirs(source_cache, exist_ok=True)
     hash = hash_of_fathom()
+    # TODO: Touch the lockfile on lock. If we find any lockfiles that haven't
+    # been used for a week, delete their folders to save disk space.
     with FileLock(source_cache / f'{hash}.lock', timeout=30):
         # Ownership of 123abc.lock means we have sole dominion over the 123abc
         # folder next to it.
-        hash_dir = (source_cache / hash)
-        finished_flag = (hash_dir / 'finished_flag')
+        hash_dir = source_cache / hash
+        finished_flag = hash_dir / 'finished_flag'
         fathom_fox = hash_dir / 'fathom_fox'
         if not finished_flag.exists():
             try:
@@ -217,14 +219,8 @@ def locked_cached_fathom():
         yield hash_dir
 
         # Clean up project-specific build artifacts, just for peace of mind:
-        try:
-            (fathom_fox / 'src' / 'rulesets.js').unlink()
-        except FileNotFoundError:
-            pass
-        try:
-            (fathom_fox / 'addon' / 'rulesets.js').unlink()
-        except FileNotFoundError:
-            pass
+        unlink_if_exists(fathom_fox / 'src' / 'rulesets.js')
+        unlink_if_exists(fathom_fox / 'addon' / 'rulesets.js')
 
 
 def zip_dir(dir, archive_path):
@@ -240,6 +236,7 @@ def serving(samples_directory):
     print('Starting HTTP file server...', end='', flush=True)
     RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
     server = ThreadingHTTPServer(('localhost', 8000), RequestHandler)
+    # TODO: Find an unused port automatically.
     Thread(target=server.serve_forever).start()
     print('done.')
     yield
@@ -453,3 +450,10 @@ def cache_directory():
     else:
         dir = expanduser('~/.fathom/cache')
     return pathlib.Path(dir)
+
+
+def unlink_if_exists(path):
+    try:
+        path.unlink()
+    except FileNotFoundError:
+        pass
