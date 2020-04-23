@@ -226,6 +226,9 @@ def serving(samples_directory):
     RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
     server = ThreadingHTTPServer(('localhost', 8000), RequestHandler)
     # TODO: Find an unused port automatically.
+    # TODO: This doesn't seem to abort when we hit control-C, even if we set
+    #   block_on_close=False on the server and comment out shutdown() and
+    #   server_close() below.
     Thread(target=server.serve_forever).start()
     print('done.')
     yield
