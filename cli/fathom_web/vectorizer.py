@@ -239,8 +239,9 @@ def serving(samples_directory):
 def running_firefox(fathom_fox, show_browser, geckodriver_path):
     """Configure and return a running Firefox to run the vectorizer with.
 
-    Sets headless mode, sets the download directory to the desired output
-    directory, turns off page caching, and installs FathomFox.
+    Sets headless mode, sets the download directory to a temp directory, turns
+    off page caching, and installs FathomFox. Tries its best to quit Firefox
+    afterward.
 
     """
     print('Running Firefox...', end='', flush=True)

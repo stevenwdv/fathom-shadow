@@ -120,7 +120,7 @@ def out_of_date(sample_cache, ruleset, sample_set):
     ruleset and sample set.
 
     If it is, return a dict of hashes we can add to the new sample cache. If
-    not, return False.
+    not, return None.
 
     We use hashes to determine out-of-dateness because git sets the mod dates
     to now whenever it changes branches. This way, you can check out somebody
