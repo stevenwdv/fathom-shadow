@@ -1,7 +1,8 @@
 """Additional factored-up routines for which no clear pattern of organization
 has yet emerged"""
 
-
+import io
+from pathlib import Path
 from random import sample
 from unicodedata import east_asian_width
 
@@ -96,3 +97,26 @@ def fit_unicode(string, width):
             width_so_far -= 2
             break
     return string[:num_chars] + (' ' * (width - width_so_far))
+
+
+def samples_from_dir(in_dir, recursive=False):
+    """Return an iterable of Paths to samples found in ``in_dir``, recursively
+    if requested."""
+    # This is factored out only as a single point of truth between fathom-list,
+    # fathom-train, and fathom-test. It will someday become less trivial as it
+    # learns to not recurse into "resources" dirs.
+    glob_method = getattr(Path(in_dir), 'rglob' if recursive else 'glob')
+    return glob_method('*.html')
+
+
+def read_chunks(file, size=io.DEFAULT_BUFFER_SIZE):
+    """Yield pieces of data from a file-like object until EOF."""
+    while True:
+        chunk = file.read(size)
+        if not chunk:
+            break
+        yield chunk
+
+
+def path_or_none(ctx, param, value):
+    return None if value is None else Path(value)

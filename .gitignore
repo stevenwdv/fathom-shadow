@@ -2,6 +2,7 @@
 /cli/dist
 /cli/*.egg-info
 /cli/venv
+/cli/fathom_web/fathom.zip
 /docs/_build
 /docs/venv
 /fathom/.npm_installed

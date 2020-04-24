@@ -40,8 +40,10 @@ trainees.set(
      // The content-area size to use while training. Defaults to 1024x768.
      viewportSize: {width: 1024, height: 768},
 
-     // The type of node to extract features from when using the Vectorizer
-     vectorType: 'overlay',
+     // The type of node to extract features from when using the Vectorizer.
+     // Defaults to the trainee ID.
+     //
+     // vectorType: 'overlay',
 
      rulesetMaker:
         function () {

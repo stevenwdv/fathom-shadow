@@ -5,17 +5,25 @@ PYTHON3 ?= python3
 # PATH seems to be exported even without "export", but I kept it to be explicit.
 export PATH := $(VIRTUAL_ENV)/bin:$(VIRTUAL_ENV)/Scripts:$(PATH)
 
-release: venv
+all: venv fathom.zip
+
+release: venv fathom.zip
 	PATH=$(PATH) python setup.py sdist bdist_wheel
 
-lint: venv
+lint: venv npm_installed
 	@PATH=$(PATH) flake8 --exclude $(VIRTUAL_ENV) .
+	@cd ../fathom && node_modules/.bin/eslint -c .eslintrc.yml ../cli/fathom_web/test/resources
 
-test: venv
+test: venv fathom.zip
 	@PATH=$(PATH) pytest fathom_web/test
 
+# I'm open to ideas on how to fire this off only when necessary. But it's
+# pretty fast, at least.
+fathom.zip:
+	cd .. && git archive --format zip --output cli/fathom_web/fathom.zip HEAD -9 fathom fathom_fox
+
 clean:
-	rm -rf $(VIRTUAL_ENV)
+	rm -rf $(VIRTUAL_ENV) fathom.zip
 
 venv: $(VIRTUAL_ENV)/pyvenv.cfg
 
@@ -31,5 +39,7 @@ $(VIRTUAL_ENV)/pyvenv.cfg: dev-requirements.txt setup.py
 	PATH=$(PATH) pip3 install -r dev-requirements.txt
 	PATH=$(PATH) pip3 install -e . -f https://download.pytorch.org/whl/torch_stable.html
 
+npm_installed:
+	@$(MAKE) -C ../fathom .npm_installed
 
-.PHONY: release lint test clean venv
+.PHONY: release lint test clean venv npm_installed

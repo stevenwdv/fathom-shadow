@@ -1,9 +1,12 @@
 from json import JSONDecodeError, load, loads
+from pathlib import Path
 
-from click import argument, BadParameter, command, File, option
+import click
+from click import argument, BadOptionUsage, BadParameter, command, option
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
-from ..utils import classifier, speed_readout, tensor, tensors_from
+from ..utils import classifier, path_or_none, speed_readout, tensor, tensors_from
+from ..vectorizer import make_or_find_vectors
 
 
 def decode_weights(ctx, param, value):
@@ -45,18 +48,41 @@ def model_from_json(weights, num_outputs, feature_names):
 
 
 @command()
-@argument('testing_file',
-          type=File('r'))
-@argument('confidence-threshold',
-          type=float)
+@argument('testing_set',
+          type=click.Path(exists=True, resolve_path=True),
+          metavar='TESTING_SET_FOLDER')
 @argument('weights', callback=decode_weights)
+@option('--confidence-threshold', '-t',
+        default=0.5,
+        show_default=True,
+        help='Threshold at which a sample is considered positive. Higher values decrease false positives and increase false negatives.')
+@option('--ruleset', '-r',
+        type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+        callback=path_or_none,
+        help='The rulesets.js file containing your rules. The file must have no imports except from fathom-web, so pre-bundle if necessary.')
+@option('--trainee',
+        type=str,
+        metavar='ID',
+        help='The trainee ID of the ruleset you are testing. Usually, this is the same as the type you are testing.')
+@option('--testing-cache',
+        type=click.Path(dir_okay=False, resolve_path=True),
+        callback=path_or_none,
+        help='Where to cache testing vectors to speed future testing runs. Any existing file will be overwritten. [default: vectors/testing_yourTraineeId.json next to your ruleset]')
+@option('--show-browser',
+        default=False,
+        is_flag=True,
+        help='Show browser window while vectorizing. (Browser runs in headless mode by default.)')
 @option('--verbose', '-v',
         default=False,
         is_flag=True,
         help='Show per-tag diagnostics, even though that could ruin blinding for the test set.')
-def main(testing_file, confidence_threshold, weights, verbose):
-    """Compute the accuracy of the given coefficients and biases on a file of
-    testing vectors.
+def main(testing_set, weights, confidence_threshold, ruleset, trainee, testing_cache, show_browser, verbose):
+    """Compute the accuracy of the given coefficients and biases on a folder of
+    testing samples.
+
+    TESTING_SET_FOLDER is a directory of labeled testing pages. It can also be,
+    for backward compatibility, a JSON file of vectors from FathomFox's
+    Vectorizer.
 
     WEIGHTS should be a JSON-formatted object like this. You can paste it
     directly from the output of fathom-train.
@@ -68,7 +94,20 @@ def main(testing_file, confidence_threshold, weights, verbose):
         "bias": -8.645608901977539}
 
     """
-    testing_data = load(testing_file)
+    testing_set = Path(testing_set)
+    if testing_set.is_dir():
+        if not ruleset:
+            raise BadOptionUsage('ruleset', 'A --ruleset file must be specified when TESTING_SET_FOLDER is passed a directory.')
+        if not trainee:
+            raise BadOptionUsage('trainee', 'A --trainee ID must be specified when TESTING_SET_FOLDER is passed a directory.')
+
+    with make_or_find_vectors(ruleset,
+                              trainee,
+                              testing_set,
+                              testing_cache,
+                              show_browser,
+                              'testing').open(encoding='utf-8') as testing_file:
+        testing_data = load(testing_file)
     testing_pages = testing_data['pages']
     x, y, num_yes = tensors_from(testing_pages)
     model = model_from_json(weights, len(y[0]), testing_data['header']['featureNames'])
