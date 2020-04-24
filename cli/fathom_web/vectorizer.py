@@ -444,6 +444,7 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path):
     download_dir = Path(firefox.profile.default_preferences['browser.download.dir'])
     new_file = wait_for_vectors_in(download_dir)
     unlink_if_exists(output_path)  # move() won't overwrite a file on Windows.
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     move(str(new_file.absolute()), str(output_path.absolute()))
 
 
