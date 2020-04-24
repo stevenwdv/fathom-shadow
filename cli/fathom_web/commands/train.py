@@ -28,7 +28,7 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None
         validation_ins, validation_outs = validation
         previous_validation_loss = None
     stopped_early = False
-    with progressbar(range(iterations)) as bar:
+    with progressbar(range(iterations), label='Training') as bar:
         for t in bar:
             y_pred = model(x)  # Make predictions.
             loss = loss_fn(y_pred, y)

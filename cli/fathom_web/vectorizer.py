@@ -422,7 +422,7 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path):
     completed_samples = 0
     print('done.')
 
-    with progressbar(length=number_of_samples, label='Running Vectorizer...') as bar:
+    with progressbar(length=number_of_samples, label='Vectorizing samples') as bar:
         vectorize_button.click()
         while completed_samples < number_of_samples:
             try:
