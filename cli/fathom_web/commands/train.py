@@ -216,9 +216,11 @@ def make_or_read_vectors(ruleset, trainee, sample_set, sample_cache, show_browse
         help='The trainee ID of the ruleset you want to train. Usually, this is the same as the type you are training for.')
 @option('--training-cache',
         type=click.Path(dir_okay=False, resolve_path=True),
+        callback=path_or_none,
         help='Where to cache training vectors to speed future training runs. Any existing file will be overwritten. [default: vectors/training_yourTraineeId.json next to your ruleset]')
 @option('--validation-cache',
         type=click.Path(dir_okay=False, resolve_path=True),
+        callback=path_or_none,
         help='Where to cache validation vectors to speed future training runs. Any existing file will be overwritten. [default: vectors/validation_yourTraineeId.json next to your ruleset]')
 @option('--show-browser',
         default=False,

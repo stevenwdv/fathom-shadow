@@ -1,7 +1,7 @@
 """Routines to do with calculating or reporting accuracy"""
 
 
-from math import floor, sqrt
+from math import floor, inf, sqrt
 
 from click import get_terminal_size, style
 import torch
@@ -62,6 +62,13 @@ def per_tag_metrics(page, model, cutoff):
             'true_negative_count': true_negatives}
 
 
+def max_default(iterable, default):
+    try:
+        return max(iterable)
+    except ValueError:  # empty iterable
+        return default
+
+
 def print_per_tag_report(metricses):
     """Given a list of results from multiple ``per_tag_metrics()`` calls,
     return a human-readable report."""
@@ -72,7 +79,9 @@ def print_per_tag_report(metricses):
                    False: {'fg': 'red'}}
 
     max_filename_len = max(len(metrics['filename']) for metrics in metricses)
-    max_tag_len = max(len(tag['markup']) for metrics in metricses for tag in metrics['tags'])
+
+    max_tag_len = max_default((len(tag['markup']) for metrics in metricses for tag in metrics['tags']),
+                              inf)
     template_width_minus_tag = max_filename_len + 2 + 3 + 2 + 3 + 10
     tag_max_width = min(get_terminal_size()[0] - template_width_minus_tag, max_tag_len)
 

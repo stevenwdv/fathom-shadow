@@ -1,4 +1,3 @@
-import pathlib
 import re
 
 from click import argument, command, File, option, Path
