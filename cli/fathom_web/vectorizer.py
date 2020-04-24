@@ -2,7 +2,6 @@ from contextlib import contextmanager
 from functools import partial
 import hashlib
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
-import io
 from importlib.resources import open_binary
 import os
 from os import devnull, kill, makedirs
@@ -24,7 +23,7 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.webdriver.support.ui import Select
 
-from .utils import samples_from_dir
+from .utils import read_chunks, samples_from_dir
 
 
 class GracefulError(ClickException):
@@ -414,15 +413,6 @@ def retry(function, max_tries=5):
             sleep(1)
     else:
         raise Timeout()
-
-
-def read_chunks(file, size=io.DEFAULT_BUFFER_SIZE):
-    """Yield pieces of data from a file-like object until EOF."""
-    while True:
-        chunk = file.read(size)
-        if not chunk:
-            break
-        yield chunk
 
 
 def hash_of_fathom():

@@ -1,7 +1,7 @@
 """Additional factored-up routines for which no clear pattern of organization
 has yet emerged"""
 
-
+import io
 from pathlib import Path
 from random import sample
 from unicodedata import east_asian_width
@@ -107,3 +107,12 @@ def samples_from_dir(in_dir, recursive=False):
     # learns to not recurse into "resources" dirs.
     glob_method = getattr(Path(in_dir), 'rglob' if recursive else 'glob')
     return glob_method('*.html')
+
+
+def read_chunks(file, size=io.DEFAULT_BUFFER_SIZE):
+    """Yield pieces of data from a file-like object until EOF."""
+    while True:
+        chunk = file.read(size)
+        if not chunk:
+            break
+        yield chunk

@@ -1,5 +1,4 @@
 import hashlib
-import io
 from json import dump, JSONDecodeError, load
 from pathlib import Path
 from pprint import pformat
@@ -12,7 +11,7 @@ from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
-from ..utils import classifier, samples_from_dir, speed_readout, tensors_from
+from ..utils import classifier, read_chunks, samples_from_dir, speed_readout, tensors_from
 from ..vectorizer import vectorize
 
 
@@ -105,15 +104,6 @@ def exclude_features(exclude, vector_data):
 
 def path_or_none(ctx, param, value):
     return None if value is None else Path(value)
-
-
-def read_chunks(file, size=io.DEFAULT_BUFFER_SIZE):
-    """Yield pieces of data from a file-like object until EOF."""
-    while True:
-        chunk = file.read(size)
-        if not chunk:
-            break
-        yield chunk
 
 
 def hash_file(path):
