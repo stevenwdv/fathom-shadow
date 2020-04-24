@@ -75,10 +75,10 @@ def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_bro
     """
     with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
         addon_path, geckodriver_path = addon_and_geckodriver
-        with serving(samples_directory):
-            with running_firefox(addon_path,
-                                 show_browser,
-                                 geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations. Just switch this with the serving() `with`.
+        with running_firefox(addon_path,
+                             show_browser,
+                             geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations. Just switch this with the serving() `with`.
+            with serving(samples_directory):
                 sample_filenames = [str(sample.relative_to(samples_directory))
                                     for sample in samples_from_dir(samples_directory)]
                 run_vectorizer(firefox, trainee_id, sample_filenames, output_file)
