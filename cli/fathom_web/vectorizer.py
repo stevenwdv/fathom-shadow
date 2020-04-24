@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from datetime import timedelta
 from functools import partial
 from json import dump, JSONDecodeError, load
 import hashlib
@@ -15,7 +16,7 @@ from subprocess import run
 import sys
 from tempfile import TemporaryDirectory
 from threading import Thread
-from time import sleep
+from time import sleep, time
 from zipfile import ZipFile, ZIP_DEFLATED
 
 from click import ClickException, progressbar
@@ -190,6 +191,32 @@ def fathom_fox_addon(ruleset_file):
         yield addon_path, (fathom_fox / 'node_modules' / '.bin' / 'geckodriver')
 
 
+def remove_old_fathom_caches(source_cache, current_hash):
+    """Delete Fathom caches that haven't been used for awhile.
+
+    They're 150MB, so this is good form.
+
+    """
+    for lock in source_cache.glob('*.lock'):
+        if lock.stem != current_hash:
+            # Don't delete the cache entry we're about to use.
+            if time() - lock.stat().st_mtime > timedelta(weeks=1).total_seconds():
+                # This lockfile is over a week old. Locking it touches its mod
+                # date.
+                with FileLock(lock, timeout=1):
+                    # We accept an unlikely race here wherein a parallel
+                    # vectorization run starts just before we acquire the lock,
+                    # having given up the lock in order to allow other parallel
+                    # runs to go on. However, it still counts on being able to
+                    # use the copy of geckodriver within the cache, which we
+                    # are about to delete. The parallel run would also have to
+                    # be from an old version of the Fathom CLI that was at
+                    # least a week old. I will trade this for simplicity and
+                    # more performant parallel runs.
+                    rmtree(lock.with_suffix(''))
+                    lock.unlink()
+
+
 @contextmanager
 def locked_cached_fathom():
     """Return a Path to a directory containing a copy of Fathom and FathomFox's
@@ -209,8 +236,8 @@ def locked_cached_fathom():
     source_cache = cache_directory() / 'source'
     makedirs(source_cache, exist_ok=True)
     hash = hash_fathom()
-    # TODO: Touch the lockfile on lock. If we find any lockfiles that haven't
-    # been used for a week, delete their folders to save disk space.
+    remove_old_fathom_caches(source_cache, hash)
+
     with FileLock(source_cache / f'{hash}.lock', timeout=30):
         # Ownership of 123abc.lock means we have sole dominion over the 123abc
         # folder next to it.
