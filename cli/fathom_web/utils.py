@@ -116,3 +116,7 @@ def read_chunks(file, size=io.DEFAULT_BUFFER_SIZE):
         if not chunk:
             break
         yield chunk
+
+
+def path_or_none(ctx, param, value):
+    return None if value is None else Path(value)

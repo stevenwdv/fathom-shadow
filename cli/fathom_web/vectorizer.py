@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from functools import partial
+from json import dump, JSONDecodeError, load
 import hashlib
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from importlib.resources import open_binary
@@ -48,6 +49,78 @@ class SilentRequestHandler(SimpleHTTPRequestHandler):
     """
     def log_message(self, format, *args):
         pass
+
+
+def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set):
+    """Return a Path to the vector file to use, building it first if necessary.
+
+    If passed a vector file for ``sample_set``, we return it verbatim. If
+    passed a folder rather than a vector file, we use the cache if it's fresh.
+    Otherwise, we build the vectors, based on the given ``ruleset`` and
+    ``trainee`` ID, and then cache them at Path ``sample_cache``.
+
+    :arg sample_cache: A Path to possibly-pre-existing vector files or None to
+        use the default location
+
+    """
+    if not sample_set.is_dir():
+        return sample_set  # It's just a vector file.
+    if not sample_cache:
+        sample_cache = ruleset.parent / 'vectors' / f'{kind_of_set}_{trainee}.json'
+    updated_hashes = out_of_date(sample_cache, ruleset, sample_set)
+    if updated_hashes:
+        # Make a vectors file, replacing it if already present:
+        vectorize(ruleset, trainee, sample_set, sample_cache, show_browser)
+        # Stick the new hashes in it:
+        with sample_cache.open(encoding='utf-8') as file:
+            json = load(file)
+        json['header'].update(updated_hashes)
+        with sample_cache.open('w', encoding='utf-8') as file:
+            dump(json, file)
+    return sample_cache
+
+
+def out_of_date(sample_cache, ruleset, sample_set):
+    """Determine whether the sample cache is out of date compared to the
+    ruleset and sample set.
+
+    If it is, return a dict of hashes we can add to the new sample cache. If
+    not, return None.
+
+    We use hashes to determine out-of-dateness because git sets the mod dates
+    to now whenever it changes branches. This way, you can check out somebody
+    else's branch from across the internet and still not have to revectorize,
+    as long as they checked their vectors in. And it takes only .2s for 250
+    samples on my 2020 SSD laptop.
+
+    :arg sample_cache: A Path to possibly-pre-existing vector file
+    :arg ruleset: A Path to a rulesets.js file. Can be None if ``sample_set``
+        is a file.
+    :arg sample_set: A Path to a folder full of samples
+
+    """
+    if sample_cache.exists():
+        with sample_cache.open(encoding='utf-8') as file:
+            try:
+                cache_header = load(file)['header']
+            except JSONDecodeError:
+                cache_header = {}
+    else:
+        cache_header = {}
+    ruleset_hash = hash_path(ruleset)
+    page_hashes = {}
+    for sample in samples_from_dir(sample_set):
+        # Hash each file separately. Otherwise, we can't tell the difference
+        # between file 1 that says "ab" and file 2 that says "c" vs. file 1
+        # that says "a" and file 2 "bc". Plus, if we store the hashes along
+        # with their sample-dir-relative paths, we can someday make this
+        # revectorize only the new samples if some are added—and delete the
+        # ones deleted.
+        page_hashes[str(sample.relative_to(sample_set))] = hash_path(sample)
+    if (ruleset_hash != cache_header.get('rulesetHash') or
+        page_hashes != cache_header.get('pageHashes')):
+        return {'pageHashes': page_hashes,
+                'rulesetHash': ruleset_hash}
 
 
 def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_browser):
@@ -135,7 +208,7 @@ def locked_cached_fathom():
     """
     source_cache = cache_directory() / 'source'
     makedirs(source_cache, exist_ok=True)
-    hash = hash_of_fathom()
+    hash = hash_fathom()
     # TODO: Touch the lockfile on lock. If we find any lockfiles that haven't
     # been used for a week, delete their folders to save disk space.
     with FileLock(source_cache / f'{hash}.lock', timeout=30):
@@ -416,14 +489,24 @@ def retry(function, max_tries=5):
         raise Timeout()
 
 
-def hash_of_fathom():
+def hash_path(path):
+    """Return the hex digest of the SHA256 hash of a file."""
+    with path.open('rb') as file:
+        return hash_file(file)
+
+
+def hash_fathom():
     """Return the first 8 chars of the hash of my embedded copy of the Fathom
     source."""
-    hash = hashlib.new('sha256')
     with open_binary('fathom_web', 'fathom.zip') as fathom_zip:
-        for chunk in read_chunks(fathom_zip):
-            hash.update(chunk)
-    return hash.hexdigest()[:8]
+        return hash_file(fathom_zip)[:8]
+
+
+def hash_file(file):
+    hash = hashlib.new('sha256')
+    for chunk in read_chunks(file):
+        hash.update(chunk)
+    return hash.hexdigest()
 
 
 def cache_directory():

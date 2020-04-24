@@ -1,5 +1,4 @@
-import hashlib
-from json import dump, JSONDecodeError, load
+from json import load
 from pathlib import Path
 from pprint import pformat
 
@@ -11,8 +10,8 @@ from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
-from ..utils import classifier, read_chunks, samples_from_dir, speed_readout, tensors_from
-from ..vectorizer import vectorize
+from ..utils import classifier, path_or_none, speed_readout, tensors_from
+from ..vectorizer import make_or_find_vectors
 
 
 def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
@@ -100,91 +99,6 @@ def exclude_features(exclude, vector_data):
         for tag in page['nodes']:
             exclude_indices(excluded_indices, tag['features'])
     return vector_data
-
-
-def path_or_none(ctx, param, value):
-    return None if value is None else Path(value)
-
-
-def hash_file(path):
-    """Return the hex digest of the SHA256 hash of a file."""
-    hash = hashlib.new('sha256')
-    with path.open('rb') as file:
-        for chunk in read_chunks(file):
-            hash.update(chunk)
-    return hash.hexdigest()
-
-
-def out_of_date(sample_cache, ruleset, sample_set):
-    """Determine whether the sample cache is out of date compared to the
-    ruleset and sample set.
-
-    If it is, return a dict of hashes we can add to the new sample cache. If
-    not, return None.
-
-    We use hashes to determine out-of-dateness because git sets the mod dates
-    to now whenever it changes branches. This way, you can check out somebody
-    else's branch from across the internet and still not have to revectorize,
-    as long as they checked their vectors in. And it takes only .2s for 250
-    samples on my 2020 SSD laptop.
-
-    :arg sample_cache: A Path to possibly-pre-existing vector file
-    :arg ruleset: A Path to a rulesets.js file. Can be None if ``sample_set``
-        is a file.
-    :arg sample_set: A Path to a folder full of samples
-
-    """
-    if sample_cache.exists():
-        with sample_cache.open(encoding='utf-8') as file:
-            try:
-                cache_header = load(file)['header']
-            except JSONDecodeError:
-                cache_header = {}
-    else:
-        cache_header = {}
-    ruleset_hash = hash_file(ruleset)
-    page_hashes = {}
-    for sample in samples_from_dir(sample_set):
-        # Hash each file separately. Otherwise, we can't tell the difference
-        # between file 1 that says "ab" and file 2 that says "c" vs. file 1
-        # that says "a" and file 2 "bc". Plus, if we store the hashes along
-        # with their sample-dir-relative paths, we can someday make this
-        # revectorize only the new samples if some are added—and delete the
-        # ones deleted.
-        page_hashes[str(sample.relative_to(sample_set))] = hash_file(sample)
-    if (ruleset_hash != cache_header.get('rulesetHash') or
-        page_hashes != cache_header.get('pageHashes')):
-        return {'pageHashes': page_hashes,
-                'rulesetHash': ruleset_hash}
-
-
-def make_or_read_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set):
-    """Return a Path to the vector file to use, building it first if necessary.
-
-    If passed a vector file for ``sample_set``, we return it verbatim. If
-    passed a folder rather than a vector file, we use the cache if it's fresh.
-    Otherwise, we build the vectors, based on the given ``ruleset`` and
-    ``trainee`` ID, and then cache them at Path ``sample_cache``.
-
-    :arg sample_cache: A Path to possibly-pre-existing vector files or None to
-        use the default location
-
-    """
-    if not sample_set.is_dir():
-        return sample_set  # It's just a vector file.
-    if not sample_cache:
-        sample_cache = ruleset.parent / 'vectors' / f'{kind_of_set}_{trainee}.json'
-    updated_hashes = out_of_date(sample_cache, ruleset, sample_set)
-    if updated_hashes:
-        # Make a vectors file, replacing it if already present:
-        vectorize(ruleset, trainee, sample_set, sample_cache, show_browser)
-        # Stick the new hashes in it:
-        with sample_cache.open(encoding='utf-8') as file:
-            json = load(file)
-        json['header'].update(updated_hashes)
-        with sample_cache.open('w', encoding='utf-8') as file:
-            dump(json, file)
-    return sample_cache
 
 
 @command()
@@ -284,11 +198,11 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
     # a ruleset and a trainee for vectorizing:
     if (validation_set and validation_set.is_dir()) or training_set.is_dir():
         if not ruleset:
-            raise BadOptionUsage('ruleset', 'A --ruleset file must be specified when TRAINING_SET or --validation-set are passed a directory.')
+            raise BadOptionUsage('ruleset', 'A --ruleset file must be specified when TRAINING_SET_FOLDER or --validation-set are passed a directory.')
         if not trainee:
-            raise BadOptionUsage('trainee', 'A --trainee ID must be specified when TRAINING_SET or --validation-set are passed a directory.')
+            raise BadOptionUsage('trainee', 'A --trainee ID must be specified when TRAINING_SET_FOLDER or --validation-set are passed a directory.')
 
-    with open(make_or_read_vectors(ruleset,
+    with open(make_or_find_vectors(ruleset,
                                    trainee,
                                    training_set,
                                    training_cache,
@@ -300,7 +214,7 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
     x, y, num_yes = tensors_from(training_pages, shuffle=True)
 
     if validation_set:
-        with open(make_or_read_vectors(ruleset,
+        with open(make_or_find_vectors(ruleset,
                                        trainee,
                                        validation_set,
                                        validation_cache,
