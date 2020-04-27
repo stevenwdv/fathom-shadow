@@ -213,7 +213,10 @@ def remove_old_fathom_caches(source_cache, current_hash):
                     # be from an old version of the Fathom CLI that was at
                     # least a week old. I will trade this for simplicity and
                     # more performant parallel runs.
-                    rmtree(lock.with_suffix(''))
+                    retry(lambda: rmtree(lock.with_suffix('')), retry_on=OSError)
+                    # The retrying is to work around a behavior on the Mac
+                    # wherein deleting fails with "OSError: [Errno 66]
+                    # Directory not empty: 'node_modules'" sometimes.
                     lock.unlink()
 
 
@@ -245,11 +248,15 @@ def locked_cached_fathom():
         finished_flag = hash_dir / 'finished_flag'
         fathom_fox = hash_dir / 'fathom_fox'
         if not finished_flag.exists():
-            try:
-                # Remove any half-built failures lying around:
-                rmtree(hash_dir)
-            except FileNotFoundError:
-                pass
+            # Remove any half-built failures lying around. Sometimes
+            # removing node_modules fails temporarily with an OSError: dir
+            # not empty.
+            def remove_hash_dir_if_exists():
+                try:
+                    rmtree(hash_dir)
+                except FileNotFoundError:
+                    pass
+            retry(remove_hash_dir_if_exists, retry_on=OSError)
             hash_dir.mkdir()
 
             # Extract a fresh copy of FathomFox and Fathom (which it needs to build
@@ -497,7 +504,7 @@ def wait_for_vectors_in(download_dir):
         raise GracefulError(f'Could not find vectors*.json in downloads folder. Present items were: {contents}.')
 
 
-def retry(function, max_tries=5):
+def retry(function, max_tries=5, retry_on=Exception):
     """Try to execute a function some number of times before raising Timeout.
 
     :arg function: A function that likely has some time dependency and you want
@@ -505,12 +512,14 @@ def retry(function, max_tries=5):
         resolve
     :arg max_tries: The number of times to try the function before raising
         Timeout
+    :arg retry_on: An exception or tuple of exceptions that should trigger a
+        retry
 
     """
     for _ in range(max_tries):
         try:
             return function()
-        except Exception:  # noqa: E722
+        except retry_on:
             sleep(1)
     else:
         raise Timeout()
