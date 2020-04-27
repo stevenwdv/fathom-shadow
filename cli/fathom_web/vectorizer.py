@@ -364,7 +364,7 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
         profile.set_preference('browser.cache.offline.enable', False)
 
         firefox = webdriver.Firefox(
-            executable_path=str(geckodriver_path.absolute()),
+            executable_path=str(geckodriver_path.resolve()),
             options=options,
             firefox_profile=profile,
             service_log_path=devnull,
@@ -452,7 +452,7 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path):
     new_file = wait_for_vectors_in(download_dir)
     unlink_if_exists(output_path)  # move() won't overwrite a file on Windows.
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    move(str(new_file.absolute()), str(output_path.absolute()))
+    move(str(new_file.resolve()), str(output_path.resolve()))
 
 
 def get_fathom_fox_uuid(firefox):
