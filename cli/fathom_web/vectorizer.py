@@ -291,17 +291,20 @@ def locked_cached_fathom():
                 # TODO: Better error message for not having which
                 # TODO: Do we need to call `which` on plain, Cygwin-less Windows? We
                 #       don't on the Mac.
+                # TODO: On Windows, use the copy of yarn we just automatically
+                #       installed. Currently, we require it to already be
+                #       installed globally.
                 yarn_dir = run_in_fathom_fox('which', 'yarn').stdout.decode().strip()[:-4]
                 if sys.platform == 'cygwin':
                     # Under cygwin, `where` returns a cygwin path, so we need to
                     # transform this into a proper Windows path:
                     yarn_dir = run_in_fathom_fox('cygpath', '-w', yarn_dir).stdout.decode().strip()
-                yarn_cmd = ['node', join(yarn_dir, 'yarn.js')]
+                yarn_binary = join(yarn_dir, 'yarn.js')
             else:
-                yarn_cmd = ['yarn']
+                yarn_binary = str((fathom_fox / 'node_modules' / '.bin' / 'yarn').resolve())
 
             # Pull in npm dependencies:
-            run_in_fathom_fox(*yarn_cmd, 'install')
+            run_in_fathom_fox('node', yarn_binary, 'install')
             # FWIW, I find the most common failure on `yarn install` is a server-side
             # 500 error while downloading geckodriver, which comes from GitHub rather
             # than npm. The output needed to distinguish this is not captured by
