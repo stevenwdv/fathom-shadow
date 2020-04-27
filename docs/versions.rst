@@ -4,11 +4,17 @@ Version History
 
 unreleased
 ==========
+* Make vectorization automatic. This largely obsoletes :command:`fathom-list` and :command:`fathom-serve`. We also remove the need to have 3 terminal tabs open, running :command:`yarn watch`, :command:`yarn browser`, and :command:`fathom-serve`. We remove the error-prone hardlinking of the ruleset into FathomFox, which breaks when git changes to a new branch with a different rulesets.js. We eliminate the possibility of forgetting to revectorize after changing a ruleset or samples. And finally, we pave the way to dramatically simplify our teaching and documentation.
+
+  I tried to hew to the CLI design of the previous version of the trainer to keep things familiar. Basically, where you used to pass in a vector file, now feel free to pass in a directory of samples instead. Of course, if you do this, you'll also need to pass in your ruleset and the trainee ID so we can turn the dir into vectors. You can also keep passing in vector files if you want more control in some niche situation, like if you're trying to reproduce results from an old branch.
+
+  Aggressive caching is in place to remove every possible impediment to using the auto-vectorization. We hash the ruleset and the sample HTML files (though not their resources) and compare them with stored hashes in a cached vector file, all of which takes well under a second. In addition, we cache the built FathomFox artifact so we need run npm or yarn or hit the network only when the user upgrades to a new version of the Fathom CLI tools.
 * Add an ``--exclude`` option to the trainer to help with feature ablation.
 * Fix an issue where the trainer would read vectors as non-UTF-8 on Windows.
-* Merge FathomFox into the Fathom repo.
 * In the trainer output, make tag excerpts that contain wide Unicode chars fit in their columns.
-* Don't show tag excerpts in ``fathom-test`` by default.
+* Don't show tag excerpts in :command:`fathom-test` by default.
+* Add application/x-javascript and application/font-sfnt to :command:`fathom-extract`'s list of known MIME types.
+* Merge FathomFox into the Fathom repo.
 * Always use in-project virtualenvs. Drop support for external ones.
 
 3.3
