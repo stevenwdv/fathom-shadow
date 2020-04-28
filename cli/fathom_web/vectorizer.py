@@ -340,9 +340,13 @@ def serving(samples_directory):
     #   server_close() below.
     Thread(target=server.serve_forever).start()
     print('done.')
-    yield
-    server.shutdown()
-    server.server_close()  # joins threads in ThreadingHTTPServer
+    # Without this try/finally, the server thread will hang forever if the main
+    # thread raises an exception. The program will require 2 control-Cs to exit.
+    try:
+        yield
+    finally:
+        server.shutdown()
+        server.server_close()  # joins threads in ThreadingHTTPServer
 
 
 @contextmanager
