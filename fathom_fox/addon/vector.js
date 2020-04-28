@@ -1,4 +1,4 @@
-class CorpusCollector extends PageVisitor {
+class Vectorizer extends PageVisitor {
     constructor(document) {
         super(document);
 
@@ -141,7 +141,7 @@ class CorpusCollector extends PageVisitor {
     }
 }
 
-const collector = new CorpusCollector(document);
-collector.addEventListeners();
+const vectorizer = new Vectorizer(document);
+vectorizer.addEventListeners();
 
 initRulesetMenu(document.getElementById('freeze'));
