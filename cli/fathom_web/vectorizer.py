@@ -111,14 +111,15 @@ def out_of_date(sample_cache, ruleset, sample_set):
         cache_header = {}
     ruleset_hash = hash_path(ruleset)
     page_hashes = {}
-    for sample in samples_from_dir(sample_set):
-        # Hash each file separately. Otherwise, we can't tell the difference
-        # between file 1 that says "ab" and file 2 that says "c" vs. file 1
-        # that says "a" and file 2 "bc". Plus, if we store the hashes along
-        # with their sample-dir-relative paths, we can someday make this
-        # revectorize only the new samples if some are added—and delete the
-        # ones deleted.
-        page_hashes[str(sample.relative_to(sample_set))] = hash_path(sample)
+    with progressbar(samples_from_dir(sample_set), label='Checking for changes') as bar:
+        for sample in bar:
+            # Hash each file separately. Otherwise, we can't tell the
+            # difference between file 1 that says "ab" and file 2 that says "c"
+            # vs. file 1 that says "a" and file 2 "bc". Plus, if we store the
+            # hashes along with their sample-dir-relative paths, we can someday
+            # make this revectorize only the new samples if some are
+            # added—and delete the ones deleted.
+            page_hashes[str(sample.relative_to(sample_set))] = hash_path(sample)
     if (ruleset_hash != cache_header.get('rulesetHash') or
         page_hashes != cache_header.get('pageHashes')):
         return {'pageHashes': page_hashes,
