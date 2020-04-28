@@ -78,7 +78,7 @@ def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browse
             json = load(file)
         json['header'].update(updated_hashes)
         with sample_cache.open('w', encoding='utf-8') as file:
-            dump(json, file)
+            dump(json, file, separators=(',', ':'))
     return sample_cache
 
 
