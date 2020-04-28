@@ -12,6 +12,7 @@ from pathlib import Path
 import platform
 from shutil import copyfile, move, rmtree
 import signal
+import socket
 from subprocess import run
 import sys
 from tempfile import TemporaryDirectory
@@ -152,10 +153,10 @@ def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_bro
         with running_firefox(addon_path,
                              show_browser,
                              geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations. Just switch this with the serving() `with`.
-            with serving(samples_directory):
+            with serving(samples_directory) as port:
                 sample_filenames = [str(sample.relative_to(samples_directory))
                                     for sample in samples_from_dir(samples_directory)]
-                run_vectorizer(firefox, trainee_id, sample_filenames, output_file, kind_of_set)
+                run_vectorizer(firefox, trainee_id, sample_filenames, output_file, kind_of_set, port)
 
 
 @contextmanager
@@ -328,22 +329,33 @@ def zip_dir(dir, archive_path):
             archive.write(file, file.relative_to(dir))
 
 
+def http_server(samples_directory):
+    """Return an HTTP server on an unused port."""
+    request_handler = partial(SilentRequestHandler, directory=samples_directory)
+
+    START_PORT = 8000
+    END_PORT = 8100
+    for port in range(START_PORT, END_PORT):
+        try:
+            server = ThreadingHTTPServer(('localhost', port), request_handler)
+        except socket.error:
+            pass
+        else:
+            return server
+    raise GracefulError(f"Couldn't find an unused port between {START_PORT} and {END_PORT} for the HTTP server.")
+
+
 @contextmanager
 def serving(samples_directory):
-    """Create a local HTTP server for the samples."""
+    """Start a local HTTP server for the samples, and yield its port."""
     print('Starting HTTP file server...', end='', flush=True)
-    RequestHandler = partial(SilentRequestHandler, directory=samples_directory)
-    server = ThreadingHTTPServer(('localhost', 8000), RequestHandler)
-    # TODO: Find an unused port automatically.
-    # TODO: This doesn't seem to abort when we hit control-C, even if we set
-    #   block_on_close=False on the server and comment out shutdown() and
-    #   server_close() below.
+    server = http_server(samples_directory)
     Thread(target=server.serve_forever).start()
     print('done.')
     # Without this try/finally, the server thread will hang forever if the main
     # thread raises an exception. The program will require 2 control-Cs to exit.
     try:
-        yield
+        yield server.server_port
     finally:
         server.shutdown()
         server.server_close()  # joins threads in ThreadingHTTPServer
@@ -408,7 +420,7 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
                 kill(geckodriver_pid, signal_for_killing)
 
 
-def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set):
+def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port):
     """Set up the vectorizer and run it, creating the vector file.
 
     Move the vector file to ``output_path``, replacing any file already there.
@@ -429,6 +441,10 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_s
 
     pages_text_area = firefox.find_element_by_id('pages')
     pages_text_area.send_keys('\n'.join(sample_filenames))
+
+    base_url_field = firefox.find_element_by_id('baseUrl')
+    base_url_field.clear()
+    base_url_field.send_keys(f'http://localhost:{port}/')
 
     number_of_samples = len(sample_filenames)
     status_box = firefox.find_element_by_id('status')
