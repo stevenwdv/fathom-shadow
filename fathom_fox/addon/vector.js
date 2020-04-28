@@ -47,6 +47,20 @@ class Vectorizer extends PageVisitor {
         }
     }
 
+    /**
+     * Return whether an exception is one that could benefit from retrying:
+     * mostly Firefox IPC errors.
+     */
+    isTransientError(error) {
+        const message = error.message;
+        return (message === 'Could not establish connection. Receiving end does not exist.' ||
+                // This one may not happen in practice, but I see it after
+                // stepping through so slowly in the debugger that it gets
+                // impatient:
+                message === 'Message manager disconnected' ||
+                message.startsWith('Invalid tab ID: '));
+    }
+
     async processWithinTimeout(tab, windowId) {
         this.setCurrentStatus({message: 'vectorizing', index: tab.id});
         // Have the content script vectorize the page:
@@ -65,8 +79,12 @@ class Vectorizer extends PageVisitor {
             } catch (error) {
                 // We often get a "receiving end does not exist", even though
                 // the receiver is a background script that should always be
-                // registered. The error goes away on retrying.
-                if (tries >= maxTries) {
+                // registered. The error goes away on retrying. We also get a
+                // lot of "Invalid tab ID: 1234", where the 1234 changes.
+                // Oddly, they keep rolling in for minutes, even after
+                // vectorization has completed successfully. That probably
+                // points to something wrong on our end.
+                if (tries >= maxTries || !this.isTransientError(error)) {
                     this.errorAndStop(`failed: ${error}`, tab.id, windowId);
                     break;
                 } else {
