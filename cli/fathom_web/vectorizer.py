@@ -348,7 +348,7 @@ def http_server(samples_directory):
 @contextmanager
 def serving(samples_directory):
     """Start a local HTTP server for the samples, and yield its port."""
-    print('Starting HTTP file server...', end='', flush=True)
+    print('Starting HTTP server...', end='', flush=True)
     server = http_server(samples_directory)
     Thread(target=server.serve_forever).start()
     print('done.')
