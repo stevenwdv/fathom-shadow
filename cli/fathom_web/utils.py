@@ -2,6 +2,7 @@
 has yet emerged"""
 
 import io
+from os import walk
 from pathlib import Path
 from random import sample
 from unicodedata import east_asian_width
@@ -99,14 +100,18 @@ def fit_unicode(string, width):
     return string[:num_chars] + (' ' * (width - width_so_far))
 
 
-def samples_from_dir(in_dir, recursive=False):
-    """Return an iterable of Paths to samples found in ``in_dir``, recursively
-    if requested."""
-    # This is factored out only as a single point of truth between fathom-list,
-    # fathom-train, and fathom-test. It will someday become less trivial as it
-    # learns to not recurse into "resources" dirs.
-    glob_method = getattr(Path(in_dir), 'rglob' if recursive else 'glob')
-    return glob_method('*.html')
+def samples_from_dir(in_dir):
+    """Return an iterable of Paths to samples found in ``in_dir``,
+    recursively."""
+    for dir_path, dirs, files in walk(in_dir):
+        try:
+            # Skip resources/ folders. Sometimes they contain .html files, and
+            # those aren't samples.
+            dirs.remove('resources')
+        except ValueError:
+            pass
+        yield from (Path(dir_path) / file for file in files
+                    if file.endswith('.html'))
 
 
 def read_chunks(file, size=io.DEFAULT_BUFFER_SIZE):

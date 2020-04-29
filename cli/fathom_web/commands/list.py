@@ -9,18 +9,15 @@ from ..utils import samples_from_dir
 @argument('in_directory', type=Path(exists=True, file_okay=False))
 @option('--base-dir', '-b', type=Path(exists=True, file_okay=False),
         help='The directory to create relative paths from.')
-@option('--recursive', '-r', default=False, is_flag=True,
-        help='Recursively list files from the IN_DIRECTORY and all subdirectories.')
 @option('--out-file', '-o', type=File(mode='w'), default=None,
         help='A file for saving the printed filenames for easy future reference.')
 @option('--show-urls', '-u', default=False, is_flag=True,
         help='Also show the original URL of each sample.')
-def main(in_directory, base_dir, recursive, out_file, show_urls):
+def main(in_directory, base_dir, out_file, show_urls):
     """
-    Lists relative paths of HTML files in a IN_DIRECTORY relative to BASE_DIR,
-    one filename per line. If BASE_DIR is not specified, paths are relative to
-    IN_DIRECTORY. Optionally saves output to OUT_FILE. Optionally performs the
-    listing recursively.
+    Recursively list paths of HTML files in IN_DIRECTORY relative to BASE_DIR,
+    one path per line. If BASE_DIR is not specified, paths are relative to
+    IN_DIRECTORY. Optionally saves output to OUT_FILE.
 
     This is useful for vectorizing samples using FathomFox. FathomFox expects
     input filenames copied into a text box with one filename per line and
@@ -33,7 +30,7 @@ def main(in_directory, base_dir, recursive, out_file, show_urls):
         filenames_to_save = []
 
     there_were_no_files = True
-    for file in samples_from_dir(in_directory, recursive=recursive):
+    for file in samples_from_dir(in_directory):
         there_were_no_files = False
         relative_path = file.relative_to(base_dir)
         if show_urls:

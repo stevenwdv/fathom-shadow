@@ -22,7 +22,6 @@ def test_end_to_end(tmp_path):
             in_directory.as_posix(),
             '-b',
             f'{base_dir.as_posix()}',
-            '-r',
             '-o',
             f'{out_file.as_posix()}',
         ],
@@ -102,7 +101,6 @@ def test_without_base_dir(tmp_path):
         list_main,
         [
             in_directory.as_posix(),
-            '-r',
             '-o',
             f'{out_file.as_posix()}',
         ],
@@ -117,34 +115,6 @@ def test_without_base_dir(tmp_path):
     }
     actual_file_contents = set(out_file.read_text().splitlines())
     assert expected_file_contents == actual_file_contents
-
-
-def test_without_recursive(tmp_path):
-    """Test omission of recursive parameter results in an empty output file"""
-    base_dir, in_directory = make_directories(tmp_path)
-
-    # Make HTML files in in_directory in two separate subdirectories.
-    # We will see that fathom-list should not find these files since
-    # the recursive option is not used.
-    make_html_files(in_directory)
-
-    # Make the out_file we will save the output to
-    out_file = (base_dir / 'out_file.txt')
-
-    # Run fathom-list
-    result = CliRunner().invoke(
-        list_main,
-        [
-            in_directory.as_posix(),
-            '-b',
-            f'{base_dir.as_posix()}',
-            '-o',
-            f'{out_file.as_posix()}',
-        ],
-    )
-    assert result.exit_code == 0
-
-    assert 'No .html files found' in result.output
 
 
 def test_in_directory_does_not_exist():
