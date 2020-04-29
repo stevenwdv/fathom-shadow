@@ -13,16 +13,14 @@ To run the tests, run... ::
 
 This will also run the linter and analyze test coverage. To render the coverage report human-legibly, run ``make coverage``. You can then find the coverage report in the ``coverage`` directory.
 
-You can also run the linter or tests for just the code of one language at a time::
+You can also run the linter or tests for just one subproject at a time. For example, to test the CLI tools... ::
 
-    make js_lint
-    make js_test
+    cd cli
+    make lint test
 
-    make py_lint
-    make py_test
+If you want to drop into the debugger in the middle of a JS test, add a ``debugger;`` statement at your desired breakpoint, then run ``make debugtest`` in the ``fathom`` subproject::
 
-If you want to drop into the debugger in the middle of a JS test, add a ``debugger;`` statement at your desired breakpoint, then run... ::
-
+    cd fathom
     make debugtest
 
 Docs
@@ -30,4 +28,9 @@ Docs
 
 To build the docs... ::
 
-    make doc
+    make docs
+
+Gotchas
+=======
+
+If you are developing the CLI tools and your changes to their embedded copy of the Fathom JS framework don't seem to be taking effect, commit first. The make target that builds ``fathom.zip`` uses ``git archive`` to pull from ``HEAD``.
