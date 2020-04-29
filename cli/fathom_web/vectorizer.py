@@ -421,6 +421,10 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
                 kill(geckodriver_pid, signal_for_killing)
 
 
+# A substring the Vectorizer spits out when something goes wrong:
+FAILURE_SIGNIFIER = 'failed:'
+
+
 def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port):
     """Set up the vectorizer and run it, creating the vector file.
 
@@ -461,7 +465,7 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_s
             except NoSuchWindowException:
                 raise UngracefulError('Vectorization aborted: Firefox window closed during vectorization')
             try:
-                failure_detected = 'failed' in status_box_text
+                failure_detected = FAILURE_SIGNIFIER in status_box_text
             except TypeError:
                 raise UngracefulError('Vectorization aborted: Firefox window closed during vectorization')
             if failure_detected:
@@ -507,7 +511,7 @@ def extract_error_from(status_text):
     """
     lines = status_text.splitlines()
     for line in lines:
-        if 'failed:' in line:
+        if FAILURE_SIGNIFIER in line:
             return line
     raise UngracefulError(f'There was a vectorizer error, but we could not find it in {status_text}')
 
