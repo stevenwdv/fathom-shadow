@@ -462,6 +462,10 @@ export function sigmoid(x) {
 /**
  * Return whether an element is practically visible, considering things like 0
  * size or opacity, ``visibility: hidden`` and ``overflow: hidden``.
+ *
+ * Merely being scrolled off the page in either horizontally or vertically
+ * doesn't count as invisible; the result of this function is meant to be
+ * independent of viewport size.
  */
 export function isVisible(fnodeOrElement) {
     // This could be 5x more efficient if https://github.com/w3c/csswg-drafts/issues/4122 happens.
@@ -475,11 +479,9 @@ export function isVisible(fnodeOrElement) {
     if (elementStyle.visibility === 'hidden') {
         return false;
     }
-    // Check if the element is off-screen:
-    const frame = element.ownerDocument.defaultView;
+    // Check if the element is irrevocably off-screen:
     if (elementRect.x + elementRect.width < 0 ||
-        elementRect.y + elementRect.height < 0 ||
-        elementRect.x > frame.innerWidth || elementRect.y > frame.innerHeight
+        elementRect.y + elementRect.height < 0
     ) {
         return false;
     }
