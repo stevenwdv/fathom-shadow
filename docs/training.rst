@@ -12,7 +12,7 @@ Collecting Samples
 
 Use `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox's developer tools. See the documentation on the aforementioned page for details.
 
-The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with your application and a rulesets.js file you create to hold your rulesets. (This file can later be hard-linked into `your source checkout of FathomFox <https://github.com/mozilla/fathom/tree/master/fathom_fox>`_ to extract feature vectors for the trainer.)
+The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with your application and a ``rulesets.js`` file you create to hold your rulesets. (This file can later be hard-linked into `your source checkout of FathomFox <https://github.com/mozilla/fathom/tree/master/fathom_fox>`_ to extract feature vectors for the trainer.)
 
 So far, a training corpus on the order of 50-100 samples has been sufficient to push validation accuracy above 99%. You'll want additional samples for a validation corpus (to let the trainer know when it's begun to overfit) and a test corpus (to come up with final accuracy numbers).
 
@@ -149,11 +149,11 @@ will change your directory to: ::
 Configuring Git-LFS
 -------------------
 
-With your extracted samples directory, you can follow the `Git-LFS Getting Started steps <https://git-lfs.github.com/>`_ to track your new resources directory. In step 2, instead of running the `git lfs track` command, you may find it easier to directly edit the `.gitattributes` file. For our resources directory, you would add the line: ::
+With your extracted samples directory, you can follow the `Git-LFS Getting Started steps <https://git-lfs.github.com/>`_ to track your new resources directory. In step 2, instead of running the ``git lfs track`` command, you may find it easier to directly edit the ``.gitattributes`` file. For our resources directory, you would add the line: ::
 
     samples/**/resources/** filter=lfs diff=lfs merge=lfs -text
 
-The first `/**` ensures all sample directories (`unused`, `training`, etc.) are tracked, and the second `/**` ensures the subdirectories are tracked.
+The first ``/**`` ensures all sample directories (``unused``, ``training``, etc.) are tracked, and the second ``/**`` ensures the subdirectories are tracked.
 
 Running the Trainer
 ===================
