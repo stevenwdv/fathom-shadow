@@ -21,9 +21,9 @@ def test_auto_vectorization_smoke(tmp_path):
     result = runner.invoke(
         main,
         [
-            f'{test_dir}/resources/vectorize/',
+            f'{test_dir}/resources/train/',
             '--ruleset',
-            f'{test_dir}/resources/vectorize/vectorize_ruleset.js',
+            f'{test_dir}/resources/train/vectorize_ruleset.js',
             '--trainee',
             'secret',
             '--training-cache',
