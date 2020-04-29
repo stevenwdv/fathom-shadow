@@ -1,5 +1,9 @@
 # Convenience targets for executing common actions from the root of the repo
 
+all: docs
+	$(MAKE) -C fathom
+	$(MAKE) -C cli
+
 docs:
 	$(MAKE) -C docs docs_clean html
 
