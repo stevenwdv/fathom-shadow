@@ -33,6 +33,6 @@ Support
 
 You can find us on...
 
-* #fathom on irc.mozilla.org
+* `Our Matrix chat room <https://chat.mozilla.org/#/room/#fathom:mozilla.org>`_
 * `GitHub <https://github.com/mozilla/fathom>`_
 * `The mailing list <https://mail.mozilla.org/listinfo/fathom>`_
