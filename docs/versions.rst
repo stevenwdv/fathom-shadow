@@ -10,6 +10,7 @@ Version History
 
   Aggressive caching is in place to remove every possible impediment to using auto-vectorization. We store hashes of the ruleset and samples so we can tell when revectorizing is necessary. We also cache a built copy of FathomFox (embedded in the Python package) so we don't need to run npm or yarn or hit the network again until you upgrade to a new version of the Fathom CLI tools.
 * When the Retry checkbox is checked in the Vectorizer, it now retries only errors it thinks are transient. This means you don't have to wait 200 seconds for your syntax errors to bubble to the fore anymore.
+* Make ``vectorType`` optional in ``rulesets.js`` if it's the same as the trainee ID.
 * Add an ``--exclude`` option to the trainer to help with feature ablation.
 * Fix an issue where the trainer would read vectors as non-UTF-8 on Windows.
 * In the trainer output, make tag excerpts that contain wide Unicode chars fit in their columns.
