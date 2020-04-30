@@ -2,8 +2,8 @@
 Version History
 ===============
 
-unreleased
-==========
+3.4
+===
 * Make vectorization automatic. This largely obsoletes :command:`fathom-list` and :command:`fathom-serve`. We also remove the need to have 3 terminal tabs open, running :command:`yarn watch`, :command:`yarn browser`, and :command:`fathom-serve`. We remove the error-prone hardlinking of the ruleset into FathomFox, which breaks when git changes to a new branch with a changed ruleset file. We eliminate the possibility of forgetting to revectorize after changing a ruleset or samples. And finally, we pave the way to dramatically simplify our teaching and documentation.
 
   We tried to hew to the CLI design of the previous version of the trainer to keep things familiar. Basically, where you used to pass in a vector file, now feel free to pass in a directory of samples instead. If you do, you'll also need to pass in your ruleset file and the trainee ID so we can turn the samples into vectors behind the scenes. You can also keep passing in vector files manually if you want more control in some niche situation, like if you're trying to reproduce results from an old branch.
@@ -17,6 +17,9 @@ unreleased
 * Add application/x-javascript and application/font-sfnt to :command:`fathom-extract`'s list of known MIME types.
 * Merge FathomFox into the Fathom repo.
 * Always use in-project virtualenvs for development. Drop support for external ones.
+* :func:`isVisible` now considers things visible that are merely scrolled out of the viewport.
+* :command:`fathom-list`, though no longer needed in most cases, is now always recursive. It has also learned to ignore ``resources`` directories.
+* :command:`fathom-unzip` is gone.
 
 3.3
 ===
