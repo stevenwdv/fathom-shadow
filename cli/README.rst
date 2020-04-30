@@ -1,11 +1,25 @@
-==================================
-The Fathom Trainer and Other Tools
-==================================
+========================
+Fathom Commandline Tools
+========================
 
-This is the commandline trainer for `Fathom <https://mozilla.github.io/fathom/>`_, which itself is a supervised-learning system for recognizing parts of web pages. It also includes other commandline tools for ruleset development, like ``fathom-unzip``, ``fathom-pick``, and ``fathom-list``. `See docs for the trainer here <http://mozilla.github.io/fathom/training.html#running-the-trainer>`_.
+This is the commandline trainer for `Fathom <https://mozilla.github.io/fathom/>`_, which itself is a supervised-learning system for recognizing parts of web pages. This package also includes other tools for ruleset development, like ``fathom-extract``, ``fathom-pick``, and ``fathom-test``. `See docs for the trainer here <http://mozilla.github.io/fathom/training.html#running-the-trainer>`_.
 
 Version History
 ===============
+
+3.4
+  * Make vectorization automatic. This largely obsoletes ``fathom-list`` and ``fathom-serve``. We also remove the need to have 3 terminal tabs open, running ``yarn watch``, ``yarn browser``, and ``fathom-serve``. We remove the error-prone hardlinking of the ruleset into FathomFox, which breaks when git changes to a new branch with a changed ruleset file. We eliminate the possibility of forgetting to revectorize after changing a ruleset or samples. And finally, we pave the way to dramatically simplify our teaching and documentation.
+
+    We tried to hew to the CLI design of the previous version of the trainer to keep things familiar. Basically, where you used to pass in a vector file, now feel free to pass in a directory of samples instead. If you do, you'll also need to pass in your ruleset file and the trainee ID so we can turn the samples into vectors behind the scenes. You can also keep passing in vector files manually if you want more control in some niche situation, like if you're trying to reproduce results from an old branch.
+
+    Aggressive caching is in place to remove every possible impediment to using auto-vectorization. We store hashes of the ruleset and samples so we can tell when revectorizing is necessary. We also cache a built copy of FathomFox (embedded in the Python package) so we don't need to run npm or yarn or hit the network again until you upgrade to a new version of the Fathom CLI tools.
+  * Add an ``--exclude`` option to the trainer to help with feature ablation.
+  * Fix an issue where the trainer would read vectors as non-UTF-8 on Windows.
+  * In the trainer output, make tag excerpts that contain wide Unicode chars fit in their columns.
+  * Don't show tag excerpts in ``fathom-test`` by default.
+  * Add application/x-javascript and application/font-sfnt to ``fathom-extract``'s list of known MIME types.
+  * ``fathom-list``, though no longer needed in most cases, is now always recursive. It has also learned to ignore ``resources`` directories.
+  * ``fathom-unzip`` is gone.
 
 3.3
   * Add to the trainer a readout of the average time per candidate tag examined.
