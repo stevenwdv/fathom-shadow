@@ -67,7 +67,7 @@ author = u'Erik Rose'
 # built documents.
 #
 # The short X.Y version.
-version = u'3.3'
+version = u'3.4'
 # The full version, including alpha/beta/rc tags.
 release = version
 

@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='fathom-web',
-    version='3.3',
+    version='3.4',
     description='Commandline tools for training Fathom rulesets',
     long_description=open('README.rst', 'r', encoding='utf8').read(),
     author='Erik Rose',
