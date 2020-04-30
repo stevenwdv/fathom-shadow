@@ -15,8 +15,10 @@ Find meaning in the web.
 Get Fathom
 ===========
 
-* `source code <https://github.com/mozilla/fathom>`_
-* `npm package <https://www.npmjs.com/package/fathom-web>`_
+* `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_, the Firefox add-on for labeling sample elements
+* `JS runtime library <https://www.npmjs.com/package/fathom-web>`_
+* `Trainer and other commandline tools <https://pypi.org/project/fathom-web/>`_
+* `Source code <https://github.com/mozilla/fathom>`_
 
 Documentation
 =============
