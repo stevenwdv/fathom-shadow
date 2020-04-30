@@ -33,7 +33,6 @@ setup(
         'fathom-serve = fathom_web.commands.serve:main',
         'fathom-test = fathom_web.commands.test:main',
         'fathom-train = fathom_web.commands.train:main',
-        'fathom-unzip = fathom_web.commands.unzip:main',
     ]},
     package_data={'': ['fathom.zip']},
     classifiers=[
