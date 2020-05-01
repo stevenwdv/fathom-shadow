@@ -7,6 +7,13 @@ Welcome to the Fathom Ruleset Zoo, a bestiary of Fathom real-world examples. Eac
 .. note::
    Some repos are private because they contain copyrighted training samples. While we believe this is fair use, we don't wish to provoke cease-and-desist bots. If you work for Mozilla, just ask, and we’ll grant you access. Otherwise, enjoy!
 
+New-Password Forms
+==================
+
+Firefox's password manager needed a way to identify new-password fields so it could suggest (and memorize) high-entropy passwords for them. There is standardized markup for this, but only 2-4% of sites use it. Fathom thus stepped in to backstop the other 97%. On a corpus of 508 pages, we trained to a testing precision of 99.2% and recall of 92.1%. (We used ``fathom-train --pos-weight`` to slant the results in favor of fewer false positives, sacrificing some recall for it.) Independent QA work showed an accuracy and false-negative rate better than that of Google Chrome—and a false-positive rate only 1% worse—and all of that with a purely client-side model.
+
+`New-password ruleset source <https://github.com/mozilla-services/fathom-login-forms/blob/master/new-password/rulesets.js>`_
+
 Login Forms
 ===========
 

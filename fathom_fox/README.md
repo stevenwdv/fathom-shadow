@@ -70,7 +70,7 @@ Thanks to Treora for his excellent freeze-dry library!
 
 ### 3.4
 
-* When the Retry checkbox is checked in the Vectorizer, it now retries only errors it thinks are transient. This means you don’t have to wait 200 seconds for your syntax errors to bubble to the fore if you forget to uncheck Retry
+* When the Retry checkbox is checked in the Vectorizer, it now retries only errors it thinks are transient. This means you don’t have to wait 200 seconds for your syntax errors to bubble to the fore if you forget to uncheck Retry.
 * Make `vectorType` optional if it’s the same as the trainee ID.
 
 ### 3.3
