@@ -16,7 +16,7 @@ The pages serialized by FathomFox will be large, on the order of 100-200MB each.
 
 So far, a training set on the order of a few hundred samples has been sufficient to push validation accuracy above 99%. You'll want additional samples for a validation set (to let the trainer know when it's begun to overfit) and a test set (to come up with final accuracy numbers). We recommend a 60/20/20 split among training/validation/testing set. This gives you large enough validation and testing sets, at typical corpus sizes, while shunting as many samples as possible to the training set so you can mine them for rule ideas.
 
-It's important to keep your sets mutually representative. If you have a list of sites sorted by some metric, like popularity, don't use sites 1-100 for training and then sites 101-200 for validation. Instead, collect a set of samples, and then use :command:`fathom-pick` to proportionally assign them to sets: 60% to training and 20% to each of validation and testing. You can repeat this as you later come to need more samples.
+It's important to keep your sets mutually representative. If you have a bunch of samples sorted by some metric, like site popularity or when they were collected, don't use samples 1-100 for training and then 101-200 for validation. Instead, collect a set of samples, and then use :command:`fathom-pick` to proportionally assign them to sets: 60% to training and 20% to each of validation and testing. You can repeat this as you later come to need more samples.
 
 Designing Rules
 ===============
@@ -210,7 +210,7 @@ Run the trainer. A simple beginning, using just a training set, is... ::
        DA_177.html  <input data-validation-match="#UserModel_VerifyPassword" id="UserModel_ActionMod        0.99999964
        ...
 
-Viewing the TensorBoard graphs with ``tensorboard --logdir runs/`` will quickly show you whether the loss function is oscillating. If you see oscilloscope-like wiggles rather than a smooth descent, the learning rate is too high: the trainer is taking steps that are too big and overshooting the optimum it's chasing. Decrease the learning rate by a factor of 10 until the graph becomes smooth::
+Viewing the TensorBoard graphs with ``tensorboard --logdir runs/`` will quickly show you whether the loss function is oscillating. If you see oscilloscope-like wiggles rather than a smooth descent, the learning rate is too high: the trainer is taking steps that are too big and overshooting the optimum it's chasing. Decrease the learning rate by a factor of 10 until the graph becomes monotonically decreasing::
 
     fathom-train samples/training  --ruleset rulesets.js --trainee yourTraineeId --learning-rate 0.1 -c tryingToRemoveOscillations
 
