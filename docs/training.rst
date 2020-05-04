@@ -102,7 +102,7 @@ A few notes:
 Installing Fathom's Commandline Tools
 =====================================
 
-Fathom's commandline tools, are Python 3 programs. If you don't already have Python 3.7 or better, download it from https://www.python.org/downloads/. Then, install the Fathom tools by running... ::
+Fathom's commandline tools are Python 3 programs. If you don't already have Python 3.7 or better, download it from https://www.python.org/downloads/. Then, install the Fathom tools by running... ::
 
     pip3 install fathom-web
 

@@ -4,7 +4,7 @@ A suite of tools for developing [Fathom](http://mozilla.github.io/fathom/) rules
 
 * Corpus collection and labeling tools (which are likely all you will need)
 * An Evaluator which can help you drop into the JS debugger inside your ruleset
-* A Vectorizer, which you can ignore. It persist, for now, as an optional manual alternative to simply letting `fathom-train` and `fathom-test` take care of vectorization automatically.
+* A Vectorizer, which you can ignore. It persists, for now, as an optional manual alternative to simply letting `fathom-train` and `fathom-test` take care of vectorization automatically.
 
 ## Page-By-Page Corpus Collection
 
