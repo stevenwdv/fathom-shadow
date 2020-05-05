@@ -1,3 +1,4 @@
+from click import style
 from contextlib import contextmanager
 from datetime import timedelta
 from functools import partial
@@ -15,6 +16,7 @@ import signal
 import socket
 from subprocess import run
 import sys
+from sys import exc_info
 from tempfile import TemporaryDirectory
 from threading import Thread
 from time import sleep, time
@@ -39,18 +41,6 @@ class UngracefulError(ClickException):
 
 class Timeout(Exception):
     """``retry()`` finished all its tries without succeeding."""
-
-
-class SilentRequestHandler(SimpleHTTPRequestHandler):
-    """A request handler that will not output the log for each request to the
-    terminal
-
-    Not only is this distracting but it also seems to prevent requests from
-    being served when using the ThreadingHTTPServer.
-
-    """
-    def log_message(self, format, *args):
-        pass
 
 
 def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set):
@@ -330,6 +320,38 @@ def zip_dir(dir, archive_path):
             archive.write(file, file.relative_to(dir))
 
 
+class SilentRequestHandler(SimpleHTTPRequestHandler):
+    """A request handler that will not output the log for each request to the
+    terminal
+
+    Not only is this distracting but it also seems to prevent requests from
+    being served when using the ThreadingHTTPServer.
+
+    """
+    def log_message(self, format, *args):
+        pass
+
+
+class SilentHTTPServer(ThreadingHTTPServer):
+    swallowable_error_count = 0
+
+    def handle_error(self, request, client_address):
+        """Silence and tally some anticipated errors.
+
+        Things like BrokenPipeErrors can happen, probably when we take too long
+        to serve a request (like an unextracted 40MB HTML file). Meanwhile
+        FathomFox's 5-second default delay finishes and it begins trying to
+        vectorize, after which it slams the tab, aborting the transfer.
+
+        """
+        if issubclass(exc_info()[0], BrokenPipeError):
+            self.swallowable_error_count += 1
+        else:
+            # Print it so we can evaluate whether to suppress it in a future
+            # version:
+            super().handle_error(request, client_address)
+
+
 def http_server(samples_directory):
     """Return an HTTP server on an unused port."""
     request_handler = partial(SilentRequestHandler, directory=samples_directory)
@@ -338,7 +360,7 @@ def http_server(samples_directory):
     END_PORT = 8100
     for port in range(START_PORT, END_PORT):
         try:
-            server = ThreadingHTTPServer(('localhost', port), request_handler)
+            server = SilentHTTPServer(('localhost', port), request_handler)
         except socket.error:
             pass
         else:
@@ -360,6 +382,8 @@ def serving(samples_directory):
     finally:
         server.shutdown()
         server.server_close()  # joins threads in ThreadingHTTPServer
+    if server.swallowable_error_count:
+        print(style(f'{server.swallowable_error_count} errors while serving samples. Increase vectorization delay or use fathom-extract to make smaller HTML files.', fg='red'))
 
 
 @contextmanager
