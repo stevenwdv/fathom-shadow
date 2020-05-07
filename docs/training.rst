@@ -194,13 +194,13 @@ Run the trainer. A simple beginning, using just a training set, is... ::
             ],
          "bias": -3.9029786586761475}
 
-    Training accuracy per tag:  0.97173    95% CI: (0.95808, 0.98539)
-                          FPR:  0.01163    95% CI: (0.00150, 0.02176)
-                          FNR:  0.08088    95% CI: (0.03506, 0.12671)
-                    Precision:  0.96154    Recall: 0.91912
-                     F1 Score:  0.93985
+    Training precision: 0.9834   Recall: 1.0000                           Predicted
+              Accuracy: 0.9889   95% CI: (0.9780, 0.9997)        ╭───┬── + ───┬── - ───╮
+                   FPR: 0.0328   95% CI: (0.0012, 0.0644)   True │ + │    237 │      0 │
+                   FNR: 0.0000   95% CI: (0.0000, 0.0000)        │ - │      4 │    118 │
+              F1 Score: 0.9916                                   ╰───┴────────┴────────╯
 
-    Time per page (ms): 2 |▁▃█▅▂▁    | 34    Average per tag: 8.3
+    Time per page (ms): 2 |▁▃█▅▂▁    | 34    Average per tag: 8
 
     Training per-tag results:
        AR_534.html  <input type="password" class="form-control pass" autocomplete="off" id="password        1.00000000
