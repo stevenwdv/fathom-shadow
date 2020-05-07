@@ -169,10 +169,19 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positives, f
     # really helps when thinking about the Venn diagrams of these values.
     true_positives = positives - false_negatives
     true_negatives = negatives - false_positives
-    precision = true_positives / (true_positives + false_positives)
-    # recall is the same as the true positive rate
+    if not true_positives + false_positives:
+        # If the denominator is 0, the numerator is too, so we didn't get any
+        # right.
+        precision = 0
+    else:
+        precision = true_positives / (true_positives + false_positives)
+    # Recall is the same as the true positive rate:
     recall = 1 - false_negative_rate
-    f1score = 2.0 * (precision * recall) / (precision + recall)
+    if not precision + recall:
+        # If the denominator is 0, the numerator is too.
+        f1score = 0
+    else:
+        f1score = 2.0 * (precision * recall) / (precision + recall)
     return ('\n'
             f'{description: >10} precision: {precision:.4f}   Recall: {recall:.4f}                           Predicted\n'
             f'            Accuracy: {accuracy:.4f}   95% CI: ({ci_low:.4f}, {ci_high:.4f})        ╭───┬── + ───┬── - ───╮\n'
