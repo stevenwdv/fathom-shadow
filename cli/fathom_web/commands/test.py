@@ -113,7 +113,7 @@ def main(testing_set, weights, confidence_threshold, ruleset, trainee, testing_c
     model = model_from_json(weights, len(y[0]), testing_data['header']['featureNames'])
 
     accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold)
-    print(pretty_accuracy('\n   Testing accuracy per tag: ', accuracy, len(x), false_positives, false_negatives, num_yes))
+    print(pretty_accuracy('Testing', accuracy, len(x), false_positives, false_negatives, num_yes))
 
     if testing_pages and 'time' in testing_pages[0]:
         print(speed_readout(testing_pages))

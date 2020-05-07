@@ -245,7 +245,7 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
 
     print(pretty_coeffs(model, training_data['header']['featureNames']))
     accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold)
-    print(pretty_accuracy(('  ' if validation_set else '') + 'Training accuracy per tag: ',
+    print(pretty_accuracy('Training',
                           accuracy,
                           len(x),
                           false_positives,
@@ -253,7 +253,7 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                           num_yes))
     if validation_set:
         accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold)
-        print(pretty_accuracy('Validation accuracy per tag: ',
+        print(pretty_accuracy('Validation',
                               accuracy,
                               len(validation_ins),
                               false_positives,

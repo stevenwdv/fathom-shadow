@@ -82,7 +82,7 @@ def speed_readout(pages):
     benchmarks taken by the Vectorizer."""
     average = sum(p['time'] for p in pages) / sum(len(p['nodes']) for p in pages)
     histogram = mini_histogram([p['time'] for p in pages])
-    return f'\nTime per page (ms): {histogram}    Average per tag: {average:.1f}'
+    return f'\nTime per page (ms): {histogram}    Average per tag: {average:.0f}'
 
 
 def fit_unicode(string, width):

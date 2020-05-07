@@ -144,10 +144,11 @@ def thermometer(ratio):
             style(text[tenth:], bg='bright_white', fg='black'))
 
 
-def pretty_accuracy(description, accuracy, number_of_samples, false_positives=None, false_negatives=None, positives=None):
+def pretty_accuracy(description, accuracy, number_of_samples, false_positives, false_negatives, positives):
     """Return a big printable block of numbers describing the accuracy and
     error bars of a model.
 
+    :arg description: What kind of set this is: "Validation", "Training", etc.
     :arg accuracy: The accuracy of the model, expressed as a ratio 0..1
     :arg number_of_samples: The number of tags considered while training or
         testing the model
@@ -159,24 +160,22 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positives=No
 
     """
     ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
-    if false_positives is not None:
-        negatives = number_of_samples - positives
-        false_positive_rate = false_positives / negatives
-        false_negative_rate = false_negatives / positives
-        fpr_ci_low, fpr_ci_high = confidence_interval(false_positive_rate, negatives)
-        fnr_ci_low, fnr_ci_high = confidence_interval(false_negative_rate, positives)
-        # https://en.wikipedia.org/wiki/Precision_and_recall#/media/File:Precisionrecall.svg
-        # really helps when thinking about the Venn diagrams of these values.
-        true_positives = positives - false_negatives
-        precision = true_positives / (true_positives + false_positives)
-        # recall is the same as the true positive rate
-        recall = 1 - false_negative_rate
-        f1score = 2.0 * (precision * recall) / (precision + recall)
-        falses = ('\n'
-                  f'                        FPR:  {false_positive_rate:.5f}    95% CI: ({fpr_ci_low:.5f}, {fpr_ci_high:.5f})\n'
-                  f'                        FNR:  {false_negative_rate:.5f}    95% CI: ({fnr_ci_low:.5f}, {fnr_ci_high:.5f})\n'
-                  f'                  Precision:  {precision:.5f}    Recall: {recall:.5f}\n'
-                  f'                   F1 Score:  {f1score:.5f}\n')
-    else:
-        falses = ''
-    return f'{description} {accuracy:.5f}    95% CI: ({ci_low:.5f}, {ci_high:.5f}){falses}'
+    negatives = number_of_samples - positives
+    false_positive_rate = false_positives / negatives  # Think of this as the ratio of negatives we got wrong.
+    false_negative_rate = false_negatives / positives
+    fpr_ci_low, fpr_ci_high = confidence_interval(false_positive_rate, negatives)
+    fnr_ci_low, fnr_ci_high = confidence_interval(false_negative_rate, positives)
+    # https://en.wikipedia.org/wiki/Precision_and_recall#/media/File:Precisionrecall.svg
+    # really helps when thinking about the Venn diagrams of these values.
+    true_positives = positives - false_negatives
+    true_negatives = negatives - false_positives
+    precision = true_positives / (true_positives + false_positives)
+    # recall is the same as the true positive rate
+    recall = 1 - false_negative_rate
+    f1score = 2.0 * (precision * recall) / (precision + recall)
+    return ('\n'
+            f'{description: >10} precision: {precision:.4f}   Recall: {recall:.4f}                           Predicted\n'
+            f'            Accuracy: {accuracy:.4f}   95% CI: ({ci_low:.4f}, {ci_high:.4f})        ╭───┬── + ───┬── - ───╮\n'
+            f'                 FPR: {false_positive_rate:.4f}   95% CI: ({fpr_ci_low:.4f}, {fpr_ci_high:.4f})   True │ + │ {true_positives: >6} │ {false_negatives: >6} │\n'
+            f'                 FNR: {false_negative_rate:.4f}   95% CI: ({fnr_ci_low:.4f}, {fnr_ci_high:.4f})        │ - │ {false_positives: >6} │ {true_negatives: >6} │\n'
+            f'            F1 Score: {f1score:.4f}                                   ╰───┴────────┴────────╯')
