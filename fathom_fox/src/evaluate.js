@@ -57,7 +57,10 @@ async function evaluateTabs() {
     try {
         // TODO: Using "active" here rather than a tab ID presents a race condition
         // if you quickly switch away from the tab after clicking the Evaluate button.
-        const tabs = (await browser.tabs.query({currentWindow: true, active: false}));
+        let tabs = await browser.tabs.query({currentWindow: true, active: false});
+        // We don't have permission to mess with about: tabs, so they crash.
+        // Filter them out:
+        tabs = tabs.filter(tab => !tab.url.startsWith('about:'));
         const rulesetName = document.getElementById('ruleset').value;
         const viewportSize = trainees.get(rulesetName).viewportSize || {width: 1024, height: 768};
         await setViewportSize(tabs[0], viewportSize.width, viewportSize.height);  // for consistent element sizing in samples due to text wrap, etc.
