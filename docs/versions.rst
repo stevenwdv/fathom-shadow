@@ -2,6 +2,21 @@
 Version History
 ===============
 
+unreleased
+==========
+
+FathomFox
+---------
+
+* Have the Evaluator skip over ``about:`` tabs that used to crash it with permission problems.
+
+CLI tools
+---------
+
+* Add confusion matrices to :command:`fathom-train` and :command:`fathom-test` readouts.
+* Catch and nicely report HTTP server errors during autovectorization rather than just spewing tracebacks.
+* Don't spit out ``nan`` for precision or F1 when we don't get any samples right.
+
 3.4
 ===
 * Make vectorization automatic. This largely obsoletes :command:`fathom-list` and :command:`fathom-serve`. We also remove the need to have 3 terminal tabs open, running :command:`yarn watch`, :command:`yarn browser`, and :command:`fathom-serve`. We remove the error-prone hardlinking of the ruleset into FathomFox, which breaks when git changes to a new branch with a changed ruleset file. We eliminate the possibility of forgetting to revectorize after changing a ruleset or samples. And finally, we pave the way to dramatically simplify our teaching and documentation.
