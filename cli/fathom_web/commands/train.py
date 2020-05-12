@@ -126,6 +126,11 @@ def exclude_features(exclude, vector_data):
         type=click.Path(dir_okay=False, resolve_path=True),
         callback=path_or_none,
         help='Where to cache validation vectors to speed future training runs. Any existing file will be overwritten. [default: vectors/validation_yourTraineeId.json next to your ruleset]')
+@option('--delay',
+        default=5,
+        type=int,
+        show_default=True,
+        help='Number of seconds to wait for a page to load before vectorizing it')
 @option('--show-browser',
         default=False,
         is_flag=True,
@@ -166,7 +171,7 @@ def exclude_features(exclude, vector_data):
         type=str,
         multiple=True,
         help='Exclude a rule while training. This helps with before-and-after tests to see if a rule is effective.')
-def main(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
+def main(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
     """Compute optimal numerical parameters for a Fathom ruleset.
 
     There are a lot of options, but the usual invocation is something like...
@@ -207,7 +212,8 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                                    training_set,
                                    training_cache,
                                    show_browser,
-                                   'training'),
+                                   'training',
+                                   delay),
               encoding='utf-8') as training_file:
         training_data = exclude_features(exclude, load(training_file))
     training_pages = training_data['pages']
@@ -219,7 +225,8 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                                        validation_set,
                                        validation_cache,
                                        show_browser,
-                                       'validation'),
+                                       'validation',
+                                       delay),
                   encoding='utf-8') as validation_file:
             validation_pages = exclude_features(exclude, load(validation_file))['pages']
         validation_ins, validation_outs, validation_yes = tensors_from(validation_pages)

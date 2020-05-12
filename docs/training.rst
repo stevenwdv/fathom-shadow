@@ -285,6 +285,9 @@ The trainer comes with a variety of adjustment knobs to ensure a good fit and a 
                                       vectors/validation_yourTraineeId.json next
                                       to your ruleset]
 
+      --delay INTEGER                 Number of seconds to wait for a page to load
+                                      before vectorizing it  [default: 5]
+
       --show-browser                  Show browser window while vectorizing.
                                       (Browser runs in headless mode by default.)
 

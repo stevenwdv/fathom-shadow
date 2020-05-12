@@ -68,6 +68,11 @@ def model_from_json(weights, num_outputs, feature_names):
         type=click.Path(dir_okay=False, resolve_path=True),
         callback=path_or_none,
         help='Where to cache testing vectors to speed future testing runs. Any existing file will be overwritten. [default: vectors/testing_yourTraineeId.json next to your ruleset]')
+@option('--delay',
+        default=5,
+        type=int,
+        show_default=True,
+        help='Number of seconds to wait for a page to load before vectorizing it')
 @option('--show-browser',
         default=False,
         is_flag=True,
@@ -76,7 +81,7 @@ def model_from_json(weights, num_outputs, feature_names):
         default=False,
         is_flag=True,
         help='Show per-tag diagnostics, even though that could ruin blinding for the test set.')
-def main(testing_set, weights, confidence_threshold, ruleset, trainee, testing_cache, show_browser, verbose):
+def main(testing_set, weights, confidence_threshold, ruleset, trainee, testing_cache, delay, show_browser, verbose):
     """Compute the accuracy of the given coefficients and biases on a folder of
     testing samples.
 
@@ -106,7 +111,8 @@ def main(testing_set, weights, confidence_threshold, ruleset, trainee, testing_c
                               testing_set,
                               testing_cache,
                               show_browser,
-                              'testing').open(encoding='utf-8') as testing_file:
+                              'testing',
+                              delay).open(encoding='utf-8') as testing_file:
         testing_data = load(testing_file)
     testing_pages = testing_data['pages']
     x, y, num_yes = tensors_from(testing_pages)

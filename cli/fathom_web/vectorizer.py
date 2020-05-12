@@ -43,7 +43,7 @@ class Timeout(Exception):
     """``retry()`` finished all its tries without succeeding."""
 
 
-def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set):
+def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay):
     """Return a Path to the vector file to use, building it first if necessary.
 
     If passed a vector file for ``sample_set``, we return it verbatim. If
@@ -62,7 +62,7 @@ def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browse
     updated_hashes = out_of_date(sample_cache, ruleset, sample_set)
     if updated_hashes:
         # Make a vectors file, replacing it if already present:
-        vectorize(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set)
+        vectorize(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay)
         # Stick the new hashes in it:
         with sample_cache.open(encoding='utf-8') as file:
             json = load(file)
@@ -116,7 +116,7 @@ def out_of_date(sample_cache, ruleset, sample_set):
                 'rulesetHash': ruleset_hash}
 
 
-def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_browser, kind_of_set):
+def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_browser, kind_of_set, delay):
     """Create feature vectors for a directory of training samples.
 
     We unpack an embedded version of FathomFox, fetch its npm dependencies,
@@ -143,11 +143,11 @@ def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_bro
         addon_path, geckodriver_path = addon_and_geckodriver
         with running_firefox(addon_path,
                              show_browser,
-                             geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations. Just switch this with the serving() `with`.
+                             geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations.
             with serving(samples_directory) as port:
                 sample_filenames = [str(sample.relative_to(samples_directory))
                                     for sample in samples_from_dir(samples_directory)]
-                run_vectorizer(firefox, trainee_id, sample_filenames, output_file, kind_of_set, port)
+                run_vectorizer(firefox, trainee_id, sample_filenames, output_file, kind_of_set, port, delay)
 
 
 @contextmanager
@@ -383,7 +383,7 @@ def serving(samples_directory):
         server.shutdown()
         server.server_close()  # joins threads in ThreadingHTTPServer
     if server.swallowable_error_count:
-        print(style(f'{server.swallowable_error_count} errors while serving samples. Increase vectorization delay or use fathom-extract to make smaller HTML files.', fg='red'))
+        print(style(f'{server.swallowable_error_count} errors while serving samples. Increase vectorization --delay or use fathom-extract to make smaller HTML files.', fg='red'))
 
 
 @contextmanager
@@ -449,7 +449,7 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
 FAILURE_SIGNIFIER = 'failed:'
 
 
-def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port):
+def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port, delay):
     """Set up the vectorizer and run it, creating the vector file.
 
     Move the vector file to ``output_path``, replacing any file already there.
@@ -474,6 +474,10 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_s
     base_url_field = firefox.find_element_by_id('baseUrl')
     base_url_field.clear()
     base_url_field.send_keys(f'http://localhost:{port}/')
+
+    wait_field = firefox.find_element_by_id('wait')
+    wait_field.clear()
+    wait_field.send_keys(str(delay))
 
     number_of_samples = len(sample_filenames)
     status_box = firefox.find_element_by_id('status')
