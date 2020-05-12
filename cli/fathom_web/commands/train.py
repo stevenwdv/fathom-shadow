@@ -273,4 +273,3 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
         if validation_set:
             print('\nValidation per-tag results:')
             print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in validation_pages])
-    # TODO: Print "8000 elements. 7900 successes. 50 false positive. 50 false negatives."
