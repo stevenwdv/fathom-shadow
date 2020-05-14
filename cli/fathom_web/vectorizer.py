@@ -14,7 +14,8 @@ import platform
 from shutil import copyfile, move, rmtree
 import signal
 import socket
-from subprocess import run
+import subprocess
+from subprocess import CalledProcessError
 import sys
 from sys import exc_info
 from tempfile import TemporaryDirectory
@@ -165,10 +166,10 @@ def fathom_fox_addon(ruleset_file):
             copyfile(ruleset_file, fathom_fox / 'src' / 'rulesets.js')
 
             # Build FathomFox:
-            run([fathom_fox / 'node_modules' / '.bin' / 'rollup', '-c'],
+            run(fathom_fox / 'node_modules' / '.bin' / 'rollup',
+                '-c',
                 cwd=fathom_fox,
-                capture_output=True,
-                check=True)
+                desc='Compiling ruleset')
 
             # Smoosh FathomFox down into an XPI. The Firefox webdriver requires
             # we load custom addons using .xpi files.
@@ -260,16 +261,16 @@ def locked_cached_fathom():
                 zip = ZipFile(fathom_zip)
                 zip.extractall(hash_dir)
 
-            def run_in_fathom_fox(*args):
+            def run_in_fathom_fox(*args, desc):
                 """Run a command using the FathomFox dir as the working dir."""
-                return run(args, cwd=fathom_fox, capture_output=True, check=True)
+                run(*args, cwd=fathom_fox, desc=desc)
 
             # Install yarn, because it installs FathomFox's dependencies in 15s rather
             # than 30s. And once installed once, yarn itself takes only 1.5s to install
             # again. Also, it has security advantages. Though this install itself isn't
             # hashed, so we're just trusting NPM.
-            run_in_fathom_fox('npm', 'install', 'yarn@1.22.4')
-            # TODO: Better error message for not having node
+            run_in_fathom_fox('npm', 'install', 'yarn@1.22.4',
+                              desc='Installing yarn')
 
             # Figure out how to invoke yarn:
             if platform.system() == 'Windows':
@@ -280,23 +281,24 @@ def locked_cached_fathom():
                 # using yarn.js. To find this file, we use `which`. See:
                 # https://stackoverflow.com/questions/39085380/how- can-i-suppress-
                 # terminate-batch-job-y-n-confirmation-in-powershell
-                # TODO: Better error message for not having which
                 # TODO: Do we need to call `which` on plain, Cygwin-less Windows? We
                 #       don't on the Mac.
                 # TODO: On Windows, use the copy of yarn we just automatically
                 #       installed. Currently, we require it to already be
                 #       installed globally.
-                yarn_dir = run_in_fathom_fox('which', 'yarn').stdout.decode().strip()[:-4]
+                yarn_dir = run_in_fathom_fox('which', 'yarn', desc='Finding yarn').stdout.decode().strip()[:-4]
                 if sys.platform == 'cygwin':
                     # Under cygwin, `where` returns a cygwin path, so we need to
                     # transform this into a proper Windows path:
-                    yarn_dir = run_in_fathom_fox('cygpath', '-w', yarn_dir).stdout.decode().strip()
+                    yarn_dir = run_in_fathom_fox('cygpath', '-w', yarn_dir,
+                                                 desc="Converting yarn's path to a non-Cygwin one").stdout.decode().strip()
                 yarn_binary = join(yarn_dir, 'yarn.js')
             else:
                 yarn_binary = str((fathom_fox / 'node_modules' / '.bin' / 'yarn').resolve())
 
             # Pull in npm dependencies:
-            run_in_fathom_fox('node', yarn_binary, 'install')
+            run_in_fathom_fox('node', yarn_binary, 'install',
+                              desc='Installing dependencies with yarn')
             # FWIW, I find the most common failure on `yarn install` is a server-side
             # 500 error while downloading geckodriver, which comes from GitHub rather
             # than npm. The output needed to distinguish this is not captured by
@@ -617,3 +619,23 @@ def unlink_if_exists(path):
         path.unlink()
     except FileNotFoundError:
         pass
+
+
+def run(*args, cwd, desc):
+    """Run a command using the given working dir, and raise a nice error.
+
+    If it fails, raise a GracefulError that includes the command
+    invocation as well as captured stdout and stderr to give you a chance at
+    diagnosing the problem.
+
+    """
+    try:
+        return subprocess.run(args, cwd=cwd, capture_output=True, check=True)
+    except CalledProcessError as e:
+        raise GracefulError('\n'.join([f'{desc} failed:',
+                                       ' '.join(str(arg) for arg in args),
+                                       e.stdout.decode(errors='ignore'),
+                                       e.stderr.decode(errors='ignore')]))
+    except FileNotFoundError as e:
+        # Happens when the command isn't found.
+        raise GracefulError(f'{desc} failed: {e.filename} not found.')
