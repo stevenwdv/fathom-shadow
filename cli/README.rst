@@ -7,6 +7,13 @@ This is the commandline trainer for `Fathom <https://mozilla.github.io/fathom/>`
 Version History
 ===============
 
+3.4.1
+  * Add confusion matrices to ``fathom-train`` and ``fathom-test`` readouts.
+  * Catch JS syntax errors and other compile-type errors, and report them in ``fathom-train`` and ``fathom-test``.
+  * Catch errors due to the absence of prerequisite commands like ``npm``.
+  * Catch and nicely report HTTP server errors during autovectorization rather than just spewing tracebacks. Add ``--delay`` option to ``fathom-train`` and ``fathom-test`` to work around them.
+  * Don't spit out ``nan`` for precision or F1 when we don't get any samples right.
+
 3.4
   * Make vectorization automatic. This largely obsoletes ``fathom-list`` and ``fathom-serve``. We also remove the need to have 3 terminal tabs open, running ``yarn watch``, ``yarn browser``, and ``fathom-serve``. We remove the error-prone hardlinking of the ruleset into FathomFox, which breaks when git changes to a new branch with a changed ruleset file. We eliminate the possibility of forgetting to revectorize after changing a ruleset or samples. And finally, we pave the way to dramatically simplify our teaching and documentation.
 

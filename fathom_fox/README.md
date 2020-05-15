@@ -68,6 +68,10 @@ Thanks to Treora for his excellent freeze-dry library!
 
 ## Version History
 
+### 3.4.1
+
+* Have the Evaluator skip over `about:` tabs that used to crash it with permission problems.
+
 ### 3.4
 
 * When the Retry checkbox is checked in the Vectorizer, it now retries only errors it thinks are transient. This means you don’t have to wait 200 seconds for your syntax errors to bubble to the fore if you forget to uncheck Retry.
