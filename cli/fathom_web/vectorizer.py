@@ -385,7 +385,7 @@ def serving(samples_directory):
         server.shutdown()
         server.server_close()  # joins threads in ThreadingHTTPServer
     if server.swallowable_error_count:
-        print(style(f'{server.swallowable_error_count} errors while serving samples. Increase vectorization --delay or use fathom-extract to make smaller HTML files.', fg='red'))
+        print(style(f'{server.swallowable_error_count} error{"" if server.swallowable_error_count == 1 else "s"} while serving samples. Increase vectorization --delay or use fathom-extract to make smaller HTML files.', fg='red'))
 
 
 @contextmanager
