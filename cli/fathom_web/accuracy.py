@@ -177,14 +177,21 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positives, f
         precision = true_positives / (true_positives + false_positives)
     # Recall is the same as the true positive rate:
     recall = 1 - false_negative_rate
-    if not precision + recall:
+    if precision + recall:
+        f1score = 2.0 * (precision * recall) / (precision + recall)
+    else:
         # If the denominator is 0, the numerator is too.
         f1score = 0
+    mcc_denom = sqrt((true_positives + false_positives) * (true_positives + false_negatives) * (true_negatives + false_positives) * (true_negatives + false_negatives))
+    if mcc_denom:
+        mcc = (true_positives * true_negatives - false_positives * false_negatives) / mcc_denom
     else:
-        f1score = 2.0 * (precision * recall) / (precision + recall)
+        # I figure "same as chance" value 0 is the worst you can get. Wikipedia
+        # agrees.
+        mcc = 0
     return ('\n'
             f'{description: >10} precision: {precision:.4f}   Recall: {recall:.4f}                           Predicted\n'
             f'            Accuracy: {accuracy:.4f}   95% CI: ({ci_low:.4f}, {ci_high:.4f})        ╭───┬── + ───┬── - ───╮\n'
             f'                 FPR: {false_positive_rate:.4f}   95% CI: ({fpr_ci_low:.4f}, {fpr_ci_high:.4f})   True │ + │ {true_positives: >6} │ {false_negatives: >6} │\n'
             f'                 FNR: {false_negative_rate:.4f}   95% CI: ({fnr_ci_low:.4f}, {fnr_ci_high:.4f})        │ - │ {false_positives: >6} │ {true_negatives: >6} │\n'
-            f'            F1 Score: {f1score:.4f}                                   ╰───┴────────┴────────╯')
+            f'            F1 Score: {f1score:.4f}      MCC: {mcc:.4f}                  ╰───┴────────┴────────╯')
