@@ -9,7 +9,7 @@ Version History
 
 3.4.1
   * Add confusion matrices to ``fathom-train`` and ``fathom-test`` readouts.
-  * Catch JS syntax errors and other compile-type errors, and report them in ``fathom-train`` and ``fathom-test``.
+  * Catch JS syntax errors and other compile-time errors, and report them in ``fathom-train`` and ``fathom-test``.
   * Catch errors due to the absence of prerequisite commands like ``npm``.
   * Catch and nicely report HTTP server errors during autovectorization rather than just spewing tracebacks. Add ``--delay`` option to ``fathom-train`` and ``fathom-test`` to work around them.
   * Don't spit out ``nan`` for precision or F1 when we don't get any samples right.
