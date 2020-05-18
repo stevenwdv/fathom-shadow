@@ -22,6 +22,7 @@ MIME_TYPE_TO_FILE_EXTENSION = {
     'application/vnd.ms-fontobject': '.eot',
     'font/opentype': '.otf',
     'font/ttf': '.ttf',
+    'font/woff': '.woff',
     'font/woff2': '.woff2',
     'image/jpeg': '.jpg',
     'image/webp': '.webp',
@@ -39,12 +40,15 @@ MIME_TYPE_TO_FILE_EXTENSION = {
     'application/x-font-ttf': '.ttf',
     'image/jpg': '.jpg',
     'image/xicon': '.ico',
+    'image/x-icon': '.ico',
     'application/fontwoff2': '.woff2',
     'application/fontwoff': '.woff',
     'application/x-font-woff': '.woff',
     'application/font-ttf': '.ttf',
     'application/x-javascript': '.js',
     'application/font-sfnt': '.sfnt',
+    'application/vnd.ms-opentype': 'otf',
+    'application/x-mpegurl': '.m3u8',
 }
 
 
