@@ -104,21 +104,33 @@ def feature_metrics(feature_names, x, y, buckets, enabled_features):
 
 
 def print_feature_report(metrics):
-    metrics = list(metrics)
-    longest_bar = max((positives + negatives) for _, bars in metrics
-                                              for _, positives, negatives in bars)
-    samples_per_char = longest_bar / 260
-    positive_style = style('', **FAT_COLORS['good'], reset=False)
-    negative_style = style('', **FAT_COLORS['bad'], reset=False)
+    def bar(length, label):
+        """Return a bar of about the given length with the given label printed
+        on it.
+
+        We may cheat and expand a bar a bit to fit the label.
+
+        """
+        if not label:
+            # Don't expand a bar just to print a 0. The bar's absence serves.
+            label = ''
+        return ('{label: ^%i}' % length).format(label=label)
+
+    pos_style = style('', **FAT_COLORS['good'], reset=False)
+    neg_style = style('', **FAT_COLORS['bad'], reset=False)
     style_reset = style('', reset=True)
     for feature, bars in metrics:
+        longest_bar = max((positives + negatives) for _, positives, negatives in bars)
+        samples_per_char = longest_bar / 130
         print(style(feature, bold=True))
         longest_label = max(len(label) for label, _, _ in bars)
         for label, positives, negatives in bars:
-            positives_length = int(round(positives / samples_per_char))
-            negatives_length = int(round(negatives / samples_per_char))
+            pos_length = int(round(positives / samples_per_char))
+            neg_length = int(round(negatives / samples_per_char))
             padded_label = ('{label: >%i}' % longest_label).format(label=label)
-            print(f'  {padded_label} {positive_style}{" " * positives_length}{style_reset}{negative_style}{" " * negatives_length}{style_reset} {positives + negatives}: {positives}+ / {negatives}-')
+            pos_bar = bar(pos_length, positives)
+            neg_bar = bar(neg_length, negatives)
+            print(f'  {padded_label} {pos_style}{pos_bar}{style_reset}{neg_style}{neg_bar}{style_reset}{" " if (positives + negatives) else ""}{positives + negatives}')
         print()
 
 
