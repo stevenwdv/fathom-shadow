@@ -37,7 +37,16 @@ from ..vectorizer import make_or_find_vectors
         default=False,
         is_flag=True,
         help='Show browser window while vectorizing. (Browser runs in headless mode by default.)')
-def main(training_set, ruleset, trainee, training_cache, delay, show_browser):
+@option('--buckets', '-b',
+        default=10,
+        type=int,
+        show_default=True,
+        help='Number of histogram buckets to use for non-boolean features')
+@option('features', '--feature', '-f',
+        type=str,
+        multiple=True,
+        help='The features to graph. Omitting this graphs all features.')
+def main(training_set, ruleset, trainee, training_cache, delay, show_browser, buckets, features):
     """Print a histogram of feature values, showing what proportion at each
     value was a positive or negative sample.
 
@@ -62,35 +71,48 @@ def main(training_set, ruleset, trainee, training_cache, delay, show_browser):
         training_data = load(training_file)
     training_pages = training_data['pages']
     x, y, num_yes = tensors_from(training_pages)
-    x_t = x.T  # [[...feature0 values across all pages...], [...feature1 values...], ...].
     feature_names = training_data['header']['featureNames']
-    BAR_WIDTH = 80
-    samples_per_char = len(y) / BAR_WIDTH
+    print_feature_report(feature_metrics(feature_names, x, y, buckets, features or feature_names))
 
+
+def feature_metrics(feature_names, x, y, buckets, enabled_features):
+    x_t = x.T  # [[...feature0 values across all pages...], [...feature1 values...], ...].
     for name, values in zip(feature_names, x_t):
-        print(f'{name}:')
+        if name not in enabled_features:
+            continue
         is_boolean = is_boolean_feature(values)
-        counts, boundaries = histogram(values.numpy(),
-                                       bins=2 if is_boolean else 10)
-        lengths = (counts / samples_per_char).round().astype(int)
+        _, boundaries = histogram(values.numpy(),
+                                  bins=2 if is_boolean else buckets)
         highest_boundary = boundaries[-1]
-        for boundary, length, count, (low_bound, high_bound) in zip(boundaries, lengths, counts, pairwise(boundaries)):
+        bars = []
+        for boundary, (low_bound, high_bound) in zip(boundaries, pairwise(boundaries)):
             is_last_time = high_bound == highest_boundary
 
             # Whether each feature value is a member of this bucket. Last
             # interval is inclusive on the right.
-            x_is_for_this_bar = ((x_t[0] >= low_bound) &
-                                  ((x_t[0] <= high_bound) if is_last_time else
-                                   (x_t[0] < high_bound)))
+            x_is_for_this_bar = ((values >= low_bound) &
+                                  ((values <= high_bound) if is_last_time else
+                                   (values < high_bound)))
 
             y_for_this_bar = y.T[0].masked_select(x_is_for_this_bar)
             positives = (y_for_this_bar.numpy() == 1).sum()
             negatives = len(y_for_this_bar) - positives
+            label = ceil(boundary) if is_boolean else f'{boundary:.1f}'
+            bars.append((label, positives, negatives))
+        yield name, bars
+
+
+def print_feature_report(metrics):
+    metrics = list(metrics)
+    longest_bar = max((positives + negatives) for _, bars in metrics
+                                              for _, positives, negatives in bars)
+    samples_per_char = longest_bar / 260
+    for feature, bars in metrics:
+        print(f'{feature}:')
+        for label, positives, negatives in bars:
             positives_length = int(round(positives / samples_per_char))
             negatives_length = int(round(negatives / samples_per_char))
-
-            label = ceil(boundary) if is_boolean else f'{boundary:.1f}'
-            print(f'{label: >4} {"+" * positives_length}{"-" * negatives_length} {count}: {positives}+ / {negatives}-')
+            print(f'{label: >4} {"+" * positives_length}{"-" * negatives_length} {positives + negatives}: {positives}+ / {negatives}-')
 
 
 def is_boolean_feature(t):
