@@ -6,7 +6,6 @@ import click
 from click import argument, BadOptionUsage, command, get_terminal_size, option, style
 from more_itertools import pairwise
 from numpy import histogram
-from sklearn.preprocessing import minmax_scale
 
 from ..accuracy import FAT_COLORS
 from ..utils import path_or_none, tensors_from
@@ -92,8 +91,8 @@ def feature_metrics(feature_names, x, y, buckets, enabled_features):
             # Whether each feature value is a member of this bucket. Last
             # interval is inclusive on the right.
             x_is_for_this_bar = ((values >= low_bound) &
-                                  ((values <= high_bound) if is_last_time else
-                                   (values < high_bound)))
+                                 ((values <= high_bound) if is_last_time else
+                                  (values < high_bound)))
 
             y_for_this_bar = y.T[0].masked_select(x_is_for_this_bar)
             positives = (y_for_this_bar.numpy() == 1).sum()
