@@ -3,11 +3,12 @@ from math import ceil
 from pathlib import Path
 
 import click
-from click import argument, BadOptionUsage, command, option
+from click import argument, BadOptionUsage, command, option, style
 from more_itertools import pairwise
 from numpy import histogram
 from sklearn.preprocessing import minmax_scale
 
+from ..accuracy import FAT_COLORS
 from ..utils import path_or_none, tensors_from
 from ..vectorizer import make_or_find_vectors
 
@@ -97,7 +98,7 @@ def feature_metrics(feature_names, x, y, buckets, enabled_features):
             y_for_this_bar = y.T[0].masked_select(x_is_for_this_bar)
             positives = (y_for_this_bar.numpy() == 1).sum()
             negatives = len(y_for_this_bar) - positives
-            label = ceil(boundary) if is_boolean else f'{boundary:.1f}'
+            label = str(ceil(boundary)) if is_boolean else f'{boundary:.1f}'
             bars.append((label, positives, negatives))
         yield name, bars
 
@@ -107,12 +108,18 @@ def print_feature_report(metrics):
     longest_bar = max((positives + negatives) for _, bars in metrics
                                               for _, positives, negatives in bars)
     samples_per_char = longest_bar / 260
+    positive_style = style('', **FAT_COLORS['good'], reset=False)
+    negative_style = style('', **FAT_COLORS['bad'], reset=False)
+    style_reset = style('', reset=True)
     for feature, bars in metrics:
-        print(f'{feature}:')
+        print(style(feature, bold=True))
+        longest_label = max(len(label) for label, _, _ in bars)
         for label, positives, negatives in bars:
             positives_length = int(round(positives / samples_per_char))
             negatives_length = int(round(negatives / samples_per_char))
-            print(f'{label: >4} {"+" * positives_length}{"-" * negatives_length} {positives + negatives}: {positives}+ / {negatives}-')
+            padded_label = ('{label: >%i}' % longest_label).format(label=label)
+            print(f'  {padded_label} {positive_style}{" " * positives_length}{style_reset}{negative_style}{" " * negatives_length}{style_reset} {positives + negatives}: {positives}+ / {negatives}-')
+        print()
 
 
 def is_boolean_feature(t):
