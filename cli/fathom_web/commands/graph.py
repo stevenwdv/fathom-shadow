@@ -3,7 +3,7 @@ from math import ceil
 from pathlib import Path
 
 import click
-from click import argument, BadOptionUsage, command, option, style
+from click import argument, BadOptionUsage, command, get_terminal_size, option, style
 from more_itertools import pairwise
 from numpy import histogram
 from sklearn.preprocessing import minmax_scale
@@ -116,14 +116,17 @@ def print_feature_report(metrics):
             label = ''
         return ('{label: ^%i}' % length).format(label=label)
 
+    term_width = get_terminal_size()[0]
     pos_style = style('', **FAT_COLORS['good'], reset=False)
     neg_style = style('', **FAT_COLORS['bad'], reset=False)
     style_reset = style('', reset=True)
     for feature, bars in metrics:
         longest_bar = max((positives + negatives) for _, positives, negatives in bars)
-        samples_per_char = longest_bar / 130
         print(style(feature, bold=True))
         longest_label = max(len(label) for label, _, _ in bars)
+        longest_total = max(len(str(n + p)) for _, p, n in bars)
+        # This could still be slightly short if bar() has to cheat any bar lengths:
+        samples_per_char = longest_bar / (term_width - longest_label - longest_total - 4)
         for label, positives, negatives in bars:
             pos_length = int(round(positives / samples_per_char))
             neg_length = int(round(negatives / samples_per_char))
