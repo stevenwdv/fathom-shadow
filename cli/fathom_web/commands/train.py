@@ -135,9 +135,9 @@ def exclude_features(exclude, vector_data):
         default=False,
         is_flag=True,
         help='Show browser window while vectorizing. (Browser runs in headless mode by default.)')
-@option('--stop-early', '-s',
-        default=False,
-        is_flag=True,
+@option('--stop-early/--no-early-stopping', '-s',
+        default=True,
+        show_default=True,
         help='Stop 1 iteration before validation loss begins to rise, to avoid overfitting. Before using this, check Tensorboard graphs to make sure validation loss is monotonically decreasing.')
 @option('--learning-rate', '-l',
         default=1.0,
@@ -151,7 +151,7 @@ def exclude_features(exclude, vector_data):
         type=float,
         default=None,
         show_default=True,
-        help='The weighting factor given to all positive samples by the loss function. See: https://pytorch.org/docs/stable/nn.html#bcewithlogitsloss')
+        help='The weighting factor given to all positive samples by the loss function. Raise this to increase recall at the expense of precision. See: https://pytorch.org/docs/stable/nn.html#bcewithlogitsloss')
 @option('--comment', '-c',
         default='',
         help='Additional comment to append to the Tensorboard run name, for display in the web UI')
