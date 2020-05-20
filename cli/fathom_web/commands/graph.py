@@ -7,7 +7,6 @@ from click import argument, BadOptionUsage, command, get_terminal_size, option, 
 from more_itertools import pairwise
 from numpy import histogram
 
-from ..accuracy import FAT_COLORS
 from ..utils import path_or_none, tensors_from
 from ..vectorizer import make_or_find_vectors
 
@@ -116,12 +115,13 @@ def print_feature_report(metrics):
         return ('{label: ^%i}' % length).format(label=label)
 
     term_width = get_terminal_size()[0]
-    pos_style = style('', **FAT_COLORS['good'], reset=False)
-    neg_style = style('', **FAT_COLORS['bad'], reset=False)
+    pos_style = style('', fg='black', bg='bright_green', bold=True, reset=False)
+    neg_style = style('', fg='bright_white', bg='bright_black', bold=True, reset=False)
     style_reset = style('', reset=True)
+    print(f'{pos_style} {style_reset} Positive Samples   {neg_style} {style_reset} Negative Samples')
     for feature, bars in metrics:
         longest_bar = max((positives + negatives) for _, positives, negatives in bars)
-        print(style(feature, bold=True))
+        print('\n', style(feature, bold=True), sep='')
         longest_label = max(len(label) for label, _, _ in bars)
         longest_total = max(len(str(n + p)) for _, p, n in bars)
         # This could still be slightly short if bar() has to cheat any bar lengths:
@@ -133,7 +133,6 @@ def print_feature_report(metrics):
             pos_bar = bar(pos_length, positives)
             neg_bar = bar(neg_length, negatives)
             print(f'  {padded_label} {pos_style}{pos_bar}{style_reset}{neg_style}{neg_bar}{style_reset}{" " if (positives + negatives) else ""}{positives + negatives}')
-        print()
 
 
 def is_boolean_feature(t):
