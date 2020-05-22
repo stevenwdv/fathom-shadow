@@ -26,7 +26,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from click import ClickException, progressbar
 from filelock import FileLock
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchWindowException
+from selenium.common.exceptions import NoSuchElementException, NoSuchWindowException
 from selenium.webdriver.support.ui import Select
 
 from .utils import read_chunks, samples_from_dir
@@ -468,7 +468,10 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_s
     firefox.get(f'moz-extension://{fathom_fox_uuid}/pages/vector.html')
 
     ruleset_dropdown_selector = Select(firefox.find_element_by_id('ruleset'))
-    ruleset_dropdown_selector.select_by_visible_text(trainee_id)
+    try:
+        ruleset_dropdown_selector.select_by_visible_text(trainee_id)
+    except NoSuchElementException:
+        raise UngracefulError(f"Couldn't find trainee ID \"{trainee_id}\" in your rulesets.")
 
     pages_text_area = firefox.find_element_by_id('pages')
     pages_text_area.send_keys('\n'.join(sample_filenames))
