@@ -306,6 +306,19 @@ export class NiceSet extends Set {
     }
 
     /**
+     * Subtract another set from a copy of me.
+     *
+     * @return a copy of myself excluding the elements in ``otherSet``.
+     */
+    minus(otherSet) {
+        const ret = new NiceSet(this);
+        for (const item of otherSet) {
+            ret.delete(item);
+        }
+        return ret;
+    }
+
+    /**
      * Actually show the items in me.
      */
     toString() {

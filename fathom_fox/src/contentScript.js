@@ -9,6 +9,7 @@
  */
 import freezeDry from 'freeze-dry';
 import {type} from 'fathom-web';
+import {NiceSet} from 'fathom-web/utilsForFrontend';
 
 
 /**
@@ -129,7 +130,7 @@ function startTag(element) {
  *
  *    {filename: '3.html',
  *     isTarget: true,
- *     features: [['ruleName1', 4], ['ruleName2', 3]]}
+ *     features: [[1.2, 4], [5.7, 3]]}
  *
  * We assume, for the moment, that the type of node you're interested in is the
  * same as the trainee ID.
@@ -141,6 +142,15 @@ function vectorizeTab(traineeId) {
     let time = performance.now()
     const fnodes = boundRuleset.get(type(vectorType));
     time = performance.now() - time;
+
+    // Make sure we are considering all target nodes:
+    const targets = new NiceSet(window.document.querySelectorAll('[data-fathom=' + vectorType + ']').values());
+    const candidates = new Set(fnodes.map(fnode => fnode.element));
+    const missed = targets.minus(candidates);
+    if (missed.size) {
+        throw new Error(`A labeled "${vectorType}" node was prematurely pruned off by the ruleset: ${startTag(missed.pop())}. Broaden your dom() selectors to include it.`);
+    }
+
     const path = window.location.pathname;
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
     const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
