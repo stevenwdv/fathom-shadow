@@ -9,7 +9,7 @@
  */
 import freezeDry from 'freeze-dry';
 import {type} from 'fathom-web';
-import {NiceSet} from 'fathom-web/utilsForFrontend';
+import {map, NiceSet} from 'fathom-web/utilsForFrontend';
 
 
 /**
@@ -139,17 +139,10 @@ function vectorizeTab(traineeId) {
     const trainee = trainees.get(traineeId);
     const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
     const vectorType = trainee.vectorType || traineeId
+
     let time = performance.now()
     const fnodes = boundRuleset.get(type(vectorType));
     time = performance.now() - time;
-
-    // Make sure we are considering all target nodes:
-    const targets = new NiceSet(window.document.querySelectorAll('[data-fathom=' + vectorType + ']').values());
-    const candidates = new Set(fnodes.map(fnode => fnode.element));
-    const missed = targets.minus(candidates);
-    if (missed.size) {
-        throw new Error(`A labeled "${vectorType}" node was prematurely pruned off by the ruleset: ${startTag(missed.pop())}. Broaden your dom() selectors to include it.`);
-    }
 
     const path = window.location.pathname;
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
@@ -162,6 +155,21 @@ function vectorizeTab(traineeId) {
             markup: startTag(fnode.element)
         };
     });
+
+    // Log any target nodes we prematurely pruned with too-tight dom() calls:
+    const targets = new NiceSet(window.document.querySelectorAll('[data-fathom=' + vectorType + ']').values());
+    const candidates = new Set(fnodes.map(fnode => fnode.element));
+    const missed = targets.minus(candidates);
+    perNodeStuff.push(
+        ...map(element => {
+                   return {
+                       pruned: true,
+                       isTarget: true,
+                       features: [],
+                       markup: startTag(element)
+                   };
+               },
+               missed))
     return {filename: path.substr(path.lastIndexOf('/') + 1),
             nodes: perNodeStuff,
             time};

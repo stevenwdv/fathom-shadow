@@ -1,6 +1,7 @@
 """Routines to do with calculating or reporting accuracy"""
 
 
+from itertools import repeat
 from math import floor, inf, sqrt
 
 from click import get_terminal_size, style
@@ -9,10 +10,15 @@ import torch
 from .utils import tensors_from, fit_unicode
 
 
-def accuracy_per_tag(y, y_pred, cutoff):
+def accuracy_per_tag(y, y_pred, cutoff, num_prunes):
     """Return the accuracy 0..1 of the model on a per-tag basis, given the
     correct output tensors and the prediction tensors from the model for the
-    same samples."""
+    same samples.
+
+    :arg num_prunes: The number of targets that didn't get matched by a dom()
+        call: FNs, inevitably
+
+    """
     # Use `torch.no_grad()` so the sigmoid on y_pred is not tracked by pytorch's autograd
     with torch.no_grad():
         # We turn our tensors into 1-D numpy arrays because its methods are faster
@@ -22,8 +28,8 @@ def accuracy_per_tag(y, y_pred, cutoff):
         predicted_positives = y_pred_confidence >= cutoff
         successes = (predicted_positives == y).sum()
         false_positives = (predicted_positives & (y == 0)).sum()
-        number_of_tags = len(y)
-        false_negatives = number_of_tags - successes - false_positives
+        number_of_tags = len(y) + num_prunes
+        false_negatives = number_of_tags - successes - false_positives + num_prunes
         return (successes / number_of_tags), false_positives, false_negatives
 
 
@@ -31,13 +37,15 @@ def per_tag_metrics(page, model, cutoff):
     """Return the per-tag numbers to be templated into a human-readable report
     by ``print_per_tag_report``."""
     # Get scores for all tags:
-    inputs, correct_outputs, _ = tensors_from([page])
+    inputs, correct_outputs, _, num_prunes = tensors_from([page])
     with torch.no_grad():
         try:
-            scores = model(inputs).sigmoid().numpy().flatten()
+            scores = model(inputs).sigmoid().numpy().flatten().tolist()
         except RuntimeError:  # TODO: Figure out why we're having a mismatched-matrix-size error on pages with no tags, and do something that doesn't require a branch.
             scores = []
-
+    # All the prematurely pruned nodes are at the end of the vectorized node
+    # list, so we can just pad out the scores with zeroes, and they'll align:
+    scores.extend(repeat(0, num_prunes))
     true_negatives = 0
     tag_metrics = []
     for tag, score in zip(page['nodes'], scores):
@@ -52,7 +60,7 @@ def per_tag_metrics(page, model, cutoff):
                 tag_metric['error_type'] = 'FN'
             elif is_target and predicted:
                 tag_metric['error_type'] = ''
-            tag_metric['score'] = score
+            tag_metric['score'] = 'pruned' if tag.get('pruned') else score
             tag_metric['markup'] = tag.get('markup', 'Use a newer FathomFox to see markup.')
             tag_metrics.append(tag_metric)
         else:  # not is_target and not is_error: TNs
@@ -101,7 +109,7 @@ def print_per_tag_report(metricses):
                 tag_and_padding=fit_unicode(tag['markup'], tag_max_width),
                 tag_style=style('', **THIN_COLORS[not bool(tag['error_type'])], reset=False),
                 error_type=tag['error_type'],
-                score=thermometer(tag['score'])))
+                score='pruned' if tag['score'] == 'pruned' else thermometer(tag['score'])))
             first = False
         if first:
             # There were no targets and no errors, so we didn't print tags.
