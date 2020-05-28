@@ -148,7 +148,7 @@ class Vectorizer extends PageVisitor {
         await download(JSON.stringify(
                 {
                     header: {
-                        version: 1,
+                        version: 2,
                         featureNames: Array.from(this.trainee.coeffs.keys())
                     },
                     pages: this.vectors
