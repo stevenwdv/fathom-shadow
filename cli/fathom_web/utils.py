@@ -7,7 +7,7 @@ from pathlib import Path
 from random import sample
 from unicodedata import east_asian_width
 
-from more_itertools import pairwise
+from more_itertools import ilen, pairwise
 from numpy import array, histogram
 from sklearn.preprocessing import minmax_scale
 import torch
@@ -21,22 +21,25 @@ def tensor(some_list):
 
 def tensors_from(pages, shuffle=False):
     """Return (inputs, correct outputs, number of tags that are recognition
-    targets) tuple.
+    targets, number of tags that were prematurely pruned) tuple.
 
     Can also shuffle to improve training performance.
 
     """
     xs = []
     ys = []
-    num_targets = 0
+    num_targets = num_prunes = 0
     maybe_shuffled_pages = sample(pages, len(pages)) if shuffle else pages
     for page in maybe_shuffled_pages:
         for tag in page['nodes']:
-            xs.append(tag['features'])
-            ys.append([1 if tag['isTarget'] else 0])  # Tried 0.1 and 0.9 instead. Was much worse.
+            if tag.get('pruned'):
+                num_prunes += 1
+            else:
+                xs.append(tag['features'])
+                ys.append([1 if tag['isTarget'] else 0])  # Tried 0.1 and 0.9 instead. Was much worse.
             if tag['isTarget']:
                 num_targets += 1
-    return tensor(xs), tensor(ys), num_targets
+    return tensor(xs), tensor(ys), num_targets, num_prunes
 
 
 def classifier(num_inputs, num_outputs, hidden_layer_sizes=None):
@@ -80,7 +83,8 @@ def mini_histogram(data):
 def speed_readout(pages):
     """Return human-readable metrics on ruleset-running speed based on
     benchmarks taken by the Vectorizer."""
-    average = sum(p['time'] for p in pages) / sum(len(p['nodes']) for p in pages)
+    num_unpruned_nodes = sum(ilen(n for n in p['nodes'] if not n.get('pruned')) for p in pages)
+    average = sum(p['time'] for p in pages) / num_unpruned_nodes
     histogram = mini_histogram([p['time'] for p in pages])
     return f'\nTime per page (ms): {histogram}    Average per tag: {average:.0f}'
 

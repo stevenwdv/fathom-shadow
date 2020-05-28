@@ -14,7 +14,7 @@ from ..utils import classifier, path_or_none, speed_readout, tensors_from
 from ..vectorizer import make_or_find_vectors
 
 
-def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
+def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = classifier(len(x[0]), len(y[0]), layers)
@@ -32,6 +32,9 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None
         for t in bar:
             y_pred = model(x)  # Make predictions.
             loss = loss_fn(y_pred, y)
+            # The loss function doesn't take num_prunes into account, but
+            # that's okay; we're only trying to minimize it, not arrive at 0
+            # precisely when accuracy is 1.
             writer.add_scalar('loss', loss, t)
             if validation:
                 validation_loss = loss_fn(model(validation_ins), validation_outs)
@@ -44,7 +47,7 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None
                         previous_validation_loss = validation_loss
                         previous_model = model.state_dict()
                 writer.add_scalar('validation_loss', validation_loss, t)
-            accuracy, _, _ = accuracy_per_tag(y, y_pred, confidence_threshold)
+            accuracy, _, _ = accuracy_per_tag(y, y_pred, confidence_threshold, num_prunes)
             writer.add_scalar('training_accuracy_per_tag', accuracy, t)
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
@@ -217,7 +220,8 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
               encoding='utf-8') as training_file:
         training_data = exclude_features(exclude, load(training_file))
     training_pages = training_data['pages']
-    x, y, num_yes = tensors_from(training_pages, shuffle=True)
+    x, y, num_yes, num_prunes = tensors_from(training_pages, shuffle=True)
+    num_samples = len(x) + num_prunes
 
     if validation_set:
         with open(make_or_find_vectors(ruleset,
@@ -229,7 +233,7 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                                        delay),
                   encoding='utf-8') as validation_file:
             validation_pages = exclude_features(exclude, load(validation_file))['pages']
-        validation_ins, validation_outs, validation_yes = tensors_from(validation_pages)
+        validation_ins, validation_outs, validation_yes, validation_prunes = tensors_from(validation_pages)
         validation_arg = validation_ins, validation_outs
     else:
         validation_arg = None
@@ -244,6 +248,7 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                   x,
                   y,
                   confidence_threshold,
+                  num_prunes,
                   validation=validation_arg,
                   stop_early=stop_early,
                   run_comment=full_comment,
@@ -251,21 +256,21 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                   layers=layers)
 
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold)
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold, num_prunes)
     print(pretty_accuracy('Training',
                           accuracy,
-                          len(x),
+                          num_samples,
                           false_positives,
                           false_negatives,
-                          num_yes))
+                          num_yes + num_prunes))
     if validation_set:
-        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold)
+        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold, validation_prunes)
         print(pretty_accuracy('Validation',
                               accuracy,
                               len(validation_ins),
                               false_positives,
                               false_negatives,
-                              validation_yes))
+                              validation_yes + validation_prunes))
 
     # Print timing information:
     if training_pages and 'time' in training_pages[0]:

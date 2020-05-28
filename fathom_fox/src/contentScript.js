@@ -9,6 +9,7 @@
  */
 import freezeDry from 'freeze-dry';
 import {type} from 'fathom-web';
+import {map, NiceSet} from 'fathom-web/utilsForFrontend';
 
 
 /**
@@ -129,7 +130,7 @@ function startTag(element) {
  *
  *    {filename: '3.html',
  *     isTarget: true,
- *     features: [['ruleName1', 4], ['ruleName2', 3]]}
+ *     features: [[1.2, 4], [5.7, 3]]}
  *
  * We assume, for the moment, that the type of node you're interested in is the
  * same as the trainee ID.
@@ -138,9 +139,11 @@ function vectorizeTab(traineeId) {
     const trainee = trainees.get(traineeId);
     const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
     const vectorType = trainee.vectorType || traineeId
+
     let time = performance.now()
     const fnodes = boundRuleset.get(type(vectorType));
     time = performance.now() - time;
+
     const path = window.location.pathname;
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
     const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
@@ -152,6 +155,21 @@ function vectorizeTab(traineeId) {
             markup: startTag(fnode.element)
         };
     });
+
+    // Log any target nodes we prematurely pruned with too-tight dom() calls:
+    const targets = new NiceSet(window.document.querySelectorAll('[data-fathom=' + vectorType + ']').values());
+    const candidates = new Set(fnodes.map(fnode => fnode.element));
+    const missed = targets.minus(candidates);
+    perNodeStuff.push(
+        ...map(element => {
+                   return {
+                       pruned: true,
+                       isTarget: true,
+                       features: [],
+                       markup: startTag(element)
+                   };
+               },
+               missed))
     return {filename: path.substr(path.lastIndexOf('/') + 1),
             nodes: perNodeStuff,
             time};
