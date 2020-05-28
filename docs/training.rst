@@ -198,7 +198,7 @@ Run the trainer. A simple beginning, using just a training set, is... ::
               Accuracy: 0.9889   95% CI: (0.9780, 0.9997)        ╭───┬── + ───┬── - ───╮
                    FPR: 0.0328   95% CI: (0.0012, 0.0644)   True │ + │    237 │      0 │
                    FNR: 0.0000   95% CI: (0.0000, 0.0000)        │ - │      4 │    118 │
-              F1 Score: 0.9916                                   ╰───┴────────┴────────╯
+                   MCC: 0.9916                                   ╰───┴────────┴────────╯
 
     Time per page (ms): 2 |▁▃█▅▂▁    | 34    Average per tag: 8
 
@@ -291,11 +291,12 @@ The trainer comes with a variety of adjustment knobs to ensure a good fit and a 
       --show-browser                  Show browser window while vectorizing.
                                       (Browser runs in headless mode by default.)
 
-      -s, --stop-early                Stop 1 iteration before validation loss
+      -s, --stop-early / --no-early-stopping
+                                      Stop 1 iteration before validation loss
                                       begins to rise, to avoid overfitting. Before
                                       using this, check Tensorboard graphs to make
                                       sure validation loss is monotonically
-                                      decreasing.
+                                      decreasing.  [default: True]
 
       -l, --learning-rate FLOAT       The learning rate to start from  [default:
                                       1.0]
@@ -304,9 +305,10 @@ The trainer comes with a variety of adjustment knobs to ensure a good fit and a 
                                       through  [default: 1000]
 
       -p, --pos-weight FLOAT          The weighting factor given to all positive
-                                      samples by the loss function. See: https://p
-                                      ytorch.org/docs/stable/nn.html#bcewithlogits
-                                      loss
+                                      samples by the loss function. Raise this to
+                                      increase recall at the expense of precision.
+                                      See: https://pytorch.org/docs/stable/nn.html
+                                      #bcewithlogitsloss
 
       -c, --comment TEXT              Additional comment to append to the
                                       Tensorboard run name, for display in the web

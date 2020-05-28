@@ -2,6 +2,28 @@
 Version History
 ===============
 
+unreleased
+==========
+
+Fathom
+------
+
+No changes.
+
+FathomFox
+---------
+
+* Record prematurely pruned elements. This bumps the vector version number to 2, which means previous versions of the commandline tools will not understand these new vector files.
+
+CLI tools
+---------
+
+* Notice prematurely pruned elements during vectorization, and take them into account in training and testing metrics. Tag-level diagnostics in the trainer will show "pruned" for these elements so you can adjust your :func:`dom` calls if desired.
+* Replace F1 score with the Matthews Correlation Coefficient. MCC doesn't assume same-sized classes (which Fathom problems never have) and also is not sensitive to which side of the problem you call "positive".
+* Default to early stopping whenever a validation corpus is provided to :command:`fathom-train`. After all, if you provide a validation corpus, it makes sense that we do something useful with it.
+* Add some `fathom-extract` MIME types we discovered in a recent corpus.
+* Fix remaining divide-by-zero corner cases in the metrics code. (These would show up in toy corpora that were entirely lacking either positive or negative samples.)
+
 3.4.1
 =====
 
