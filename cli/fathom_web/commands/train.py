@@ -1,4 +1,3 @@
-from json import load
 from pathlib import Path
 from pprint import pformat
 
@@ -14,7 +13,7 @@ from ..utils import classifier, path_or_none, speed_readout, tensors_from
 from ..vectorizer import make_or_find_vectors
 
 
-def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
+def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = classifier(len(x[0]), len(y[0]), layers)
@@ -32,6 +31,9 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None
         for t in bar:
             y_pred = model(x)  # Make predictions.
             loss = loss_fn(y_pred, y)
+            # The loss function doesn't take num_prunes into account, but
+            # that's okay; we're only trying to minimize it, not arrive at 0
+            # precisely when accuracy is 1.
             writer.add_scalar('loss', loss, t)
             if validation:
                 validation_loss = loss_fn(model(validation_ins), validation_outs)
@@ -44,7 +46,7 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, validation=None
                         previous_validation_loss = validation_loss
                         previous_model = model.state_dict()
                 writer.add_scalar('validation_loss', validation_loss, t)
-            accuracy, _, _ = accuracy_per_tag(y, y_pred, confidence_threshold)
+            accuracy, _, _ = accuracy_per_tag(y, y_pred, confidence_threshold, num_prunes)
             writer.add_scalar('training_accuracy_per_tag', accuracy, t)
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
@@ -135,9 +137,9 @@ def exclude_features(exclude, vector_data):
         default=False,
         is_flag=True,
         help='Show browser window while vectorizing. (Browser runs in headless mode by default.)')
-@option('--stop-early', '-s',
-        default=False,
-        is_flag=True,
+@option('--stop-early/--no-early-stopping', '-s',
+        default=True,
+        show_default=True,
         help='Stop 1 iteration before validation loss begins to rise, to avoid overfitting. Before using this, check Tensorboard graphs to make sure validation loss is monotonically decreasing.')
 @option('--learning-rate', '-l',
         default=1.0,
@@ -151,7 +153,7 @@ def exclude_features(exclude, vector_data):
         type=float,
         default=None,
         show_default=True,
-        help='The weighting factor given to all positive samples by the loss function. See: https://pytorch.org/docs/stable/nn.html#bcewithlogitsloss')
+        help='The weighting factor given to all positive samples by the loss function. Raise this to increase recall at the expense of precision. See: https://pytorch.org/docs/stable/nn.html#bcewithlogitsloss')
 @option('--comment', '-c',
         default='',
         help='Additional comment to append to the Tensorboard run name, for display in the web UI')
@@ -207,29 +209,30 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
         if not trainee:
             raise BadOptionUsage('trainee', 'A --trainee ID must be specified when TRAINING_SET_FOLDER or --validation-set are passed a directory.')
 
-    with open(make_or_find_vectors(ruleset,
-                                   trainee,
-                                   training_set,
-                                   training_cache,
-                                   show_browser,
-                                   'training',
-                                   delay),
-              encoding='utf-8') as training_file:
-        training_data = exclude_features(exclude, load(training_file))
+    training_data = exclude_features(
+        exclude,
+        make_or_find_vectors(ruleset,
+                             trainee,
+                             training_set,
+                             training_cache,
+                             show_browser,
+                             'training',
+                             delay))
     training_pages = training_data['pages']
-    x, y, num_yes = tensors_from(training_pages, shuffle=True)
+    x, y, num_yes, num_prunes = tensors_from(training_pages, shuffle=True)
+    num_samples = len(x) + num_prunes
 
     if validation_set:
-        with open(make_or_find_vectors(ruleset,
-                                       trainee,
-                                       validation_set,
-                                       validation_cache,
-                                       show_browser,
-                                       'validation',
-                                       delay),
-                  encoding='utf-8') as validation_file:
-            validation_pages = exclude_features(exclude, load(validation_file))['pages']
-        validation_ins, validation_outs, validation_yes = tensors_from(validation_pages)
+        validation_pages = exclude_features(
+            exclude,
+            make_or_find_vectors(ruleset,
+                                 trainee,
+                                 validation_set,
+                                 validation_cache,
+                                 show_browser,
+                                 'validation',
+                                 delay))['pages']
+        validation_ins, validation_outs, validation_yes, validation_prunes = tensors_from(validation_pages)
         validation_arg = validation_ins, validation_outs
     else:
         validation_arg = None
@@ -244,6 +247,7 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                   x,
                   y,
                   confidence_threshold,
+                  num_prunes,
                   validation=validation_arg,
                   stop_early=stop_early,
                   run_comment=full_comment,
@@ -251,21 +255,21 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                   layers=layers)
 
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold)
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold, num_prunes)
     print(pretty_accuracy('Training',
                           accuracy,
-                          len(x),
+                          num_samples,
                           false_positives,
                           false_negatives,
-                          num_yes))
+                          num_yes + num_prunes))
     if validation_set:
-        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold)
+        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold, validation_prunes)
         print(pretty_accuracy('Validation',
                               accuracy,
                               len(validation_ins),
                               false_positives,
                               false_negatives,
-                              validation_yes))
+                              validation_yes + validation_prunes))
 
     # Print timing information:
     if training_pages and 'time' in training_pages[0]:

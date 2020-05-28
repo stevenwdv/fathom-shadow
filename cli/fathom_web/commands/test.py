@@ -1,4 +1,4 @@
-from json import JSONDecodeError, load, loads
+from json import JSONDecodeError, loads
 from pathlib import Path
 
 import click
@@ -106,20 +106,19 @@ def main(testing_set, weights, confidence_threshold, ruleset, trainee, testing_c
         if not trainee:
             raise BadOptionUsage('trainee', 'A --trainee ID must be specified when TESTING_SET_FOLDER is passed a directory.')
 
-    with make_or_find_vectors(ruleset,
-                              trainee,
-                              testing_set,
-                              testing_cache,
-                              show_browser,
-                              'testing',
-                              delay).open(encoding='utf-8') as testing_file:
-        testing_data = load(testing_file)
+    testing_data = make_or_find_vectors(ruleset,
+                                        trainee,
+                                        testing_set,
+                                        testing_cache,
+                                        show_browser,
+                                        'testing',
+                                        delay)
     testing_pages = testing_data['pages']
-    x, y, num_yes = tensors_from(testing_pages)
+    x, y, num_yes, num_prunes = tensors_from(testing_pages)
     model = model_from_json(weights, len(y[0]), testing_data['header']['featureNames'])
 
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold)
-    print(pretty_accuracy('Testing', accuracy, len(x), false_positives, false_negatives, num_yes))
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold, num_prunes)
+    print(pretty_accuracy('Testing', accuracy, len(x), false_positives, false_negatives, num_yes + num_prunes))
 
     if testing_pages and 'time' in testing_pages[0]:
         print(speed_readout(testing_pages))

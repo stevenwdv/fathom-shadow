@@ -60,16 +60,16 @@ def main(training_set, ruleset, trainee, training_cache, delay, show_browser, bu
         if not trainee:
             raise BadOptionUsage('trainee', 'A --trainee ID must be specified when TRAINING_SET_FOLDER is passed a directory.')
 
-    with make_or_find_vectors(ruleset,
-                              trainee,
-                              training_set,
-                              training_cache,
-                              show_browser,
-                              'training',
-                              delay).open(encoding='utf-8') as training_file:
-        training_data = load(training_file)
+    training_data = make_or_find_vectors(
+        ruleset,
+        trainee,
+        training_set,
+        training_cache,
+        show_browser,
+        'training',
+        delay)
     training_pages = training_data['pages']
-    x, y, num_yes = tensors_from(training_pages)
+    x, y, num_yes, _ = tensors_from(training_pages)
     feature_names = training_data['header']['featureNames']
     print_feature_report(feature_metrics(feature_names, x, y, buckets, features or feature_names))
 

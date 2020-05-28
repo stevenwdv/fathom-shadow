@@ -26,7 +26,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from click import ClickException, progressbar
 from filelock import FileLock
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchWindowException
+from selenium.common.exceptions import NoSuchElementException, NoSuchWindowException
 from selenium.webdriver.support.ui import Select
 
 from .utils import read_chunks, samples_from_dir
@@ -45,7 +45,7 @@ class Timeout(Exception):
 
 
 def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay):
-    """Return a Path to the vector file to use, building it first if necessary.
+    """Return the contents of a vector file, building it first if necessary.
 
     If passed a vector file for ``sample_set``, we return it verbatim. If
     passed a folder rather than a vector file, we use the cache if it's fresh.
@@ -57,20 +57,27 @@ def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browse
 
     """
     if not sample_set.is_dir():
-        return sample_set  # It's just a vector file.
-    if not sample_cache:
-        sample_cache = ruleset.parent / 'vectors' / f'{kind_of_set}_{trainee}.json'
-    updated_hashes = out_of_date(sample_cache, ruleset, sample_set)
-    if updated_hashes:
-        # Make a vectors file, replacing it if already present:
-        vectorize(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay)
-        # Stick the new hashes in it:
-        with sample_cache.open(encoding='utf-8') as file:
-            json = load(file)
-        json['header'].update(updated_hashes)
-        with sample_cache.open('w', encoding='utf-8') as file:
-            dump(json, file, separators=(',', ':'))
-    return sample_cache
+        final_path = sample_set  # It's just a vector file.
+    else:
+        if not sample_cache:
+            sample_cache = ruleset.parent / 'vectors' / f'{kind_of_set}_{trainee}.json'
+        updated_hashes = out_of_date(sample_cache, ruleset, sample_set)
+        if updated_hashes:
+            # Make a vectors file, replacing it if already present:
+            vectorize(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay)
+            # Stick the new hashes in it:
+            with sample_cache.open(encoding='utf-8') as file:
+                json = load(file)
+            json['header'].update(updated_hashes)
+            with sample_cache.open('w', encoding='utf-8') as file:
+                dump(json, file, separators=(',', ':'))
+            return json
+        final_path = sample_cache
+    with open(final_path, encoding='utf-8') as file:
+        json = load(file)
+        if json['header']['version'] > 2:
+            raise GracefulError(f'The vector file {final_path} has a newer format than these tools can handle. Please run `pip install -U fathom-web` to upgrade your tools.')
+        return json
 
 
 def out_of_date(sample_cache, ruleset, sample_set):
@@ -468,7 +475,10 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_s
     firefox.get(f'moz-extension://{fathom_fox_uuid}/pages/vector.html')
 
     ruleset_dropdown_selector = Select(firefox.find_element_by_id('ruleset'))
-    ruleset_dropdown_selector.select_by_visible_text(trainee_id)
+    try:
+        ruleset_dropdown_selector.select_by_visible_text(trainee_id)
+    except NoSuchElementException:
+        raise UngracefulError(f"Couldn't find trainee ID \"{trainee_id}\" in your rulesets.")
 
     pages_text_area = firefox.find_element_by_id('pages')
     pages_text_area.send_keys('\n'.join(sample_filenames))
