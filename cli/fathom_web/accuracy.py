@@ -2,7 +2,7 @@
 
 
 from itertools import repeat
-from math import floor, inf, sqrt
+from math import floor, inf, nan, sqrt
 
 from click import get_terminal_size, style
 import torch
@@ -140,7 +140,14 @@ def print_per_tag_report(metricses):
 def confidence_interval(success_ratio, number_of_samples):
     """Return a 95% binomial proportion confidence interval."""
     z_for_95_percent = 1.96
-    addend = z_for_95_percent * sqrt(success_ratio * (1 - success_ratio) / number_of_samples)
+    if number_of_samples:
+        addend = z_for_95_percent * sqrt(success_ratio * (1 - success_ratio) / number_of_samples)
+    else:
+        addend = nan
+    # max() and min() will pick the other arg if one of them is nan, giving us
+    # the most conservative possible confidence interval. For example, if there
+    # aren't any TPs to get wrong, we can't very well say anything about the FN
+    # rate.
     return max(0., success_ratio - addend), min(1., success_ratio + addend)
 
 
@@ -169,8 +176,10 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positives, f
     """
     ci_low, ci_high = confidence_interval(accuracy, number_of_samples)
     negatives = number_of_samples - positives
-    false_positive_rate = false_positives / negatives  # Think of this as the ratio of negatives we got wrong.
-    false_negative_rate = false_negatives / positives
+    # Think of this as the ratio of negatives we got wrong. If there were no
+    # negatives, we can't have got any of them wrong:
+    false_positive_rate = (false_positives / negatives) if negatives else 0
+    false_negative_rate = (false_negatives / positives) if positives else 0
     fpr_ci_low, fpr_ci_high = confidence_interval(false_positive_rate, negatives)
     fnr_ci_low, fnr_ci_high = confidence_interval(false_negative_rate, positives)
     # https://en.wikipedia.org/wiki/Precision_and_recall#/media/File:Precisionrecall.svg
