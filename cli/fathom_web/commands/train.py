@@ -1,4 +1,3 @@
-from json import load
 from pathlib import Path
 from pprint import pformat
 
@@ -210,29 +209,29 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
         if not trainee:
             raise BadOptionUsage('trainee', 'A --trainee ID must be specified when TRAINING_SET_FOLDER or --validation-set are passed a directory.')
 
-    with open(make_or_find_vectors(ruleset,
-                                   trainee,
-                                   training_set,
-                                   training_cache,
-                                   show_browser,
-                                   'training',
-                                   delay),
-              encoding='utf-8') as training_file:
-        training_data = exclude_features(exclude, load(training_file))
+    training_data = exclude_features(
+        exclude,
+        make_or_find_vectors(ruleset,
+                             trainee,
+                             training_set,
+                             training_cache,
+                             show_browser,
+                             'training',
+                             delay))
     training_pages = training_data['pages']
     x, y, num_yes, num_prunes = tensors_from(training_pages, shuffle=True)
     num_samples = len(x) + num_prunes
 
     if validation_set:
-        with open(make_or_find_vectors(ruleset,
-                                       trainee,
-                                       validation_set,
-                                       validation_cache,
-                                       show_browser,
-                                       'validation',
-                                       delay),
-                  encoding='utf-8') as validation_file:
-            validation_pages = exclude_features(exclude, load(validation_file))['pages']
+        validation_pages = exclude_features(
+            exclude,
+            make_or_find_vectors(ruleset,
+                                 trainee,
+                                 validation_set,
+                                 validation_cache,
+                                 show_browser,
+                                 'validation',
+                                 delay))['pages']
         validation_ins, validation_outs, validation_yes, validation_prunes = tensors_from(validation_pages)
         validation_arg = validation_ins, validation_outs
     else:
