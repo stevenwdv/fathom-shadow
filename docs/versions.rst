@@ -18,6 +18,7 @@ FathomFox
 CLI tools
 ---------
 
+* Add :command:`fathom-histogram` tool for examining the shapes of individual rule values.
 * Notice prematurely pruned elements during vectorization, and take them into account in training and testing metrics. Tag-level diagnostics in the trainer will show "pruned" for these elements so you can adjust your :func:`dom` calls if desired.
 * Replace F1 score with the Matthews Correlation Coefficient. MCC doesn't assume same-sized classes (which Fathom problems never have) and also is not sensitive to which side of the problem you call "positive".
 * Default to early stopping whenever a validation corpus is provided to :command:`fathom-train`. After all, if you provide a validation corpus, it makes sense that we do something useful with it.

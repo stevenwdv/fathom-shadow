@@ -77,12 +77,14 @@ def max_default(iterable, default):
         return default
 
 
+FAT_COLORS = {'good': {'fg': 'black', 'bg': 'bright_green', 'bold': True},
+              'medium': {'fg': 'black', 'bg': 'bright_yellow'},
+              'bad': {'fg': 'white', 'bg': 'red', 'bold': True}}
+
+
 def print_per_tag_report(metricses):
     """Given a list of results from multiple ``per_tag_metrics()`` calls,
     return a human-readable report."""
-    FAT_COLORS = {'good': {'fg': 'black', 'bg': 'bright_green', 'bold': True},
-                  'medium': {'fg': 'black', 'bg': 'bright_yellow'},
-                  'bad': {'fg': 'white', 'bg': 'red', 'bold': True}}
     THIN_COLORS = {True: {'fg': 'green'},
                    False: {'fg': 'red'}}
 
