@@ -222,116 +222,13 @@ Comments (with ``-c``) are your friend, as a heap of anonymous TensorBoard runs 
 
    Incidentally, it's not the end of the world if some scores go slightly outside [0, 1]. Limited tests have gotten away with values up to about 10 without measurable harm to training speed or accuracy. However, when feature values differ in magnitude by a factor of 1000, annoying oscillations dominate early iterations. Stick to [0, 1] for a trouble-free experience.
 
-Once you've tamped down oscillations, use validation samples and early stopping to keep Fathom from overfitting::
+Once you've tamped down oscillations, use validation samples and early stopping (on by default) to keep Fathom from overfitting::
 
-    fathom-train samples/training --ruleset rulesets.js --trainee yourTraineeId --validation-set samples/validaton --stop-early -c tryingEarlyStopping
+    fathom-train samples/training --ruleset rulesets.js --trainee yourTraineeId --validation-set samples/validaton
 
-The trainer comes with a variety of adjustment knobs to ensure a good fit and a good tradeoff between false positives and false negatives. Here is its online help, to give you a sense of its full capabilities:
+The trainer comes with a variety of adjustment knobs to ensure a good fit and to trade off between false positives and false negatives. For a full tour of its capabilities, see...
 
-.. code-block:: none
-
-    % fathom-train --help
-
-    Usage: fathom-train [OPTIONS] TRAINING_SET_FOLDER
-
-      Compute optimal numerical parameters for a Fathom ruleset.
-
-      There are a lot of options, but the usual invocation is something like...
-
-        fathom-train samples/training --validation-set samples/validation
-        --stop-early --ruleset rulesets.js --trainee new
-
-      TRAINING_SET_FOLDER is a directory of labeled training pages. It can also
-      be, for backward compatibility, a JSON file of vectors from FathomFox's
-      Vectorizer.
-
-      To see graphs of the results, install TensorBoard, then run this:
-      tensorboard --logdir runs/. These will tell you whether you need to adjust
-      the --learning-rate.
-
-      Some vocab used in the output messages:
-
-        target -- A "right answer" DOM node, one that should be recognized
-
-        candidate -- Any node (target or not) brought into the ruleset, by a
-        dom() call, for consideration
-
-        negative sample -- A sample with no intended target nodes, used to bait
-        the recognizer into a false-positive choice
-
-    Options:
-      -a, --validation-set FOLDER     Either a folder of validation pages or a
-                                      JSON file made manually by FathomFox's
-                                      Vectorizer. Validation pages are used to
-                                      avoid overfitting.
-
-      -r, --ruleset FILE              The rulesets.js file containing your rules.
-                                      The file must have no imports except from
-                                      fathom-web, so pre-bundle if necessary.
-
-      --trainee ID                    The trainee ID of the ruleset you want to
-                                      train. Usually, this is the same as the type
-                                      you are training for.
-
-      --training-cache FILE           Where to cache training vectors to speed
-                                      future training runs. Any existing file will
-                                      be overwritten. [default:
-                                      vectors/training_yourTraineeId.json next to
-                                      your ruleset]
-
-      --validation-cache FILE         Where to cache validation vectors to speed
-                                      future training runs. Any existing file will
-                                      be overwritten. [default:
-                                      vectors/validation_yourTraineeId.json next
-                                      to your ruleset]
-
-      --delay INTEGER                 Number of seconds to wait for a page to load
-                                      before vectorizing it  [default: 5]
-
-      --show-browser                  Show browser window while vectorizing.
-                                      (Browser runs in headless mode by default.)
-
-      -s, --stop-early / --no-early-stopping
-                                      Stop 1 iteration before validation loss
-                                      begins to rise, to avoid overfitting. Before
-                                      using this, check Tensorboard graphs to make
-                                      sure validation loss is monotonically
-                                      decreasing.  [default: True]
-
-      -l, --learning-rate FLOAT       The learning rate to start from  [default:
-                                      1.0]
-
-      -i, --iterations INTEGER        The number of training iterations to run
-                                      through  [default: 1000]
-
-      -p, --pos-weight FLOAT          The weighting factor given to all positive
-                                      samples by the loss function. Raise this to
-                                      increase recall at the expense of precision.
-                                      See: https://pytorch.org/docs/stable/nn.html
-                                      #bcewithlogitsloss
-
-      -c, --comment TEXT              Additional comment to append to the
-                                      Tensorboard run name, for display in the web
-                                      UI
-
-      -q, --quiet                     Hide per-tag diagnostics that may help with
-                                      ruleset debugging.
-
-      -t, --confidence-threshold FLOAT
-                                      Threshold at which a sample is considered
-                                      positive. Higher values decrease false
-                                      positives and increase false negatives.
-                                      [default: 0.5]
-
-      -y, --layer INTEGER             Add a hidden layer of the given size. You
-                                      can specify more than one, and they will be
-                                      connected in the given order. EXPERIMENTAL.
-
-      -x, --exclude TEXT              Exclude a rule while training. This helps
-                                      with before-and-after tests to see if a rule
-                                      is effective.
-
-      --help                          Show this message and exit.
+:doc:`fathom-train reference documentation<commands/train>`
 
 Workflow
 ========

@@ -34,6 +34,7 @@ from os.path import join
 extensions = [
 #     'sphinx.ext.autodoc',
 #     'sphinx.ext.viewcode',
+    'sphinx_click.ext',
     'sphinx_js'
 ]
 
