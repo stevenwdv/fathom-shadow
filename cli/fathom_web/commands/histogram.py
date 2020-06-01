@@ -1,4 +1,3 @@
-from json import load
 from math import ceil
 from pathlib import Path
 
