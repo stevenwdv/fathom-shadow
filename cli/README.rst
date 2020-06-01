@@ -7,6 +7,14 @@ This is the commandline trainer for `Fathom <https://mozilla.github.io/fathom/>`
 Version History
 ===============
 
+3.5
+  * Add ``fathom-histogram`` tool for examining the shapes of individual rule values.
+  * Notice prematurely pruned elements during vectorization, and take them into account in training and testing metrics. Tag-level diagnostics in the trainer will show "pruned" for these elements so you can adjust your ``dom()`` calls if desired.
+  * Replace F1 score with the Matthews Correlation Coefficient. MCC doesn't assume same-sized classes (which Fathom problems never have) and also is not sensitive to which side of the problem you call "positive".
+  * Default to early stopping whenever a validation corpus is provided to ``fathom-train``. After all, if you provide a validation corpus, it makes sense that we do something useful with it.
+  * Add some ``fathom-extract`` MIME types we discovered in a recent corpus.
+  * Fix remaining divide-by-zero corner cases in the metrics code. (These would show up in toy corpora that were entirely lacking either positive or negative samples.)
+
 3.4.1
   * Add confusion matrices to ``fathom-train`` and ``fathom-test`` readouts.
   * Catch JS syntax errors and other compile-time errors, and report them in ``fathom-train`` and ``fathom-test``.

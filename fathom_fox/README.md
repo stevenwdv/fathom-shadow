@@ -68,6 +68,10 @@ Thanks to Treora for his excellent freeze-dry library!
 
 ## Version History
 
+### 3.5
+
+* Record prematurely pruned elements. This bumps the vector version number to 2, which means previous versions of the commandline tools will not understand these new vector files.
+
 ### 3.4.1
 
 * Have the Evaluator skip over `about:` tabs that used to crash it with permission problems.
