@@ -92,11 +92,12 @@ def main(testing_set, weights, confidence_threshold, ruleset, trainee, testing_c
     WEIGHTS should be a JSON-formatted object like this. You can paste it
     directly from the output of fathom-train.
 
+    \b
         {"coeffs": [["nextAnchorIsJavaScript", 1.1627885103225708],
-        ["nextButtonTypeSubmit", 4.613410949707031],
-        ["nextInputTypeSubmit", 4.374269008636475]],
-
-        "bias": -8.645608901977539}
+                    ["nextButtonTypeSubmit", 4.613410949707031],
+                    ["nextInputTypeSubmit", 4.374269008636475]],
+    \b
+         "bias": -8.645608901977539}
 
     """
     testing_set = Path(testing_set)

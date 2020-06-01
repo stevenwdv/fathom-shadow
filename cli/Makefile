@@ -32,11 +32,11 @@ venv: $(VIRTUAL_ENV)/pyvenv.cfg
 
 # Make a virtualenv at $VIRTUAL_ENV if there isn't one or if requirements have
 # changed. Install the dev requirements and the actual requirements.
-$(VIRTUAL_ENV)/pyvenv.cfg: dev-requirements.txt setup.py
+$(VIRTUAL_ENV)/pyvenv.cfg: dev-requirements.txt doc-building-requirements.txt setup.py
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
 	# We don't path-qualify pip3 because python -m venv on Travis creates a
 	# venv with no pip executable in it.
-	PATH=$(PATH) pip3 install -r dev-requirements.txt
+	PATH=$(PATH) pip3 install -r dev-requirements.txt -r doc-building-requirements.txt
 	PATH=$(PATH) pip3 install -e . -f https://download.pytorch.org/whl/torch_stable.html
 
 npm_installed:

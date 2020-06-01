@@ -15,13 +15,15 @@ from ..utils import samples_from_dir
         help='Also show the original URL of each sample.')
 def main(in_directory, base_dir, out_file, show_urls):
     """
-    Recursively list paths of HTML files in IN_DIRECTORY relative to BASE_DIR,
-    one path per line. If BASE_DIR is not specified, paths are relative to
-    IN_DIRECTORY. Optionally saves output to OUT_FILE.
+    Recursively list paths of HTML files in IN_DIRECTORY relative to
+    <base_dir>, one path per line. If <base_dir> is not specified,
+    paths are relative to IN_DIRECTORY. Optionally saves output to
+    <out_file>.
 
     This is useful for vectorizing samples using FathomFox. FathomFox expects
     input filenames copied into a text box with one filename per line and
     relative to some path you are serving files from using fathom-serve.
+
     """
     if base_dir is None:
         base_dir = in_directory

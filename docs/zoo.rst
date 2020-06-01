@@ -1,6 +1,6 @@
-========
-Examples
-========
+===========
+Ruleset Zoo
+===========
 
 Welcome to the Fathom Ruleset Zoo, a bestiary of Fathom real-world examples. Each gives an overview and links to a repository with full source code.
 

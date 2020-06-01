@@ -20,11 +20,10 @@ Get Fathom
 * `JS library <https://www.npmjs.com/package/fathom-web>`_ for running rulesets
 * `Source code <https://github.com/mozilla/fathom>`_
 
-Documentation
-=============
-
 .. toctree::
+   :caption: Documentation
    :maxdepth: 2
+   :glob:
 
    intro
    using
@@ -37,13 +36,16 @@ Documentation
    development
    versions
 
-Back Matter
-===========
+.. toctree::
+   :caption: Command Reference
+   :titlesonly:
+   :glob:
+
+   commands/*
 
 .. toctree::
-   :hidden:
+   :caption: Back Matter
 
    glossary
 
-* :doc:`glossary`
 * :ref:`genindex`

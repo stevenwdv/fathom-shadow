@@ -176,27 +176,30 @@ def exclude_features(exclude, vector_data):
 def main(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
     """Compute optimal numerical parameters for a Fathom ruleset.
 
-    There are a lot of options, but the usual invocation is something like...
+    The usual invocation is something like this::
 
-      fathom-train samples/training --validation-set samples/validation --stop-early --ruleset rulesets.js --trainee new
+        fathom-train samples/training --validation-set samples/validation --ruleset rulesets.js --trainee new
 
-    TRAINING_SET_FOLDER is a directory of labeled training pages. It can also
+    The first argument is a directory of labeled training pages. It can also
     be, for backward compatibility, a JSON file of vectors from FathomFox's
     Vectorizer.
 
-    To see graphs of the results, install TensorBoard, then run this:
-    tensorboard --logdir runs/. These will tell you whether you need to adjust
-    the --learning-rate.
+    To see graphs of loss functions, install TensorBoard, then run
+    ``tensorboard --logdir runs/``. These will tell you whether you need to
+    adjust the ``--learning-rate``.
 
-    Some vocab used in the output messages:
+    Definitions of terms used in output:
 
-      target -- A "right answer" DOM node, one that should be recognized
+    \b
+    pruned
+        Said of a node that was prematurely eliminated from consideration
+        because it did not match the selector of any ``dom()`` call in the
+        ruleset
 
-      candidate -- Any node (target or not) brought into the ruleset, by a
-      dom() call, for consideration
-
-      negative sample -- A sample with no intended target nodes, used to bait
-      the recognizer into a false-positive choice
+    \b
+    target
+        A "right answer": a labeled, positive DOM node, one that should be
+        recognized.
 
     """
     training_set = Path(training_set)

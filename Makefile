@@ -5,7 +5,7 @@ all: docs
 	$(MAKE) -C cli
 
 docs:
-	$(MAKE) -C docs docs_clean html
+	$(MAKE) -C docs clean html
 
 lint:
 	$(MAKE) -C cli lint

@@ -13,12 +13,10 @@ from click import argument, command, Path, UsageError
 @argument('number', type=int)
 def main(from_dir, to_dir, number):
     """Move a given number of HTML files and any extracted resources from one
-    directory to another.
-
-    Ignore hidden files.
+    directory to another. Ignore hidden files.
 
     This is useful for dividing a corpus into training, validation, and testing
-    parts.
+    sets.
     """
     # Make these strings into ``Path``s so they are easier to work with
     from_dir = pathlib.Path(from_dir)
