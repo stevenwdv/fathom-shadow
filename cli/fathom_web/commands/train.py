@@ -107,11 +107,6 @@ def exclude_features(exclude, vector_data):
 @argument('training_set',
           type=click.Path(exists=True, resolve_path=True),
           metavar='TRAINING_SET_FOLDER')
-@option('--validation-set', '-a',
-        type=click.Path(exists=True, resolve_path=True),
-        callback=path_or_none,
-        metavar='FOLDER',
-        help="Either a folder of validation pages or a JSON file made manually by FathomFox's Vectorizer. Validation pages are used to avoid overfitting.")
 @option('--ruleset', '-r',
         type=click.Path(exists=True, dir_okay=False, resolve_path=True),
         callback=path_or_none,
@@ -137,6 +132,11 @@ def exclude_features(exclude, vector_data):
         default=False,
         is_flag=True,
         help='Show browser window while vectorizing. (Browser runs in headless mode by default.)')
+@option('--validation-set', '-a',
+        type=click.Path(exists=True, resolve_path=True),
+        callback=path_or_none,
+        metavar='FOLDER',
+        help="Either a folder of validation pages or a JSON file made manually by FathomFox's Vectorizer. Validation pages are used to avoid overfitting.")
 @option('--stop-early/--no-early-stopping', '-s',
         default=True,
         show_default=True,
