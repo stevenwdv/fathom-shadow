@@ -5,7 +5,7 @@ Development
 Tests and Examples
 ==================
 
-`Our tests <https://github.com/mozilla/fathom/tree/master/test>`_, are replete with examples exercising every corner of Fathom.
+`Our tests <https://github.com/mozilla/fathom/tree/master/fathom/test>`_ are replete with examples exercising every corner of Fathom.
 
 To run the tests, run... ::
 
