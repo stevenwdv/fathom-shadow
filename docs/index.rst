@@ -23,18 +23,21 @@ Get Fathom
 .. toctree::
    :caption: Documentation
    :maxdepth: 2
-   :glob:
 
    intro
    using
    training
-   ruleset
-   clustering
-   fnodes
-   utilities
    zoo
    development
-   versions
+
+.. toctree::
+   :caption: API Reference
+   :maxdepth: 2
+
+   ruleset
+   fnodes
+   utilities
+   clustering
 
 .. toctree::
    :caption: Command Reference
@@ -45,7 +48,9 @@ Get Fathom
 
 .. toctree::
    :caption: Back Matter
+   :titlesonly:
 
+   versions
    glossary
 
 * :ref:`genindex`
