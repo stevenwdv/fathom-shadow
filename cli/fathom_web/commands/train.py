@@ -99,7 +99,8 @@ def exclude_features(exclude, vector_data):
     exclude_indices(excluded_indices, feature_names)
     for page in vector_data['pages']:
         for tag in page['nodes']:
-            exclude_indices(excluded_indices, tag['features'])
+            if not tag.get('pruned'):
+                exclude_indices(excluded_indices, tag['features'])
     return vector_data
 
 
