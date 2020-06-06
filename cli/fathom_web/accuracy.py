@@ -203,9 +203,12 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positives, f
         # I figure "same as chance" value 0 is the worst you can get. Wikipedia
         # agrees.
         mcc = 0
+    red = style('', fg='red', reset=False)
+    green = style('', fg='green', reset=False)
+    reset = style('', reset=True)
     return ('\n'
             f'{description: >10} precision: {precision:.4f}   Recall: {recall:.4f}                           Predicted\n'
             f'            Accuracy: {accuracy:.4f}   95% CI: ({ci_low:.4f}, {ci_high:.4f})        ╭───┬── + ───┬── - ───╮\n'
-            f'                 FPR: {false_positive_rate:.4f}   95% CI: ({fpr_ci_low:.4f}, {fpr_ci_high:.4f})   True │ + │ {true_positives: >6} │ {false_negatives: >6} │\n'
-            f'                 FNR: {false_negative_rate:.4f}   95% CI: ({fnr_ci_low:.4f}, {fnr_ci_high:.4f})        │ - │ {false_positives: >6} │ {true_negatives: >6} │\n'
+            f'                 FPR: {false_positive_rate:.4f}   95% CI: ({fpr_ci_low:.4f}, {fpr_ci_high:.4f})   True │ + │ {green}{true_positives: >6}{reset} │ {red}{false_negatives: >6}{reset} │\n'
+            f'                 FNR: {false_negative_rate:.4f}   95% CI: ({fnr_ci_low:.4f}, {fnr_ci_high:.4f})        │ - │ {red}{false_positives: >6}{reset} │ {green}{true_negatives: >6}{reset} │\n'
             f'                 MCC: {mcc:.4f}                                   ╰───┴────────┴────────╯')
