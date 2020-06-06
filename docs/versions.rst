@@ -18,11 +18,11 @@ FathomFox
 CLI tools
 ---------
 
-* Add :command:`fathom-histogram` tool for examining the shapes of individual rule values.
+* Add :doc:`fathom-histogram<commands/histogram>` tool for examining the shapes of individual rule values.
 * Notice prematurely pruned elements during vectorization, and take them into account in training and testing metrics. Tag-level diagnostics in the trainer will show "pruned" for these elements so you can adjust your :func:`dom` calls if desired.
 * Replace F1 score with the Matthews Correlation Coefficient. MCC doesn't assume same-sized classes (which Fathom problems never have) and also is not sensitive to which side of the problem you call "positive".
-* Default to early stopping whenever a validation corpus is provided to :command:`fathom-train`. After all, if you provide a validation corpus, it makes sense that we do something useful with it.
-* Add some :command:`fathom-extract` MIME types we discovered in a recent corpus.
+* Default to early stopping whenever a validation corpus is provided to :doc:`fathom-train<commands/train>`. After all, if you provide a validation corpus, it makes sense that we do something useful with it.
+* Add some :doc:`fathom-extract<commands/extract>` MIME types we discovered in a recent corpus.
 * Fix remaining divide-by-zero corner cases in the metrics code. (These would show up in toy corpora that were entirely lacking either positive or negative samples.)
 
 3.4.1
@@ -41,15 +41,15 @@ FathomFox
 CLI tools
 ---------
 
-* Add confusion matrices to :command:`fathom-train` and :command:`fathom-test` readouts.
-* Catch JS syntax errors and other compile-time errors, and report them in :command:`fathom-train` and :command:`fathom-test`.
+* Add confusion matrices to :doc:`fathom-train<commands/train>` and :doc:`fathom-test<commands/test>` readouts.
+* Catch JS syntax errors and other compile-time errors, and report them in :doc:`fathom-train<commands/train>` and :doc:`fathom-test<commands/test>`.
 * Catch errors due to the absence of prerequisite commands like :command:`npm`.
-* Catch and nicely report HTTP server errors during autovectorization rather than just spewing tracebacks. Add ``--delay`` option to :command:`fathom-train` and :command:`fathom-test` to work around them.
+* Catch and nicely report HTTP server errors during autovectorization rather than just spewing tracebacks. Add ``--delay`` option to :doc:`fathom-train<commands/train>` and :doc:`fathom-test<commands/test>` to work around them.
 * Don't spit out ``nan`` for precision or F1 when we don't get any samples right.
 
 3.4
 ===
-* Make vectorization automatic. This largely obsoletes :command:`fathom-list` and :command:`fathom-serve`. We also remove the need to have 3 terminal tabs open, running :command:`yarn watch`, :command:`yarn browser`, and :command:`fathom-serve`. We remove the error-prone hardlinking of the ruleset into FathomFox, which breaks when git changes to a new branch with a changed ruleset file. We eliminate the possibility of forgetting to revectorize after changing a ruleset or samples. And finally, we pave the way to dramatically simplify our teaching and documentation.
+* Make vectorization automatic. This largely obsoletes :doc:`fathom-list<commands/list>` and :doc:`fathom-serve<commands/serve>`. We also remove the need to have 3 terminal tabs open, running :command:`yarn watch`, :command:`yarn browser`, and :doc:`fathom-serve<commands/serve>`. We remove the error-prone hardlinking of the ruleset into FathomFox, which breaks when git changes to a new branch with a changed ruleset file. We eliminate the possibility of forgetting to revectorize after changing a ruleset or samples. And finally, we pave the way to dramatically simplify our teaching and documentation.
 
   We tried to hew to the CLI design of the previous version of the trainer to keep things familiar. Basically, where you used to pass in a vector file, now feel free to pass in a directory of samples instead. If you do, you'll also need to pass in your ruleset file and the trainee ID so we can turn the samples into vectors behind the scenes. You can also keep passing in vector files manually if you want more control in some niche situation, like if you're trying to reproduce results from an old branch.
 
@@ -59,12 +59,12 @@ CLI tools
 * Add an ``--exclude`` option to the trainer to help with feature ablation.
 * Fix an issue where the trainer would read vectors as non-UTF-8 on Windows.
 * In the trainer output, make tag excerpts that contain wide Unicode chars fit in their columns.
-* Don't show tag excerpts in :command:`fathom-test` by default.
-* Add application/x-javascript and application/font-sfnt to :command:`fathom-extract`'s list of known MIME types.
+* Don't show tag excerpts in :doc:`fathom-test<commands/test>` by default.
+* Add application/x-javascript and application/font-sfnt to :doc:`fathom-extract<commands/extract>`'s list of known MIME types.
 * Merge FathomFox into the Fathom repo.
 * Always use in-project virtualenvs for development. Drop support for external ones.
 * :func:`isVisible` now considers things visible that are merely scrolled out of the viewport.
-* :command:`fathom-list`, though no longer needed in most cases, is now always recursive. It has also learned to ignore ``resources`` directories.
+* :doc:`fathom-list<commands/list>`, though no longer needed in most cases, is now always recursive. It has also learned to ignore ``resources`` directories.
 * :command:`fathom-unzip` is gone.
 
 3.3
@@ -82,9 +82,9 @@ CLI tools
 
 3.2
 ===
-* Add :command:`fathom-test` tool for computing test-corpus accuracies.
-* Add :command:`fathom-extract` to break down frozen pages into small enough pieces to check into GitHub.
-* Add :command:`fathom-serve` to dodge the CORS errors that otherwise happen when loading extracted pages.
+* Add :doc:`fathom-test<commands/test>` tool for computing test-corpus accuracies.
+* Add :doc:`fathom-extract<commands/extract>` to break down frozen pages into small enough pieces to check into GitHub.
+* Add :doc:`fathom-serve<commands/serve>` to dodge the CORS errors that otherwise happen when loading extracted pages.
 * Add a test harness for the Python code.
 * Make :func:`isVisible` more correct and, in Firefox, 13% less janky.
 * Add in-browser test harness for routines that need a real DOM.
@@ -119,7 +119,7 @@ CLI tools
 3.1
 ===
 * Make BAD-element-labeling reliable when using FathomFox to debug rulesets.
-* Add :command:`fathom-list` tool.
+* Add :doc:`fathom-list<commands/list>` tool.
 * Further optimize trainer: about 17x faster for a 60-sample corpus, with superlinear improvements for larger ones.
 
 3.0
@@ -144,8 +144,8 @@ Backward-incompatible changes
 Other specific changes
 ----------------------
 
-* The annealing optimizer is deprecated. Training is now purview of the commandline :command:`fathom-train` tool.
-* Add :command:`fathom-unzip` and :command:`fathom-pick` tools for corpus management.
+* The annealing optimizer is deprecated. Training is now purview of the commandline :doc:`fathom-train<commands/train>` tool.
+* Add :command:`fathom-unzip` and :doc:`fathom-pick<commands/pick>` tools for corpus management.
 * Fix the bad-element labeling in FathomFox (by fixing a file compiled into fathom-trainees).
 * Add utility functions :func:`isVisible`, :func:`rgbaFromString`, :func:`saturation`, :func:`sigmoid`, and :func:`linearScale`.
 * Allow :func:`euclidean` to take HTML elements in addition to fnodes.

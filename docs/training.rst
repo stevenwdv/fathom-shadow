@@ -12,11 +12,11 @@ Collecting Samples
 
 Use `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox's developer tools. Typically, you'll use the latter. See the documentation on the aforementioned page for details.
 
-The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with your application and a ``rulesets.js`` file you create to hold your rulesets. The :command:`fathom-extract` tool makes this feasible; see `Storing Large Corpora in Version Control`_.
+The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with your application and a ``rulesets.js`` file you create to hold your rulesets. The :doc:`fathom-extract<commands/extract>` tool makes this feasible; see `Storing Large Corpora in Version Control`_.
 
 So far, a training set on the order of a few hundred samples has been sufficient to push validation accuracy above 99%. You'll want additional samples for a validation set (to let the trainer know when it's begun to overfit) and a test set (to come up with final accuracy numbers). We recommend a 60/20/20 split among training/validation/testing set. This gives you large enough validation and testing sets, at typical corpus sizes, while shunting as many samples as possible to the training set so you can mine them for rule ideas.
 
-It's important to keep your sets mutually representative. If you have a bunch of samples sorted by some metric, like site popularity or when they were collected, don't use samples 1-100 for training and then 101-200 for validation. Instead, collect a set of samples, and then use :command:`fathom-pick` to proportionally assign them to sets: 60% to training and 20% to each of validation and testing. You can repeat this as you later come to need more samples.
+It's important to keep your sets mutually representative. If you have a bunch of samples sorted by some metric, like site popularity or when they were collected, don't use samples 1-100 for training and then 101-200 for validation. Instead, collect a set of samples, and then use :doc:`fathom-pick<commands/pick>` to proportionally assign them to sets: 60% to training and 20% to each of validation and testing. You can repeat this as you later come to need more samples.
 
 Designing Rules
 ===============
@@ -97,7 +97,7 @@ We've mentioned a number of items to check into version control. Here is a direc
 A few notes:
 
 * The negative samples' numerical IDs are in the same namespace as the positive ones, but we prefix them with an n. This is so that, when the trainer says it assumed a sample was negative because it had no labeled target elements, we can tell at a glance whether it was correct.
-* Samples start in the ``unused`` folder. From there, they should be divided among the training, validation, and testing ones using :command:`fathom-pick`, which randomly moves a given number of files from one directory to another to keep the sets mutually representative.
+* Samples start in the ``unused`` folder. From there, they should be divided among the training, validation, and testing ones using :doc:`fathom-pick<commands/pick>`, which randomly moves a given number of files from one directory to another to keep the sets mutually representative.
 
 Installing Fathom's Commandline Tools
 =====================================
@@ -111,12 +111,12 @@ It's possible your Python package manager ("pip") is called simply "pip" rather 
 Storing Large Corpora in Version Control
 ========================================
 
-Fathom corpora often bump up against the limits imposed by git hosting services like GitHub. Thus, we recommend using `Git Large File Storage (LFS) <https://git-lfs.github.com/>`_ to store samples. This is facilitated by a tool called :command:`fathom-extract`, which breaks large subresources like images back out of the HTML. As a bonus, your HTML files will shrink drastically and become feasible to diff.
+Fathom corpora often bump up against the limits imposed by git hosting services like GitHub. Thus, we recommend using `Git Large File Storage (LFS) <https://git-lfs.github.com/>`_ to store samples. This is facilitated by a tool called :doc:`fathom-extract<commands/extract>`, which breaks large subresources like images back out of the HTML. As a bonus, your HTML files will shrink drastically and become feasible to diff.
 
 Using fathom-extract
 --------------------
 
-:command:`fathom-extract` pulls the inlined data URLs representing subresources (like images and CSS) out of your samples, converts them into images and CSS files, places them in a newly created sample-specific directory within a newly created resources directory, and replaces the data URLs with references to the new files. This let you use Git-LFS to store the new subresource files.
+:doc:`fathom-extract<commands/extract>` pulls the inlined data URLs representing subresources (like images and CSS) out of your samples, converts them into images and CSS files, places them in a newly created sample-specific directory within a newly created resources directory, and replaces the data URLs with references to the new files. This let you use Git-LFS to store the new subresource files.
 
 For example, if you have this directory of samples: ::
 
@@ -174,7 +174,7 @@ Running the Trainer
 
 .. note::
 
-   Fathom has had several trainers over its evolution. Both the Corpus Framework and the trainer built into old versions of FathomFox are obsoleted by :command:`fathom-train`, described herein.
+   Fathom has had several trainers over its evolution. Both the Corpus Framework and the trainer built into old versions of FathomFox are obsoleted by :doc:`fathom-train<commands/train>`, described herein.
 
 Once your samples are collected and at least several rules are written, you're ready to do some initial training. Training is done for one type at a time. If you have types that depend on other types (an advanced case), train the other types first.
 
@@ -240,6 +240,6 @@ A sane authoring process is a feedback loop something like this:
 3. Run the trainer. Start with 10-20 training pages and an equal number of validation ones.
 4. If accuracy is insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their tag excerpts. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
 5. Go back to step 3.
-6. Once *validation accuracy* is sufficient, use the :command:`fathom-test` tool on a fresh set of *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
+6. Once *validation accuracy* is sufficient, use the :doc:`fathom-test<commands/test>` tool on a fresh set of *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
 7. If testing accuracy is too low, imbibe the testing pages into your training set, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
 8. If testing accuracy is sufficient, you're done! Make sure the latest ruleset and coefficients are in your finished product, and ship it.
