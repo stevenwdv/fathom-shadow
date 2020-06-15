@@ -12,7 +12,7 @@ Collecting Samples
 
 Use `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox's developer tools. Typically, you'll use the latter. See the documentation on the aforementioned page for details.
 
-The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we've found is to check them into git, along with your application and a ``rulesets.js`` file you create to hold your rulesets. The :doc:`fathom-extract<commands/extract>` tool makes this feasible; see `Storing Large Corpora in Version Control`_.
+The pages serialized by FathomFox will be large, on the order of 100-200MB each. The best organizational approach we've found is to check them into git, along with your application and a ``rulesets.js`` file you create to hold your rulesets. The :doc:`fathom-extract<commands/extract>` tool makes this feasible; see `Storing Large Corpora in Version Control`_.
 
 So far, a training set on the order of a few hundred samples has been sufficient to push validation accuracy above 99%. You'll want additional samples for a validation set (to let the trainer know when it's begun to overfit) and a test set (to come up with final accuracy numbers). We recommend a 60/20/20 split among training/validation/testing set. This gives you large enough validation and testing sets, at typical corpus sizes, while shunting as many samples as possible to the training set so you can mine them for rule ideas.
 

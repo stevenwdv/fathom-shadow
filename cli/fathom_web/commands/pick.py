@@ -7,16 +7,17 @@ from click import argument, command, Path, UsageError
 
 @command()
 @argument('from_dir',
-          type=Path(exists=True, file_okay=False, writable=True, dir_okay=True, allow_dash=True))
+          type=Path(exists=True, file_okay=False, writable=True, dir_okay=True))
 @argument('to_dir',
-          type=Path(exists=True, file_okay=False, writable=True, dir_okay=True, allow_dash=True))
+          type=Path(exists=True, file_okay=False, writable=True, dir_okay=True))
 @argument('number', type=int)
 def main(from_dir, to_dir, number):
-    """Move a given number of HTML files and any extracted resources from one
-    directory to another. Ignore hidden files.
+    """Move a random selection of HTML files and their extracted resources, if
+    any, from one directory to another. Ignore hidden files.
 
     This is useful for dividing a corpus into training, validation, and testing
     sets.
+
     """
     # Make these strings into ``Path``s so they are easier to work with
     from_dir = pathlib.Path(from_dir)
