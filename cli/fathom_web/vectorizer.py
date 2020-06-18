@@ -11,7 +11,7 @@ from os import devnull, kill, makedirs
 from os.path import expanduser, expandvars, join
 from pathlib import Path
 import platform
-from shutil import copyfile, move, rmtree
+from shutil import copyfileobj, move, rmtree
 import signal
 import socket
 import subprocess
@@ -124,17 +124,17 @@ def out_of_date(sample_cache, ruleset, sample_set):
                 'rulesetHash': ruleset_hash}
 
 
-def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_browser, kind_of_set, delay):
+def vectorize(ruleset_path, trainee_id, samples_directory, output_path, show_browser, kind_of_set, delay):
     """Create feature vectors for a directory of training samples.
 
     We unpack an embedded version of FathomFox, fetch its npm dependencies,
     copy the ruleset into it, bundle it up, run it in a copy of Firefox, and
     drive the Vectorizer with Selenium.
 
-    :arg ruleset_file: Path to the rulesets.js file
+    :arg ruleset_path: Path to the rulesets.js file
     :arg trainee_id: The ID of the desired Fathom trainee in rulesets.js
     :arg samples_directory: Path to the directory containing the sample pages
-    :arg output_file: Where to save the resulting vector file
+    :arg output_path: Where to save the resulting vector file
     :arg show_browser: Whether to show Firefox vs. running it in headless mode
 
     Required for this to work are...
@@ -147,15 +147,16 @@ def vectorize(ruleset_file, trainee_id, samples_directory, output_file, show_bro
     with other currently running Firefox processes.
 
     """
-    with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
-        addon_path, geckodriver_path = addon_and_geckodriver
-        with running_firefox(addon_path,
-                             show_browser,
-                             geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations.
-            with serving(samples_directory) as port:
-                sample_filenames = [str(sample.relative_to(samples_directory))
-                                    for sample in samples_from_dir(samples_directory)]
-                run_vectorizer(firefox, trainee_id, sample_filenames, output_file, kind_of_set, port, delay)
+    with ruleset_path.open('rb') as ruleset_file:
+        with fathom_fox_addon(ruleset_file) as addon_and_geckodriver:
+            addon_path, geckodriver_path = addon_and_geckodriver
+            with running_firefox(addon_path,
+                                 show_browser,
+                                 geckodriver_path) as firefox:  # TODO: I can probably run FF once and share it across the training and validation vectorizations.
+                with serving(samples_directory) as port:
+                    sample_filenames = [str(sample.relative_to(samples_directory))
+                                        for sample in samples_from_dir(samples_directory)]
+                    run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port, delay)
 
 
 @contextmanager
@@ -170,7 +171,8 @@ def fathom_fox_addon(ruleset_file):
             fathom_fox = source / 'fathom_fox'
 
             # Copy in your ruleset:
-            copyfile(ruleset_file, fathom_fox / 'src' / 'rulesets.js')
+            with (fathom_fox / 'src' / 'rulesets.js').open('wb') as new_ruleset_file:
+                copyfileobj(ruleset_file, new_ruleset_file)
 
             # Build FathomFox:
             run(fathom_fox / 'node_modules' / '.bin' / 'rollup',
