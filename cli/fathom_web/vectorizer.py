@@ -264,8 +264,8 @@ def locked_cached_fathom():
             # including it directly from the source tree, we save downloading it
             # afterward (and figuring out where to put it), and FathomFox can
             # continue to refer to Fathom as file:../fathom for easy development.
-            with open_binary('fathom_web', 'fathom.zip') as fathom_zip:
-                zip = ZipFile(fathom_zip)
+            with fathom_zip() as zip_file:
+                zip = ZipFile(zip_file)
                 zip.extractall(hash_dir)
 
             def run_in_fathom_fox(*args, desc):
@@ -602,8 +602,8 @@ def hash_path(path):
 def hash_fathom():
     """Return the first 8 chars of the hash of my embedded copy of the Fathom
     source."""
-    with open_binary('fathom_web', 'fathom.zip') as fathom_zip:
-        return hash_file(fathom_zip)[:8]
+    with fathom_zip() as zip_file:
+        return hash_file(zip_file)[:8]
 
 
 def hash_file(file):
@@ -611,6 +611,14 @@ def hash_file(file):
     for chunk in read_chunks(file):
         hash.update(chunk)
     return hash.hexdigest()
+
+
+@contextmanager
+def fathom_zip():
+    """Return a file-like object representing my embedded, zipped copy of
+    Fathom and FathomFox."""
+    with open_binary('fathom_web', 'fathom.zip') as zip_file:
+        yield zip_file
 
 
 def cache_directory():
