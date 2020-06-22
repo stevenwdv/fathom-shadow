@@ -2,6 +2,11 @@
 Development
 ===========
 
+Source
+======
+
+It's on `GitHub <https://github.com/mozilla/fathom>`_.
+
 Tests and Examples
 ==================
 

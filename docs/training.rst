@@ -99,15 +99,6 @@ A few notes:
 * The negative samples' numerical IDs are in the same namespace as the positive ones, but we prefix them with an n. This is so that, when the trainer says it assumed a sample was negative because it had no labeled target elements, we can tell at a glance whether it was correct.
 * Samples start in the ``unused`` folder. From there, they should be divided among the training, validation, and testing ones using :doc:`fathom-pick<commands/pick>`, which randomly moves a given number of files from one directory to another to keep the sets mutually representative.
 
-Installing Fathom's Commandline Tools
-=====================================
-
-Fathom's commandline tools are Python 3 programs. If you don't already have Python 3.7 or better, download it from https://www.python.org/downloads/. Then, install the Fathom tools by running... ::
-
-    pip3 install fathom-web
-
-It's possible your Python package manager ("pip") is called simply "pip" rather than "pip3". Give that a try if the above fails.
-
 Storing Large Corpora in Version Control
 ========================================
 

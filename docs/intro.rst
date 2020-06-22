@@ -27,12 +27,3 @@ Bonus Features
 * Caching to keep from re-deriving intermediate results between queries
 * Clustering based on a notion of DOM node distance influenced by structural similarity
 * Many handy utils from which to compose scoring callbacks
-
-Support
-=======
-
-You can find us on...
-
-* `Our Matrix chat room <https://chat.mozilla.org/#/room/#fathom:mozilla.org>`_
-* `GitHub <https://github.com/mozilla/fathom>`_
-* `The mailing list <https://mail.mozilla.org/listinfo/fathom>`_
