@@ -7,7 +7,7 @@ Fathom is a supervised-learning system for recognizing parts of web pages—pop-
 Why?
 ====
 
-A study of existing projects like Readability and Distiller suggests that purely imperative approaches to semantic extraction get bogged down in the mechanics of DOM traversal and state accumulation, obscuring the operative parts of the extractors and making new ones long and tedious to write. They involve a lot of human guessing of numerical weights. And they are brittle due to the promiscuous profusion of state. Fathom makes extractors easier to write by providing a declarative language, corpus capture, and neural-net-based training. With these, Fathom handles tree-walking, execution order, weight determination, and annotation bookkeeping so you don't have to.
+A study of existing projects like Readability and Distiller suggests that purely imperative approaches to semantic extraction get bogged down in the mechanics of DOM traversal and state accumulation, obscuring the operative parts of the extractors and making new ones long and tedious to write. They involve a lot of human guessing of numerical weights. And they are brittle due to the promiscuous profusion of state. Fathom makes extractors easier to write by providing a declarative language, corpus capture, and neural-net-based training. With these, Fathom handles tree-walking, execution order, weight determination, and annotation bookkeeping, letting you concentrate on your application.
 
 Specific Areas We Address
 =========================

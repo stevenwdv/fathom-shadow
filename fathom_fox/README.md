@@ -12,7 +12,7 @@ FathomFox’s primary job is to serialize web pages and let you label elements o
 
 1. Navigate to a web page that has what you’re trying to recognize: for instance, a background overlay behind a modal dialog, as the provided example ruleset seeks out.
 2. Right-click the element, and choose Inspect Element. If the right element eluded your click, fine-tune using Firefox’s developer tools’ Inspector.
-3. Switch to the Fathom developer tools tab, enter “overlay” (or whatever label you choose for your own project) in the label field, and click Save Page. It “freezes” those pages to your usual downloads folder, inlining images and CSS into data URLs and getting rid of JS to keep pages deterministic so they can be used as a reliable basis for training or testing. (Scripts loading scripts loading other scripts is surprisingly common in the wild, which often makes pages turn out unpredictably, not to mention being dependent on the network.)
+3. Switch to the Fathom developer tools tab, enter a label of your choice in the label field, and click Save Page. It “freezes” those pages to your usual downloads folder, inlining images and CSS into data URLs and getting rid of JS to keep pages deterministic so they can be used as a reliable basis for training or testing. (Scripts loading scripts loading other scripts is surprisingly common in the wild, which often makes pages turn out unpredictably, not to mention being dependent on the network.)
 4. Label at least 20 pages like this before you attempt any training.
 
 ### Tips
