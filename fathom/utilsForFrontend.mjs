@@ -118,9 +118,9 @@ export function length(iterable) {
  * Iterate, depth first, over a DOM node. Return the original node first.
  *
  * @arg shouldTraverse {function} Given a node, say whether we should
- *     include it and its children
+ *     include it and its children. Default: always true.
  */
-export function *walk(element, shouldTraverse) {
+export function *walk(element, shouldTraverse = element => true) {
     yield element;
     for (let child of element.childNodes) {
         if (shouldTraverse(child)) {
