@@ -13,7 +13,7 @@ from ..vectorizer import make_or_find_vectors
 @command()
 @argument('training_set',
           type=click.Path(exists=True, resolve_path=True),
-          metavar='TESTING_SET_FOLDER')
+          metavar='TRAINING_SET_FOLDER')
 @option('--ruleset', '-r',
         type=click.Path(exists=True, dir_okay=False, resolve_path=True),
         callback=path_or_none,
@@ -40,10 +40,10 @@ from ..vectorizer import make_or_find_vectors
         type=int,
         show_default=True,
         help='Number of histogram buckets to use for non-boolean features')
-@option('features', '--feature', '-f',
+@option('features', '--rule',
         type=str,
         multiple=True,
-        help='The features to graph. Omitting this graphs all features.')
+        help='The rules to graph. Omitting this graphs all rules.')
 def main(training_set, ruleset, trainee, training_cache, delay, show_browser, buckets, features):
     """Print a histogram of feature values, showing what proportion at each
     value was a positive or negative sample.
