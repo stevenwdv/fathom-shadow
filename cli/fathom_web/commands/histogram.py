@@ -40,15 +40,15 @@ from ..vectorizer import make_or_find_vectors
         type=int,
         show_default=True,
         help='Number of histogram buckets to use for non-boolean features')
-@option('features', '--rule',
+@option('rules', '--rule',
         type=str,
         multiple=True,
-        help='The rules to graph. Omitting this graphs all rules.')
-def main(training_set, ruleset, trainee, training_cache, delay, show_browser, buckets, features):
-    """Print a histogram of feature values, showing what proportion at each
-    value was a positive or negative sample.
+        help='The rule to graph. Can be repeated. Omitting this graphs all rules.')
+def main(training_set, ruleset, trainee, training_cache, delay, show_browser, buckets, rules):
+    """Print a histogram of rule scores, showing what proportion at each
+    score was a positive or negative sample.
 
-    This gives you an idea whether a feature is broadly applicable,
+    This gives you an idea whether a rule is broadly applicable,
     discriminatory, and spitting out what you expect.
 
     """
@@ -70,13 +70,13 @@ def main(training_set, ruleset, trainee, training_cache, delay, show_browser, bu
     training_pages = training_data['pages']
     x, y, num_yes, _ = tensors_from(training_pages)
     feature_names = training_data['header']['featureNames']
-    print_feature_report(feature_metrics(feature_names, x, y, buckets, features or feature_names))
+    print_feature_report(feature_metrics(feature_names, x, y, buckets, rules or feature_names))
 
 
-def feature_metrics(feature_names, x, y, buckets, enabled_features):
+def feature_metrics(feature_names, x, y, buckets, enabled_rules):
     x_t = x.T  # [[...feature0 values across all pages...], [...feature1 values...], ...].
     for name, values in zip(feature_names, x_t):
-        if name not in enabled_features:
+        if name not in enabled_rules:
             continue
         is_boolean = is_boolean_feature(values)
         _, boundaries = histogram(values.numpy(),

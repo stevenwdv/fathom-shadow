@@ -108,3 +108,10 @@ Identifying Misrecognized Elements
 ----------------------------------
 
 The Evaluator can also point out misrecognized elements, in case the tag exerpts emitted by the trainer are insufficient to identify them. When you click Evaluate, as above, any pages with misrecognized nodes will show up in red; click those to see which element was wrongly selected. Unfortunately, you need to manually show the dev tools and switch to the Fathom panel once you get to the page in question; there aren’t yet web extension APIs to do it automatically. Once you do, you’ll see a quick and dirty representation of the “bad” element: a new label called “BAD [the trainee ID]”. Be sure to delete this if you choose to re-save the page for some reason. Also note that the BAD label is created only when the bad cell is clicked, for speed; if you navigate to the bad page manually, the label won’t be there, or there might be an old label from a previous iteration.
+
+fathom-histogram
+----------------
+
+Finally, a great way to examine the score values your rules are emitting is :doc:`fathom-histogram<commands/histogram>`. It can show you how useful a discriminator a rule is and help you notice when the distribution of output values is not what you expect.
+
+.. image:: img/histogram.png
