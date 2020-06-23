@@ -24,6 +24,8 @@ These are the control structures which govern the flow of scores, types, and not
 
 .. autofunction:: rule
 
+.. _lhs:
+
 Left-hand Sides
 ---------------
 

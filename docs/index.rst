@@ -12,21 +12,16 @@ Fathom
 
 Find meaning in the web.
 
-Get Fathom
-===========
-
-* `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_, the Firefox add-on for labeling samples
-* `Trainer and other commandline tools <https://pypi.org/project/fathom-web/>`_ for authoring rulesets
-* `JS library <https://www.npmjs.com/package/fathom-web>`_ for running rulesets
-* `Source code <https://github.com/mozilla/fathom>`_
-
 .. toctree::
    :caption: Documentation
    :maxdepth: 2
 
    intro
-   using
+   installing
+   samples
+   rules
    training
+   integrating
    zoo
    development
 
@@ -46,10 +41,20 @@ Get Fathom
 
    commands/*
 
+Support
+=======
+
+You can find us on...
+
+* `Our Matrix chat room <https://chat.mozilla.org/#/room/#fathom:mozilla.org>`_
+* `GitHub <https://github.com/mozilla/fathom>`_
+* `The mailing list <https://mail.mozilla.org/listinfo/fathom>`_
+
 .. toctree::
    :caption: Back Matter
    :titlesonly:
 
+   example
    versions
    glossary
 
