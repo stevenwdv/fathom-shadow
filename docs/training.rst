@@ -73,11 +73,38 @@ Workflow
 
 A sane authoring process is a feedback loop something like this:
 
-1. Collect samples. Observe patterns in the :term:`target` nodes as you do.
-2. Write a few rules based on your observations.
-3. Run the trainer. Start with 10-20 training pages and an equal number of validation ones.
-4. If accuracy is insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their tag excerpts. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
-5. Go back to step 3.
-6. Once *validation accuracy* is sufficient, use the :doc:`fathom-test<commands/test>` tool on a fresh set of *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
-7. If testing accuracy is too low, imbibe the testing pages into your training set, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
-8. If testing accuracy is sufficient, you're done! Make sure the latest ruleset and coefficients are in your finished product, and ship it.
+#. Collect samples. Observe patterns in the :term:`target` nodes as you do.
+#. Write a few rules based on your observations.
+#. Run the trainer. Start with 10-20 training pages and an equal number of validation ones.
+#. If accuracy is insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their tag excerpts. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
+#. Go back to step 3.
+#. Once *validation accuracy* is sufficient, use the :doc:`fathom-test<commands/test>` tool on a fresh set of *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
+#. If testing accuracy is too low, imbibe the testing pages into your training set, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
+#. If testing accuracy is sufficient, you're done! Make sure the latest ruleset and coefficients are in your finished product, and ship it.
+
+Debugging
+=========
+
+Setting Breakpoints
+-------------------
+
+If the trainer reports JavaScript errors, you've probably got a bug in your ruleset code. If you can't find it by examination and need to place a breakpoint, the tool of choice is the FathomFox Evaluator.
+
+#. Make sure you have the latest trained coefficients and biases pasted into your ruleset.
+#. Run :doc:`fathom-fox<commands/fox>`, and pass it your ruleset::
+
+    fathom-fox -r rulesets.js
+
+#. Use the instance of Firefox that comes up to open a page that you think will reproduce the problem.
+#. Show the dev tools, and navigate to the Debugger panel.
+#. In the disclosure tree to the left, disclose FathomFox, and select `rulesets.js`.
+#. Scroll to the bottom, past the minified mess, and you’ll see your ruleset code. Place a breakpoint as you like, probably in one of your scoring callbacks.
+#. Invoke the Evaluator from the Fathom toolbar menu.
+#. Click Evaluate to run the ruleset over the loaded tabs.
+
+You’ll end up in the debugger, paused at your breakpoint.
+
+Identifying Misrecognized Elements
+----------------------------------
+
+The Evaluator can also point out misrecognized elements, in case the tag exerpts emitted by the trainer are insufficient to identify them. When you click Evaluate, as above, any pages with misrecognized nodes will show up in red; click those to see which element was wrongly selected. Unfortunately, you need to manually show the dev tools and switch to the Fathom panel once you get to the page in question; there aren’t yet web extension APIs to do it automatically. Once you do, you’ll see a quick and dirty representation of the “bad” element: a new label called “BAD [the trainee ID]”. Be sure to delete this if you choose to re-save the page for some reason. Also note that the BAD label is created only when the bad cell is clicked, for speed; if you navigate to the bad page manually, the label won’t be there, or there might be an old label from a previous iteration.
