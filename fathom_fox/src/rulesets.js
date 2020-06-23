@@ -1,16 +1,16 @@
-import {ruleset, rule, dom, type, score, out} from 'fathom-web';
-import {ancestors, isVisible, linearScale, rgbaFromString, saturation} from 'fathom-web/utilsForFrontend';
+import {ruleset, rule, dom, type, score, out, utils} from 'fathom-web';
+const {ancestors, isVisible, linearScale, rgbaFromString, saturation} = utils;
 
 
 /**
  * Rulesets to vectorize or debug (and metadata about them)
  *
  * More mechanically, a map of names to {coeffs, rulesetMaker, ...} objects,
- * which we call "trainees". The rulesets you specify here show up in the
- * FathomFox UI, from which you can debug a ruleset or turn it into vectors for
- * use with the command-line trainer. Most often, all the entries here point to
- * the same ruleset but have different values of `vectorType` for separately
- * training each type of thing the ruleset recognizes.
+ * which we call "trainees". The rulesets you specify here are available to the
+ * trainer and also show up in the FathomFox UI, from which you can debug a
+ * ruleset. Most often, all the entries here point to the same ruleset but have
+ * different values of `vectorType` for separately training each type of thing
+ * the ruleset recognizes.
  */
 const trainees = new Map();
 
@@ -23,11 +23,13 @@ const trainees = new Map();
  */
 trainees.set(
     // The ID for this trainee, which must be the same as the Fathom type you
-    // are evaluating, if you are using the Evaluator:
+    // are evaluating, if you are using the FathomFox Evaluator:
     'overlay',
 
     // Here we paste in coefficients from fathom-train. This lets us use the
-    // Evaluator to see what Fathom is getting wrong:
+    // Evaluator to see what Fathom is getting wrong. Otherwise, these numbers
+    // do nothing until you deploy your application, so there's no need to
+    // maintain them until then.
     {coeffs: new Map([  // [rule name, coefficient]
         ['big', 50.4946],
         ['nearlyOpaque', 48.6396],
@@ -119,12 +121,24 @@ trainees.set(
             /* The actual ruleset */
 
             const rules = ruleset([
+                // Consider all <div> tags as candidate overlays:
                 rule(dom('div'), type('overlay')),
+
+                // Contribute the "bigness" of the node to its overlay score:
                 rule(type('overlay'), score(big), {name: 'big'}),
+        
+                // Contibute the opacity of the node to its overlay score:
                 rule(type('overlay'), score(nearlyOpaque), {name: 'nearlyOpaque'}),
+        
+                // Contribute some other signals as well:
                 rule(type('overlay'), score(monochrome), {name: 'monochrome'}),
                 rule(type('overlay'), score(suspiciousClassOrId), {name: 'classOrId'}),
                 rule(type('overlay'), score(isVisible), {name: 'visible'}),
+
+                // Offer the max-scoring overlay-typed node under the output key
+                // "overlay". The score on that node will represent the probability,
+                // informed by a corpus of training samples, that the node is, indeed,
+                // a pop-up overlay.
                 rule(type('overlay').max(), out('overlay'))
             ]);
             return rules;

@@ -96,7 +96,7 @@ class Ruleset {
  * A ruleset that is earmarked to analyze a certain DOM
  *
  * Carries a cache of rule results on that DOM. Typically comes from
- * :func:`against`.
+ * :meth:`~Ruleset.against`.
  */
 class BoundRuleset {
     /**

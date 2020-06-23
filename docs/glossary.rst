@@ -5,16 +5,16 @@ Glossary
 .. glossary::
 
    candidate
-       Any node (:term:`target` or not) brought into the ruleset by a :func:`dom` call for consideration
+       Any node (:term:`target` or not) brought into the ruleset by a :func:`dom` or :func:`element` call for consideration
 
    fnode
-       A data structure parallel to a DOM node, holding :term:`scores<score>`, :term:`notes<note>`, and :term:`types<type>` pertaining to it. See :doc:`fnodes`.
+       A wrapper around a DOM node, holding :term:`scores<score>`, :term:`notes<note>`, and :term:`types<type>` pertaining to it. See :doc:`fnodes`.
 
    note
        An arbitrary, opaque-to-Fathom piece of data attached to a given :term:`type` on a :term:`fnode`. Notes can be consulted by scoring callbacks and are a good place to park expensive-to-recompute information. They are the main way of passing data between rules.
 
    ruleset
-       The unordered collection of rules that forms a Fathom program. See :doc:`using` for more on the relationships between top-level constructs.
+       The unordered collection of rules that forms a Fathom program. See :doc:`rules` for more on the relationships between top-level constructs.
 
    score
        The fuzzy-edged part of :term:`fnode` state. A floating-point number, typically between 0 and 1, attached to a certain :term:`type` on a :term:`fnode`. They represent the confidence with which a node belongs to a type.

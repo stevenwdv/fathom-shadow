@@ -1,8 +1,10 @@
-============
-Installation
-============
+==========
+Installing
+==========
 
 Fathom consists of 3 parts. Here's how to install each one.
+
+.. _fathomfox-installation:
 
 FathomFox
 =========
@@ -29,7 +31,7 @@ Fathom
 
 Fathom proper is a JS library which runs trained rulesets to do the actual recognition. You don't need to worry about installing it until your rulesets are performing satisfactorily and you're ready to integrate them with your application.
 
-If your application runs server-side under node.js, you can install `the Fathom node package <https://www.npmjs.com/package/fathom-web>`_ like any other dependency::
+If your application runs server-side under `node.js <https://nodejs.org/en/>`_, you can install `the Fathom node package <https://www.npmjs.com/package/fathom-web>`_ like any other dependency::
 
     npm install fathom-web
 

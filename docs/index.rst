@@ -17,9 +17,11 @@ Find meaning in the web.
    :maxdepth: 2
 
    intro
-   installation
-   using
+   installing
+   samples
+   rules
    training
+   integrating
    zoo
    development
 
@@ -52,6 +54,7 @@ You can find us on...
    :caption: Back Matter
    :titlesonly:
 
+   example
    versions
    glossary
 
