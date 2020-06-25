@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const version = '3.5.0';
+const version = '3.6.0';
 import {rule} from './rule';
 import {ruleset} from './ruleset';
 import {dom, element} from './lhs';

@@ -34,6 +34,8 @@ Find meaning in the web.
    utilities
    clustering
 
+.. _command-reference:
+
 .. toctree::
    :caption: Command Reference
    :titlesonly:
