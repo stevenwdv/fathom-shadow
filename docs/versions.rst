@@ -2,6 +2,37 @@
 Version History
 ===============
 
+3.6
+===
+
+Fathom
+------
+
+* Have :func:`walk` default to walking all elements rather than insisting the caller provide a predicate.
+
+FathomFox
+---------
+
+* Make Vectorizer concurrency customizable.
+* Remove Retry checkbox from Vectorizer. We automatically do the right thing now.
+
+CLI tools
+---------
+
+* Add the :doc:`fathom-fox<commands/fox>` command. This makes it more convenient for labelers to get FathomFox going in a blank Firefox profile, for those who have the commandline tools installed. Setting up a profile otherwise requires multiple steps and is easy to neglect.
+* Make the number of concurrent tabs during vectorization customizable, which can boost performance on big machines.
+* Fix a crash when :doc:`fathom-train<commands/train>` ``-x`` was used on a sample set that had premature prunings.
+* Color cells of the confusion matrix according to whether they're good or bad.
+* Change ``--feature`` to ``--rule`` in :doc:`fathom-histogram<commands/histogram>` for consistency of vocabulary.
+
+Docs
+----
+
+* Modernize the docs and make them a chronological how-to.
+* Auto-extract reference docs for CLI tools.
+* Add canonical :doc:`example` to the docs, since few have cause to check out the FathomFox source (where it lives) anymore.
+* Merge most of the FathomFox readme into the Sphinx docs.
+
 3.5
 ===
 
