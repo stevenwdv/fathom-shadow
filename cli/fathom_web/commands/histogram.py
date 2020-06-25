@@ -31,6 +31,11 @@ from ..vectorizer import make_or_find_vectors
         type=int,
         show_default=True,
         help='Number of seconds to wait for a page to load before vectorizing it')
+@option('--tabs',
+        default=16,
+        type=int,
+        show_default=True,
+        help='Number of concurrent browser tabs to use while vectorizing')
 @option('--show-browser',
         default=False,
         is_flag=True,
@@ -44,7 +49,7 @@ from ..vectorizer import make_or_find_vectors
         type=str,
         multiple=True,
         help='The rule to graph. Can be repeated. Omitting this graphs all rules.')
-def main(training_set, ruleset, trainee, training_cache, delay, show_browser, buckets, rules):
+def main(training_set, ruleset, trainee, training_cache, delay, tabs, show_browser, buckets, rules):
     """Print a histogram of rule scores, showing what proportion at each
     score was a positive or negative sample.
 
@@ -66,7 +71,8 @@ def main(training_set, ruleset, trainee, training_cache, delay, show_browser, bu
         training_cache,
         show_browser,
         'training',
-        delay)
+        delay,
+        tabs)
     training_pages = training_data['pages']
     x, y, num_yes, _ = tensors_from(training_pages)
     feature_names = training_data['header']['featureNames']

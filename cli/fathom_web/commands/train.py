@@ -129,6 +129,11 @@ def exclude_features(exclude, vector_data):
         type=int,
         show_default=True,
         help='Number of seconds to wait for a page to load before vectorizing it')
+@option('--tabs',
+        default=16,
+        type=int,
+        show_default=True,
+        help='Number of concurrent browser tabs to use while vectorizing')
 @option('--show-browser',
         default=False,
         is_flag=True,
@@ -174,7 +179,7 @@ def exclude_features(exclude, vector_data):
         type=str,
         multiple=True,
         help='Exclude a rule while training. This helps with before-and-after tests to see if a rule is effective.')
-def main(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
+def main(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, tabs, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
     """Compute optimal numerical parameters for a Fathom ruleset.
 
     The usual invocation is something like this::
@@ -221,7 +226,8 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                              training_cache,
                              show_browser,
                              'training',
-                             delay))
+                             delay,
+                             tabs))
     training_pages = training_data['pages']
     x, y, num_yes, num_prunes = tensors_from(training_pages, shuffle=True)
     num_samples = len(x) + num_prunes
@@ -235,7 +241,8 @@ def main(training_set, validation_set, ruleset, trainee, training_cache, validat
                                  validation_cache,
                                  show_browser,
                                  'validation',
-                                 delay))['pages']
+                                 delay,
+                                 tabs))['pages']
         validation_ins, validation_outs, validation_yes, validation_prunes = tensors_from(validation_pages)
         validation_arg = validation_ins, validation_outs
     else:

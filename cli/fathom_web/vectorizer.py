@@ -44,7 +44,7 @@ class Timeout(Exception):
     """``retry()`` finished all its tries without succeeding."""
 
 
-def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay):
+def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay, tabs):
     """Return the contents of a vector file, building it first if necessary.
 
     If passed a vector file for ``sample_set``, we return it verbatim. If
@@ -64,7 +64,7 @@ def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browse
         updated_hashes = out_of_date(sample_cache, ruleset, sample_set)
         if updated_hashes:
             # Make a vectors file, replacing it if already present:
-            vectorize(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay)
+            vectorize(ruleset, trainee, sample_set, sample_cache, show_browser, kind_of_set, delay, tabs)
             # Stick the new hashes in it:
             with sample_cache.open(encoding='utf-8') as file:
                 json = load(file)
@@ -124,7 +124,7 @@ def out_of_date(sample_cache, ruleset, sample_set):
                 'rulesetHash': ruleset_hash}
 
 
-def vectorize(ruleset_path, trainee_id, samples_directory, output_path, show_browser, kind_of_set, delay):
+def vectorize(ruleset_path, trainee_id, samples_directory, output_path, show_browser, kind_of_set, delay, tabs):
     """Create feature vectors for a directory of training samples.
 
     We unpack an embedded version of FathomFox, fetch its npm dependencies,
@@ -156,7 +156,7 @@ def vectorize(ruleset_path, trainee_id, samples_directory, output_path, show_bro
                 with serving(samples_directory) as port:
                     sample_filenames = [str(sample.relative_to(samples_directory))
                                         for sample in samples_from_dir(samples_directory)]
-                    run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port, delay)
+                    run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port, delay, tabs)
 
 
 @contextmanager
@@ -460,7 +460,7 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
 FAILURE_SIGNIFIER = 'failed:'
 
 
-def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port, delay):
+def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_set, port, delay, tabs):
     """Set up the vectorizer and run it, creating the vector file.
 
     Move the vector file to ``output_path``, replacing any file already there.
@@ -471,6 +471,12 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_s
     we know when the Vectorizer has stopped running.
 
     """
+    def put_into_field(field_id, string):
+        """Put a given string into the text field of a given ID."""
+        field = firefox.find_element_by_id(field_id)
+        field.clear()
+        field.send_keys(string)
+
     print('Configuring Vectorizer...', end='', flush=True)
     # Navigate to the vectorizer page
     fathom_fox_uuid = get_fathom_fox_uuid(firefox)
@@ -482,16 +488,10 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_s
     except NoSuchElementException:
         raise UngracefulError(f"Couldn't find trainee ID \"{trainee_id}\" in your rulesets.")
 
-    pages_text_area = firefox.find_element_by_id('pages')
-    pages_text_area.send_keys('\n'.join(sample_filenames))
-
-    base_url_field = firefox.find_element_by_id('baseUrl')
-    base_url_field.clear()
-    base_url_field.send_keys(f'http://localhost:{port}/')
-
-    wait_field = firefox.find_element_by_id('wait')
-    wait_field.clear()
-    wait_field.send_keys(str(delay))
+    put_into_field('pages', '\n'.join(sample_filenames))
+    put_into_field('baseUrl', f'http://localhost:{port}/')
+    put_into_field('wait', str(delay))
+    put_into_field('maxTabs', str(tabs))
 
     number_of_samples = len(sample_filenames)
     status_box = firefox.find_element_by_id('status')
