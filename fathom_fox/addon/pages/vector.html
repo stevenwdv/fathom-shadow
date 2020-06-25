@@ -58,6 +58,10 @@
           <label for="baseUrl" title="This gets prepended to each page title to make a URL.">Base URL:</label>
           <input type="text" size="30" id="baseUrl" value="http://localhost:8000/">
         </div>
+        <div>
+          <label for="maxTabs" title="Vectorize this many tab at a time.">Concurrency:</label>
+          <input class="number" type="text" required pattern="[0-9]+" min="1" size="2" id="maxTabs" value="16"> tabs
+        </div>
       </div>
     </form>
     <ul id="status"></ul>

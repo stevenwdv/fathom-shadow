@@ -31,6 +31,11 @@ class Vectorizer extends PageVisitor {
             return undefined;
         }
 
+        options.maxTabs = parseFloat(this.doc.getElementById('maxTabs').value);
+        if (Number.isNaN(options.maxTabs) || options.maxTabs < 1) {
+            return undefined;
+        }
+
         options.otherOptions = {
             wait: parseInt(this.doc.getElementById('wait').value),
         };

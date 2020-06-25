@@ -50,6 +50,10 @@ class CorpusCollector extends PageVisitor {
         if (options.urls.length === 0) {
             return undefined;
         }
+
+        // Not customizeable just because nobody asked for it yet:
+        options.maxTabs = 16;
+
         return options;
     }
 

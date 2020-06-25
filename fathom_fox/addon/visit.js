@@ -7,7 +7,7 @@ class PageVisitor {
         this.tabIdToUrlsIndex = new Map();  // Maps tab IDs to an index in this.urls
         this.urlIndex = undefined;  // index of current URL in this.urls
         this.tabsDone = undefined;
-        this.maxTabs = 16;
+        this.maxTabs = undefined;
         this.timeout = undefined;
         this.viewportWidth = undefined;
         this.viewportHeight = undefined;
@@ -42,6 +42,7 @@ class PageVisitor {
         }
         this.urls = options.urls;
         this.timeout = options.timeout;
+        this.maxTabs = Math.min(options.maxTabs, this.urls.length);
         this.otherOptions = options.otherOptions;
 
         const viewportSize = this.getViewportHeightAndWidth();
@@ -54,7 +55,6 @@ class PageVisitor {
         let windowId = 'uninitialized window ID';
         this.urlIndex = -1;
         this.tabsDone = 0;
-        this.maxTabs = Math.min(this.maxTabs, this.urls.length);
 
         // Listen for tab events before we start creating tabs; this avoids race
         // conditions between creating tabs and waiting for loading to complete.
@@ -238,10 +238,10 @@ class PageVisitor {
     /**
      * Return a collection of user input from the form.
      *
-     * @return {urls, timeout, otherOptions}, where `otherOptions` is an
-     *     object encapsulating options specific to the PageVisitor subclass,
-     *     opaque to the superclass. If the form data is invalid or contains
-     *     no URLs, return undefined instead.
+     * @return {urls, timeout, maxTabs, otherOptions}, where `otherOptions` is
+     *     an object encapsulating options specific to the PageVisitor
+     *     subclass, opaque to the superclass. If the form data is invalid or
+     *     contains no URLs, return undefined instead.
      */
     formOptions() {
         throw new Error('You must implement formOptions()')
