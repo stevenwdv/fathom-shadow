@@ -33,7 +33,6 @@ class Vectorizer extends PageVisitor {
 
         options.otherOptions = {
             wait: parseInt(this.doc.getElementById('wait').value),
-            retryOnError: this.doc.getElementById('retryOnError').checked
         };
 
         return options;
@@ -66,7 +65,7 @@ class Vectorizer extends PageVisitor {
         // Have the content script vectorize the page:
         let vector = undefined;
         let tries = 0;
-        const maxTries = this.otherOptions.retryOnError ? 100 : 1;  // 10 is not enough.
+        const MAX_TRIES = 100;  // 10 is not enough.
         while (vector === undefined) {
             try {
                 tries++;
@@ -84,7 +83,7 @@ class Vectorizer extends PageVisitor {
                 // Oddly, they keep rolling in for minutes, even after
                 // vectorization has completed successfully. That probably
                 // points to something wrong on our end.
-                if (tries >= maxTries || !this.isTransientError(error)) {
+                if (tries >= MAX_TRIES || !this.isTransientError(error)) {
                     this.errorAndStop(`failed: ${error}`, tab.id, windowId);
                     break;
                 } else {
