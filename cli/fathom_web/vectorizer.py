@@ -194,7 +194,7 @@ def fathom_fox_addon(ruleset_file):
 
 def add_cmd_if_windows(binary_path):
     """Add the .cmd suffix to a pathlib.Path if running on Windows."""
-    if platform.system() == 'Windows':
+    if os.name == 'nt':
         return binary_path.with_suffix('.cmd')
     else:
         return binary_path
@@ -284,12 +284,14 @@ def locked_cached_fathom():
             # Install yarn, because it installs FathomFox's dependencies in 15s rather
             # than 30s. And once installed once, yarn itself takes only 1.5s to install
             # again. Also, it has security advantages. Though this install itself isn't
-            # hashed, so we're just trusting NPM.
+            # hashed, so we're just trusting NPM. Additionally, we have to call
+            # shutils.which() on npm because it is a .cmd file on Windows, while node
+            # (down below) is an executable.
             run_in_fathom_fox(which('npm'), 'install', 'yarn@1.22.4',
                               desc='Installing yarn')
 
             # Figure out how to invoke yarn:
-            if platform.system() == 'Windows':
+            if os.name == 'nt':
                 yarn_binary = str((fathom_fox / 'node_modules' / 'yarn' / 'bin' / 'yarn.js').resolve())
             else:
                 yarn_binary = str((fathom_fox / 'node_modules' / '.bin' / 'yarn').resolve())
