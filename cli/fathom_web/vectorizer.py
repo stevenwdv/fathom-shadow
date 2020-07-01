@@ -174,11 +174,7 @@ def fathom_fox_addon(ruleset_file):
                 copyfileobj(ruleset_file, new_ruleset_file)
 
             # Build FathomFox:
-            if platform.system() == 'Windows':
-                rollup_path = str((fathom_fox / 'node_modules' / '.bin' / 'rollup.cmd').resolve())
-            else:
-                rollup_path = str((fathom_fox / 'node_modules' / '.bin' / 'rollup').resolve())
-            run(rollup_path,
+            run(str(add_cmd_if_windows((fathom_fox / 'node_modules' / '.bin' / 'rollup').resolve())),
                 '-c',
                 cwd=fathom_fox,
                 desc='Compiling ruleset')
@@ -193,11 +189,15 @@ def fathom_fox_addon(ruleset_file):
         # It should be okay to reference geckodriver outside the
         # locked_cached_fathom() lock, since that part of the cache is
         # immutable:
-        if platform.system() == 'Windows':
-            geckodriver_path = (fathom_fox / 'node_modules' / '.bin' / 'geckodriver.cmd')
-        else:
-            geckodriver_path = (fathom_fox / 'node_modules' / '.bin' / 'geckodriver')
-        yield addon_path, geckodriver_path
+        yield addon_path, add_cmd_if_windows(fathom_fox / 'node_modules' / '.bin' / 'geckodriver')
+
+
+def add_cmd_if_windows(binary_path):
+    """Add the .cmd suffix to a pathlib.Path if running on Windows."""
+    if platform.system() == 'Windows':
+        return binary_path.with_suffix('.cmd')
+    else:
+        return binary_path
 
 
 def remove_old_fathom_caches(source_cache, current_hash):
