@@ -41,14 +41,19 @@ MIME_TYPE_TO_FILE_EXTENSION = {
     'image/jpg': '.jpg',
     'image/xicon': '.ico',
     'image/x-icon': '.ico',
+    'image/ico': '.ico',
+    'img/png': '.png',
     'application/fontwoff2': '.woff2',
     'application/fontwoff': '.woff',
+    'font/x-woff': '.woff',
     'application/x-font-woff': '.woff',
     'application/font-ttf': '.ttf',
+    'application/x-font-truetype': '.ttf',
     'application/x-javascript': '.js',
     'application/font-sfnt': '.sfnt',
     'application/vnd.ms-opentype': 'otf',
     'application/x-mpegurl': '.m3u8',
+    'text/x-component': '.htc',
 }
 
 
