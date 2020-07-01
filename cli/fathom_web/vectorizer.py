@@ -8,15 +8,14 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from importlib.resources import open_binary
 import os
 from os import devnull, kill, makedirs
-from os.path import expanduser, expandvars, join
+from os.path import expanduser, expandvars
 from pathlib import Path
 import platform
-from shutil import copyfileobj, move, rmtree
+from shutil import copyfileobj, move, rmtree, which
 import signal
 import socket
 import subprocess
 from subprocess import CalledProcessError
-import sys
 from sys import exc_info
 from tempfile import TemporaryDirectory
 from threading import Thread
@@ -175,7 +174,7 @@ def fathom_fox_addon(ruleset_file):
                 copyfileobj(ruleset_file, new_ruleset_file)
 
             # Build FathomFox:
-            run(fathom_fox / 'node_modules' / '.bin' / 'rollup',
+            run(str(add_cmd_if_windows((fathom_fox / 'node_modules' / '.bin' / 'rollup').resolve())),
                 '-c',
                 cwd=fathom_fox,
                 desc='Compiling ruleset')
@@ -190,7 +189,15 @@ def fathom_fox_addon(ruleset_file):
         # It should be okay to reference geckodriver outside the
         # locked_cached_fathom() lock, since that part of the cache is
         # immutable:
-        yield addon_path, (fathom_fox / 'node_modules' / '.bin' / 'geckodriver')
+        yield addon_path, add_cmd_if_windows(fathom_fox / 'node_modules' / '.bin' / 'geckodriver')
+
+
+def add_cmd_if_windows(binary_path):
+    """Add the .cmd suffix to a pathlib.Path if running on Windows."""
+    if os.name == 'nt':
+        return binary_path.with_suffix('.cmd')
+    else:
+        return binary_path
 
 
 def remove_old_fathom_caches(source_cache, current_hash):
@@ -277,31 +284,15 @@ def locked_cached_fathom():
             # Install yarn, because it installs FathomFox's dependencies in 15s rather
             # than 30s. And once installed once, yarn itself takes only 1.5s to install
             # again. Also, it has security advantages. Though this install itself isn't
-            # hashed, so we're just trusting NPM.
-            run_in_fathom_fox('npm', 'install', 'yarn@1.22.4',
+            # hashed, so we're just trusting NPM. Additionally, we have to call
+            # shutils.which() on npm because it is a .cmd file on Windows, while node
+            # (down below) is an executable.
+            run_in_fathom_fox(which('npm'), 'install', 'yarn@1.22.4',
                               desc='Installing yarn')
 
             # Figure out how to invoke yarn:
-            if platform.system() == 'Windows':
-                # Running yarn through the Command Prompt will cause a cancellation
-                # prompt to appear if the user presses ctrl+c during yarn's execution.
-                # We do not want this. We want this program to stop immediately when a
-                # user hits ctrl+c. The work around is to execute yarn through node
-                # using yarn.js. To find this file, we use `which`. See:
-                # https://stackoverflow.com/questions/39085380/how- can-i-suppress-
-                # terminate-batch-job-y-n-confirmation-in-powershell
-                # TODO: Do we need to call `which` on plain, Cygwin-less Windows? We
-                #       don't on the Mac.
-                # TODO: On Windows, use the copy of yarn we just automatically
-                #       installed. Currently, we require it to already be
-                #       installed globally.
-                yarn_dir = run_in_fathom_fox('which', 'yarn', desc='Finding yarn').stdout.decode().strip()[:-4]
-                if sys.platform == 'cygwin':
-                    # Under cygwin, `where` returns a cygwin path, so we need to
-                    # transform this into a proper Windows path:
-                    yarn_dir = run_in_fathom_fox('cygpath', '-w', yarn_dir,
-                                                 desc="Converting yarn's path to a non-Cygwin one").stdout.decode().strip()
-                yarn_binary = join(yarn_dir, 'yarn.js')
+            if os.name == 'nt':
+                yarn_binary = str((fathom_fox / 'node_modules' / 'yarn' / 'bin' / 'yarn.js').resolve())
             else:
                 yarn_binary = str((fathom_fox / 'node_modules' / '.bin' / 'yarn').resolve())
 
