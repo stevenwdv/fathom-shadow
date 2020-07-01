@@ -11,7 +11,7 @@ from os import devnull, kill, makedirs
 from os.path import expanduser, expandvars
 from pathlib import Path
 import platform
-from shutil import copyfileobj, move, rmtree
+from shutil import copyfileobj, move, rmtree, which
 import signal
 import socket
 import subprocess
@@ -174,7 +174,11 @@ def fathom_fox_addon(ruleset_file):
                 copyfileobj(ruleset_file, new_ruleset_file)
 
             # Build FathomFox:
-            run(str((fathom_fox / 'node_modules' / '.bin' / 'rollup').resolve()),
+            if platform.system() == 'Windows':
+                rollup_path = str((fathom_fox / 'node_modules' / '.bin' / 'rollup.cmd').resolve())
+            else:
+                rollup_path = str((fathom_fox / 'node_modules' / '.bin' / 'rollup').resolve())
+            run(rollup_path,
                 '-c',
                 cwd=fathom_fox,
                 desc='Compiling ruleset')
@@ -281,7 +285,7 @@ def locked_cached_fathom():
             # than 30s. And once installed once, yarn itself takes only 1.5s to install
             # again. Also, it has security advantages. Though this install itself isn't
             # hashed, so we're just trusting NPM.
-            run_in_fathom_fox('npm', 'install', 'yarn@1.22.4',
+            run_in_fathom_fox(which('npm'), 'install', 'yarn@1.22.4',
                               desc='Installing yarn')
 
             # Figure out how to invoke yarn:
@@ -635,7 +639,7 @@ def run(*args, cwd, desc):
 
     """
     try:
-        return subprocess.run(args, cwd=cwd, shell=True, capture_output=True, check=True)
+        return subprocess.run(args, cwd=cwd, capture_output=True, check=True)
     except CalledProcessError as e:
         raise GracefulError('\n'.join([f'{desc} failed:',
                                        ' '.join(str(arg) for arg in args),
