@@ -14,9 +14,8 @@ export function ruleset(rules, coeffs = [], biases = []) {
 }
 
 /**
- * An unbound ruleset. Eventually, you'll be able to add rules to these. Then,
- * when you bind them by calling :func:`~Ruleset.against()`, the resulting
- * :class:`BoundRuleset` will be immutable.
+ * An unbound ruleset. When you bind it by calling :func:`~Ruleset.against()`,
+ * the resulting :class:`BoundRuleset` will be immutable.
  */
 class Ruleset {
     /**
