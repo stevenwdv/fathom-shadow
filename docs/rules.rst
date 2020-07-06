@@ -94,7 +94,7 @@ Remember that Fathom's rulesets are unordered, so any rule's output can flow int
 Starting Your Ruleset
 =====================
 
-Begin your own ruleset by copying and pasting the :doc:`example`. It illustrates the API you need to follow to hook into the trainer. As you are writing your ruleset, refer to the :doc:`ruleset` API documentation as well for the full list of routines you can use. You can also visit the :doc:`zoo` for inspiration.
+Begin your own ruleset by copying and pasting the :doc:`example`. It illustrates the API you need to follow to hook into the trainer, namely the ``trainees`` object and its fields. As you are writing your ruleset, refer to the :doc:`ruleset` API documentation as well for the full list of routines you can use. You can also visit the :doc:`zoo` for inspiration.
 
 Designing Rules
 ===============
@@ -143,78 +143,3 @@ Getting Ready to Train
 ======================
 
 Once you've written a few scoring rules, it's time for :doc:`training`. This computes optimal weighting coefficients and biases, which let the ruleset compute accurate confidences of its decisions. Be sure to write at least 2 rules before attempting to train; when there's only one, the trainer has nothing to balance.
-
-Before you plug your ruleset into the trainer, there is a bit of surrounding code required in your ``ruleset.js`` file to define your trainees. Here is the trainees code that goes with the ruleset excerpt at the top of this page:
-
-.. code-block:: js
-
-    import {ruleset, rule, dom, type, score, out, utils} from 'fathom-web';
-    const {isVisible, linearScale} = utils;
-
-    /**
-     * Rulesets to vectorize or debug (and metadata about them)
-     *
-     * More mechanically, a map of names to {coeffs, rulesetMaker, ...} objects,
-     * which we call "trainees". The rulesets you specify here are available to the
-     * trainer and also show up in the FathomFox UI, from which you can debug a
-     * ruleset. Most often, all the entries here point to the same ruleset but have
-     * different values of `vectorType` for separately training each type of thing
-     * the ruleset recognizes.
-     */
-    const trainees = new Map();
-
-    /**
-     * An example ruleset. Replace it with your own.
-     *
-     * This one finds the full-screen, content-blocking overlays that often go
-     * behind modal popups. It's not the most well-honed thing, but it's simple and
-     * short.
-     */
-    trainees.set(
-        // The ID for this trainee, which must be the same as the Fathom type you
-        // are evaluating, if you are using the FathomFox Evaluator:
-        'overlay',
-
-        // Here we paste in coefficients from fathom-train. This lets us use the
-        // Evaluator to see what Fathom is getting wrong. Otherwise, these numbers
-        // do nothing until you deploy your application, so there's no need to
-        // maintain them until then.
-        {coeffs: new Map([  // [rule name, coefficient]
-            ['big', 50.4946],
-            ['nearlyOpaque', 48.6396],
-            ['monochrome', 42.8406],
-            ['classOrId', 0.5005],
-            ['visible', 55.8750]]),
-        // Bias is -139.3106 for this example, though that isn't needed until
-        // production.
-
-        // The content-area size to use while training. Defaults to 1024x768.
-        viewportSize: {width: 1024, height: 768},
-
-        // The type of node to extract features from when using the Vectorizer.
-        // Defaults to the trainee ID.
-        //
-        // vectorType: 'overlay',
-
-        rulesetMaker:
-            function () {
-                // Here are the rules and functions from the above excerpt.
-                const rules = ruleset([...]);
-                function big(fnode) {...};
-                function nearlyOpaque(fnode) {...}
-                function monochrome(fnode) {...}
-                function suspiciousClassOrId(fnode) {...}
-            }
-
-
-        // isTarget is an optional function which returns whether the Vectorizer
-        // should consider a fnode a target. The default is to consider it a
-        // target iff its ``data-fathom`` attribute === the trainee ID.
-        //
-        // isTarget: fnode => fnode.element.dataset.fathom === 'foo'
-        }
-    );
-
-    export default trainees;
-
-Once again, the unabridged :doc:`example` is in the appendix, and shows all the pieces put together.

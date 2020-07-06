@@ -72,7 +72,7 @@ async function initRulesetMenu(goButton) {
     // Draw Ruleset menu:
     let traineeKeys;
     traineeKeys = Array.from(trainees.keys());
-    const menu = document.getElementById('ruleset');
+    const menu = document.getElementById('trainee');
     if (traineeKeys.length) {
         for (const traineeKey of traineeKeys) {
             const option = document.createElement('option');

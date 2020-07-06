@@ -132,7 +132,7 @@ class Vectorizer extends PageVisitor {
 
     async processAtBeginningOfRun() {
         this.vectors = [];
-        this.traineeId = this.doc.getElementById('ruleset').value;
+        this.traineeId = this.doc.getElementById('trainee').value;
         this.trainee = trainees.get(this.traineeId);
     }
 

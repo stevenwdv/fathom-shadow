@@ -9,13 +9,13 @@ Fathom consists of 3 parts. Here's how to install each one.
 Commandline Tools
 =================
 
-Fathom's commandline tools take your labeled pages as input and train the machine-learning model. They also contain the simplest way to collect pages, FathomFox. If you don't already have Python 3.7 or better, download it from https://www.python.org/downloads/. Then, install the tools by running... ::
+Fathom's commandline tools take your labeled pages as input and train the machine-learning model. They also contain an embedded copy of FathomFox (see below), the simplest way to collect pages. If you don't already have Python 3.7 or better, download it from https://www.python.org/downloads/. Then, install the tools by running... ::
 
     pip3 install fathom-web
 
 It's possible your Python package manager is called simply "pip" rather than "pip3". Give that a try if the above fails.
 
-You will also need to install `Node.js <https://nodejs.org/en/>`_ to use the most important commandline tools, like :doc:`fathom-train<commands/train>`.
+You will also need to install `Node.js <https://nodejs.org/en/>`_ to use many of the commandline tools.
 
 FathomFox
 =========

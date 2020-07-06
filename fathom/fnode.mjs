@@ -41,7 +41,8 @@ export class Fnode {
     }
 
     /**
-     * Return whether the given type is one of the ones attached to the fnode.
+     * Return whether the given type is one of the ones attached to the wrapped
+     * HTML node.
      */
     hasType(type) {
         // Run type(theType) against the ruleset to make sure this doesn't
