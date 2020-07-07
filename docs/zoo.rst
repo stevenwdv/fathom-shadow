@@ -19,7 +19,7 @@ Login Forms
 
 As a proof-of-concept next-generation autofiller for `Firefox Lockwise <https://www.mozilla.org/en-US/firefox/lockwise/>`_, we built recognizers for login forms’ username fields and Log In buttons.
 
-This is a clean, simple example of a Fathom 3 ruleset. It was designed for 3 from the beginning, solves the problem concisely, and has respectable accuracy.
+This is a clean, simple example of a Fathom 3 ruleset. It was designed for Fathom 3 from the beginning, solves the problem concisely, and has respectable accuracy.
 
 Recognizers
 -----------
@@ -32,7 +32,7 @@ Recognizers
 Smoot: Page Classification
 ==========================
 
-An upcoming Firefox metrics effort, Project Smoot will use a set of whole-page classifiers to characterize user tasks in a privacy-preserving way. 
+An upcoming Firefox metrics effort, Project Smoot will use a set of whole-page classifiers to characterize user tasks in a privacy-preserving way.
 
 Recognizers
 -----------

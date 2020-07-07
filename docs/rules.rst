@@ -19,13 +19,13 @@ This is an excerpt from a ruleset that finds whole-page translucent overlays beh
     const rules = ruleset([
         // Consider all <div> tags as candidate overlays:
         rule(dom('div'), type('overlay')),
-        
+
         // Contribute the "bigness" of the node to its overlay score:
         rule(type('overlay'), score(big), {name: 'big'}),
-        
+
         // Contibute the opacity of the node to its overlay score:
         rule(type('overlay'), score(nearlyOpaque), {name: 'nearlyOpaque'}),
-        
+
         // Contribute some other signals as well:
         rule(type('overlay'), score(monochrome), {name: 'monochrome'}),
         rule(type('overlay'), score(suspiciousClassOrId), {name: 'classOrId'}),
@@ -52,7 +52,7 @@ This is an excerpt from a ruleset that finds whole-page translucent overlays beh
 
         // Compress the result into the 0..1 range. 250px is getting into "too
         // tall to just be nav or something" territory.
-        return linearScale(hDifference + wDifference, 250, 0);  
+        return linearScale(hDifference + wDifference, 250, 0);
     }
 
     function nearlyOpaque(fnode) {...}
@@ -94,7 +94,7 @@ Remember that Fathom's rulesets are unordered, so any rule's output can flow int
 Starting Your Ruleset
 =====================
 
-Begin your own ruleset by copying and pasting the :doc:`example`. It illustrates the API you need to follow to hook into the trainer. As you are writing your ruleset, refer to the :doc:`ruleset` API documentation as well for the full list of routines you can use. You can also visit the :doc:`zoo` for inspiration.
+Begin your own ruleset by copying and pasting the :doc:`example`. It illustrates the API you need to follow to hook into the trainer, namely the ``trainees`` object and its fields. As you are writing your ruleset, refer to the :doc:`ruleset` API documentation as well for the full list of routines you can use. You can also visit the :doc:`zoo` for inspiration.
 
 Designing Rules
 ===============

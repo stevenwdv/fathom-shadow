@@ -6,6 +6,17 @@ Fathom consists of 3 parts. Here's how to install each one.
 
 .. _fathomfox-installation:
 
+Commandline Tools
+=================
+
+Fathom's commandline tools take your labeled pages as input and train the machine-learning model. They also contain an embedded copy of FathomFox (see below), the simplest way to collect pages. If you don't already have Python 3.7 or better, download it from https://www.python.org/downloads/. Then, install the tools by running... ::
+
+    pip3 install fathom-web
+
+It's possible your Python package manager is called simply "pip" rather than "pip3". Give that a try if the above fails.
+
+You will also need to install `Node.js <https://nodejs.org/en/>`_ to use many of the commandline tools.
+
 FathomFox
 =========
 
@@ -17,21 +28,12 @@ This will launch a built-in copy of FathomFox in a fresh Firefox profile so ad b
 
 For more casual use, you can instead `install FathomFox through the web <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_, in which case it will be your responsibility to avoid addons that might mutate the DOM.
 
-Commandline Tools
-=================
-
-Fathom's commandline tools take your labeled pages as input and train the machine-learning model. If you don't already have Python 3.7 or better, download it from https://www.python.org/downloads/. Then, install the tools by running... ::
-
-    pip3 install fathom-web
-
-It's possible your Python package manager is called simply "pip" rather than "pip3". Give that a try if the above fails.
-
 Fathom
 ======
 
 Fathom proper is a JS library which runs trained rulesets to do the actual recognition. You don't need to worry about installing it until your rulesets are performing satisfactorily and you're ready to integrate them with your application.
 
-If your application runs server-side under `node.js <https://nodejs.org/en/>`_, you can install `the Fathom node package <https://www.npmjs.com/package/fathom-web>`_ like any other dependency::
+If your application runs server-side under `Node.js <https://nodejs.org/en/>`_, you can install `the Fathom node package <https://www.npmjs.com/package/fathom-web>`_ like any other dependency::
 
     npm install fathom-web
 

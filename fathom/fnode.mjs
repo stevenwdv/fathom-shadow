@@ -8,8 +8,8 @@ import {getDefault, setDefault, sigmoid} from './utilsForFrontend';
  */
 export class Fnode {
     /**
-     * @arg element The DOM element I describe
-     * @arg ruleset The ruleset which created me
+     * @arg element The DOM element described by the fnode.
+     * @arg ruleset The ruleset which created the fnode.
      */
     constructor(element, ruleset) {
         if (element === undefined) {
@@ -41,7 +41,8 @@ export class Fnode {
     }
 
     /**
-     * Return whether the given type is one of the ones attached to the node.
+     * Return whether the given type is one of the ones attached to the wrapped
+     * HTML node.
      */
     hasType(type) {
         // Run type(theType) against the ruleset to make sure this doesn't
@@ -51,7 +52,7 @@ export class Fnode {
     }
 
     /**
-     * Return the confidence, in the range (0, 1), that the node belongs to the
+     * Return the confidence, in the range (0, 1), that the fnode belongs to the
      * given type, 0 by default.
      */
     scoreFor(type) {
@@ -61,7 +62,7 @@ export class Fnode {
     }
 
     /**
-     * Return the node's note for the given type, ``undefined`` if none.
+     * Return the fnode's note for the given type, ``undefined`` if none.
      */
     noteFor(type) {
         this._computeType(type);
@@ -69,7 +70,7 @@ export class Fnode {
     }
 
     /**
-     * Return whether this node has a note for the given type.
+     * Return whether this fnode has a note for the given type.
      *
      * ``undefined`` is not considered a note and may be overwritten with
      * impunity.

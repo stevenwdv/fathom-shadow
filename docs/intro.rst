@@ -2,7 +2,7 @@
 Introduction
 ============
 
-Fathom is a supervised-learning system for recognizing parts of web pages—pop-ups, address forms, slideshows—or for classifying a page as a whole. A DOM flows in one side, and DOM nodes flow out the other, tagged with types and probabilities that those types are correct. A Prolog-like language makes it straightforward to specify the hints that suggest each type, and a neural-net-based trainer determines the optimal contribution of each. Finally, the `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ web extension and a rich assortment of commandline tools help you collect and label a corpus of web pages for training.
+Fathom is a supervised-learning system for recognizing parts of web pages—pop-ups, address forms, slideshows—or for classifying a page as a whole. A DOM flows in one side, and DOM nodes flow out the other, tagged with types and probabilities that those types are correct. A Prolog-like language makes it straightforward to specify the hints that suggest each type, and a neural-net-based trainer determines the optimal contribution of each. Finally, the `FathomFox <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_ web extension and a rich assortment of commandline tools help you collect, label, and use a corpus of web pages to train a recognizer.
 
 Why?
 ====

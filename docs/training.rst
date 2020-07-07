@@ -52,13 +52,13 @@ Viewing the TensorBoard graphs with ``tensorboard --logdir runs/`` will quickly 
 
     fathom-train samples/training  --ruleset rulesets.js --trainee yourTraineeId --learning-rate 0.1 -c tryingToRemoveOscillations
 
-Comments (with ``-c``) are your friend, as a heap of anonymous TensorBoard runs otherwise quickly becomes indistinguishable.
+Comments added (with ``-c``) to your :doc:`fathom-train<commands/train>` calls are your friend, as a heap of anonymous TensorBoard runs otherwise quickly becomes indistinguishable.
 
 .. note::
 
    Fathom currently uses the `Adam <https://en.wikipedia.org/wiki/Stochastic_gradient_descent#Adam>`_ optimization algorithm, which is good at tuning its own learning rates. Even if the loss graph oscillates at the start, it will eventually flatten out, given enough iterations. However, it's best to tamp down oscillations from the beginning so you can use validation-guided early stopping. Adam seems to dial in the learning rate quickly enough, as long as you get it within a power of 10.
 
-   Incidentally, it's not the end of the world if some scores go slightly outside [0, 1]. Limited tests have gotten away with values up to about 10 without measurable harm to training speed or accuracy. However, when feature values differ in magnitude by a factor of 1000, annoying oscillations dominate early iterations. Stick to [0, 1] for a trouble-free experience.
+   Incidentally, it's not the end of the world if some rules' scores go slightly outside [0, 1]. Limited tests have gotten away with values up to about 10 without measurable harm to training speed or accuracy. However, when feature values differ in magnitude by a factor of 1000, annoying oscillations dominate early iterations. Stick to [0, 1] for a trouble-free experience.
 
 Once you've tamped down oscillations, use validation samples and early stopping (on by default) to keep Fathom from overfitting::
 
@@ -109,7 +109,17 @@ Identifying Misrecognized Elements
 .. note::
    Make sure you have the latest trained coefficients and biases pasted into your ruleset before you do this, or recognition won't work well.
 
-The Evaluator can also point out misrecognized elements, in case the tag exerpts emitted by the trainer are insufficient to identify them. When you click Evaluate, as above, any pages with misrecognized nodes will show up in red; click those to see which element was wrongly selected. Unfortunately, you need to manually show the dev tools and switch to the Fathom panel once you get to the page in question; there aren’t yet web extension APIs to do it automatically. Once you do, you’ll see a quick and dirty representation of the “bad” element: a new label called “BAD [the trainee ID]”. Be sure to delete this if you choose to re-save the page for some reason. Also note that the BAD label is created only when the bad cell is clicked, for speed; if you navigate to the bad page manually, the label won’t be there, or there might be an old label from a previous iteration.
+FathomFox's Evaluator can point out misrecognized elements, in case the tag exerpts emitted by the trainer are insufficient to identify them. To use the Evaluator:
+
+#. Open an instance of Firefox with FathomFox and your ruleset loaded (``fathom-fox -r rulesets.js`` makes this simple).
+#. Open all of the samples you want to diagnose as separate tabs.
+#. Open the Evaluator page using FathomFox's browser action button.
+#. In the Trainee dropdown, select the trainee you want to diagnose.
+#. Click the Evaluate button.
+#. Click any red box to navigate to a page with misrecognized nodes.
+#. On that tab, open the dev tools panel (ctrl-shift-N) and switch to the Fathom panel. Unfortunately, there aren't yet web extension APIs to do this part automatically.
+#. At this point, you’ll see a quick and dirty representation of the “bad” element: a new label called “BAD [the trainee]”. Be sure to delete this if you choose to re-save the page for some reason. Also note that the BAD label is created only when the bad cell is clicked, for speed; if you navigate to the bad page manually, the label won’t be there, or there might be an old label from a previous iteration.
+#. Return to the Evaluator tab and click any other red boxes you want to explore.
 
 Histograms
 ----------

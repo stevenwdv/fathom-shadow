@@ -61,7 +61,7 @@ async function evaluateTabs() {
         // We don't have permission to mess with about: tabs, so they crash.
         // Filter them out:
         tabs = tabs.filter(tab => !tab.url.startsWith('about:'));
-        const rulesetName = document.getElementById('ruleset').value;
+        const rulesetName = document.getElementById('trainee').value;
         const viewportSize = trainees.get(rulesetName).viewportSize || {width: 1024, height: 768};
         await setViewportSize(tabs[0], viewportSize.width, viewportSize.height);  // for consistent element sizing in samples due to text wrap, etc.
         const evaluator = new Evaluator(tabs, rulesetName);
@@ -123,7 +123,7 @@ function updateOutputs(coeffs, cost, successesOrFailures) {
             }
         }
         let div = gGoodBadDiv.firstElementChild;
-        const traineeId = document.getElementById('ruleset').value;
+        const traineeId = document.getElementById('trainee').value;
         for (let sf of successesOrFailures) {
             div.firstChild.textContent = sf.filename;
             div.addEventListener('click', function focusTab() {
@@ -169,7 +169,7 @@ async function initPage(document) {
 
     document.getElementById('evaluate').onclick = evaluateTabs;
 
-    initRulesetMenu(document.getElementById('evaluate'));
+    initTraineeMenu(document.getElementById('evaluate'));
 }
 
 initPage(document);

@@ -10,8 +10,6 @@ It's on `GitHub <https://github.com/mozilla/fathom>`_.
 Tests and Examples
 ==================
 
-`Our tests <https://github.com/mozilla/fathom/tree/master/fathom/test>`_ are replete with examples exercising every corner of Fathom.
-
 To run the tests, run... ::
 
     make lint test
@@ -38,4 +36,9 @@ To build the docs... ::
 Gotchas
 =======
 
-If you are developing the CLI tools and your changes to their embedded copy of the Fathom JS framework don't seem to be taking effect, commit first. The make target that builds ``fathom.zip`` uses ``git archive`` to pull from ``HEAD``.
+If you are developing the CLI tools and your changes to their embedded copy of the Fathom JS framework don't seem to be taking effect, commit first. The make target that builds ``fathom.zip`` uses ``git archive`` to pull from ``HEAD``. In this scenario, we tend to use a single local commit we amend with ``git commit --amend --no-edit`` when we want to test our changes.
+
+Windows Considerations
+======================
+
+Fathom uses `makefiles <https://www.gnu.org/software/make/manual/make.html>`_ to do its builds and run its tests. These makefiles rely on Unix commands. Therefore, if you are developing on Windows, you need access to these Unix commands through something like `Cygwin <https://www.cygwin.com/>`_. You can build and test Fathom using `Windows Subsystem for Linux <https://docs.microsoft.com/en-us/windows/wsl/>`_, but just know that you are technically building and testing Fathom in Linux when you do.

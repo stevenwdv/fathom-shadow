@@ -101,9 +101,9 @@ will change your directory to: ::
                     3.jpg
                     ...
                 ...
-            foo.html
-            bar.html
-            baz.html
+            foo.com.html
+            bar.edu.html
+            baz.com.html
             ...
 
 Once you are comfortable that your samples extracted correctly, you can delete the ``originals`` directory.

@@ -473,7 +473,7 @@ def run_vectorizer(firefox, trainee_id, sample_filenames, output_path, kind_of_s
     fathom_fox_uuid = get_fathom_fox_uuid(firefox)
     firefox.get(f'moz-extension://{fathom_fox_uuid}/pages/vector.html')
 
-    ruleset_dropdown_selector = Select(firefox.find_element_by_id('ruleset'))
+    ruleset_dropdown_selector = Select(firefox.find_element_by_id('trainee'))
     try:
         ruleset_dropdown_selector.select_by_visible_text(trainee_id)
     except NoSuchElementException:
