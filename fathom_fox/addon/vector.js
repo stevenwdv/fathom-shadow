@@ -168,4 +168,4 @@ class Vectorizer extends PageVisitor {
 const vectorizer = new Vectorizer(document);
 vectorizer.addEventListeners();
 
-initRulesetMenu(document.getElementById('freeze'));
+initTraineeMenu(document.getElementById('freeze'));

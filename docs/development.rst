@@ -41,4 +41,4 @@ If you are developing the CLI tools and your changes to their embedded copy of t
 Windows Considerations
 ======================
 
-Fathom uses `Makefiles <https://www.gnu.org/software/make/manual/make.html>`_ to do its builds and run its tests. These Makefiles rely on Unix commands. Therefore, if you are developing on Windows, you need access to these Unix commands through something like `Cygwin <https://www.cygwin.com/>`_. You can build and test Fathom using `Windows Subsystem for Linux <https://docs.microsoft.com/en-us/windows/wsl/>`_, but just know that you are technically building and testing Fathom in Linux when you do.
+Fathom uses `makefiles <https://www.gnu.org/software/make/manual/make.html>`_ to do its builds and run its tests. These makefiles rely on Unix commands. Therefore, if you are developing on Windows, you need access to these Unix commands through something like `Cygwin <https://www.cygwin.com/>`_. You can build and test Fathom using `Windows Subsystem for Linux <https://docs.microsoft.com/en-us/windows/wsl/>`_, but just know that you are technically building and testing Fathom in Linux when you do.

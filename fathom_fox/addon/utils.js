@@ -68,7 +68,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function initRulesetMenu(goButton) {
+async function initTraineeMenu(goButton) {
     // Draw Ruleset menu:
     let traineeKeys;
     traineeKeys = Array.from(trainees.keys());

@@ -169,7 +169,7 @@ async function initPage(document) {
 
     document.getElementById('evaluate').onclick = evaluateTabs;
 
-    initRulesetMenu(document.getElementById('evaluate'));
+    initTraineeMenu(document.getElementById('evaluate'));
 }
 
 initPage(document);

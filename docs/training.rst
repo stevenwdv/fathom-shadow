@@ -114,11 +114,11 @@ FathomFox's Evaluator can point out misrecognized elements, in case the tag exer
 #. Open an instance of Firefox with FathomFox and your ruleset loaded (``fathom-fox -r rulesets.js`` makes this simple).
 #. Open all of the samples you want to diagnose as separate tabs.
 #. Open the Evaluator page using FathomFox's browser action button.
-#. In the Trainee ID dropdown, select the trainee ID you want to diagnose.
+#. In the Trainee dropdown, select the trainee you want to diagnose.
 #. Click the Evaluate button.
 #. Click any red box to navigate to a page with misrecognized nodes.
 #. On that tab, open the dev tools panel (ctrl-shift-N) and switch to the Fathom panel. Unfortunately, there aren't yet web extension APIs to do this part automatically.
-#. At this point, you’ll see a quick and dirty representation of the “bad” element: a new label called “BAD [the trainee ID]”. Be sure to delete this if you choose to re-save the page for some reason. Also note that the BAD label is created only when the bad cell is clicked, for speed; if you navigate to the bad page manually, the label won’t be there, or there might be an old label from a previous iteration.
+#. At this point, you’ll see a quick and dirty representation of the “bad” element: a new label called “BAD [the trainee]”. Be sure to delete this if you choose to re-save the page for some reason. Also note that the BAD label is created only when the bad cell is clicked, for speed; if you navigate to the bad page manually, the label won’t be there, or there might be an old label from a previous iteration.
 #. Return to the Evaluator tab and click any other red boxes you want to explore.
 
 Histograms
