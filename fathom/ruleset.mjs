@@ -118,9 +118,10 @@ class BoundRuleset {
     }
 
     /**
-     * Change my coefficients and biases after I've already been constructed.
+     * Change my coefficients and biases after construction.
      *
-     * @arg coeffsAndBiases See the :class:`Ruleset` constructor.
+     * @arg coeffs See the :class:`Ruleset` constructor.
+     * @arg biases See the :class:`Ruleset` constructor.
      */
     setCoeffsAndBiases(coeffs, biases = []) {
         // Destructuring assignment doesn't make it through rollup properly
@@ -141,15 +142,15 @@ class BoundRuleset {
 
     /**
      * Return an array of zero or more fnodes.
-     * @arg thing {string|Lhs|Node} Can be...
+     * @arg thing {string|Lhs|Node} Can be
      *
-     *       * A string which matches up with an "out" rule in the ruleset. If the
-     *         out rule uses through(), the results of through's callback (which
-     *         might not be fnodes) will be returned.
-     *       * An arbitrary LHS which we calculate and return the results of
-     *       * A DOM node, for which we will return the corresponding fnode
+     *       (1) A string which matches up with an "out" rule in the ruleset.
+     *           If the out rule uses through(), the results of through's
+     *           callback (which might not be fnodes) will be returned.
+     *       (2) An arbitrary LHS which we calculate and return the results of.
+     *       (3) A DOM node, for which we will return the corresponding fnode.
      *
-     *     Results are cached in the first and third cases.
+     *     Results are cached for cases (1) and (3).
      */
     get(thing) {
         if (typeof thing === 'string') {
