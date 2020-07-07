@@ -1,6 +1,6 @@
 from click.testing import CliRunner
 
-from ..commands.list import main as list_main
+from ..commands.list import list as list_main
 
 
 def test_end_to_end(tmp_path):
@@ -15,7 +15,7 @@ def test_end_to_end(tmp_path):
     # Make the out_file we will save the output to
     out_file = (base_dir / 'out_file.txt')
 
-    # Run fathom-list
+    # Run fathom list
     result = CliRunner().invoke(
         list_main,
         [
@@ -39,7 +39,7 @@ def test_end_to_end(tmp_path):
 
 
 def make_directories(tmp_path):
-    """Makes the directories used as base_dir and in_directory in our fathom-list calls"""
+    """Makes the directories used as base_dir and in_directory in our fathom list calls"""
     base_dir = tmp_path / 'base_dir'
     base_dir.mkdir()
     in_directory = base_dir / 'in_directory'
@@ -48,7 +48,7 @@ def make_directories(tmp_path):
 
 
 def make_html_files(in_directory):
-    """Makes four HTML files in a common directory structure for using in our fathom-list calls"""
+    """Makes four HTML files in a common directory structure for using in our fathom list calls"""
     (in_directory / 'source_a').mkdir()
     a1 = (in_directory / 'source_a' / '1.html')
     a1.touch()
@@ -70,7 +70,7 @@ def test_no_files_to_list(tmp_path):
     # Make the out_file we will save the output to
     out_file = (in_directory / 'out_file.txt')
 
-    # Run fathom-list
+    # Run fathom list
     result = CliRunner().invoke(
         list_main,
         [
@@ -96,7 +96,7 @@ def test_without_base_dir(tmp_path):
     # Make the out_file we will save the output to
     out_file = (base_dir / 'out_file.txt')
 
-    # Run fathom-list
+    # Run fathom list
     result = CliRunner().invoke(
         list_main,
         [
@@ -119,7 +119,7 @@ def test_without_base_dir(tmp_path):
 
 def test_in_directory_does_not_exist():
     """Test giving an invalid path for in_directory causes an error"""
-    # Run fathom-list
+    # Run fathom list
     result = CliRunner().invoke(
         list_main,
         [
@@ -137,7 +137,7 @@ def test_base_dir_does_not_exist(tmp_path):
     """Test giving an invalid path for base-dir causes an error"""
     _, in_directory = make_directories(tmp_path)
 
-    # Run fathom-list
+    # Run fathom list
     result = CliRunner().invoke(
         list_main,
         [

@@ -16,7 +16,7 @@ def get_base64_regex_matches(from_string):
     """Helper method to get the list of matches from the given string.
 
     We need to use finditer() here because it returns Match objects while
-    findall() does not, and we use Match objects in fathom-extract.
+    findall() does not, and we use Match objects in ``fathom extract``.
     """
     return list(BASE64_DATA_PATTERN.finditer(from_string))
 

@@ -1,2 +1,2 @@
-.. click:: fathom_web.commands.label:main
-   :prog: fathom-label
+.. click:: fathom_web.commands.label:label
+   :prog: fathom label

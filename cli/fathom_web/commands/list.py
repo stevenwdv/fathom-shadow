@@ -13,8 +13,10 @@ from ..utils import samples_from_dir
         help='A file for saving the printed filenames for easy future reference.')
 @option('--show-urls', '-u', default=False, is_flag=True,
         help='Also show the original URL of each sample.')
-def main(in_directory, base_dir, out_file, show_urls):
+def list(in_directory, base_dir, out_file, show_urls):
     """
+    List URL paths to samples.
+
     Recursively list paths of HTML files in IN_DIRECTORY relative to
     <base_dir>, one path per line. If <base_dir> is not specified,
     paths are relative to IN_DIRECTORY. Optionally saves output to
@@ -22,7 +24,7 @@ def main(in_directory, base_dir, out_file, show_urls):
 
     This is useful for vectorizing samples using FathomFox. FathomFox expects
     input filenames copied into a text box with one filename per line and
-    relative to some path you are serving files from using fathom-serve.
+    relative to some path you are serving files from using ``fathom serve``.
 
     """
     if base_dir is None:

@@ -13,11 +13,12 @@ from ..vectorizer import fathom_fox_addon, fathom_zip, running_firefox
         type=click.Path(exists=True, dir_okay=False, resolve_path=True),
         callback=path_or_none,
         help='The rulesets.js file containing your rules. The file must have no imports except from fathom-web, so pre-bundle if necessary. [default: the demo ruleset included with FathomFox]')
-def main(ruleset):
-    """Launch a fresh instance of Firefox with a blank profile and FathomFox
-    installed.
+def fox(ruleset):
+    """
+    Launch Firefox with FathomFox installed.
 
-    This is an easy way to set up an environment for labeling samples.
+    This launches a fresh instance of Firefox with a blank profile as a
+    suitably clean environment for labeling samples.
 
     """
     with ruleset_or_default(ruleset) as ruleset_file:

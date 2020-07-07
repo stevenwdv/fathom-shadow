@@ -1,2 +1,2 @@
-.. click:: fathom_web.commands.test:main
-   :prog: fathom-test
+.. click:: fathom_web.commands.test:test
+   :prog: fathom test

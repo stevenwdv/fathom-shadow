@@ -1,2 +1,2 @@
-.. click:: fathom_web.commands.extract:main
-   :prog: fathom-extract
+.. click:: fathom_web.commands.extract:extract
+   :prog: fathom extract

@@ -1,2 +1,2 @@
-.. click:: fathom_web.commands.pick:main
-   :prog: fathom-pick
+.. click:: fathom_web.commands.pick:pick
+   :prog: fathom pick

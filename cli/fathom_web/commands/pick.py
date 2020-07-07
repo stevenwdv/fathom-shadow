@@ -11,12 +11,12 @@ from click import argument, command, Path, UsageError
 @argument('to_dir',
           type=Path(exists=True, file_okay=False, writable=True, dir_okay=True))
 @argument('number', type=int)
-def main(from_dir, to_dir, number):
-    """Move a random selection of HTML files and their extracted resources, if
-    any, from one directory to another. Ignore hidden files.
+def pick(from_dir, to_dir, number):
+    """
+    Randomly move samples to a training, validation, or test set.
 
-    This is useful for dividing a corpus into training, validation, and testing
-    sets.
+    Move a random selection of HTML files and their extracted resources, if
+    any, from one directory to another. Ignore hidden files.
 
     """
     # Make these strings into ``Path``s so they are easier to work with

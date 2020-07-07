@@ -1,11 +1,11 @@
 from click.testing import CliRunner
 
-from ..commands.pick import main as pick_main
+from ..commands.pick import pick
 
 
 def test_end_to_end(tmp_path):
     """
-    Given a directory of three files, use ``fathom-pick`` to move two files, and
+    Given a directory of three files, use ``fathom pick`` to move two files, and
     check that the files and their potential resources directories have moved.
     """
     # Make temporary source and destination directories
@@ -27,10 +27,10 @@ def test_end_to_end(tmp_path):
     (source / 'resources' / '2' / '1.png').touch()
     (source / 'resources' / '2' / '2.css').touch()
 
-    # Run fathom-pick to move 2 files from source to destination
+    # Run fathom pick to move 2 files from source to destination
     runner = CliRunner()
     # Arguments to invoke() must be passed as strings (this isn't documented!!!)
-    result = runner.invoke(pick_main, [source.as_posix(), destination.as_posix(), '2'])
+    result = runner.invoke(pick, [source.as_posix(), destination.as_posix(), '2'])
     assert result.exit_code == 0
 
     # Check the correct number of files have moved
@@ -74,10 +74,10 @@ def test_resource_directory_path_collision(tmp_path):
     # Add a resource directory for the same file in the destination directory
     (destination / 'resources' / '1').mkdir(parents=True)
 
-    # Run fathom-pick to move the only file from source to destination
+    # Run fathom pick to move the only file from source to destination
     runner = CliRunner()
     # Arguments to invoke() must be passed as strings (this isn't documented!!!)
-    result = runner.invoke(pick_main, [source.as_posix(), destination.as_posix(), '1'])
+    result = runner.invoke(pick, [source.as_posix(), destination.as_posix(), '1'])
 
     # Assert the program exited with a UsageError and our error message is in the program output
     assert result.exit_code == 2

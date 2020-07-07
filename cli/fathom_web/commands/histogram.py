@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 from click import argument, BadOptionUsage, command, get_terminal_size, option, style
 from more_itertools import pairwise
-from numpy import histogram
+import numpy
 
 from ..utils import path_or_none, tensors_from
 from ..vectorizer import make_or_find_vectors
@@ -49,12 +49,12 @@ from ..vectorizer import make_or_find_vectors
         type=str,
         multiple=True,
         help='The rule to graph. Can be repeated. Omitting this graphs all rules.')
-def main(training_set, ruleset, trainee, training_cache, delay, tabs, show_browser, buckets, rules):
-    """Print a histogram of rule scores, showing what proportion at each
-    score was a positive or negative sample.
+def histogram(training_set, ruleset, trainee, training_cache, delay, tabs, show_browser, buckets, rules):
+    """Show a histogram of rule scores.
 
-    This gives you an idea whether a rule is broadly applicable,
-    discriminatory, and spitting out what you expect.
+    We also break down what proportion of each bucket comprised positive or
+    negative samples. Altogether, this gives you an idea whether a rule is
+    broadly applicable, discriminatory, and spitting out what you expect.
 
     """
     training_set = Path(training_set)
@@ -85,8 +85,8 @@ def feature_metrics(feature_names, x, y, buckets, enabled_rules):
         if name not in enabled_rules:
             continue
         is_boolean = is_boolean_feature(values)
-        _, boundaries = histogram(values.numpy(),
-                                  bins=2 if is_boolean else buckets)
+        _, boundaries = numpy.histogram(values.numpy(),
+                                        bins=2 if is_boolean else buckets)
         highest_boundary = boundaries[-1]
         bars = []
         for boundary, (low_bound, high_bound) in zip(boundaries, pairwise(boundaries)):

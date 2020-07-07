@@ -2,7 +2,7 @@ import os
 
 from click.testing import CliRunner
 
-from ..commands.train import exclude_indices, main
+from ..commands.train import exclude_indices, train
 
 
 def test_exclude_indices():
@@ -19,7 +19,7 @@ def test_auto_vectorization_smoke(tmp_path):
 
     runner = CliRunner()
     result = runner.invoke(
-        main,
+        train,
         [
             f'{test_dir}/resources/train/',
             '--ruleset',

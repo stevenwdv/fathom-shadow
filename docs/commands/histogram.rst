@@ -1,5 +1,5 @@
-.. click:: fathom_web.commands.histogram:main
-   :prog: fathom-histogram
+.. click:: fathom_web.commands.histogram:histogram
+   :prog: fathom histogram
 
 ----
 

@@ -26,15 +26,7 @@ setup(
         'https://download.pytorch.org/whl/torch_stable.html'
     ],
     entry_points={'console_scripts': [
-        'fathom-extract = fathom_web.commands.extract:main',
-        'fathom-fox = fathom_web.commands.fox:main',
-        'fathom-histogram = fathom_web.commands.histogram:main',
-        'fathom-label = fathom_web.commands.label:main',
-        'fathom-list = fathom_web.commands.list:main',
-        'fathom-pick = fathom_web.commands.pick:main',
-        'fathom-serve = fathom_web.commands.serve:main',
-        'fathom-test = fathom_web.commands.test:main',
-        'fathom-train = fathom_web.commands.train:main',
+        'fathom = fathom_web.commands:fathom',
     ]},
     package_data={'': ['fathom.zip']},
     classifiers=[
