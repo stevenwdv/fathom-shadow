@@ -19,12 +19,15 @@ from click import argument, command, option, Path, progressbar, STRING
              ' process (default: the number of logical cores the machine has)')
 @argument('in_directory', type=Path(exists=True, file_okay=False))
 @argument('in_type', type=STRING)
-def main(in_directory, in_type, preserve_originals, number_of_workers):
+def label(in_directory, in_type, preserve_originals, number_of_workers):
     """
+    Apply a whole-page label to each page in a directory.
+
     Add the ``data-fathom`` attribute with a value of IN_TYPE to the
     opening tag of any ``<html>`` elements in the HTML pages in
     IN_DIRECTORY. This tool is used to label an entire webpage (e.g.
     IN_TYPE could be "article" for article webpages).
+
     """
     if preserve_originals:
         originals_dir = pathlib.Path(in_directory) / 'originals'

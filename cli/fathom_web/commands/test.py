@@ -86,16 +86,16 @@ def model_from_json(weights, num_outputs, feature_names):
         default=False,
         is_flag=True,
         help='Show per-tag diagnostics, even though that could ruin blinding for the test set.')
-def main(testing_set, weights, confidence_threshold, ruleset, trainee, testing_cache, delay, tabs, show_browser, verbose):
-    """Compute the accuracy of the given coefficients and biases on a folder of
-    testing samples.
+def test(testing_set, weights, confidence_threshold, ruleset, trainee, testing_cache, delay, tabs, show_browser, verbose):
+    """
+    Evaluate how well a trained ruleset does.
 
     TESTING_SET_FOLDER is a directory of labeled testing pages. It can also be,
     for backward compatibility, a JSON file of vectors from FathomFox's
     Vectorizer.
 
-    WEIGHTS should be a JSON-formatted object like this. You can paste it
-    directly from the output of fathom-train.
+    WEIGHTS should be a JSON-formatted object, as follows. You can paste it
+    directly from the output of trainer.
 
     \b
         {"coeffs": [["nextAnchorIsJavaScript", 1.1627885103225708],

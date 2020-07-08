@@ -26,10 +26,10 @@ trainees.set(
     // are evaluating, if you are using the FathomFox Evaluator:
     'overlay',
 
-    // Here we paste in coefficients from fathom-train. This lets us use the
-    // Evaluator to see what Fathom is getting wrong. Otherwise, these numbers
-    // do nothing until you deploy your application, so there's no need to
-    // maintain them until then.
+    // Here we paste in coefficients from ``fathom train``. This lets us use
+    // the Evaluator to see what Fathom is getting wrong. Otherwise, these
+    // numbers do nothing until you deploy your application, so there's no need
+    // to maintain them until then.
     {coeffs: new Map([  // [rule name, coefficient]
         ['big', 50.4946],
         ['nearlyOpaque', 48.6396],

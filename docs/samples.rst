@@ -59,12 +59,12 @@ With a first draft of your rubric written, you're ready to collect samples using
 Storing Samples in Git
 ======================
 
-There are great advantages to storing samples in version control. However, corpora often bump up against the limits imposed by git hosting services like GitHub. Thus, we recommend using `Git Large File Storage (LFS) <https://git-lfs.github.com/>`_ to store samples. This is facilitated by a tool called :doc:`fathom-extract<commands/extract>`, which breaks large subresources like images back out of the HTML. As a bonus, your HTML files will shrink drastically and become feasible to diff and load into text editors.
+There are great advantages to storing samples in version control. However, corpora often bump up against the limits imposed by git hosting services like GitHub. Thus, we recommend using `Git Large File Storage (LFS) <https://git-lfs.github.com/>`_ to store samples. This is facilitated by :doc:`fathom extract<commands/extract>`, which breaks large subresources like images back out of the HTML. As a bonus, your HTML files will shrink drastically and become feasible to diff and load into text editors.
 
-Using fathom-extract
+Using fathom extract
 --------------------
 
-:doc:`fathom-extract<commands/extract>` pulls the inlined data URLs representing subresources (like images and CSS) out of your samples, converts them into images and CSS files, places them in a newly created sample-specific directory within a newly created resources directory, and replaces the data URLs with references to the new files. This let you use Git-LFS to store the new subresource files.
+:doc:`fathom extract<commands/extract>` pulls the inlined data URLs representing subresources (like images and CSS) out of your samples, converts them into images and CSS files, places them in a newly created sample-specific directory within a newly created resources directory, and replaces the data URLs with references to the new files. This let you use Git-LFS to store the new subresource files.
 
 For example, if you have this directory of samples: ::
 
@@ -77,7 +77,7 @@ For example, if you have this directory of samples: ::
 
 Running... ::
 
-    fathom-extract samples/unused
+    fathom extract samples/unused
 
 will change your directory to: ::
 
@@ -120,20 +120,20 @@ The first ``/**`` ensures all sample directories (``unused``, ``training``, etc.
 Training, Testing, and Validation Sets
 ======================================
 
-Up to now, we've kept the samples in the ``unused`` folder. Now it's time to divide them among the training, validation, and testing sets using :doc:`fathom-pick<commands/pick>`. This command randomly moves a given number of files from one directory to another to keep the sets mutually representative.
+Up to now, we've kept the samples in the ``unused`` folder. Now it's time to divide them among the training, validation, and testing sets using :doc:`fathom pick<commands/pick>`. This command randomly moves a given number of files from one directory to another to keep the sets mutually representative.
 
 A training set on the order of a few hundred samples is generally sufficient to push precision and recall percentages into the high 90s. You'll want additional samples for a validation set (to let the trainer know when it's begun to overfit) and a test set (to come up with final accuracy numbers). We recommend a 60/20/20 split among training/validation/testing sets. This gives you large enough validation and testing sets, at typical corpus sizes, while shunting as many samples as possible to the training set so you can mine them for rule ideas.
 
 For example, if you had collected 100 samples initially, you would run these commands to divide them into sets::
 
     cd samples
-    fathom-pick unused training 60
-    fathom-pick unused validation 20
-    fathom-pick unused testing 20
+    fathom pick unused training 60
+    fathom pick unused validation 20
+    fathom pick unused testing 20
 
 If you collected a great many samples, leave some in the ``unused`` folder for now; the trainer will run faster with less data. Work on your ruleset until you have high accuracy on a few dozen samples, and only then add more.
 
 Maintaining Representativeness
 ------------------------------
 
-It's important to keep your sets mutually representative. If you have a collection of samples sorted by some metric, like site popularity or when they were collected, don't use samples 1-100 for training and then 101-200 for validation. Instead, use :command:`fathom-pick` to proportionally assign them to sets: 60% to training and 20% to each of validation and testing. You can repeat this as you later come to need more samples.
+It's important to keep your sets mutually representative. If you have a collection of samples sorted by some metric, like site popularity or when they were collected, don't use samples 1-100 for training and then 101-200 for validation. Instead, use :command:`fathom pick` to proportionally assign them to sets: 60% to training and 20% to each of validation and testing. You can repeat this as you later come to need more samples.

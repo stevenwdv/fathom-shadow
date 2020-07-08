@@ -12,13 +12,13 @@ Running the Trainer
 
 .. note::
 
-   Fathom has had several trainers over its evolution. Both the Corpus Framework and the trainer built into old versions of FathomFox are obsoleted by :doc:`fathom-train<commands/train>`, described herein.
+   Fathom has had several trainers over its evolution. Both the Corpus Framework and the trainer built into old versions of FathomFox are obsoleted by :doc:`fathom train<commands/train>`, described herein.
 
 Once your samples are collected and at least several rules are written, you're ready to do some initial training. Training is done for one type at a time. If you have types that depend on other types (an advanced case), train the other types first.
 
 Run the trainer. A simple beginning, using just a training set, is... ::
 
-    fathom-train samples/training --ruleset rulesets.js --trainee yourTraineeId
+    fathom train samples/training --ruleset rulesets.js --trainee yourTraineeId
 
 ...yielding something like... ::
 
@@ -50,7 +50,7 @@ Run the trainer. A simple beginning, using just a training set, is... ::
 
 Viewing the TensorBoard graphs with ``tensorboard --logdir runs/`` will quickly show you whether the loss function is oscillating. If you see oscilloscope-like wiggles rather than a smooth descent, the learning rate is too high: the trainer is taking steps that are too big and overshooting the optimum it's chasing. Decrease the learning rate by a factor of 10 until the graph becomes monotonically decreasing::
 
-    fathom-train samples/training  --ruleset rulesets.js --trainee yourTraineeId --learning-rate 0.1 -c tryingToRemoveOscillations
+    fathom train samples/training  --ruleset rulesets.js --trainee yourTraineeId --learning-rate 0.1 -c tryingToRemoveOscillations
 
 Comments added (with ``-c``) to your :doc:`fathom-train<commands/train>` calls are your friend, as a heap of anonymous TensorBoard runs otherwise quickly becomes indistinguishable.
 
@@ -62,11 +62,11 @@ Comments added (with ``-c``) to your :doc:`fathom-train<commands/train>` calls a
 
 Once you've tamped down oscillations, use validation samples and early stopping (on by default) to keep Fathom from overfitting::
 
-    fathom-train samples/training --ruleset rulesets.js --trainee yourTraineeId --validation-set samples/validaton
+    fathom train samples/training --ruleset rulesets.js --trainee yourTraineeId --validation-set samples/validaton
 
 The trainer comes with a variety of adjustment knobs to ensure a good fit and to trade off between false positives and false negatives. For a full tour of its capabilities, see...
 
-:doc:`fathom-train reference documentation<commands/train>`
+:doc:`fathom train reference documentation<commands/train>`
 
 Workflow
 ========
@@ -78,7 +78,7 @@ A sane authoring process is a feedback loop something like this:
 #. Run the trainer. Start with 10-20 training pages and an equal number of validation ones.
 #. If accuracy is insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their tag excerpts. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
 #. Go back to step 3.
-#. Once *validation accuracy* is sufficient, use the :doc:`fathom-test<commands/test>` tool on a fresh set of *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
+#. Once *validation accuracy* is sufficient, use :doc:`fathom test<commands/test>` on a fresh set of *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
 #. If testing accuracy is too low, imbibe the testing pages into your training set, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
 #. If testing accuracy is sufficient, you're done! Make sure the latest ruleset and coefficients are in your finished product, and ship it.
 
@@ -90,9 +90,9 @@ Setting Breakpoints
 
 If the trainer reports JavaScript errors, you've probably got a bug in your ruleset code. If you can't find it by examination and need to place a breakpoint, the tool of choice is the FathomFox Evaluator.
 
-#. Run :doc:`fathom-fox<commands/fox>`, and pass it your ruleset::
+#. Run :doc:`fathom fox<commands/fox>`, and pass it your ruleset::
 
-    fathom-fox -r rulesets.js
+    fathom fox -r rulesets.js
 
 #. Use the instance of Firefox that comes up to open a page that you think will reproduce the problem.
 #. Show the dev tools, and navigate to the Debugger panel.
@@ -124,6 +124,6 @@ FathomFox's Evaluator can point out misrecognized elements, in case the tag exer
 Histograms
 ----------
 
-Finally, a great way to examine the scores your rules are emitting is :doc:`fathom-histogram<commands/histogram>`. It can show you how useful a discriminator a rule is and help you notice when the distribution of output values is not what you expect.
+Finally, a great way to examine the scores your rules are emitting is :doc:`fathom histogram<commands/histogram>`. It can show you how useful a discriminator a rule is and help you notice when the distribution of output values is not what you expect.
 
 .. image:: img/histogram.png

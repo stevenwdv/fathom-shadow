@@ -22,9 +22,9 @@ FathomFox
 
 FathomFox is a browser extension used to label web pages. The best way to get it is to first install the commandline tools and then run… ::
 
-    fathom-fox
+    fathom fox
 
-This will launch a built-in copy of FathomFox in a fresh Firefox profile so ad blockers and other customizations don't interfere with the clean capture of labeled pages. (Some ad blockers will make changes to the DOM, like adding style attributes to ad iframes to hide them.) Using the commandline launcher also lets you pass in your own rulesets for debugging with the FathomFox Evaluator. See the ``-r`` option on the :doc:`fathom-fox reference page<commands/fox>`.
+This will launch a built-in copy of FathomFox in a fresh Firefox profile so ad blockers and other customizations don't interfere with the clean capture of labeled pages. (Some ad blockers will make changes to the DOM, like adding style attributes to ad iframes to hide them.) Using the commandline launcher also lets you pass in your own rulesets for debugging with the FathomFox Evaluator. See the ``-r`` option on the :doc:`fathom fox reference page<commands/fox>`.
 
 For more casual use, you can instead `install FathomFox through the web <https://addons.mozilla.org/en-US/firefox/addon/fathomfox/>`_, in which case it will be your responsibility to avoid addons that might mutate the DOM.
 

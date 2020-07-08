@@ -1,2 +1,2 @@
-.. click:: fathom_web.commands.fox:main
-   :prog: fathom-fox
+.. click:: fathom_web.commands.fox:fox
+   :prog: fathom fox

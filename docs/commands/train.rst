@@ -1,2 +1,2 @@
-.. click:: fathom_web.commands.train:main
-   :prog: fathom-train
+.. click:: fathom_web.commands.train:train
+   :prog: fathom train

@@ -179,12 +179,12 @@ def exclude_features(exclude, vector_data):
         type=str,
         multiple=True,
         help='Exclude a rule while training. This helps with before-and-after tests to see if a rule is effective.')
-def main(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, tabs, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
+def train(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, tabs, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
     """Compute optimal numerical parameters for a Fathom ruleset.
 
     The usual invocation is something like this::
 
-        fathom-train samples/training --validation-set samples/validation --ruleset rulesets.js --trainee new
+        fathom train samples/training --validation-set samples/validation --ruleset rulesets.js --trainee new
 
     The first argument is a directory of labeled training pages. It can also
     be, for backward compatibility, a JSON file of vectors from FathomFox's

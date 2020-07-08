@@ -63,14 +63,16 @@ MIME_TYPE_TO_FILE_EXTENSION = {
         help='Save original HTML files in a newly created `originals`'
              ' directory in IN_DIRECTORY (default: True)')
 @argument('in_directory', type=Path(exists=True, file_okay=False))
-def main(in_directory, preserve_originals):
+def extract(in_directory, preserve_originals):
     """
-    Extract resources from the HTML pages in IN_DIRECTORY and store the
-    resources for each page in a newly created page-specific directory
-    within a newly created resources directory in IN_DIRECTORY.
-    For example, the resources for ``example.html`` would be stored in
-    ``resources/example/``. This tool is used to prepare your samples for a
-    git-LFS-enabled repository.
+    Extract resources from samples to store them in Git LFS.
+
+    Extract resources from the HTML pages in IN_DIRECTORY, and store the
+    resources for each page in a newly created page-specific directory within a
+    newly created resources directory in IN_DIRECTORY. For example, the
+    resources for ``example.html`` would be stored in ``resources/example/``.
+    This tool is used to prepare your samples for a git-LFS-enabled repository.
+
     """
     if preserve_originals:
         originals_dir = pathlib.Path(in_directory) / 'originals'
