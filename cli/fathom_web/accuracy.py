@@ -196,7 +196,7 @@ def pretty_accuracy(description, accuracy, number_of_samples, false_positives, f
         precision = true_positives / (true_positives + false_positives)
     # Recall is the same as the true positive rate:
     recall = 1 - false_negative_rate
-    mcc_denom = sqrt((true_positives + false_positives) * (true_positives + false_negatives) * (true_negatives + false_positives) * (true_negatives + false_negatives))
+    mcc_denom = sqrt(float(true_positives + false_positives) * float(true_positives + false_negatives) * float(true_negatives + false_positives) * float(true_negatives + false_negatives))
     if mcc_denom:
         mcc = (true_positives * true_negatives - false_positives * false_negatives) / mcc_denom
     else:
