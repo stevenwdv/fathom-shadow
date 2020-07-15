@@ -30,7 +30,7 @@ def accuracy_per_tag(y, y_pred, cutoff, num_prunes):
         false_positives = (predicted_positives & (y == 0)).sum()
         number_of_tags = len(y) + num_prunes
         false_negatives = number_of_tags - successes - false_positives + num_prunes
-        return (successes / number_of_tags), false_positives, false_negatives
+        return (successes / number_of_tags), int(false_positives), int(false_negatives)
 
 
 def per_tag_metrics(page, model, cutoff):
