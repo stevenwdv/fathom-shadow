@@ -272,7 +272,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
                           num_samples,
                           false_positives,
                           false_negatives,
-                          num_yes + num_prunes))
+                          num_yes))
     if validation_set:
         accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold, validation_prunes)
         print(pretty_accuracy('Validation',
@@ -280,7 +280,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
                               len(validation_ins),
                               false_positives,
                               false_negatives,
-                              validation_yes + validation_prunes))
+                              validation_yes))
 
     # Print timing information:
     if training_pages and 'time' in training_pages[0]:
