@@ -6,6 +6,7 @@ from json import dump, JSONDecodeError, load
 import hashlib
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from importlib.resources import open_binary
+from itertools import filterfalse
 import os
 from os import devnull, kill, makedirs
 from os.path import expanduser, expandvars
@@ -68,6 +69,8 @@ def make_or_find_vectors(ruleset, trainee, sample_set, sample_cache, show_browse
             with sample_cache.open(encoding='utf-8') as file:
                 json = load(file)
             json['header'].update(updated_hashes)
+            # TODO: Solve this problem for real and remove this method
+            remove_duplicate_sample_vectors(json)
             with sample_cache.open('w', encoding='utf-8') as file:
                 dump(json, file, separators=(',', ':'))
             return json
@@ -630,6 +633,27 @@ def unlink_if_exists(path):
         path.unlink()
     except FileNotFoundError:
         pass
+
+
+def remove_duplicate_sample_vectors(json):
+    """Remove potential duplicated feature vectors from the vector file.
+
+    7/21/2020: This is a bandage solution to the problem of duplicated feature
+    vectors. I (Daniel) will fix the source of the problem in ~2-4 weeks. If
+    you are reading this message after that time has passed, please tell me
+    to fix the problem and get rid of this method.
+
+    """
+    filenames_seen = set()
+
+    def not_seen(feature_vector):
+        filename = feature_vector['filename']
+        if filename not in filenames_seen:
+            filenames_seen.add(filename)
+            return False
+        return True
+
+    json['pages'][:] = filterfalse(not_seen, json['pages'])
 
 
 def run(*args, cwd, desc):
