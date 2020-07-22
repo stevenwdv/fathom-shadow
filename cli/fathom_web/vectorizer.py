@@ -408,6 +408,7 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
         profile.set_preference('browser.cache.disk.enable', False)
         profile.set_preference('browser.cache.memory.enable', False)
         profile.set_preference('browser.cache.offline.enable', False)
+        profile.set_preference('devtools.chrome.enabled', True)
 
         firefox = webdriver.Firefox(
             executable_path=str(geckodriver_path.resolve()),
