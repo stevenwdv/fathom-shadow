@@ -137,6 +137,16 @@ class Vectorizer extends PageVisitor {
     }
 
     async processAtEndOfRun() {
+        // Remove potential duplicated feature vectors from the vector file.
+        // 7/24/2020: This is a bandage solution to the problem of duplicated
+        // feature vectors. I (Daniel) will fix the source of the problem in
+        // ~2-4 weeks. If you are reading this message after that time has
+        // passed, please tell me to fix the problem and get rid of this code.
+        let filenamesSeen = new Set();
+        this.vectors = this.vectors.filter(item => {
+            return filenamesSeen.has(item['filename']) ? false : filenamesSeen.add(item['filename']);
+        });
+
         function compareByKey(key) {
             function cmp(a, b) {
                 const keyA = key(a);
