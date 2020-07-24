@@ -142,10 +142,8 @@ class Vectorizer extends PageVisitor {
         // feature vectors. I (Daniel) will fix the source of the problem in
         // ~2-4 weeks. If you are reading this message after that time has
         // passed, please tell me to fix the problem and get rid of this code.
-        let filenamesSeen = new Set();
-        this.vectors = this.vectors.filter(item => {
-            return filenamesSeen.has(item['filename']) ? false : filenamesSeen.add(item['filename']);
-        });
+        const filenamesSeen = new Set();
+        this.vectors = this.vectors.filter(item => filenamesSeen.has(item['filename']) ? false : filenamesSeen.add(item['filename']));
 
         function compareByKey(key) {
             function cmp(a, b) {

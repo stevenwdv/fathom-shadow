@@ -6,7 +6,6 @@ from json import dump, JSONDecodeError, load
 import hashlib
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from importlib.resources import open_binary
-from itertools import filterfalse
 import os
 from os import devnull, kill, makedirs
 from os.path import expanduser, expandvars
