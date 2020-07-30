@@ -2,6 +2,29 @@
 Version History
 ===============
 
+3.7
+===
+
+Fathom
+------
+
+* :meth:`setCoeffsAndBiases` is now a documented part of the public API.
+
+FathomFox
+---------
+
+No changes.
+
+CLI tools
+---------
+
+* Combine commandline tools into a single one called simply ``fathom``. This makes the subcommands more discoverable.
+* Fix confusion matrix numbers, which have been wrong (if there were any pruned nodes) since we introduced pruned element detection in 3.5.
+* Fix autovectorization on Windows.
+* Whitelist a transient Vectorizer error that happens only on Windows.
+* Fix int32 overflow crashers in MCC calculations.
+* Implement a short-term workaround for the Vectorizer sometimes duplicating pages.
+
 3.6
 ===
 
