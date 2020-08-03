@@ -4,7 +4,7 @@ class Vectorizer extends PageVisitor {
 
         this.trainee = undefined;
         this.traineeId = undefined;
-        this.vectorType = undefined;
+        this.vectorFormat = undefined;
         this.vectors = [];
     }
 
@@ -82,7 +82,7 @@ class Vectorizer extends PageVisitor {
                   {active: true}
                 );
                 await sleep(this.otherOptions.wait * 1000);
-                vector = await browser.tabs.sendMessage(tab.id, {type: 'vectorizeTab', traineeId: this.traineeId});
+                vector = await browser.tabs.sendMessage(tab.id, {type: 'vectorizeTab', traineeId: this.traineeId, vectorFormat: this.vectorFormat});
             } catch (error) {
                 // We often get a "receiving end does not exist", even though
                 // the receiver is a background script that should always be
@@ -134,10 +134,10 @@ class Vectorizer extends PageVisitor {
     async processAtBeginningOfRun() {
         this.vectors = [];
 
-        if (this.doc.querySelector('input[name="vectorType"]:checked').value === 'graph') {
-            this.vectorType = 'graph';
+        if (this.doc.querySelector('input[name="vectorFormat"]:checked').value === 'graph') {
+            this.vectorFormat = 'graph';
         } else {
-            this.vectorType = 'ruleset';
+            this.vectorFormat = 'ruleset';
         }
         this.traineeId = this.doc.getElementById('trainee').value;
         this.trainee = trainees.get(this.traineeId);

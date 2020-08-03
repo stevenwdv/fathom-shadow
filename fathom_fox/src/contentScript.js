@@ -135,7 +135,7 @@ function startTag(element) {
  * We assume, for the moment, that the type of node you're interested in is the
  * same as the trainee ID.
  */
-function vectorizeTab(traineeId) {
+function vectorizeTab(traineeId, vectorFormat) {
     const trainee = trainees.get(traineeId);
     const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
     const vectorType = trainee.vectorType || traineeId
@@ -213,7 +213,7 @@ function dispatch(request) {
             break;
 
         case 'vectorizeTab':
-            return Promise.resolve(vectorizeTab(request.traineeId));
+            return Promise.resolve(vectorizeTab(request.traineeId, request.vectorFormat));
 
         default:
             return Promise.resolve({});
