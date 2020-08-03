@@ -4,6 +4,7 @@ class Vectorizer extends PageVisitor {
 
         this.trainee = undefined;
         this.traineeId = undefined;
+        this.vectorType = undefined;
         this.vectors = [];
     }
 
@@ -132,6 +133,12 @@ class Vectorizer extends PageVisitor {
 
     async processAtBeginningOfRun() {
         this.vectors = [];
+
+        if (this.doc.querySelector('input[name="vectorType"]:checked').value === 'graph') {
+            this.vectorType = 'graph';
+        } else {
+            this.vectorType = 'ruleset';
+        }
         this.traineeId = this.doc.getElementById('trainee').value;
         this.trainee = trainees.get(this.traineeId);
     }
