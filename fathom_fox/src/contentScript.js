@@ -176,10 +176,12 @@ function vectorizeTab(traineeId, vectorFormat) {
             missed))
     } else {
         const unboundRuleset = trainee.rulesetMaker('dummy');
-        perNodeStuff = new Map();
+        const featureVectors = [];
+        const edgeDestinations = [];
+        const edgeSources = [];
 
         // Recursive function running the ruleset against each DOM element
-        function vectorizeDOM(element, parentMap) {
+        function vectorizeDOM(element, parentIndex) {
             const boundRuleset = unboundRuleset.against(element);
 
             const singleNodeTime = performance.now()
@@ -192,19 +194,32 @@ function vectorizeTab(traineeId, vectorFormat) {
                 features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName)),
                 markup: startTag(fnode.element)
             };
-            const elementMap = new Map();
-            parentMap.set(nodeStuff, elementMap);
+            featureVectors.push(nodeStuff);
+            const nodeIndex = featureVectors.length - 1;
+            edgeDestinations.push(nodeIndex);
+            edgeSources.push(parentIndex);
 
             // Recurse down the DOM depth-first.
             element = element.firstElementChild;
             while(element) {
-                vectorizeDOM(element, elementMap);
+                vectorizeDOM(element, ++parentIndex);
                 element = element.nextElementSibling;
             }
         }
 
-        vectorizeDOM(window.document.body, perNodeStuff)
+        vectorizeDOM(window.document.body, -1)
+
+        // Remove the first edge since it's a fake edge for the document.body.
+        edgeDestinations.shift();
+        edgeSources.shift();
+
         // Since we're vectorizing the entire DOM, we won't have any pruned elements.
+
+        perNodeStuff = {
+            featureVectors,
+            edgeDestinations,
+            edgeSources
+        }
     }
 
     const path = window.location.pathname;

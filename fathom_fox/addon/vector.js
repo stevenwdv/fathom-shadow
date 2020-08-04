@@ -104,7 +104,13 @@ class Vectorizer extends PageVisitor {
 
             // Check if any of the rules didn't run or returned null.
             // This presents as an undefined value in a feature vector.
-            const nullFeatures = this.nullFeatures(vector.nodes);
+            let nullFeatures;
+            const featureNames = Array.from(this.trainee.coeffs.keys());
+            if (this.vectorFormat === 'ruleset') {
+                nullFeatures = this.nullFeatures(vector.nodes, featureNames);
+            } else {
+                nullFeatures = this.nullFeatures(vector.nodes.featureVectors, featureNames);
+            }
             if (nullFeatures) {
                 this.errorAndStop(`failed: rule(s) ${nullFeatures} returned null values`, tab.id, windowId);
             } else {
@@ -117,10 +123,9 @@ class Vectorizer extends PageVisitor {
         }
     }
 
-    nullFeatures(nodes) {
+    nullFeatures(nodes, featureNames) {
         for (const node of nodes) {
             if (node.features.some(featureValue => featureValue === undefined)) {
-                const featureNames = Array.from(this.trainee.coeffs.keys());
                 return node.features.reduce((nullFeatures, featureValue, index) => {
                     if (featureValue === undefined) {
                         nullFeatures.push(featureNames[index]);
