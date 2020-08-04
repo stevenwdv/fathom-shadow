@@ -137,42 +137,76 @@ function startTag(element) {
  */
 function vectorizeTab(traineeId, vectorFormat) {
     const trainee = trainees.get(traineeId);
-    const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
-    const vectorType = trainee.vectorType || traineeId
+    const vectorType = trainee.vectorType || traineeId;
+    const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
+    let perNodeStuff = [];
+    let time = 0.0;
 
-    let time = performance.now()
-    const fnodes = boundRuleset.get(type(vectorType));
-    time = performance.now() - time;
+    if (vectorFormat === 'ruleset') {
+        const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
+
+        time = performance.now()
+        const fnodes = boundRuleset.get(type(vectorType));
+        time = performance.now() - time;
+
+        perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
+            const scoreMap = fnode.scoresSoFarFor(vectorType);
+            return {
+                isTarget: isTarget(fnode),
+                // Loop over ruleset.coeffs in order, and spit out each score:
+                features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName)),
+                markup: startTag(fnode.element)
+            };
+        });
+
+        // Log any target nodes we prematurely pruned with too-tight dom() calls:
+        const targets = new NiceSet(window.document.querySelectorAll('[data-fathom=' + vectorType + ']').values());
+        const candidates = new Set(fnodes.map(fnode => fnode.element));
+        const missed = targets.minus(candidates);
+        perNodeStuff.push(
+          ...map(element => {
+                return {
+                    pruned: true,
+                    isTarget: true,
+                    features: [],
+                    markup: startTag(element)
+                };
+            },
+            missed))
+    } else {
+        const unboundRuleset = trainee.rulesetMaker('dummy');
+
+        // Recursive function running the ruleset against each DOM element
+        function vectorizeDOM(element) {
+            const boundRuleset = unboundRuleset.against(element);
+
+            const singleNodeTime = performance.now()
+            const fnode = boundRuleset.get(type(vectorType))[0];
+            time += performance.now() - singleNodeTime;
+
+            const scoreMap = fnode.scoresSoFarFor(vectorType);
+            perNodeStuff.push({
+                isTarget: isTarget(fnode),
+                features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName)),
+                markup: startTag(fnode.element)
+            });
+
+            // Recurse down the DOM depth-first.
+            element = element.firstElementChild;
+            while(element) {
+                vectorizeDOM(element);
+                element = element.nextElementSibling;
+            }
+        }
+
+        vectorizeDOM(window.document.body)
+        // Since we're vectorizing the entire DOM, we won't have any pruned elements.
+    }
 
     const path = window.location.pathname;
-    const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
-    const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
-        const scoreMap = fnode.scoresSoFarFor(vectorType);
-        return {
-            isTarget: isTarget(fnode),
-            // Loop over ruleset.coeffs in order, and spit out each score:
-            features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName)),
-            markup: startTag(fnode.element)
-        };
-    });
-
-    // Log any target nodes we prematurely pruned with too-tight dom() calls:
-    const targets = new NiceSet(window.document.querySelectorAll('[data-fathom=' + vectorType + ']').values());
-    const candidates = new Set(fnodes.map(fnode => fnode.element));
-    const missed = targets.minus(candidates);
-    perNodeStuff.push(
-        ...map(element => {
-                   return {
-                       pruned: true,
-                       isTarget: true,
-                       features: [],
-                       markup: startTag(element)
-                   };
-               },
-               missed))
     return {filename: path.substr(path.lastIndexOf('/') + 1),
-            nodes: perNodeStuff,
-            time};
+        nodes: perNodeStuff,
+        time};
 }
 
 /**
