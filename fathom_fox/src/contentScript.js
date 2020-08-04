@@ -139,11 +139,12 @@ function vectorizeTab(traineeId, vectorFormat) {
     const trainee = trainees.get(traineeId);
     const vectorType = trainee.vectorType || traineeId;
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
-    let perNodeStuff = [];
+    let perNodeStuff;
     let time = 0.0;
 
     if (vectorFormat === 'ruleset') {
         const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
+        perNodeStuff = [];
 
         time = performance.now()
         const fnodes = boundRuleset.get(type(vectorType));
@@ -175,9 +176,10 @@ function vectorizeTab(traineeId, vectorFormat) {
             missed))
     } else {
         const unboundRuleset = trainee.rulesetMaker('dummy');
+        perNodeStuff = new Map();
 
         // Recursive function running the ruleset against each DOM element
-        function vectorizeDOM(element) {
+        function vectorizeDOM(element, parentMap) {
             const boundRuleset = unboundRuleset.against(element);
 
             const singleNodeTime = performance.now()
@@ -185,21 +187,23 @@ function vectorizeTab(traineeId, vectorFormat) {
             time += performance.now() - singleNodeTime;
 
             const scoreMap = fnode.scoresSoFarFor(vectorType);
-            perNodeStuff.push({
+            const nodeStuff = {
                 isTarget: isTarget(fnode),
                 features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName)),
                 markup: startTag(fnode.element)
-            });
+            };
+            const elementMap = new Map();
+            parentMap.set(nodeStuff, elementMap);
 
             // Recurse down the DOM depth-first.
             element = element.firstElementChild;
             while(element) {
-                vectorizeDOM(element);
+                vectorizeDOM(element, elementMap);
                 element = element.nextElementSibling;
             }
         }
 
-        vectorizeDOM(window.document.body)
+        vectorizeDOM(window.document.body, perNodeStuff)
         // Since we're vectorizing the entire DOM, we won't have any pruned elements.
     }
 
