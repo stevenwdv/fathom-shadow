@@ -55,9 +55,13 @@ const biases = [
 const trainee = {
   viewportSize: VIEWPORT_SIZE,
   coeffs: new Map(coefficients),
-  isTarget: fnode =>
-    fnode.element.dataset.fathom === "new" ||
-    fnode.element.dataset.fathom === "confirm",
+  isTarget: fnode => {
+    const type = fnode.element.type;
+    if (type) {
+      return type === 'password';
+    }
+    return false;
+  },
   rulesetMaker: () => makeRuleset([
       ...coefficients],
     biases)
