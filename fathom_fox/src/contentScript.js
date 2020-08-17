@@ -9,7 +9,7 @@
  */
 import freezeDry from 'freeze-dry';
 import {type} from 'fathom-web';
-import {map, NiceSet} from 'fathom-web/utilsForFrontend';
+import {map, max, NiceSet} from 'fathom-web/utilsForFrontend';
 
 
 /**
@@ -146,32 +146,19 @@ function vectorizeTab(traineeId) {
 
     const path = window.location.pathname;
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
-    const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
-        const scoreMap = fnode.scoresSoFarFor(vectorType);
-        return {
-            isTarget: isTarget(fnode),
-            // Loop over ruleset.coeffs in order, and spit out each score:
-            features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName)),
-            markup: startTag(fnode.element)
-        };
-    });
+    
+    // Grab max-scoring fnode:
+    const topFnode = max(fnodes, f => f.scoreFor(vectorType));
+    
+    const topNodeStuff = {
+        isTarget: isTarget(fnode),
+        // Loop over ruleset.coeffs in order, and spit out each score:
+        features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName)),
+        markup: topFnode.element.outerHTML
+    };
 
-    // Log any target nodes we prematurely pruned with too-tight dom() calls:
-    const targets = new NiceSet(window.document.querySelectorAll('[data-fathom=' + vectorType + ']').values());
-    const candidates = new Set(fnodes.map(fnode => fnode.element));
-    const missed = targets.minus(candidates);
-    perNodeStuff.push(
-        ...map(element => {
-                   return {
-                       pruned: true,
-                       isTarget: true,
-                       features: [],
-                       markup: startTag(element)
-                   };
-               },
-               missed))
     return {filename: path.substr(path.lastIndexOf('/') + 1),
-            nodes: perNodeStuff,
+            nodes: topNodeStuff,
             time};
 }
 
