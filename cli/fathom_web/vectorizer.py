@@ -442,6 +442,7 @@ def running_firefox(fathom_fox, show_browser, geckodriver_path):
                 signal_for_killing = (signal.CTRL_C_EVENT if os.name == 'nt'
                                       else signal.SIGTERM)
                 try:
+                    # https://bugzilla.mozilla.org/show_bug.cgi?id=1430064
                     kill(firefox_pid, signal_for_killing)
                 except (SystemError, ProcessLookupError):
                     pass
