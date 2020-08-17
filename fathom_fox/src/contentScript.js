@@ -147,12 +147,17 @@ function vectorizeTab(traineeId) {
     const path = window.location.pathname;
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
     
-    // Grab max-scoring fnode:
-    const topFnode = max(fnodes, f => f.scoreFor(vectorType));
+    // Grab HTML of max-scoring fnode, if one exists:
+    let outerHtml;
+    if (fnodes.length) {
+        outerHtml = max(fnodes, f => f.scoreFor(vectorType)).element.outerHTML;
+    } else {
+        outerHtml = ''
+    }
     
     const topNodeStuff = [{
         features: [],
-        markup: topFnode.element.outerHTML
+        markup: outerHtml
     }];
 
     return {filename: path.substr(path.lastIndexOf('/') + 1),
