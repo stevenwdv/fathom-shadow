@@ -151,9 +151,6 @@ function vectorizeTab(traineeId) {
     const topFnode = max(fnodes, f => f.scoreFor(vectorType));
     
     const topNodeStuff = {
-        isTarget: isTarget(fnode),
-        // Loop over ruleset.coeffs in order, and spit out each score:
-        features: Array.from(trainee.coeffs.keys()).map(ruleName => scoreMap.get(ruleName)),
         markup: topFnode.element.outerHTML
     };
 
