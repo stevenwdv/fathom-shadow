@@ -138,14 +138,14 @@ function startTag(element) {
 function vectorizeTab(traineeId) {
     const trainee = trainees.get(traineeId);
     const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
+    boundRuleset.setCoeffsAndBiases(trainee.coeffs, trainee.biases);
     const vectorType = trainee.vectorType || traineeId
 
-    let time = performance.now()
+    let time = performance.now();
     const fnodes = boundRuleset.get(type(vectorType));
     time = performance.now() - time;
 
     const path = window.location.pathname;
-    const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
     
     // Grab HTML of max-scoring fnode, if one exists:
     let outerHtml, bestFnode;
@@ -159,8 +159,7 @@ function vectorizeTab(traineeId) {
     const topNodeStuff = [{
         features: [],
         markup: outerHtml,
-        score: bestFnode.scoreFor(vectorType),
-        isTarget
+        score: bestFnode.scoreFor(vectorType)
     }];
 
     return {filename: path.substr(path.lastIndexOf('/') + 1),
