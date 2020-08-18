@@ -148,16 +148,19 @@ function vectorizeTab(traineeId) {
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
     
     // Grab HTML of max-scoring fnode, if one exists:
-    let outerHtml;
+    let outerHtml, bestFnode;
     if (fnodes.length) {
-        outerHtml = max(fnodes, f => f.scoreFor(vectorType)).element.outerHTML;
+        bestFnode = max(fnodes, f => f.scoreFor(vectorType));
+        outerHtml = bestFnode.element.outerHTML;
     } else {
         outerHtml = ''
     }
     
     const topNodeStuff = [{
         features: [],
-        markup: outerHtml
+        markup: outerHtml,
+        score: bestFnode.scoreFor(vectorType),
+        isTarget
     }];
 
     return {filename: path.substr(path.lastIndexOf('/') + 1),
