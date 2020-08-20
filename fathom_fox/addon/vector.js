@@ -62,8 +62,9 @@ class Vectorizer extends PageVisitor {
                 // stepping through so slowly in the debugger that it gets
                 // impatient:
                 message === 'Message manager disconnected' ||
-                // This is the message that shows up on Windows.
+                // These two messages can show up on Windows.
                 message === 'can\'t access property "browser", tab is null' ||
+                message === 'An unexpected error has occurred' ||
                 message.startsWith('Invalid tab ID: '));
     }
 
