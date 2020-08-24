@@ -64,19 +64,20 @@ class PageVisitor {
                 tab.url === 'about:blank' ||
                 tab.url === 'about:newtab' ||
                 tab.status !== 'complete' ||
-                // I want to say "!tab.active ||" here, but that leads to the
-                // vectorizer freezing. Apparently, many tabs never go active.
                 changeInfo.status !== 'complete'  // Avoid the several other update events about things like "attention" that fire on every page.
             ) {
                 return;
             }
-            
+
             // Firefox has twice since the advent of FathomFox found new
             // reasons to fire tab-updated events. Each time, it has led to
             // nondeterministic behavior stemming from duplicate visits to the
             // same tab. While we try to keep the set of conditions tight
             // enough that we end up called only once per tab, history shows
-            // this additional set of suspenders atop our belt is necessary:
+            // this additional set of suspenders atop our belt is necessary.
+            // Most recently (sometime between FF 75 and 81), we now receive an
+            // event where tab.active == True, which probably comes from our
+            // (longstanding) explicit activation of the tab in the Vectorizer.
             if (tabIdsAlreadyVisited.has(tabId)) {
                 return;
             } else {
