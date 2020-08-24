@@ -64,6 +64,8 @@ class PageVisitor {
                 tab.url === 'about:blank' ||
                 tab.url === 'about:newtab' ||
                 tab.status !== 'complete' ||
+                // I want to say "!tab.active ||" here, but that leads to the
+                // vectorizer freezing. Apparently, many tabs never go active.
                 changeInfo.status !== 'complete'  // Avoid the several other update events about things like "attention" that fire on every page.
             ) {
                 return;
