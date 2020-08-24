@@ -55,6 +55,7 @@ class PageVisitor {
         let windowId = 'uninitialized window ID';
         this.urlIndex = -1;
         this.tabsDone = 0;
+        const tabIdsAlreadyVisited = new Set();
 
         // Listen for tab events before we start creating tabs; this avoids race
         // conditions between creating tabs and waiting for loading to complete.
@@ -66,6 +67,18 @@ class PageVisitor {
                 changeInfo.status !== 'complete'  // Avoid the several other update events about things like "attention" that fire on every page.
             ) {
                 return;
+            }
+            
+            // Firefox has twice since the advent of FathomFox found new
+            // reasons to fire tab-updated events. Each time, it has led to
+            // nondeterministic behavior stemming from duplicate visits to the
+            // same tab. While we try to keep the set of conditions tight
+            // enough that we end up called only once per tab, history shows
+            // this additional set of suspenders atop our belt is necessary:
+            if (tabIdsAlreadyVisited.has(tabId)) {
+                return;
+            } else {
+                tabIdsAlreadyVisited.add(tabId);
             }
 
             if (tab.url.startsWith('moz-extension://')) {
