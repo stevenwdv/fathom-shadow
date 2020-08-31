@@ -100,7 +100,7 @@ def extract(in_directory, preserve_originals):
             if preserve_originals:
                 shutil.move(file, originals_dir / file.name)
 
-            with file.open('w', encoding='utf-8') as fp:
+            with file.open('w', encoding='utf-8', errors='surrogateescape') as fp:
                 fp.write(html)
 
 
@@ -116,7 +116,7 @@ def extract_base64_data_from_html_page(file: pathlib.Path):
     Base64 data is found with regex matching. Each data string is decoded and
     saved as a separate file.
     """
-    with file.open(encoding='utf-8') as fp:
+    with file.open(encoding='utf-8', errors='surrogateescape') as fp:
         html = fp.read()
 
     # Make the subresources directory
