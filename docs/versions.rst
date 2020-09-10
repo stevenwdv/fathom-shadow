@@ -2,6 +2,24 @@
 Version History
 ===============
 
+3.7.1
+=====
+
+Fathom
+------
+
+No changes.
+
+FathomFox
+---------
+
+* Fix "An unexpected error has occurred" while vectorizing in recent versions of Firefox.
+
+CLI tools
+---------
+
+* Tolerate and preserve any invalid Unicode sequences we encounter during sample :doc:`extraction<commands/extract>`.
+
 3.7
 ===
 
