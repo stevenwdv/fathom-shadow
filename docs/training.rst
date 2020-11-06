@@ -68,6 +68,33 @@ The trainer comes with a variety of adjustment knobs to ensure a good fit and to
 
 :doc:`fathom train reference documentation<commands/train>`
 
+.. _evaluating-metrics:
+
+Evaluating Metrics
+==================
+
+:doc:`fathom train<commands/train>` and :doc:`fathom test<commands/test>` emit blocks of metrics::
+
+    Training precision: 1.0000   Recall: 0.9083                           Predicted
+              Accuracy: 0.9394   95% CI: (0.9148, 0.9639)        ╭───┬── + ───┬── - ───╮
+                   FPR: 0.0000   95% CI: (0.0000, 0.0000)   True │ + │    218 │     22 │
+                   FNR: 0.0917   95% CI: (0.0552, 0.1282)        │ - │      0 │    123 │
+                   MCC: 0.8778                                   ╰───┴────────┴────────╯
+
+Here's how to read them:
+
+* `Precision and recall <https://en.wikipedia.org/wiki/Precision_and_recall>`_ are all you really need to look at. If tweaking a ruleset improves those, keep the tweak. For most applications, one or the other will be more important. For example, for autofill of saved passwords, it's more important to be precise so you don't accidentally put a password into, say, a blog comment field. Remember you can trade off between the two values with :doc:`fathom train<commands/train>`'s ``-p`` option.
+* Ignore Accuracy, which can be misleading for problems with unbalanced classes. For example, if you're trying to identify paragraphs containing author bios and those are rare in the space of all paragraphs, a ruleset could simply say "No, that's not a bio" all the time and have high accuracy. It would, however, have zero recall and be utterly useless.
+* FNR (false-negative rate) and FPR (`false-positive rate <https://en.wikipedia.org/wiki/False_positive_rate>`_) are defined in the standard way and are provided for people familiar with them.
+* MCC (`Matthews Correlation Coefficient <https://en.wikipedia.org/wiki/Matthews_correlation_coefficient>`_) tries to mix down all sources of error into one number. It's best to look at precision and recall instead, as they are usually not equally important. However, if you need a single number to roughly sort a bunch of candidate models, MCC is as good a choice as any. It ranges from -1 (getting exactly the wrong predictions all the time) through 0 (predictions having no correlation with the truth) to 1 (a perfect predictor).
+* All of these statistics (and others, if you like) can be computed from the raw `confusion matrix <https://en.wikipedia.org/wiki/Confusion_matrix>`_, contained in the bordered box to the right. It shows you raw numbers of false positives, false negatives, true positives, and true negatives.
+
+There are also speed histograms::
+
+    Time per page (ms): 2 |  ▃█▃▁▁   | 35    Average per tag: 11
+
+These show how much time Fathom is taking per page and per tag. The horizontal axis is milliseconds, and the vertical is page count. The histograms vary more from run to run than the other (convergent) statistics, and, of course the absolute numbers change based on the speed of the machine. What you should look out for is the sudden appearance of large bars to the far right (indicating many slow outliers) or a drastic increase in the numbers, indicating you slowed things down across the board.
+
 Workflow
 ========
 
@@ -76,8 +103,8 @@ A sane authoring process is a feedback loop something like this:
 #. Collect samples. Observe patterns in the :term:`target` nodes as you do.
 #. Write a few rules based on your observations.
 #. Run the trainer. Start with 10-20 training pages and an equal number of validation ones.
-#. If accuracy is insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their tag excerpts. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.
+#. Examine *training* precision and recall. (See :ref:`Evaluating Metrics <evaluating-metrics>`.) If they are insufficient, examine the failing training pages. The trainer will point these out on the commandline, but FathomFox's Evaluator will help you track down ones that are hard to distinguish from their tag excerpts. Remediate by changing or adding rules. If there are signals Fathom is missing—positive or negative—add rules that score based on them. You'll probably also need to do some :doc:`debugging`.
 #. Go back to step 3.
-#. Once *validation accuracy* is sufficient, use :doc:`fathom test<commands/test>` on a fresh set of *testing* samples. This is your *testing accuracy* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
-#. If testing accuracy is too low, imbibe the testing pages into your training set, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
-#. If testing accuracy is sufficient, you're done! Make sure the latest ruleset and coefficients are in your finished product, and ship it.
+#. Once *validation* precision and recall are sufficient, use :doc:`fathom test<commands/test>` on a fresh set of *testing* samples. These are your *testing metrics* and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.
+#. If testing precision and recall are too low, imbibe the testing pages into your training set, and go back to step 3. As typical in supervised learning systems, testing samples should be considered "burned" once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.
+#. If testing precision and recall are sufficient, you're done! Make sure the latest ruleset and coefficients are in your finished product, and ship it.
