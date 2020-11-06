@@ -21,6 +21,7 @@ Find meaning in the web.
    samples
    rules
    training
+   debugging
    integrating
    zoo
    development
