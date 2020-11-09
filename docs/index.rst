@@ -23,6 +23,7 @@ Find meaning in the web.
    training
    debugging
    integrating
+   maintaining
    zoo
    development
 
