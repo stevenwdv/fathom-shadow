@@ -93,7 +93,7 @@ There are also speed histograms::
 
     Time per page (ms): 2 |  ▃█▃▁▁   | 35    Average per tag: 11
 
-These show how much time Fathom is taking per page and per tag. The horizontal axis is milliseconds, and the vertical is page count. The histograms vary more from run to run than the other (convergent) statistics, and, of course the absolute numbers change based on the speed of the machine. What you should look out for is the sudden appearance of large bars to the far right (indicating many slow outliers) or a drastic increase in the numbers, indicating you slowed things down across the board.
+These show how much time Fathom is taking per page and per tag. The horizontal axis is milliseconds, and the vertical is page count. The histograms vary more from run to run than the other (convergent) statistics, and, of course, the absolute numbers change based on the speed of the machine. What you should look out for is the sudden appearance of large bars to the far right (indicating many slow outliers) or a drastic increase in the numbers (indicating you slowed things down across the board).
 
 Workflow
 ========
