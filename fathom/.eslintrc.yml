@@ -32,6 +32,7 @@ rules:
   no-loop-func: error
   no-new-func: error  # equivalent to eval()
   no-prototype-builtins: off
+  no-restricted-globals: [error, getComputedStyle]
   no-throw-literal: error
   no-trailing-spaces: error
   no-underscore-dangle: off

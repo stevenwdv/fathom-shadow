@@ -1,7 +1,7 @@
 const {assert} = require('chai');
 const firefox = require('selenium-webdriver/firefox');
 const {Builder, until, By} = require('selenium-webdriver');
-const {ancestors, isDomElement, isVisible, toDomElement} = require('../../utilsForFrontend'); // eslint-disable-line node/no-missing-require
+const {ancestors, isDomElement, isVisible, toDomElement, windowForElement} = require('../../utilsForFrontend'); // eslint-disable-line node/no-missing-require
 
 const WAIT_MS = 10000;
 const TEST_PAGE_URL = 'http://localhost:8000/isVisible.html';
@@ -21,6 +21,7 @@ describe('isVisible', () => {
             ${ancestors}
             ${isDomElement}
             ${toDomElement}
+            ${windowForElement}
             return ${isVisible}(document.getElementById('${id}'));
         `);
         assert.equal(

@@ -416,6 +416,25 @@ export function toDomElement(fnodeOrElement) {
     return isDomElement(fnodeOrElement) ? fnodeOrElement : fnodeOrElement.element;
 }
 
+/* istanbul ignore next */
+/* Private.
+ * Return the window an element is in.
+ *
+ * @throws {Error} There isn't such a window.
+ */
+export function windowForElement(element) {
+    let doc = element.ownerDocument;
+    if (doc === null) {
+        // The element itself was a document.
+        doc = element;
+    }
+    const win = doc.defaultView;
+    if (win === null) {
+        throw new Error('The element was not in a window.');
+    }
+    return win;
+}
+
 /**
  * Checks whether any of the element's attribute values satisfy some condition.
  *
@@ -479,12 +498,18 @@ export function sigmoid(x) {
  * Merely being scrolled off the page in either horizontally or vertically
  * doesn't count as invisible; the result of this function is meant to be
  * independent of viewport size.
+ *
+ * @throws {Error} The element (or perhaps one of its ancestors) is not in a
+ *     window, so we can't find the `getComputedStyle()` routine to call. That
+ *     routine is the source of most of the information we use, so you should
+ *     pick a different strategy for non-window contexts.
  */
 export function isVisible(fnodeOrElement) {
     // This could be 5x more efficient if https://github.com/w3c/csswg-drafts/issues/4122 happens.
     const element = toDomElement(fnodeOrElement);
+    const elementWindow = windowForElement(element);
     const elementRect = element.getBoundingClientRect();
-    const elementStyle = getComputedStyle(element);
+    const elementStyle = elementWindow.getComputedStyle(element);
     // Alternative to reading ``display: none`` due to Bug 1381071.
     if (elementRect.width === 0 && elementRect.height === 0 && elementStyle.overflow !== 'hidden') {
         return false;
@@ -500,7 +525,7 @@ export function isVisible(fnodeOrElement) {
     }
     for (const ancestor of ancestors(element)) {
         const isElement = ancestor === element;
-        const style = isElement ? elementStyle : getComputedStyle(ancestor);
+        const style = isElement ? elementStyle : elementWindow.getComputedStyle(ancestor);
         if (style.opacity === '0') {
             return false;
         }
