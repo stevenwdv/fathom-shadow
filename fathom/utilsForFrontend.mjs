@@ -416,25 +416,6 @@ export function toDomElement(fnodeOrElement) {
     return isDomElement(fnodeOrElement) ? fnodeOrElement : fnodeOrElement.element;
 }
 
-/* istanbul ignore next */
-/* Private.
- * Return the window an element is in.
- *
- * @throws {Error} There isn't such a window.
- */
-export function windowForElement(element) {
-    let doc = element.ownerDocument;
-    if (doc === null) {
-        // The element itself was a document.
-        doc = element;
-    }
-    const win = doc.defaultView;
-    if (win === null) {
-        throw new Error('The element was not in a window.');
-    }
-    return win;
-}
-
 /**
  * Checks whether any of the element's attribute values satisfy some condition.
  *
@@ -634,4 +615,23 @@ export function forEach(fn, iterable) {
 
 function isIterable(thing) {
     return thing && typeof thing[Symbol.iterator] === 'function';
+}
+
+/* istanbul ignore next */
+/*
+ * Return the window an element is in.
+ *
+ * @throws {Error} There isn't such a window.
+ */
+export function windowForElement(element) {
+    let doc = element.ownerDocument;
+    if (doc === null) {
+        // The element itself was a document.
+        doc = element;
+    }
+    const win = doc.defaultView;
+    if (win === null) {
+        throw new Error('The element was not in a window.');
+    }
+    return win;
 }
