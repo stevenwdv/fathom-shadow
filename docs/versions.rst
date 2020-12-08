@@ -2,6 +2,25 @@
 Version History
 ===============
 
+3.7.2
+=====
+
+Fathom
+------
+
+* :func:`isVisible` now works in contexts without a global `window` object around.
+* Make :func:`toDomElement` public.
+
+FathomFox
+---------
+
+No changes.
+
+CLI tools
+---------
+
+No changes.
+
 3.7.1
 =====
 
