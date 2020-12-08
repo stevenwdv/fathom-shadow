@@ -237,15 +237,6 @@ export function getDefault(map, key, defaultMaker) {
 }
 
 /**
- * Return an backward iterator over an Array.
- */
-export function *reversed(array) {
-    for (let i = array.length - 1; i >= 0; i--) {
-        yield array[i];
-    }
-}
-
-/**
  * Return an Array, the reverse topological sort of the given nodes.
  *
  * @arg nodes An iterable of arbitrary things
@@ -395,14 +386,6 @@ export function domSort(fnodes) {
         }
     }
     return Array.from(fnodes).sort(compare);
-}
-
-/* istanbul ignore next */
-/**
- * @return whether a thing appears to be a DOM element.
- */
-export function isDomElement(thing) {
-    return thing.nodeName !== undefined;
 }
 
 /* istanbul ignore next */
@@ -613,8 +596,25 @@ export function forEach(fn, iterable) {
     }
 }
 
+/* istanbul ignore next */
+/**
+ * @return whether a thing appears to be a DOM element.
+ */
+export function isDomElement(thing) {
+    return thing.nodeName !== undefined;
+}
+
 function isIterable(thing) {
     return thing && typeof thing[Symbol.iterator] === 'function';
+}
+
+/**
+ * Return an backward iterator over an Array.
+ */
+export function *reversed(array) {
+    for (let i = array.length - 1; i >= 0; i--) {
+        yield array[i];
+    }
 }
 
 /* istanbul ignore next */
