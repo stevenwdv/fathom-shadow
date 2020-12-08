@@ -41,5 +41,6 @@ Import them from ``fathom-web/utils``. For example...
 .. autofunction:: setDefault
 .. autofunction:: sigmoid
 .. autofunction:: sum
+.. autofunction:: toDomElement
 .. autofunction:: toposort
 .. autofunction:: walk
