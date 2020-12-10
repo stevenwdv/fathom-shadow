@@ -75,9 +75,9 @@ class Rule {  // abstract
     prerequisites(ruleset) {
         // Optimization: we could cache the result of this when in a compiled (immutable) ruleset.
 
-        // Extend prereqs with rules derived from each of the give types. If no
-        // rules are found, raise an exception, as that indicates a malformed
-        // ruleset.
+        // Extend prereqs with rules derived from each of the given types. If
+        // no rules are found, raise an exception, as that indicates a
+        // malformed ruleset.
         function extendOrThrow(prereqs, types, ruleGetter, verb) {
             for (let type of types) {
                 const rules = ruleGetter(type);
