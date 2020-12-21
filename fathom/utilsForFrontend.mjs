@@ -609,7 +609,7 @@ function isIterable(thing) {
 }
 
 /**
- * Return an backward iterator over an Array.
+ * Return an backward iterator over an Array without reversing it in place.
  */
 export function *reversed(array) {
     for (let i = array.length - 1; i >= 0; i--) {
