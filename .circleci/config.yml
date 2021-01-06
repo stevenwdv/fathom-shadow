@@ -1,0 +1,35 @@
+version: 2.1
+
+orbs:
+  browser-tools: circleci/browser-tools@1.1.1
+
+jobs:
+  test_js:
+    docker:
+      - image: cimg/node:15.3.0
+    environment:
+      MOZ_HEADLESS: 1
+    steps:
+      - browser-tools/install-firefox:
+          version: 84.0.1
+      - checkout
+      - run: make -C fathom lint test
+      - run: make -C fathom coveralls
+  test_python:
+    docker:
+      - image: cimg/python:3.7.9-node
+    environment:
+      MOZ_HEADLESS: 1
+    steps:
+      - browser-tools/install-firefox:
+          version: 84.0.1
+      - checkout
+      - run: make -C cli lint test
+      - run: make docs
+
+workflows:
+  version: 2
+  js_python_and_docs:
+    jobs:
+      - test_js
+      - test_python
