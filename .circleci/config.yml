@@ -13,7 +13,7 @@ jobs:
       - browser-tools/install-firefox:
           version: 84.0.1
       - checkout
-      - run: make -C fathom lint test
+      - run: PATH=~/project/fathom/node_modules/.bin/:$PATH make -C fathom lint test
       - run: make -C fathom coveralls
   test_python:
     docker:
