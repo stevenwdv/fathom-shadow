@@ -17,7 +17,7 @@ jobs:
       - run: make -C fathom coveralls
   test_python:
     docker:
-      - image: cimg/python:3.9.1-node
+      - image: cimg/python:3.7.9-node
     environment:
       MOZ_HEADLESS: 1
     steps:
