@@ -6,7 +6,7 @@ orbs:
 jobs:
   test_js:
     docker:
-      - image: cimg/node:15.3.0-browser
+      - image: cimg/node:15.3.0-browsers
     environment:
       MOZ_HEADLESS: 1
     steps:
