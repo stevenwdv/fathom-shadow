@@ -1,17 +1,16 @@
 version: 2.1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.1.1
+  browser-tools: circleci/browser-tools
 
 jobs:
   test_js:
     docker:
-      - image: cimg/node:15.3.0
+      - image: cimg/node:15.3.0-browser
     environment:
       MOZ_HEADLESS: 1
     steps:
-      - browser-tools/install-firefox:
-          version: 84.0.1
+      - browser-tools/install-browser-tools
       - checkout
       - run: PATH=~/project/fathom/node_modules/.bin/:$PATH make -C fathom lint test
       - run: make -C fathom coveralls
