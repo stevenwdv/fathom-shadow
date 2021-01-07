@@ -12,7 +12,7 @@ jobs:
     steps:
       - browser-tools/install-browser-tools
       - checkout
-      - run: PATH=~/project/fathom/node_modules/.bin/:$PATH make -C fathom lint test
+      - run: make -C fathom lint test
       - run: make -C fathom coveralls
   test_python:
     docker:
