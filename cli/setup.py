@@ -23,7 +23,7 @@ setup(
         'torch>=1.0,<2.0'
     ],
     dependency_links=[
-        'https://download.pytorch.org/whl/torch_stable.html'
+        'https://download.pytorch.org/whl/cu110/torch_stable.html'
     ],
     entry_points={'console_scripts': [
         'fathom = fathom_web.commands:fathom',
