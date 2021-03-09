@@ -621,7 +621,7 @@ export function *reversed(array) {
 /*
  * Return the window an element is in.
  *
- * @throws {Error} There isn't such a window.
+ * @throws {NoWindowError} There isn't such a window.
  */
 export function windowForElement(element) {
     let doc = element.ownerDocument;
