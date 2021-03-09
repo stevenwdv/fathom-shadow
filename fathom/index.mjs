@@ -11,6 +11,7 @@ import {and, atMost, nearest, note, props, score, type, typeIn} from './side';
 
 export * as clusters from './clusters';
 export * as utils from './utilsForFrontend';
+export * as exceptions from './exceptions';
 export {
     and,
     atMost,

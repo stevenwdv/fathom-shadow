@@ -1,4 +1,4 @@
-import {CycleError} from './exceptions';
+import {CycleError, NoWindowError} from './exceptions';
 
 
 /**
@@ -631,7 +631,7 @@ export function windowForElement(element) {
     }
     const win = doc.defaultView;
     if (win === null) {
-        throw new Error('The element was not in a window.');
+        throw new NoWindowError();
     }
     return win;
 }
