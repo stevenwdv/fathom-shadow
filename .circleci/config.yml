@@ -10,7 +10,8 @@ jobs:
     environment:
       MOZ_HEADLESS: 1
     steps:
-      - browser-tools/install-browser-tools
+      - browser-tools/install-firefox:
+          version: 86.0.1
       - checkout
       - run: make -C fathom lint test
       - run: make -C fathom coveralls
@@ -21,7 +22,7 @@ jobs:
       MOZ_HEADLESS: 1
     steps:
       - browser-tools/install-firefox:
-          version: 84.0.1
+          version: 86.0.1
       - checkout
       - run: make -C cli lint test
       - run: make docs
