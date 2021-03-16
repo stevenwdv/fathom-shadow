@@ -14,7 +14,13 @@ jobs:
           version: 86.0.1
       - checkout
       - run: make -C fathom lint test
-      - run: make -C fathom coveralls
+      # Upload new coveralls stats only on master, which is the only place
+      # COVERALLS_REPO_TOKEN is defined:
+      - run: |
+          if [ ! -z "$COVERALLS_REPO_TOKEN" ]
+          then
+              make -C fathom coveralls
+          fi
   test_python:
     docker:
       - image: cimg/python:3.7.9-node
@@ -26,6 +32,13 @@ jobs:
       - checkout
       - run: make -C cli lint test
       - run: make docs
+      # Upload new docs only on master, which is the only place GH_TOKEN is
+      # defined. This saves time over doing it in a separate job.
+      - run: |
+          if [ ! -z "$GH_TOKEN" ]
+          then
+              docs/deploy-docs
+          fi
 
 workflows:
   version: 2
