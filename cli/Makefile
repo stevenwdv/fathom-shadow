@@ -32,6 +32,9 @@ venv: $(VIRTUAL_ENV)/pyvenv.cfg
 
 # Make a virtualenv at $VIRTUAL_ENV if there isn't one or if requirements have
 # changed. Install the dev requirements and the actual requirements.
+#
+# If the prereqs for this target change, UPDATE THE CACHE KEYS in the CircleCI
+# config as well!
 $(VIRTUAL_ENV)/pyvenv.cfg: dev-requirements.txt doc-building-requirements.txt setup.py
 	$(PYTHON3) -m venv $(VIRTUAL_ENV)
 	# We don't path-qualify pip3 because python -m venv on Travis creates a

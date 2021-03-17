@@ -32,8 +32,15 @@ jobs:
       - browser-tools/install-firefox:
           version: 86.0.1
       - checkout
+      - restore_cache:
+          keys:
+            - venv-v1-{{ arch }}-{{ checksum "cli/dev-requirements.txt" }}-{{ checksum "cli/doc-building-requirements.txt" }}-{{ checksum "cli/setup.py" }}
       - run: make -C cli lint test
       - run: make docs
+      - save_cache:
+          key: venv-v1-{{ arch }}-{{ checksum "cli/dev-requirements.txt" }}-{{ checksum "cli/doc-building-requirements.txt" }}-{{ checksum "cli/setup.py" }}
+          paths:
+            - cli/venv
       # Upload new docs only on master, which is the only place GH_TOKEN is
       # defined. This saves time over doing it in a separate job.
       - run:
