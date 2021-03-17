@@ -16,7 +16,9 @@ jobs:
       - run: make -C fathom lint test
       # Upload new coveralls stats only on master, which is the only place
       # COVERALLS_REPO_TOKEN is defined:
-      - run: |
+      - run:
+         name: Publish code coverage (if on master)
+         command: |
           if [ ! -z "$COVERALLS_REPO_TOKEN" ]
           then
               make -C fathom coveralls
@@ -34,7 +36,9 @@ jobs:
       - run: make docs
       # Upload new docs only on master, which is the only place GH_TOKEN is
       # defined. This saves time over doing it in a separate job.
-      - run: |
+      - run:
+         name: Publish docs (if on master)
+         command: |
           if [ ! -z "$GH_TOKEN" ]
           then
               docs/deploy-docs
