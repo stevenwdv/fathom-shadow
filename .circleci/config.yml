@@ -1,0 +1,52 @@
+version: 2.1
+
+orbs:
+  browser-tools: circleci/browser-tools@1.1.1
+
+jobs:
+  test_js:
+    docker:
+      - image: cimg/node:15.3.0-browsers
+    environment:
+      MOZ_HEADLESS: 1
+    steps:
+      - browser-tools/install-firefox:
+          version: 86.0.1
+      - checkout
+      - run: make -C fathom lint test
+      # Upload new coveralls stats only on master, which is the only place
+      # COVERALLS_REPO_TOKEN is defined:
+      - run:
+         name: Publish code coverage (if on master)
+         command: |
+          if [ ! -z "$COVERALLS_REPO_TOKEN" ]
+          then
+              make -C fathom coveralls
+          fi
+  test_python:
+    docker:
+      - image: cimg/python:3.7.9-node
+    environment:
+      MOZ_HEADLESS: 1
+    steps:
+      - browser-tools/install-firefox:
+          version: 86.0.1
+      - checkout
+      - run: make -C cli lint test
+      - run: make docs
+      # Upload new docs only on master, which is the only place GH_TOKEN is
+      # defined. This saves time over doing it in a separate job.
+      - run:
+         name: Publish docs (if on master)
+         command: |
+          if [ ! -z "$GH_TOKEN" ]
+          then
+              docs/deploy-docs
+          fi
+
+workflows:
+  version: 2
+  js_python_and_docs:
+    jobs:
+      - test_js
+      - test_python
