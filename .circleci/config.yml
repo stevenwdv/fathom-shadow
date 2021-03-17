@@ -55,5 +55,13 @@ workflows:
   version: 2
   js_python_and_docs:
     jobs:
-      - test_js
-      - test_python
+      - test_js:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+      - test_python:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
