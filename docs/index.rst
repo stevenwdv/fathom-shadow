@@ -2,9 +2,9 @@
 Fathom
 ======
 
-.. image:: https://travis-ci.org/mozilla/fathom.svg?branch=master
+.. image:: https://circleci.com/gh/mozilla/fathom.svg?style=svg
    :alt: Build Status
-   :target: https://travis-ci.org/mozilla/fathom
+   :target: https://circleci.com/gh/mozilla/fathom
 
 .. image:: https://coveralls.io/repos/github/mozilla/fathom/badge.svg?branch=master
    :alt: Coverage Status
