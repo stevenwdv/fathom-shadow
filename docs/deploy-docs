@@ -9,7 +9,7 @@ git config user.name "Fathom Documenter"
 git config user.email "erik+fathomdoc@mozilla.commm"
 git checkout -b gh-pages
 git add .
-git commit -m "Update docs to ${REV}."
+git commit -m "Update docs to ${REV}. [skip ci]"
 git remote add mozilla "https://$GH_TOKEN@github.com/mozilla/fathom.git"
 # Eat output so it doesn't spit out the sensitive GH_TOKEN if something goes wrong:
 git push -q -f mozilla gh-pages > /dev/null 2>&1
