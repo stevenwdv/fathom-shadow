@@ -1,6 +1,5 @@
 from pathlib import Path
 from pprint import pformat
-import numpy as np
 
 import click
 from click import argument, BadOptionUsage, command, option, progressbar
@@ -60,7 +59,6 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, num
 
     print(f'Suggested threshold(s) are: {optimal_thresholds}.')
     print(f'All listed thresholds have the same accuracy value of {max_accuracy}')
-
 
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
