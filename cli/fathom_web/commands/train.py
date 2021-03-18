@@ -191,10 +191,6 @@ def exclude_features(exclude, vector_data):
         default=False,
         is_flag=True,
         help='Hide per-tag diagnostics that may help with ruleset debugging.')
-@option('--confidence-threshold', '-t',
-        default=0.5,
-        show_default=True,
-        help='Threshold at which a sample is considered positive. Higher values decrease false positives and increase false negatives.')
 @option('layers', '--layer', '-y',
         type=int,
         multiple=True,
@@ -203,7 +199,7 @@ def exclude_features(exclude, vector_data):
         type=str,
         multiple=True,
         help='Exclude a rule while training. This helps with before-and-after tests to see if a rule is effective.')
-def train(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, tabs, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
+def train(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, tabs, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, layers, exclude):
     """Compute optimal numerical parameters for a Fathom ruleset.
 
     The usual invocation is something like this::
@@ -277,11 +273,13 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
         l=learning_rate,
         i=iterations,
         c=(',' + comment) if comment else '')
+
+    static_confidence_threshold = 0.5
     model = learn(learning_rate,
                   iterations,
                   x,
                   y,
-                  confidence_threshold,
+                  static_confidence_threshold,
                   num_prunes,
                   num_samples,
                   num_yes,
@@ -292,7 +290,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
                   layers=layers)
 
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold, num_prunes)
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), static_confidence_threshold, num_prunes)
     print(pretty_accuracy('Training',
                           accuracy,
                           num_samples,
@@ -300,7 +298,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
                           false_negatives,
                           num_yes))
     if validation_set:
-        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold, validation_prunes)
+        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), static_confidence_threshold, validation_prunes)
         print(pretty_accuracy('Validation',
                               accuracy,
                               len(validation_ins),
@@ -317,7 +315,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
 
     if not quiet:
         print('\nTraining per-tag results:')
-        print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in training_pages])
+        print_per_tag_report([per_tag_metrics(page, model, static_confidence_threshold) for page in training_pages])
         if validation_set:
             print('\nValidation per-tag results:')
-            print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in validation_pages])
+            print_per_tag_report([per_tag_metrics(page, model, static_confidence_threshold) for page in validation_pages])
