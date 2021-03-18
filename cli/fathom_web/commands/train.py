@@ -55,14 +55,12 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, num
     if stopped_early:
         print(f'Stopping early at iteration {t}, just before validation error rose.')
 
-    print('Successfully trained model, determining optimal threshold')
-    optimal_thresholds = find_optimal_threshold(y, y_pred, num_prunes, num_samples, positives,
-                                                confidence_threshold, threshold_incr=0.05)
-    if confidence_threshold not in optimal_thresholds:
-        print(f'Threshold: {confidence_threshold} is not an optimal threshold.  '
-              f'Suggested threshold(s) are: {optimal_thresholds}')
-    else:
-        print(f'Threshold: {confidence_threshold} is an optimal threshold.')
+    print(f'Successfully trained model using threshold {confidence_threshold}.')
+    optimal_thresholds, max_accuracy = find_optimal_threshold(y, y_pred, num_prunes, threshold_incr=0.05)
+
+    print(f'Suggested threshold(s) are: {optimal_thresholds}.')
+    print(f'All listed thresholds have the same accuracy value of {max_accuracy}')
+
 
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
@@ -70,42 +68,20 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, num
     return model
 
 
-def find_optimal_threshold(y, y_pred, num_prunes, num_samples, positives, configured_threshold, threshold_incr=0.05):
+def find_optimal_threshold(y, y_pred, num_prunes, threshold_incr=0.05):
     max_range = int(1.0 / threshold_incr) + 1
-    min_distance = 1.4143
+    max_accuracy = 0
     optimal_thresholds = []
 
     for test_threshold in [round(x * threshold_incr, 2) for x in range(1, max_range)]:
-        distance = calculate_precision_recall_distance(y, y_pred, test_threshold, num_prunes, num_samples, positives)
-
-        if distance == min_distance:
+        accuracy, _, _ = accuracy_per_tag(y, y_pred, test_threshold, num_prunes)
+        if accuracy == max_accuracy:
             optimal_thresholds.append(test_threshold)
-        if distance < min_distance:
+        if accuracy > max_accuracy:
             optimal_thresholds = [test_threshold]
-            min_distance = distance
+            max_accuracy = accuracy
 
-    return optimal_thresholds
-
-
-def calculate_precision_recall_distance(y, y_pred, confidence_threshold, num_prunes, num_samples, positives):
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, y_pred, confidence_threshold, num_prunes)
-
-    target_precision_recall = np.array([1, 1])
-    negatives = num_samples - positives
-    true_positives = positives - false_negatives
-    true_negatives = negatives - false_positives
-    if not true_positives + false_positives:
-        precision = 0
-    else:
-        precision = true_positives / (true_positives + false_positives)
-
-    if not true_positives + false_negatives:
-        recall = 0
-    else:
-        recall = true_positives / (true_positives + false_negatives)
-
-    pr_distance = np.linalg.norm(np.array([precision, recall]) - target_precision_recall)
-    return round(pr_distance, 4)
+    return optimal_thresholds, max_accuracy
 
 
 def confidences(model, x):
