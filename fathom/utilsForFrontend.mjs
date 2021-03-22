@@ -463,10 +463,10 @@ export function sigmoid(x) {
  * doesn't count as invisible; the result of this function is meant to be
  * independent of viewport size.
  *
- * @throws {Error} The element (or perhaps one of its ancestors) is not in a
- *     window, so we can't find the `getComputedStyle()` routine to call. That
- *     routine is the source of most of the information we use, so you should
- *     pick a different strategy for non-window contexts.
+ * @throws {NoWindowError} The element (or perhaps one of its ancestors) is not
+ *     in a window, so we can't find the `getComputedStyle()` routine to call.
+ *     That routine is the source of most of the information we use, so you
+ *     should pick a different strategy for non-window contexts.
  */
 export function isVisible(fnodeOrElement) {
     // This could be 5x more efficient if https://github.com/w3c/csswg-drafts/issues/4122 happens.
