@@ -54,7 +54,6 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, num
     if stopped_early:
         print(f'Stopping early at iteration {t}, just before validation error rose.')
 
-    print(f'Successfully trained model using threshold {confidence_threshold}.')
     optimal_thresholds, max_accuracy = find_optimal_threshold(y, y_pred, num_prunes, threshold_incr=0.05)
 
     print(f'Suggested threshold(s) are: {optimal_thresholds}.')
