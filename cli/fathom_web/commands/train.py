@@ -13,7 +13,7 @@ from ..utils import classifier, path_or_none, speed_readout, tensors_from
 from ..vectorizer import make_or_find_vectors
 
 
-def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, num_samples, positives, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
+def learn(learning_rate, iterations, x, y, num_prunes, num_samples, positives, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = classifier(len(x[0]), len(y[0]), layers)
@@ -46,7 +46,7 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, num
                         previous_validation_loss = validation_loss
                         previous_model = model.state_dict()
                 writer.add_scalar('validation_loss', validation_loss, t)
-            accuracy, _, _ = accuracy_per_tag(y, y_pred, confidence_threshold, num_prunes)
+            accuracy, _, _ = accuracy_per_tag(y, y_pred, cutoff=0.5, num_prunes=num_prunes)
             writer.add_scalar('training_accuracy_per_tag', accuracy, t)
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
@@ -54,31 +54,26 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, num
     if stopped_early:
         print(f'Stopping early at iteration {t}, just before validation error rose.')
 
-    optimal_thresholds, max_accuracy = find_optimal_threshold(y, y_pred, num_prunes, threshold_incr=0.05)
-
-    print(f'Suggested threshold(s) are: {optimal_thresholds}.')
-    print(f'All listed thresholds have the same accuracy value of {max_accuracy}')
-
+    optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes, cutoff_incr=0.05)
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
     writer.close()
-    return model
+    return model, optimal_cutoff
 
 
-def find_optimal_threshold(y, y_pred, num_prunes, threshold_incr=0.05):
-    max_range = int(1.0 / threshold_incr) + 1
+def find_optimal_cutoff(y, y_pred, num_prunes, cutoff_incr=0.05):
+    max_range = int(1.0 / cutoff_incr) + 1
     max_accuracy = 0
-    optimal_thresholds = []
+    optimal_cutoffs = []
 
-    for test_threshold in [round(x * threshold_incr, 2) for x in range(1, max_range)]:
-        accuracy, _, _ = accuracy_per_tag(y, y_pred, test_threshold, num_prunes)
+    for test_cutoff in [round(x * cutoff_incr, 2) for x in range(1, max_range)]:
+        accuracy, _, _ = accuracy_per_tag(y, y_pred, test_cutoff, num_prunes)
         if accuracy == max_accuracy:
-            optimal_thresholds.append(test_threshold)
+            optimal_cutoffs.append(test_cutoff)
         if accuracy > max_accuracy:
-            optimal_thresholds = [test_threshold]
+            optimal_cutoffs = [test_cutoff]
             max_accuracy = accuracy
-
-    return optimal_thresholds, max_accuracy
+    return optimal_cutoffs[int((len(optimal_cutoffs) - 1) / 2)]
 
 
 def confidences(model, x):
@@ -271,23 +266,22 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
         i=iterations,
         c=(',' + comment) if comment else '')
 
-    static_confidence_threshold = 0.5
-    model = learn(learning_rate,
-                  iterations,
-                  x,
-                  y,
-                  static_confidence_threshold,
-                  num_prunes,
-                  num_samples,
-                  num_yes,
-                  validation=validation_arg,
-                  stop_early=stop_early,
-                  run_comment=full_comment,
-                  pos_weight=pos_weight,
-                  layers=layers)
+    model, optimal_cutoff = learn(learning_rate,
+                                  iterations,
+                                  x,
+                                  y,
+                                  num_prunes,
+                                  num_samples,
+                                  num_yes,
+                                  validation=validation_arg,
+                                  stop_early=stop_early,
+                                  run_comment=full_comment,
+                                  pos_weight=pos_weight,
+                                  layers=layers)
 
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), static_confidence_threshold, num_prunes)
+    print(f'\nOptimal cutoff: {optimal_cutoff:.4f}')
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), optimal_cutoff, num_prunes)
     print(pretty_accuracy('Training',
                           accuracy,
                           num_samples,
@@ -295,7 +289,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
                           false_negatives,
                           num_yes))
     if validation_set:
-        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), static_confidence_threshold, validation_prunes)
+        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), optimal_cutoff, validation_prunes)
         print(pretty_accuracy('Validation',
                               accuracy,
                               len(validation_ins),
@@ -312,7 +306,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
 
     if not quiet:
         print('\nTraining per-tag results:')
-        print_per_tag_report([per_tag_metrics(page, model, static_confidence_threshold) for page in training_pages])
+        print_per_tag_report([per_tag_metrics(page, model, optimal_cutoff) for page in training_pages])
         if validation_set:
             print('\nValidation per-tag results:')
-            print_per_tag_report([per_tag_metrics(page, model, static_confidence_threshold) for page in validation_pages])
+            print_per_tag_report([per_tag_metrics(page, model, optimal_cutoff) for page in validation_pages])

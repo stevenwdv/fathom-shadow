@@ -2,7 +2,7 @@ import os
 
 from click.testing import CliRunner
 
-from ..commands.train import exclude_indices, train, find_optimal_threshold
+from ..commands.train import exclude_indices, train, find_optimal_cutoff
 from ..utils import tensor
 
 
@@ -35,22 +35,11 @@ def test_auto_vectorization_smoke(tmp_path):
     assert (tmp_path / 'training_vectors.json').exists()
 
 
-def test_find_optimal_threshold():
+def test_find_optimal_cutoff():
     y_pred = tensor([-2.1605, -0.5696, 0.4886, 0.8633, -1.3479, -0.5813, -0.5696, 0.5696, -0.5950, -0.5696])
     y_pred_confidence = y_pred.sigmoid().numpy().flatten()
     # [0.1033541  0.3613291  0.6197766  0.70334965 0.20621389 0.35863352, 0.3613291  0.63867086 0.35548845 0.3613291 ]
     y = tensor([0., 0., 1., 1., 0., 0., 0., 1., 0., 0.])
 
-    optimal_thresholds, max_accuracy = find_optimal_threshold(y, y_pred, num_prunes=0, threshold_incr=0.1)
-    assert max_accuracy == 1
-    assert len(optimal_thresholds) == 3
-    assert 0.1 not in optimal_thresholds
-    assert 0.2 not in optimal_thresholds
-    assert 0.3 not in optimal_thresholds
-    assert 0.4 in optimal_thresholds
-    assert 0.5 in optimal_thresholds
-    assert 0.6 in optimal_thresholds
-    assert 0.7 not in optimal_thresholds
-    assert 0.8 not in optimal_thresholds
-    assert 0.9 not in optimal_thresholds
-    assert 1.0 not in optimal_thresholds
+    optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes=0, cutoff_incr=0.1)
+    assert optimal_cutoff == 0.5
