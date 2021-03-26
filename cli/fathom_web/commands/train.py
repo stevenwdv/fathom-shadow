@@ -1,16 +1,21 @@
 from pathlib import Path
+from more_itertools import pairwise
 from pprint import pformat
 
 import click
 from click import argument, BadOptionUsage, command, option, progressbar
 from tensorboardX import SummaryWriter
+import torch
 from torch import tensor
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
+import numpy as np
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
 from ..utils import classifier, path_or_none, speed_readout, tensors_from
 from ..vectorizer import make_or_find_vectors
+
+CUTOFF_DECIMAL_PLACES = 2
 
 
 def learn(learning_rate, iterations, x, y, num_prunes, num_samples, positives, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
@@ -54,26 +59,45 @@ def learn(learning_rate, iterations, x, y, num_prunes, num_samples, positives, v
     if stopped_early:
         print(f'Stopping early at iteration {t}, just before validation error rose.')
 
-    optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes, cutoff_incr=0.05)
+    optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes)
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
     writer.close()
     return model, optimal_cutoff
 
 
-def find_optimal_cutoff(y, y_pred, num_prunes, cutoff_incr=0.05):
-    max_range = int(1.0 / cutoff_incr) + 1
+def get_possible_cutoffs(y_pred):
+    """Using y_pred gets the sigmoid values, rounds the values and then gets the unique list.
+    This will reduce the number of cutoffs to be evaluated."""
+    with torch.no_grad():
+        flattened = y_pred.sigmoid().numpy().flatten()
+        cutoffs = np.sort(flattened)
+        if len(cutoffs) > 1:
+            cutoffs = np.unique([round((current + next) / 2, CUTOFF_DECIMAL_PLACES) for current, next in pairwise(cutoffs)])
+        return cutoffs
+
+
+def find_optimal_cutoff(y, y_pred, num_prunes):
+    """Evaluates possible cutoff values using accuracy as the metric.
+    If more than 1 cutoff gives the highest accuracy the midpoint
+    between the min and max cutoff is used."""
     max_accuracy = 0
     optimal_cutoffs = []
 
-    for test_cutoff in [round(x * cutoff_incr, 2) for x in range(1, max_range)]:
+    possible_cutoffs = get_possible_cutoffs(y_pred)
+    for _, test_cutoff in enumerate(possible_cutoffs):
         accuracy, _, _ = accuracy_per_tag(y, y_pred, test_cutoff, num_prunes)
         if accuracy == max_accuracy:
             optimal_cutoffs.append(test_cutoff)
         if accuracy > max_accuracy:
             optimal_cutoffs = [test_cutoff]
             max_accuracy = accuracy
-    return optimal_cutoffs[int((len(optimal_cutoffs) - 1) / 2)]
+
+    # Should always have at least 1 cutoff unless something has really gone sideways.
+    optimal_cutoff = optimal_cutoffs[0]
+    if len(optimal_cutoffs) > 1:
+        optimal_cutoff = round((optimal_cutoffs[0] + optimal_cutoffs[len(optimal_cutoffs) - 1]) / 2, CUTOFF_DECIMAL_PLACES)
+    return optimal_cutoff
 
 
 def confidences(model, x):
@@ -280,7 +304,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
                                   layers=layers)
 
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    print(f'\nOptimal cutoff: {optimal_cutoff:.4f}')
+    print(f'\nOptimal cutoff: {optimal_cutoff:.2f}')
     accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), optimal_cutoff, num_prunes)
     print(pretty_accuracy('Training',
                           accuracy,

@@ -41,5 +41,5 @@ def test_find_optimal_cutoff():
     # [0.1033541  0.3613291  0.6197766  0.70334965 0.20621389 0.35863352, 0.3613291  0.63867086 0.35548845 0.3613291 ]
     y = tensor([0., 0., 1., 1., 0., 0., 0., 1., 0., 0.])
 
-    optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes=0, cutoff_incr=0.1)
-    assert optimal_cutoff == 0.5
+    optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes=0)
+    assert optimal_cutoff == 0.49
