@@ -59,15 +59,14 @@ def learn(learning_rate, iterations, x, y, num_prunes, num_samples, positives, v
     if stopped_early:
         print(f'Stopping early at iteration {t}, just before validation error rose.')
 
-    optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes)
     # Horizontal axis is what confidence. Vertical is how many samples were that confidence.
     writer.add_histogram('confidence', confidences(model, x), t)
     writer.close()
-    return model, optimal_cutoff
+    return model
 
 
-def get_possible_cutoffs(y_pred):
-    """Using y_pred gets the sigmoid values, rounds the values and then gets the unique list.
+def possible_cutoffs(y_pred):
+    """Using y_pred get the sigmoid values, round the values and get the unique list.
     This will reduce the number of cutoffs to be evaluated."""
     with torch.no_grad():
         flattened = y_pred.sigmoid().numpy().flatten()
@@ -84,19 +83,19 @@ def find_optimal_cutoff(y, y_pred, num_prunes):
     max_accuracy = 0
     optimal_cutoffs = []
 
-    possible_cutoffs = get_possible_cutoffs(y_pred)
-    for _, test_cutoff in enumerate(possible_cutoffs):
+    possibles = possible_cutoffs(y_pred)
+    for test_cutoff in possibles:
         accuracy, _, _ = accuracy_per_tag(y, y_pred, test_cutoff, num_prunes)
         if accuracy == max_accuracy:
             optimal_cutoffs.append(test_cutoff)
-        if accuracy > max_accuracy:
+        elif accuracy > max_accuracy:
             optimal_cutoffs = [test_cutoff]
             max_accuracy = accuracy
 
     # Should always have at least 1 cutoff unless something has really gone sideways.
     optimal_cutoff = optimal_cutoffs[0]
     if len(optimal_cutoffs) > 1:
-        optimal_cutoff = round((optimal_cutoffs[0] + optimal_cutoffs[len(optimal_cutoffs) - 1]) / 2, CUTOFF_DECIMAL_PLACES)
+        optimal_cutoff = round((optimal_cutoffs[0] + optimal_cutoffs[-1]) / 2, CUTOFF_DECIMAL_PLACES)
     return optimal_cutoff
 
 
@@ -290,18 +289,20 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
         i=iterations,
         c=(',' + comment) if comment else '')
 
-    model, optimal_cutoff = learn(learning_rate,
-                                  iterations,
-                                  x,
-                                  y,
-                                  num_prunes,
-                                  num_samples,
-                                  num_yes,
-                                  validation=validation_arg,
-                                  stop_early=stop_early,
-                                  run_comment=full_comment,
-                                  pos_weight=pos_weight,
-                                  layers=layers)
+    model = learn(learning_rate,
+                  iterations,
+                  x,
+                  y,
+                  num_prunes,
+                  num_samples,
+                  num_yes,
+                  validation=validation_arg,
+                  stop_early=stop_early,
+                  run_comment=full_comment,
+                  pos_weight=pos_weight,
+                  layers=layers)
+
+    optimal_cutoff = find_optimal_cutoff(y, model(x), num_prunes)
 
     print(pretty_coeffs(model, training_data['header']['featureNames']))
     print(f'\nOptimal cutoff: {optimal_cutoff:.2f}')
