@@ -1,6 +1,8 @@
 from pathlib import Path
 from more_itertools import pairwise
 from pprint import pformat
+import statistics
+from bisect import bisect_left
 
 import click
 from click import argument, BadOptionUsage, command, option, progressbar
@@ -76,6 +78,28 @@ def possible_cutoffs(y_pred):
         return cutoffs
 
 
+def single_cutoff(cutoffs):
+    """Since the list of optimal cutoffs is usually short (2-3 values) using the mean or median or
+    the midpoint of the list will result in the same optimal cutoff value being selected.
+    In the case where there is a larger, skewed list of values using the mean softens the
+    effect of the excessively skewed list.
+    """
+    cutoffs_mean = statistics.mean(cutoffs)
+    pos = bisect_left(cutoffs, cutoffs_mean)
+
+    if pos == 0:
+        return cutoffs[0]
+    if pos == len(cutoffs):
+        return cutoffs[-1]
+    before = cutoffs[pos - 1]
+    after = cutoffs[pos]
+    if after - cutoffs_mean < cutoffs_mean - before:
+       return after
+    else:
+       return before
+
+
+
 def find_optimal_cutoff(y, y_pred, num_prunes):
     """Evaluates possible cutoff values using accuracy as the metric.
     If more than 1 cutoff gives the highest accuracy the midpoint
@@ -92,11 +116,7 @@ def find_optimal_cutoff(y, y_pred, num_prunes):
             optimal_cutoffs = [test_cutoff]
             max_accuracy = accuracy
 
-    # Should always have at least 1 cutoff unless something has really gone sideways.
-    optimal_cutoff = optimal_cutoffs[0]
-    if len(optimal_cutoffs) > 1:
-        optimal_cutoff = round((optimal_cutoffs[0] + optimal_cutoffs[-1]) / 2, CUTOFF_DECIMAL_PLACES)
-    return optimal_cutoff
+    return single_cutoff(optimal_cutoffs)
 
 
 def confidences(model, x):

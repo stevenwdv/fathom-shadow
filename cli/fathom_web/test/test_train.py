@@ -2,7 +2,7 @@ import os
 
 from click.testing import CliRunner
 
-from ..commands.train import exclude_indices, train, find_optimal_cutoff
+from ..commands.train import exclude_indices, train, find_optimal_cutoff, single_cutoff
 from ..utils import tensor
 
 
@@ -43,3 +43,48 @@ def test_find_optimal_cutoff():
 
     optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes=0)
     assert optimal_cutoff == 0.49
+
+
+def test_find_optimal_cutoff_multiple_cutoffs():
+    y_pred = tensor([-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.25, 2, 2.5])
+    y_pred_confidence = y_pred.sigmoid().numpy().flatten()
+    # [0.11920292 0.18242553 0.26894143 0.37754068 0.5  0.62245935, 0.7310586  0.7772999  0.880797   0.9241418 ]
+    y = tensor([0., 1., 0., 1., 0., 1., 0., 1., 0., 1.])
+
+    optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes=0)
+    assert optimal_cutoff == 0.56
+
+
+def test_single_cutoff():
+    cutoffs = [0.20, 0.30, 0.40]
+    cutoff = single_cutoff(cutoffs)
+    assert cutoff == 0.30
+
+    cutoffs = [0.20, 0.39, 0.40]
+    cutoff = single_cutoff(cutoffs)
+    assert cutoff == 0.39
+
+    cutoffs = [0.29, 0.31]
+    cutoff = single_cutoff(cutoffs)
+    assert cutoff == 0.29
+
+    cutoffs = [0.1, 0.11, 0.15, 0.6]
+    cutoff = single_cutoff(cutoffs)
+    assert cutoff == 0.15
+
+    cutoffs = [0.5]
+    cutoff = single_cutoff(cutoffs)
+    assert cutoff == 0.5
+
+    cutoffs = [0.1, 0.4, 0.41, 0.42]
+    cutoff = single_cutoff(cutoffs)
+    assert cutoff == 0.4
+
+    cutoffs = [0.15, 0.18, 0.41, 0.42]
+    cutoff = single_cutoff(cutoffs)
+    assert cutoff == 0.18
+
+    cutoffs = [0.15, 0.32, 0.56, 0.75, 0.76, 0.77, 0.78, 0.8, 0.9]
+    cutoff = single_cutoff(cutoffs)
+    assert cutoff == 0.56
+
