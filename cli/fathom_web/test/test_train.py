@@ -2,8 +2,9 @@ import os
 
 from click.testing import CliRunner
 
-from ..commands.train import exclude_indices, train, find_optimal_cutoff, single_cutoff
+from ..commands.train import exclude_indices, train, find_optimal_cutoff, single_cutoff, possible_cutoffs
 from ..utils import tensor
+import numpy as np
 
 
 def test_exclude_indices():
@@ -33,6 +34,34 @@ def test_auto_vectorization_smoke(tmp_path):
     )
     assert result.exit_code == 0
     assert (tmp_path / 'training_vectors.json').exists()
+
+
+def test_possible_cutoffs():
+    # Adequate sample number, extra possible cutoffs not required.
+    y_pred = tensor([-2.1605, -0.5696, 0.4886, 0.8633, -1.3479,
+                     -0.5813, -0.5696, 0.5696, -0.5950, -0.5696])
+    expected = [0.15, 0.28, 0.36, 0.49, 0.63, 0.67]
+    possibles = possible_cutoffs(y_pred)
+    assert len(possibles) == 6
+    assert all([a == b for a, b in zip(possibles, expected)])
+
+    # Results in 1 calculated cutoff, need to add extra possible values.
+    y_pred = tensor([1.2512, 1.2516])
+    expected = [0.58, 0.64, 0.68, 0.69, 0.70,
+                0.78, 0.81, 0.84, 0.85]
+    possibles = possible_cutoffs(y_pred)
+    assert len(possibles) == 9
+    assert all([a == b for a, b in zip(possibles, expected)])
+
+    # Results inn 3 calculated cutoffs, need to add extra possible values.
+    y_pred = tensor([-2, -2.25, -1.95, 1.251])
+    expected = [0.01, 0.03, 0.05, 0.06, 0.07,
+                 0.11, 0.12, 0.13, 0.16, 0.17,
+                 0.19, 0.2, 0.25, 0.31, 0.35,
+                 0.37, 0.45, 0.48, 0.52]
+    possibles = possible_cutoffs(y_pred)
+    assert len(possibles) == 19
+    assert all([a == b for a, b in zip(possibles, expected)])
 
 
 def test_find_optimal_cutoff():

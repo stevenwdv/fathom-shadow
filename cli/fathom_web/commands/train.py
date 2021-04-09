@@ -12,6 +12,7 @@ from torch import tensor
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 import numpy as np
+import scipy.stats as stats
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
 from ..utils import classifier, path_or_none, speed_readout, tensors_from
@@ -75,6 +76,19 @@ def possible_cutoffs(y_pred):
         cutoffs = np.sort(flattened)
         if len(cutoffs) > 1:
             cutoffs = np.unique([round((current + next) / 2, CUTOFF_DECIMAL_PLACES) for current, next in pairwise(cutoffs)])
+
+        # verify that we have adequate possible cutoffs.
+        min_num_possible_cutoffs = 5
+        if len(cutoffs) < min_num_possible_cutoffs:
+            new_cutoffs = []
+            for cutoff in cutoffs:
+                lower, upper = 0, 1
+                mu, sigma = cutoff, 0.1
+                trunc_norm = stats.truncnorm((lower - mu) / sigma, (upper - mu) / sigma, loc=mu, scale=sigma)
+                # Cast the net a little wider than the min number of values needed to account
+                # for reduction after rounding.
+                new_cutoffs.append(trunc_norm.rvs(size=2 * min_num_possible_cutoffs , random_state=10))
+            cutoffs = np.unique(np.sort(np.append(cutoffs, np.unique(np.round(new_cutoffs, 2)))))
         return cutoffs
 
 
