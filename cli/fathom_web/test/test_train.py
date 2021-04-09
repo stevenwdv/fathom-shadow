@@ -4,7 +4,6 @@ from click.testing import CliRunner
 
 from ..commands.train import exclude_indices, train, find_optimal_cutoff, single_cutoff, possible_cutoffs
 from ..utils import tensor
-import numpy as np
 
 
 def test_exclude_indices():
@@ -56,9 +55,9 @@ def test_possible_cutoffs():
     # Results inn 3 calculated cutoffs, need to add extra possible values.
     y_pred = tensor([-2, -2.25, -1.95, 1.251])
     expected = [0.01, 0.03, 0.05, 0.06, 0.07,
-                 0.11, 0.12, 0.13, 0.16, 0.17,
-                 0.19, 0.2, 0.25, 0.31, 0.35,
-                 0.37, 0.45, 0.48, 0.52]
+                0.11, 0.12, 0.13, 0.16, 0.17,
+                0.19, 0.2, 0.25, 0.31, 0.35,
+                0.37, 0.45, 0.48, 0.52]
     possibles = possible_cutoffs(y_pred)
     assert len(possibles) == 19
     assert all([a == b for a, b in zip(possibles, expected)])

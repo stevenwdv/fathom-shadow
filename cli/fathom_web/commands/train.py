@@ -87,7 +87,7 @@ def possible_cutoffs(y_pred):
                 trunc_norm = stats.truncnorm((lower - mu) / sigma, (upper - mu) / sigma, loc=mu, scale=sigma)
                 # Cast the net a little wider than the min number of values needed to account
                 # for reduction after rounding.
-                new_cutoffs.append(trunc_norm.rvs(size=2 * min_num_possible_cutoffs , random_state=10))
+                new_cutoffs.append(trunc_norm.rvs(size=2 * min_num_possible_cutoffs, random_state=10))
             cutoffs = np.unique(np.sort(np.append(cutoffs, np.unique(np.round(new_cutoffs, 2)))))
         return cutoffs
 
@@ -108,10 +108,9 @@ def single_cutoff(cutoffs):
     before = cutoffs[pos - 1]
     after = cutoffs[pos]
     if after - cutoffs_mean < cutoffs_mean - before:
-       return after
+        return after
     else:
-       return before
-
+        return before
 
 
 def find_optimal_cutoff(y, y_pred, num_prunes):
