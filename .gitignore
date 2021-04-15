@@ -1,3 +1,5 @@
+/autoextract/venv
+/autoextract/samples
 /cli/build
 /cli/dist
 /cli/*.egg-info
