@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients no-cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" style="" lang="en"><!--<![endif]--><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; media-src 'self' data:; style-src 'self' data: 'unsafe-inline'; font-src 'self' data:; frame-src 'self' data:"><meta http-equiv="Memento-Datetime" content="Thu, 15 Aug 2019 19:22:20 GMT"><link rel="original" href="https://mozilla.github.io/fathom/training.html#suggested-directory-structure">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Training — Fathom 3.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="resources/githubio-1/1.css" type="text/css" data-original-href="https://mozilla.github.io/fathom/_static/tweaks.css">
+  
+
+  
+
+  
+        <link rel="index" title="Index" href="https://mozilla.github.io/fathom/genindex.html">
+        <link rel="search" title="Search" href="https://mozilla.github.io/fathom/search.html">
+    <link rel="top" title="Fathom 3.1 documentation" href="https://mozilla.github.io/fathom/index.html">
+        <link rel="next" title="Rule and Ruleset Reference" href="https://mozilla.github.io/fathom/ruleset.html">
+        <link rel="prev" title="Basic Use" href="https://mozilla.github.io/fathom/using.html"> 
+
+  
+  
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="https://mozilla.github.io/fathom/index.html" class="icon icon-home"> Fathom
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="https://mozilla.github.io/fathom/search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs">
+    <input type="hidden" name="check_keywords" value="yes">
+    <input type="hidden" name="area" value="default">
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/using.html">Basic Use</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="https://mozilla.github.io/fathom/training.html#"><span class="toctree-expand"></span>Training</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#collecting-samples">Collecting Samples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#designing-rules"><span class="toctree-expand"></span>Designing Rules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sources-of-signal">Sources of Signal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rules-of-thumb">Rules of Thumb</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="#suggested-directory-structure">Suggested Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-trainer">Running the Trainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workflow">Workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/ruleset.html">Rule and Ruleset Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/clustering.html">Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/fnodes.html">Fnode Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/versions.html">Version History</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="https://mozilla.github.io/fathom/glossary.html">Glossary</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="https://mozilla.github.io/fathom/index.html">Fathom</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="https://mozilla.github.io/fathom/index.html">Docs</a> »</li>
+        
+      <li>Training</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="https://mozilla.github.io/fathom/_sources/training.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="training">
+<h1>Training<a class="headerlink" href="#training" title="Permalink to this headline">¶</a></h1>
+<p>Training is the process by which Fathom considers your rules against a labeled corpus of example pages (<em>samples</em>) and emits an ideal collection of parametrizing numbers which make recognition accurate. These comprise...</p>
+<ul class="simple">
+<li><em>Coefficients</em> (one per rule), which encode the relative weights of each rule</li>
+<li><em>Biases</em> (one per type), which center the resulting numerical range so the total score for a node is an accurate 0..1 confidence</li>
+</ul>
+<div class="section" id="collecting-samples">
+<h2>Collecting Samples<a class="headerlink" href="#collecting-samples" title="Permalink to this headline">¶</a></h2>
+<p>Use <a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/fathomfox/">FathomFox</a> to collect samples. It has both a bulk collector and a page-at-a-time method integrated into Firefox’s developer tools. See the documentation on its Add-Ons page for details.</p>
+<p>The pages serialized by FathomFox will be large, on the order of 100-200MB each. So far, the best organizational approach we’ve found is to check them into git, along with the ruleset-containing trainees.js file from your fork of <a class="reference external" href="https://github.com/mozilla/fathom-trainees">fathom-trainees</a>. (Symlinking from fathom-trainees to your sample repo is helpful.) Having your ruleset versioned along with your samples is invaluable for reproducing results and maintaining your sanity.</p>
+<p>So far, a training corpus on the order of 50-100 samples has been sufficient to push validation accuracy above 99%. You’ll want additional samples for a validation corpus (to let the trainer know when it’s begun to overfit) and a test corpus (to come up with final accuracy numbers).</p>
+</div>
+<div class="section" id="designing-rules">
+<h2>Designing Rules<a class="headerlink" href="#designing-rules" title="Permalink to this headline">¶</a></h2>
+<p>Each rule should generally express one machine-learning feature—or “smell”, to coin a metaphor. The score it applies—the return value of the callback passed to <a class="reference internal" href="https://mozilla.github.io/fathom/ruleset.html#score" title="score"><code class="xref js js-func docutils literal"><span class="pre">score()</span></code></a>—should be a number from 0 to 1, inclusive, representing the probability that that smell is present. These smells are later balanced by the trainer.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For many smells, it’s natural to return hard 0s or 1s (or trues and falses, if that’s more convenient). If you have fuzzier values to return—as from a rule that expresses something subjectively defined like “image is big”—<a class="reference internal" href="https://mozilla.github.io/fathom/utilities.html#linearScale" title="linearScale"><code class="xref js js-func docutils literal"><span class="pre">linearScale()</span></code></a> and <a class="reference internal" href="https://mozilla.github.io/fathom/utilities.html#sigmoid" title="sigmoid"><code class="xref js js-func docutils literal"><span class="pre">sigmoid()</span></code></a> will help you clamp down extreme values. Make the choice based on whether two adjacent extreme values should still have distinguishable outputs. If they should, go with sigmoid().</p>
+</div>
+<div class="section" id="sources-of-signal">
+<h3>Sources of Signal<a class="headerlink" href="#sources-of-signal" title="Permalink to this headline">¶</a></h3>
+<p>What sorts of rules should you write? In short, ones that express simple, atomic smells that tend to be found in—or lacked by—target elements. For example, if you are trying to recognize the images of products for sale on shopping sites, the target image might have smells like...</p>
+<ul class="simple">
+<li>Large size</li>
+<li>Position near the top of the page</li>
+<li>Position near the left of the page</li>
+<li>IDs or class names that contain the strings “hero” or “product”</li>
+</ul>
+<p>Don’t worry about expressing boolean combinations of smells except as a last resort. It’s generally sufficient to let Fathom optimize a linear combination of them. Also, Fathom will determine on its own whether to give a positive or negative weight to a smell; you don’t need to tell it.</p>
+<p>Since the primitives exposed by Fathom are thus far geared to the measurement of DOM properties (rather than, say, natural language processing), the best bang for your buck is generally rules that consider...</p>
+<ul class="simple">
+<li>CSS classes and IDs. Begin by simply testing for inclusion of signal-bearing strings. It is probably unnecessary to apply tokenization.</li>
+<li>Rendered size or position of elements</li>
+<li>Alignment or proximity of elements to each other. So far, the state of the art is to program a bit of “look around” into the scoring callback. It is also possible to get ahold of the <a class="reference internal" href="https://mozilla.github.io/fathom/ruleset.html#BoundRuleset" title="BoundRuleset"><code class="xref js js-class docutils literal"><span class="pre">BoundRuleset()</span></code></a> object and try to pair up the examined node with another of a certain type, but so far it’s a manual process.</li>
+<li>Font sizes</li>
+<li>Colors and borders</li>
+<li>Visibility</li>
+<li>Any of the above in <a class="reference internal" href="https://mozilla.github.io/fathom/utilities.html#ancestors" title="ancestors"><code class="xref js js-func docutils literal"><span class="pre">ancestor</span></code></a> elements of the target</li>
+</ul>
+<p>A useful technique is to look at some of the pages in your corpus and blur your eyes slightly. This shows you the page as Fathom sees it: you can’t read the text, but you can likely still recognize the target elements. Write rules that express the smells you are using to do so.</p>
+<p>Computed CSS properties are worth a special mention: <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle">getComputedStyle()</a> is the most robust way to retrieve style information about an element, since most properties are inherited through the complex interplay of stylesheets. Don’t try to look at <code class="docutils literal"><span class="pre">style</span></code> attributes directly or otherwise painstakingly reason out styles.</p>
+</div>
+<div class="section" id="rules-of-thumb">
+<h3>Rules of Thumb<a class="headerlink" href="#rules-of-thumb" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Lots of simple rules are better than fewer, more complex ones. Not only are they easier to write, but the further you can break up your guesses into separately optimizable pieces, the more good the trainer can do.</li>
+<li>Your rules don’t all have to be good. If you have an idea for a smell, code it up. If it was a bad idea, the trainer will give it a coefficient near 0, and you can prune it away.</li>
+<li><a class="reference internal" href="https://mozilla.github.io/fathom/ruleset.html#when" title="when"><code class="xref js js-func docutils literal"><span class="pre">when()</span></code></a> is good for early pruning: hard, yes/no decisions on what should be considered. Scores are for gradations. Pruning makes your vector files smaller and training faster.</li>
+<li>Many good rule ideas come out of labeling samples. If you are not labeling samples yourself, at least study them in depth so you can notice patterns.</li>
+<li>Rubrics are vital for labeling. If samples are labeled inconsistently, they will push the trainer in conflicting directions, and your accuracy will suffer. Also, keep your rubrics up to date. Whenever you encounter a case where you have to make a new decision—something the rubric doesn’t already clearly decide—edit the rubric to codify that decision so you are consistent with it in the future. Check your rubrics into version control.</li>
+<li>Include some samples that are missing the thing you’re trying to recognize so your ruleset learns to avoid false positives.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="suggested-directory-structure">
+<h2>Suggested Directory Structure<a class="headerlink" href="#suggested-directory-structure" title="Permalink to this headline">¶</a></h2>
+<p>We’ve mentioned a number of items to check into version control. Here is a directory structure that works well:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>runs/             -- TensorBoard data emitted by the trainer
+samples/
+    negative/     -- Samples that do NOT contain what we're looking for
+        n4.html
+        n7.html
+        n11.html
+        ...
+    positive/     -- Samples that DO contain what we're looking for
+        3.html
+        10.html
+        14.html
+    training/
+        1.html
+        n2.html
+        5.html
+        ...
+    validation/
+    testing/
+    rubric.txt
+    urls.csv      -- A mapping of sample numbers to URLs, in case we ever need them
+trainees.js       -- Ruleset code, symlinked into your fathom-trainees fork
+vectors/          -- Feature vectors from FathomFox's Vectorizer
+</pre></div>
+</div>
+<p>A few notes:</p>
+<ul class="simple">
+<li>The negative examples’ numerical IDs are in the same namespace as the positive ones, but we prefix them with an n. This is so that, when the trainer says it assumed a sample was negative because it had no labeled target elements, we can tell at a glance whether it was correct.</li>
+<li>Samples start in the <code class="docutils literal"><span class="pre">positive</span></code> and <code class="docutils literal"><span class="pre">negative</span></code> folders. From there, they should be divided among the training, validation, and testing ones using <strong class="command">fathom-pick</strong>, which randomly moves a given number of files from one directory to another.</li>
+</ul>
+</div>
+<div class="section" id="running-the-trainer">
+<h2>Running the Trainer<a class="headerlink" href="#running-the-trainer" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Fathom has had several trainers over its evolution. Both the Corpus Framework and the trainer built into old versions of FathomFox are obsoleted by <strong class="command">fathom-train</strong>, described herein.</p>
+</div>
+<p>Once your samples are collected and at least several rules are written, you’re ready to do some initial training. Fathom’s trainer is a commandline Python 3 program that can be installed, along with a few other utilities, by running...</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">fathom</span><span class="o">-</span><span class="n">web</span>
+</pre></div>
+</div>
+<p>Training is done for one type at a time. If you have types that depend on other types, train the other types first.</p>
+<p>As the first step of the training loop, use FathomFox’s Vectorizer to emit feature vectors for all your training samples. It’s a good idea to check these JSON files into the same repository as your samples and ruleset code, for later reproducibility. If you have validation samples ready, vectorize them, too, into a separate file.</p>
+<p>Next, invoke the trainer. Here is its online help, to give you a sense of its capabilities:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>Usage: fathom-train [OPTIONS] TRAINING_FILE
+
+  Compute optimal coefficients for a Fathom ruleset, based on a set of
+  labeled pages exported by the FathomFox Vectorizer.
+
+  To see graphs of the results, install TensorBoard, then run this:
+  tensorboard --logdir runs/.
+
+  Some vocab used in the output messages:
+
+    target -- A "right answer" DOM node, one that should be recognized
+
+    candidate -- Any node (target or not) brought into the ruleset, by a
+    dom() call, for consideration
+
+    negative sample -- A sample with no intended target nodes, used to bait
+    the recognizer into a false-positive choice
+
+Options:
+  -a FILENAME                A file of validation samples from FathomFox's
+                             Vectorizer, used to graph validation loss so you
+                             can see when you start to overfit
+  -s, --stop-early           Stop 1 iteration before validation loss begins to
+                             rise, to avoid overfitting. Before using this,
+                             make sure validation loss is monotonically
+                             decreasing.
+  -l, --learning-rate FLOAT  The learning rate to start from  [default: 1.0]
+  -i, --iterations INTEGER   The number of training iterations to run through
+                             [default: 1000]
+  -c, --comment TEXT         Additional comment to append to the Tensorboard
+                             run name, for display in the web UI
+  -v, --verbose              Show additional diagnostics that may help with
+                             ruleset debugging
+  --help                     Show this message and exit.
+</pre></div>
+</div>
+<p>The simplest possible trainer invocation is...</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fathom</span><span class="o">-</span><span class="n">train</span> <span class="n">initialTrainingVectors</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>...yielding something like...</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="nx">Coeffs</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">'nextAnchorIsJavaScript'</span><span class="p">,</span> <span class="mf">1.1627885103225708</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'nextButtonTypeSubmit'</span><span class="p">,</span> <span class="mf">4.613410949707031</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'nextInputTypeSubmit'</span><span class="p">,</span> <span class="mf">4.374269008636475</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'nextInputTypeImage'</span><span class="p">,</span> <span class="mf">6.867544174194336</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'nextLoginAttrs'</span><span class="p">,</span> <span class="mf">0.07278082519769669</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'nextButtonContentContainsLogIn'</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6560719609260559</span><span class="p">],</span>
+    <span class="p">]</span>
+<span class="nx">Bias</span><span class="o">:</span> <span class="o">-</span><span class="mf">8.645608901977539</span>
+  <span class="nx">Training</span> <span class="nx">accuracy</span> <span class="nx">per</span> <span class="nx">tag</span><span class="o">:</span>  <span class="mf">0.98312</span>    <span class="mi">95</span><span class="o">%</span> <span class="nx">CI</span><span class="o">:</span> <span class="p">(</span><span class="mf">0.97153</span><span class="p">,</span> <span class="mf">0.99472</span><span class="p">)</span>  <span class="nx">FP</span><span class="o">:</span> <span class="mf">0.000</span>  <span class="nx">FN</span><span class="o">:</span> <span class="mf">0.017</span>
+<span class="nx">Validation</span> <span class="nx">accuracy</span> <span class="nx">per</span> <span class="nx">tag</span><span class="o">:</span>  <span class="mf">0.97143</span>    <span class="mi">95</span><span class="o">%</span> <span class="nx">CI</span><span class="o">:</span> <span class="p">(</span><span class="mf">0.95668</span><span class="p">,</span> <span class="mf">0.98618</span><span class="p">)</span>  <span class="nx">FP</span><span class="o">:</span> <span class="mf">0.000</span>  <span class="nx">FN</span><span class="o">:</span> <span class="mf">0.029</span>
+  <span class="nx">Training</span> <span class="nx">accuracy</span> <span class="nx">per</span> <span class="nx">page</span><span class="o">:</span> <span class="mf">1.00000</span>    <span class="mi">95</span><span class="o">%</span> <span class="nx">CI</span><span class="o">:</span> <span class="p">(</span><span class="mf">1.00000</span><span class="p">,</span> <span class="mf">1.00000</span><span class="p">)</span>
+<span class="nx">Validation</span> <span class="nx">accuracy</span> <span class="nx">per</span> <span class="nx">page</span><span class="o">:</span> <span class="mf">0.96875</span>    <span class="mi">95</span><span class="o">%</span> <span class="nx">CI</span><span class="o">:</span> <span class="p">(</span><span class="mf">0.92612</span><span class="p">,</span> <span class="mf">1.00000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you pass <code class="docutils literal"><span class="pre">--verbose</span></code>, you will also get handy per-sample diagnostics.</p>
+<p>Viewing the TensorBoard graphs with <code class="docutils literal"><span class="pre">tensorboard</span> <span class="pre">--logdir</span> <span class="pre">runs/</span></code> will quickly show you whether the loss function is oscillating. If you see oscilloscope-like wiggles rather than a smooth descent, the learning rate is too high: the trainer is taking steps that are too big and overshooting the optimum it’s chasing. Decrease the learning rate by a factor of 10 until the graph becomes smooth:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fathom</span><span class="o">-</span><span class="n">train</span> <span class="n">initialTrainingVectors</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="n">learning</span><span class="o">-</span><span class="n">rate</span> <span class="mf">0.1</span> <span class="o">-</span><span class="n">c</span> <span class="n">tryingToRemoveOscillations</span>
+</pre></div>
+</div>
+<p>Comments (with <code class="docutils literal"><span class="pre">-c</span></code>) are your friend, as a heap of anonymous TensorBoard runs otherwise quickly becomes indistinguishable.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Fathom currently uses the <a class="reference external" href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent#Adam">Adam</a> optimization algorithm, which is good at tuning its own learning rates. Even if the loss graph oscillates at the start, it will eventually flatten out, given enough iterations. However, it’s best to tamp down oscillations from the beginning so you can use validation-guided early stopping. Adam seems to dial in the learning rate quickly enough, as long as you get it within a power of 10.</p>
+<p class="last">Incidentally, it’s not the end of the world if some scores go slightly outside [0, 1]. Limited tests have gotten away with values up to about 10 without measurable harm to training speed or accuracy. However, when feature values differ in magnitude by a factor of 1000, annoying oscillations dominate early iterations. Stick to [0, 1] for a trouble-free experience.</p>
+</div>
+<p>Once you’ve tamped down oscillations, use validation samples and early stopping to keep Fathom from overfitting:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fathom</span><span class="o">-</span><span class="n">train</span> <span class="n">initialTrainingVectors</span><span class="o">.</span><span class="n">json</span> <span class="o">-</span><span class="n">a</span> <span class="n">initialValidationVectors</span><span class="o">.</span><span class="n">json</span> <span class="o">--</span><span class="n">stop</span><span class="o">-</span><span class="n">early</span> <span class="o">-</span><span class="n">c</span> <span class="n">tryingEarlyStopping</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h2>
+<p>A sane authoring process is a feedback loop something like this:</p>
+<ol class="arabic simple">
+<li>Collect samples. Observe patterns in the <a class="reference internal" href="https://mozilla.github.io/fathom/glossary.html#term-target"><span class="xref std std-term">target</span></a> nodes as you do.</li>
+<li>Write a few rules based on your observations.</li>
+<li>Run the trainer. Start with 10-20 training pages and an equal number of validation ones.</li>
+<li>If accuracy is insufficient, examine the failing pages. FathomFox’s Evaluator page is invaluable for this, as it will show you the element Fathom spuriously picked. Remediate by changing or adding rules. If there are smells Fathom is missing—positive or negative—add rules that score based on them.</li>
+<li>Go to 3, making sure to re-vectorize if you have added or changed rules.</li>
+<li>Once <em>validation accuracy</em> is sufficient, copy the coefficients into your ruleset, and use the <strong class="command">fathom-test</strong> tool on a fresh set of vectorized <em>testing</em> samples. This is your <em>testing accuracy</em> and should reflect real-world performance, assuming your sample size is large and representative enough. The computed 95% confidence intervals should help you decide the former.</li>
+<li>If testing accuracy is too low, imbibe the testing pages into your training corpus, and go back to step 3. As typical in supervised learning systems, testing samples should be considered “burned” once they are measured against a single time, as otherwise you are effectively training against them. Samples are precious.</li>
+<li>If testing accuracy is sufficient, you’re done! Copy the ruleset and coefficients out of fathom-trainees into your finished product, and ship it.</li>
+</ol>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="https://mozilla.github.io/fathom/ruleset.html" class="btn btn-neutral float-right" title="Rule and Ruleset Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="https://mozilla.github.io/fathom/using.html" class="btn btn-neutral" title="Basic Use" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        © Copyright 2017-2019, Mozilla Foundation.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org/">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+      
+      
+      
+
+  
+
+  
+  
+    
+  
+
+  
+  
+  
+   
+
+
+</body></html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class=" js flexbox flexboxlegacy datauri" lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; media-src 'self' data:; style-src 'self' data: 'unsafe-inline'; font-src 'self' data:; frame-src 'self' data:"><meta http-equiv="Memento-Datetime" content="Mon, 26 Aug 2019 13:29:40 GMT"><link rel="original" href="https://www.php.net/urlhowto.php">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>PHP: URL Howto</title>
+
+ <link rel="shortcut icon" href="resources/98/1.ico" data-original-href="https://www.php.net/favicon.ico">
+ <link rel="search" type="application/opensearchdescription+xml" href="http://php.net/phpnetimprovedsearch.src" title="Add PHP.net search">
+ <link rel="alternate" type="application/atom+xml" href="https://www.php.net/releases/feed.php" title="PHP Release feed">
+ <link rel="alternate" type="application/atom+xml" href="https://www.php.net/feed.atom" title="PHP: Hypertext Preprocessor">
+
+ <link rel="canonical" href="https://www.php.net/urlhowto.php">
+ <link rel="shorturl" href="https://www.php.net/urlhowto">
+ <link rel="alternate" href="https://www.php.net/urlhowto" hreflang="x-default">
+
+
+
+<link rel="stylesheet" type="text/css" href="resources/98/2.css" media="screen" data-original-href="https://www.php.net/cached.php?t=1539771603&amp;f=/fonts/Fira/fira.css">
+<link rel="stylesheet" type="text/css" href="resources/98/3.css" media="screen" data-original-href="https://www.php.net/cached.php?t=1539765004&amp;f=/fonts/Font-Awesome/css/fontello.css">
+<link rel="stylesheet" type="text/css" href="resources/98/4.css" media="screen" data-original-href="https://www.php.net/cached.php?t=1540425603&amp;f=/styles/theme-base.css">
+<link rel="stylesheet" type="text/css" href="resources/98/5.css" media="screen" data-original-href="https://www.php.net/cached.php?t=1540425603&amp;f=/styles/theme-medium.css">
+
+ <!--[if lte IE 7]>
+ <link rel="stylesheet" type="text/css" href="https://www.php.net/styles/workarounds.ie7.css" media="screen">
+ <![endif]-->
+
+ <!--[if lte IE 8]>
+ <script>
+  window.brokenIE = true;
+ </script>
+ <![endif]-->
+
+ <!--[if lte IE 9]>
+ <link rel="stylesheet" type="text/css" href="https://www.php.net/styles/workarounds.ie9.css" media="screen">
+ <![endif]-->
+
+ <!--[if IE]>
+ <script src="https://www.php.net/js/ext/html5.js"></script>
+ <![endif]-->
+
+ 
+
+</head>
+<body class="help ">
+
+<nav id="head-nav" class="navbar navbar-fixed-top">
+  <div class="navbar-inner clearfix">
+    <a href="https://www.php.net/" class="brand"><img src="resources/98/6.svg" alt="php" data-original-src="https://www.php.net/images/logos/php-logo.svg" width="48" height="24"></a>
+    <div id="mainmenu-toggle-overlay"></div>
+    <input type="checkbox" id="mainmenu-toggle">
+    <ul class="nav">
+      <li class=""><a href="https://www.php.net/downloads">Downloads</a></li>
+      <li class=""><a href="https://www.php.net/docs.php">Documentation</a></li>
+      <li class=""><a href="https://www.php.net/get-involved">Get Involved</a></li>
+      <li class="active"><a href="https://www.php.net/support">Help</a></li>
+    </ul>
+    <form class="navbar-search" id="topsearch" action="https://www.php.net/search.php">
+      <input type="hidden" name="show" value="quickref">
+      <span class="twitter-typeahead" style="position: relative; display: inline-block;"><input class="tt-hint search-query" type="text" autocomplete="off" spellcheck="off" disabled="" style="position: absolute; top: 0px; left: 0px; border-color: transparent; box-shadow: none; background: rgb(255, 255, 255) none repeat scroll 0% 0%;"><input type="search" name="pattern" class="search-query tt-query" placeholder="Search" accesskey="s" autocomplete="off" spellcheck="false" style="position: relative; vertical-align: top; background-color: transparent;" dir="auto"><input type="submit" style="visibility: hidden; position: fixed"><span style="position: absolute; left: -9999px; visibility: hidden; white-space: nowrap; font-family: &quot;Fira Sans&quot;, &quot;Source Sans Pro&quot;, Helvetica, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: optimizelegibility; text-transform: none;"></span><span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"></span></span>
+    </form>
+  </div>
+  <div id="flash-message"></div>
+</nav>
+<nav id="trick"><div><dl>
+<dt><a href="https://www.php.net/manual/en/getting-started.php">Getting Started</a></dt>
+	<dd><a href="https://www.php.net/manual/en/introduction.php">Introduction</a></dd>
+	<dd><a href="https://www.php.net/manual/en/tutorial.php">A simple tutorial</a></dd>
+<dt><a href="https://www.php.net/manual/en/langref.php">Language Reference</a></dt>
+	<dd><a href="https://www.php.net/manual/en/language.basic-syntax.php">Basic syntax</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.types.php">Types</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.variables.php">Variables</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.constants.php">Constants</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.expressions.php">Expressions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.operators.php">Operators</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.control-structures.php">Control Structures</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.functions.php">Functions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.oop5.php">Classes and Objects</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.namespaces.php">Namespaces</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.errors.php">Errors</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.exceptions.php">Exceptions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.generators.php">Generators</a></dd>
+	<dd><a href="https://www.php.net/manual/en/language.references.php">References Explained</a></dd>
+	<dd><a href="https://www.php.net/manual/en/reserved.variables.php">Predefined Variables</a></dd>
+	<dd><a href="https://www.php.net/manual/en/reserved.exceptions.php">Predefined Exceptions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/reserved.interfaces.php">Predefined Interfaces and Classes</a></dd>
+	<dd><a href="https://www.php.net/manual/en/context.php">Context options and parameters</a></dd>
+	<dd><a href="https://www.php.net/manual/en/wrappers.php">Supported Protocols and Wrappers</a></dd>
+</dl>
+<dl>
+<dt><a href="https://www.php.net/manual/en/security.php">Security</a></dt>
+	<dd><a href="https://www.php.net/manual/en/security.intro.php">Introduction</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.general.php">General considerations</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.cgi-bin.php">Installed as CGI binary</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.apache.php">Installed as an Apache module</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.sessions.php">Session Security</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.filesystem.php">Filesystem Security</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.database.php">Database Security</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.errors.php">Error Reporting</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.globals.php">Using Register Globals</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.variables.php">User Submitted Data</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.magicquotes.php">Magic Quotes</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.hiding.php">Hiding PHP</a></dd>
+	<dd><a href="https://www.php.net/manual/en/security.current.php">Keeping Current</a></dd>
+<dt><a href="https://www.php.net/manual/en/features.php">Features</a></dt>
+	<dd><a href="https://www.php.net/manual/en/features.http-auth.php">HTTP authentication with PHP</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.cookies.php">Cookies</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.sessions.php">Sessions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.xforms.php">Dealing with XForms</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.file-upload.php">Handling file uploads</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.remote-files.php">Using remote files</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.connection-handling.php">Connection handling</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.persistent-connections.php">Persistent Database Connections</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.safe-mode.php">Safe Mode</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.commandline.php">Command line usage</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.gc.php">Garbage Collection</a></dd>
+	<dd><a href="https://www.php.net/manual/en/features.dtrace.php">DTrace Dynamic Tracing</a></dd>
+</dl>
+<dl>
+<dt><a href="https://www.php.net/manual/en/funcref.php">Function Reference</a></dt>
+	<dd><a href="https://www.php.net/manual/en/refs.basic.php.php">Affecting PHP's Behaviour</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.utilspec.audio.php">Audio Formats Manipulation</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.remote.auth.php">Authentication Services</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.utilspec.cmdline.php">Command Line Specific Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.compression.php">Compression and Archive Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.creditcard.php">Credit Card Processing</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.crypto.php">Cryptography Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.database.php">Database Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.calendar.php">Date and Time Related Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.fileprocess.file.php">File System Related Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.international.php">Human Language and Character Encoding Support</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.utilspec.image.php">Image Processing and Generation</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.remote.mail.php">Mail Related Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.math.php">Mathematical Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.utilspec.nontext.php">Non-Text MIME Output</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.fileprocess.process.php">Process Control Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.basic.other.php">Other Basic Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.remote.other.php">Other Services</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.search.php">Search Engine Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.utilspec.server.php">Server Specific Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.basic.session.php">Session Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.basic.text.php">Text Processing</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.basic.vartype.php">Variable and Type Related Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.webservice.php">Web Services</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.utilspec.windows.php">Windows Only Extensions</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.xml.php">XML Manipulation</a></dd>
+	<dd><a href="https://www.php.net/manual/en/refs.ui.php">GUI Extensions</a></dd>
+</dl>
+<dl>
+<dt>Keyboard Shortcuts</dt><dt>?</dt>
+<dd>This help</dd>
+<dt>j</dt>
+<dd>Next menu item</dd>
+<dt>k</dt>
+<dd>Previous menu item</dd>
+<dt>g p</dt>
+<dd>Previous man page</dd>
+<dt>g n</dt>
+<dd>Next man page</dd>
+<dt>G</dt>
+<dd>Scroll to bottom</dd>
+<dt>g g</dt>
+<dd>Scroll to top</dd>
+<dt>g h</dt>
+<dd>Goto homepage</dd>
+<dt>g s</dt>
+<dd>Goto search<br>(current page)</dd>
+<dt>/</dt>
+<dd>Focus search box</dd>
+</dl></div></nav>
+<div id="goto">
+    <div class="search">
+         <div class="text"></div>
+         <div class="results"><ul></ul></div>
+   </div>
+</div>
+
+
+
+
+
+<div id="layout" class="clearfix">
+  <section id="layout-content">
+
+<h1>Navigation tips&amp;tricks</h1>
+
+<p>
+ When using the PHP.net website, there is even no need to get to
+ a search box to access the content you would like to see quickly.
+ You can use short PHP.net URLs to access pages directly.
+</p>
+
+<p>
+ Note, that these shortcuts are expected to work on all mirror
+ sites, not just at the main site. If you find that some of these
+ shortcuts are not working on your mirror site, please report them
+ as a "PHP.net Website Problem" at
+ <a href="http://bugs.php.net/">http://bugs.php.net/</a>.
+</p>
+
+<p>
+ There are currently three types of URLs you can use this way.
+</p>
+
+<h2>Page shortcuts</h2>
+
+<p>
+ If you write in a PHP.net URL (e.g. <kbd>https://www.php.net/get-involved</kbd>,
+ first this URL is matched against the PHP.net pages. If there is
+ a page named <em>get-involved.php</em>, then you'll get that page
+ immediately. This type of shortcut makes easy to type in a link
+ in an IRC conversation or mailing list message. If the script
+ finds no page with this name, it tries to find a manual page.
+</p>
+
+<h2>Manual shortcuts</h2>
+
+<p>
+ If your URL can't be matched with a page name, a manual page
+ is searched for your query. This is the case for the
+ <kbd>https://www.php.net/preg_match</kbd> URL. The following pages
+ are searched for in the manual:</p>
+<ul>
+ <li>Chapter pages (e.g. <a href="https://www.php.net/installation">https://www.php.net/installation</a>)</li>
+ <li>Reference pages (e.g. <a href="https://www.php.net/imap">https://www.php.net/imap</a>)</li>
+ <li>Function pages (e.g. <a href="https://www.php.net/join">https://www.php.net/join</a>)</li>
+ <li>Class pages (e.g. <a href="https://www.php.net/dir">https://www.php.net/dir</a>)</li>
+ <li>Feature pages (e.g. <a href="https://www.php.net/safe_mode">https://www.php.net/safe_mode</a>)</li>
+ <li>Control structure pages (e.g. <a href="https://www.php.net/while">https://www.php.net/while</a>)</li>
+ <li>Other language pages (e.g. <a href="https://www.php.net/oop">https://www.php.net/oop</a>)</li>
+</ul>
+<p>
+ Since there are several manual pages that could potentially match the query
+ (extension, class, function name..) you are encouraged to use their prefix/suffix:
+</p>
+<ul>
+ <li>Extension <abbr title="Table of Contents">TOC</abbr>:
+  <kbd>https://www.php.net/<var>book.extname</var></kbd>
+  (e.g. <a href="https://www.php.net/book.dom">https://www.php.net/book.dom</a>).
+ </li>
+ <li>Extension intro pages:
+  <kbd>https://www.php.net/<var>intro.extname</var></kbd>
+  (e.g. <a href="https://www.php.net/intro.array">https://www.php.net/intro.array</a>).
+ </li>
+ <li>Extension setup <abbr title="Table of Contents">TOC</abbr>:
+  <kbd>https://www.php.net/<var>extname.setup</var></kbd>
+  (e.g. <a href="https://www.php.net/intl.setup">https://www.php.net/intl.setup</a>).
+ </li>
+ <li>Extension install chapter:
+  <kbd>https://www.php.net/<var>extname.installation</var></kbd>
+  (e.g. <a href="https://www.php.net/apc.installation">https://www.php.net/apc.installation</a>).
+ </li>
+ <li>Extension configuration:
+  <kbd>https://www.php.net/<var>extname.configuration</var></kbd>
+  (e.g. <a href="https://www.php.net/session.configuration">https://www.php.net/session.configuration</a>).
+ </li>
+ <li>Extension resources:
+  <kbd>https://www.php.net/<var>extname.resources</var></kbd>
+  (e.g. <a href="https://www.php.net/mysql.resources">https://www.php.net/mysql.resources</a>).
+ </li>
+ <li>Extension constants:
+  <kbd>https://www.php.net/<var>extname.constants</var></kbd>
+  (e.g. <a href="https://www.php.net/image.constants">https://www.php.net/image.constants</a>).
+ </li>
+ <li>Class synopsis:
+  <kbd>https://www.php.net/<var>class.classname</var></kbd>
+  (e.g. <a href="https://www.php.net/class.xmlreader">https://www.php.net/class.xmlreader</a>).
+ </li>
+ <li>Class method:
+  <kbd>https://www.php.net/<var>classname.methodname</var></kbd>
+  (e.g. <a href="https://www.php.net/pdo.query">https://www.php.net/pdo.query</a>).
+ </li>
+ <li>Functions:
+  <kbd>https://www.php.net/<var>function.functionname</var></kbd>
+  (e.g. <a href="https://www.php.net/function.strpos">https://www.php.net/function.strpos</a>).
+ </li>
+</ul>
+
+<p>
+ This kind of URL will bring up the manual page in
+ <a href="https://www.php.net/my.php">your preferred language</a>. You can
+ always override this setting by explicitly providing
+ the language you want to get to. You can embed the language
+ in the URL before the manual search term.
+ <kbd>https://www.php.net/hu/sort</kbd> will bring up
+ the Hungarian manual page for sort() for example.
+</p>
+
+<h2>Search shortcuts</h2>
+
+<p>
+ At last, if there is no PHP page, and there is no manual
+ page matching your query, a search is issued on the site with
+ the query you typed into the URL. An example of this kind
+ of URL is <kbd>https://www.php.net/<var>search_for_this</var></kbd>.
+ The exact behaviour of this search is affected by
+ <a href="https://www.php.net/my.php">your own My PHP.net settings</a>.
+</p>
+
+<h2>PHP Developer shortcuts</h2>
+<ul>
+ <li>Changelog information: <a href="http://php.net/changelog">http://php.net/changelog</a>
+  (e.g. latest PHP changelog. php5news = latest PHP 5 NEWS, phptrunknews = latest PHP trunk NEWS)
+ </li>
+ <li>Bugs: <a href="http://php.net/42">http://php.net/42</a>
+  (any numeric value redirects to said bug # at bugs.php.net)
+ </li>
+</ul>
+
+<h2>Even smarter tricks</h2>
+
+<p>
+ We also have shortcut aliases to access some resources more quickly,
+ and with a nice URL. Aliases are translated to their relevant shortcuts
+ before the first step (PHP page search) mentioned above. Some examples
+ of shortcut aliases: <a href="https://www.php.net/whatisphp">https://www.php.net/whatisphp</a>,
+ <a href="https://www.php.net/php4news">https://www.php.net/php4news</a>. The latter is an external page
+ alias, as it points to a file on the Git server, containing information
+ about changes in PHP. There are also some convenient aliases(e.g.
+ <a href="https://www.php.net/de/phpversion">https://www.php.net/de/phpversion</a> which displays the German
+ manual page for the phpversion() function.
+</p>
+
+
+    </section><!-- layout-content -->
+    
+
+  </div><!-- layout -->
+
+  <footer>
+    <div class="container footer-content">
+      <div class="row-fluid">
+      <ul class="footmenu">
+        <li><a href="https://www.php.net/copyright.php">Copyright © 2001-2019 The PHP Group</a></li>
+        <li><a href="https://www.php.net/my.php">My PHP.net</a></li>
+        <li><a href="https://www.php.net/contact.php">Contact</a></li>
+        <li><a href="https://www.php.net/sites.php">Other PHP.net sites</a></li>
+        <li><a href="https://www.php.net/privacy.php">Privacy policy</a></li>
+      </ul>
+      </div>
+    </div>
+  </footer>
+
+    
+ <!-- External and third party libraries. -->
+ 
+
+
+
+
+
+
+
+<a id="toTop" href="javascript:"><span id="toTopHover"></span><img alt="To Top" src="resources/98/7.png" data-original-src="https://www.php.net/images/to-top@2x.png" width="40" height="40"></a>
+
+
+
+</body></html>

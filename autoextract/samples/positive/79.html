@@ -1,0 +1,2654 @@
+<!DOCTYPE html>
+<html data-fathom="shopping" class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients no-cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; media-src 'self' data:; style-src 'self' data: 'unsafe-inline'; font-src 'self' data:; frame-src 'self' data:"><link rel="original" href="https://funandfunction.com/checkout/cart/">
+        
+        
+<meta name="description" content="Large selection of toys and therapy products for children with special needs like ADHD, autism, or sensory processing disorders. Vests, fidgets, swings, interactive learning and mobility tools. Offering parents, therapists, and teachers with articles and information.">
+<meta name="robots" content="INDEX,FOLLOW">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>Shopping Cart</title>
+<link rel="stylesheet" type="text/css" media="all" href="resources/79/1.css" data-original-href="https://funandfunction.com/static/_cache/merged/2c894aee398040b2da45ac36d9d824ee.min.css">
+<link rel="stylesheet" type="text/css" media="screen and (min-width: 768px)" href="resources/79/2.css" data-original-href="https://funandfunction.com/static/frontend/FunAndFunction/FunAndFunction/en_US/css/styles-l.min.css">
+<link rel="stylesheet" type="text/css" media="print" href="resources/79/3.css" data-original-href="https://funandfunction.com/static/frontend/FunAndFunction/FunAndFunction/en_US/css/print.min.css">
+
+<link rel="icon" type="image/x-icon" href="resources/79/4.png" data-original-href="https://funandfunction.com/media/favicon/stores/1/logo_-_2019-06-09.png">
+<link rel="shortcut icon" type="image/x-icon" href="resources/79/4.png" data-original-href="https://funandfunction.com/media/favicon/stores/1/logo_-_2019-06-09.png">
+<meta name="p:domain_verify" content="f24fc161751e58a44634fb625679de68">
+<meta name="msvalidate.01" content="E19D21943AE422395865BBBBB53FDAEC">
+ 
+
+        <!-- Google Tag Manager -->
+
+<!-- End Google Tag Manager --><link rel="stylesheet" type="text/css" media="all" href="resources/79/5.css" data-original-href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+<!-- BEGIN GOOGLE ANALYTICS CODE -->
+
+<!-- END GOOGLE ANALYTICS CODE -->
+
+<style type="text/css">/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2012-2013, Premasagar Rose <http://premasagar.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Bolt Mixin for Clean Slate CSS
+ * ======
+ * Aggressive CSS mixin to prevent our styles for checkout from being overridden.
+ * The original Clean Slate stylesheet has been pared down to only the styles we need.
+ */
+:root {
+  --bolt-primary-action-color: #006cff; }
+
+/**
+ * Use of !important
+ * ======
+ * We are using !important in SCSS files that touch the Connect button that is embedded in merchant sites.
+ * This prevents side-effects from merchant styles from polluting our own styles.
+
+ * All uses of !important must:
+ *   1. Be as limited in scope as possible and only affect Bolt components
+ *   2. Only used in places where necessary to prevent side affects from a merchant's page
+ *   3. Be used as little as possible and only where absolutely necessary.
+ *
+ * We manually maintain where in styles !important is used. This creates explicit intent every time
+ * !important declarations are included in styles.
+ */
+.bolt-checkout-button {
+  /* == SPECIFIC ELEMENTS == */
+  /* Some of these are browser defaults; some are just useful resets */
+  /* == ROOT CONTAINER ELEMENT == */
+  /* This contains default values for child elements to inherit  */
+  position: relative !important;
+  display: inline-block;
+  width: 284px !important; }
+  .bolt-checkout-button div,
+  .bolt-checkout-button img,
+  .bolt-checkout-button button,
+  .bolt-checkout-button label {
+    background-attachment: scroll !important;
+    background-color: transparent !important;
+    /* This rule affects the use of pngfix JavaScript http://dillerdesign.com/experiment/DD_BelatedPNG for IE6, which is used to force the browser to recognise alpha-transparent PNGs files that replace the IE6 lack of PNG transparency. (The rule overrides the VML image that is used to replace the given CSS background-image). If you don't know what that means, then you probably haven't used the pngfix script, and this comment may be ignored :) */
+    background-image: none !important;
+    background-position: 0 0 !important;
+    background-repeat: repeat !important;
+    border-color: black !important;
+    /* `border-color` should match font color. Modern browsers (incl. IE9) allow the use of "currentColor" to match the current font 'color' value <http://www.w3.org/TR/css3-color/#currentcolor>. For older browsers, a default of 'black' is given before this rule. Guideline to support older browsers: if you haven't already declared a border-color for an element, be sure to do so, e.g. when you first declare the border-width. */
+    border-color: currentColor !important;
+    border-radius: 0 !important;
+    border-style: none !important;
+    border-width: medium !important;
+    bottom: auto !important;
+    clear: none !important;
+    clip: auto !important;
+    color: inherit !important;
+    counter-increment: none !important;
+    counter-reset: none !important;
+    cursor: inherit !important;
+    direction: inherit !important;
+    /* As with other inherit values, this needs to be set on the root container element */
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-style: inherit !important;
+    font-variant: normal !important;
+    font-weight: inherit !important;
+    left: auto !important;
+    letter-spacing: normal !important;
+    line-height: inherit !important;
+    /* Could set list-style-type to none */
+    list-style-type: inherit !important;
+    list-style-position: outside !important;
+    list-style-image: none !important;
+    margin: 0 !important;
+    opacity: 1;
+    outline: invert none medium !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    position: static !important;
+    quotes: "" "" !important;
+    right: auto !important;
+    table-layout: auto !important;
+    text-align: inherit !important;
+    text-decoration: inherit !important;
+    text-indent: 0 !important;
+    text-transform: none !important;
+    top: auto !important;
+    unicode-bidi: normal !important;
+    vertical-align: baseline !important;
+    visibility: inherit !important;
+    white-space: normal !important;
+    word-spacing: normal !important;
+    z-index: auto !important;
+    background-origin: padding-box !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    background-size: auto !important;
+    -o-border-image: none !important;
+    border-image: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-box-sizing: content-box !important;
+    box-sizing: content-box !important;
+    -webkit-font-feature-settings: normal !important;
+            font-feature-settings: normal !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    -webkit-hyphens: manual !important;
+    -ms-hyphens: manual !important;
+        hyphens: manual !important;
+    -webkit-perspective: none !important;
+    -ms-perspective: none !important;
+    -o-perspective: none !important;
+    perspective: none !important;
+    -webkit-perspective-origin: 50% 50% !important;
+    -ms-perspective-origin: 50% 50% !important;
+    -o-perspective-origin: 50% 50% !important;
+    perspective-origin: 50% 50% !important;
+    -webkit-backface-visibility: visible !important;
+    backface-visibility: visible !important;
+    text-shadow: none !important;
+    word-break: normal !important; }
+  .bolt-checkout-button img,
+  .bolt-checkout-button button,
+  .bolt-checkout-button label {
+    display: inline !important; }
+  .bolt-checkout-button div {
+    float: none !important;
+    height: auto !important;
+    width: auto !important;
+    max-height: none !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    min-width: 0 !important; }
+  .bolt-checkout-button input[type="submit"],
+  .bolt-checkout-button input[type="button"],
+  .bolt-checkout-button button {
+    cursor: pointer !important; }
+  .bolt-checkout-button button,
+  .bolt-checkout-button input[type="submit"] {
+    text-align: center !important;
+    padding: 2px 6px 3px !important;
+    border-radius: 4px !important;
+    text-decoration: none !important;
+    font-family: arial, helvetica, sans-serif !important;
+    font-size: small !important;
+    background: #ffffff !important;
+    -webkit-appearance: push-button !important;
+    color: #181818 !important;
+    border: 1px #a6a6a6 solid !important;
+    -webkit-box-shadow: 1px 1px 0px #eee !important;
+    -o-box-shadow: 1px 1px 0px #eee !important;
+    box-shadow: 1px 1px 0px #eee !important;
+    outline: medium none invert !important;
+    outline: initial !important; }
+  .bolt-checkout-button button {
+    padding: 1px 6px 2px 6px !important;
+    margin-right: 5px !important; }
+  .bolt-checkout-button button:active,
+  .bolt-checkout-button input[type="submit"]:active {
+    /* Old browsers */
+    background: #3b679e !important;
+    border-color: #5259b0 !important; }
+  .bolt-checkout-button img {
+    border: 0 !important; }
+  [dir="ltr"] .bolt-checkout-button {
+    text-align: left !important; }
+  [dir="rtl"] .bolt-checkout-button {
+    text-align: right !important; }
+  .bolt-checkout-button {
+    font-size: medium !important;
+    line-height: 1 !important;
+    direction: ltr !important;
+    /* for IE, Opera */
+    text-align: left !important;
+    /* recommended W3C Spec */
+    /* Override this with whatever font-family is required */
+    font-family: sans-serif !important;
+    color: black !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    text-decoration: none !important;
+    list-style-type: disc !important; }
+
+@media only screen and (max-width: 420px) {
+  .bolt-checkout-button.responsive {
+    width: 100% !important; } }
+
+.bolt-checkout-button.flexible {
+  width: 100% !important; }
+
+.bolt-checkout-button.large-width {
+  width: 100% !important;
+  max-width: 600px !important;
+  display: block !important; }
+
+.bolt-checkout-button-error {
+  vertical-align: middle !important;
+  text-align: center !important;
+  font-family: -apple-system, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 14px !important;
+  letter-spacing: 0.41px !important;
+  color: #f04050 !important;
+  max-width: 400px !important; }
+
+html.bolt_modal_active body {
+  overflow: hidden !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 100% !important;
+  width: 100% !important; }
+</style><style type="text/css">iframe._2CmC8CfrP65QGCuwCflH_O {
+  border: none;
+  overflow: hidden;
+  height: 0px;
+  width: 0%;
+  display: none; }
+
+iframe._2nCjk5w-M8gAwG4T7MXiS- {
+  border: none;
+  overflow: hidden;
+  height: 260px;
+  width: 100%;
+  display: none; }
+
+div._3BgECYp2WfPcYGCzGyjwCs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2147483647;
+  -webkit-animation: HqbzvCS4oIdMUIRQcGOoR 0.2s ease-in;
+          animation: HqbzvCS4oIdMUIRQcGOoR 0.2s ease-in; }
+
+div._3AdnZPBR8NVkleVeYv_Ra_ {
+  position: absolute;
+  height: 100%;
+  width: 100%; }
+
+div #_3bhc1cYKiRRhYn9mxuVBU3 {
+  line-height: 16px !important;
+  font-size: 14px !important;
+  color: #707070 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  margin: 16px 0 !important; }
+
+@-webkit-keyframes _2aEXGFTX34NQgfh7tWrP7v {
+  0% {
+    -webkit-transform: scale(0.1, 0.1);
+            transform: scale(0.1, 0.1);
+    opacity: 0; }
+  100% {
+    -webkit-transform: scale(1, 1);
+            transform: scale(1, 1);
+    opacity: 1; } }
+
+@keyframes _2aEXGFTX34NQgfh7tWrP7v {
+  0% {
+    -webkit-transform: scale(0.1, 0.1);
+            transform: scale(0.1, 0.1);
+    opacity: 0; }
+  100% {
+    -webkit-transform: scale(1, 1);
+            transform: scale(1, 1);
+    opacity: 1; } }
+
+@-webkit-keyframes Vkvdib9toiAPH28d4kXJ9 {
+  0% {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0);
+    opacity: 1; }
+  100% {
+    -webkit-transform: translate(0, 100px);
+            transform: translate(0, 100px);
+    opacity: 0; } }
+
+@keyframes Vkvdib9toiAPH28d4kXJ9 {
+  0% {
+    -webkit-transform: translate(0, 0);
+            transform: translate(0, 0);
+    opacity: 1; }
+  100% {
+    -webkit-transform: translate(0, 100px);
+            transform: translate(0, 100px);
+    opacity: 0; } }
+
+@-webkit-keyframes HqbzvCS4oIdMUIRQcGOoR {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+
+@keyframes HqbzvCS4oIdMUIRQcGOoR {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+</style><style type="text/css">/* stylelint-disable */
+@supports (-webkit-appearance: -apple-pay-button) {
+  .bolt-checkout-button .apple-pay-button {
+    display: inline-block;
+    -webkit-appearance: -apple-pay-button;
+    width: 100% !important;
+    height: 48px !important; }
+  .bolt-checkout-button .apple-pay-button-black {
+    -apple-pay-button-style: black; }
+  .bolt-checkout-button .apple-pay-button-white {
+    -apple-pay-button-style: white; }
+  .bolt-checkout-button .apple-pay-button-white-with-line {
+    -apple-pay-button-style: white-outline; } }
+
+/* stylelint-enable */
+@supports not (-webkit-appearance: -apple-pay-button) {
+  .bolt-checkout-button .apple-pay-button {
+    display: inline-block;
+    background-size: 100% 60%;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    border-radius: 4px;
+    padding: 0px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    min-width: 200px;
+    min-height: 32px;
+    max-height: 64px;
+    width: 100% !important;
+    margin-top: 4px !important; }
+  .bolt-checkout-button .apple-pay-button-black {
+    /* stylelint-disable-next-line */
+    background-image: -webkit-named-image(apple-pay-logo-white);
+    background-color: black; }
+  .bolt-checkout-button .apple-pay-button-white {
+    /* stylelint-disable-next-line */
+    background-image: -webkit-named-image(apple-pay-logo-black);
+    background-color: white; }
+  .bolt-checkout-button .apple-pay-button-white-with-line {
+    /* stylelint-disable-next-line */
+    background-image: -webkit-named-image(apple-pay-logo-black);
+    background-color: white;
+    border: 0.5px solid black; } }
+
+.bolt-checkout-button .apple-pay-type-plain {
+  /* stylelint-disable-next-line */
+  -apple-pay-button-type: plain; }
+
+.bolt-checkout-button .apple-pay-type-buy {
+  /* stylelint-disable-next-line */
+  -apple-pay-button-type: buy; }
+</style><style type="text/css">._2NW_bqX1OEU1Lszd5cPBAL {
+  -webkit-animation: _3YFWePL5olOZWWh2eo-XBF 0.2s ease-in 1;
+          animation: _3YFWePL5olOZWWh2eo-XBF 0.2s ease-in 1;
+  height: 100%;
+  width: 100%;
+  position: relative; }
+
+.Rszzc01KlcYH9X2TZQZdx {
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.125);
+  border-bottom: 3px solid #006cff;
+  border-bottom: 3px solid var(--bolt-primary-action-color);
+  -webkit-transform: translateZ(0);
+          transform: translateZ(0);
+  -webkit-animation: _1SvB47GNmkpauJRCiyfDKw 1.4s infinite linear;
+          animation: _1SvB47GNmkpauJRCiyfDKw 1.4s infinite linear; }
+
+@-webkit-keyframes _1SvB47GNmkpauJRCiyfDKw {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+@keyframes _1SvB47GNmkpauJRCiyfDKw {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+._2VvVwTsTfRvxKcsVdrddRs {
+  font-family: -apple-system, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #ffffff;
+  font-size: 16px;
+  margin-top: 16px;
+  height: 25px;
+  width: 200px;
+  text-align: center; }
+
+._18acGG4_WjBEukcRKanAPh {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center; }
+</style><style type="text/css">/**
+ * Use of !important
+ * ======
+ * We are using !important in SCSS files that touch the Connect button that is embedded in merchant sites.
+ * This prevents side-effects from merchant styles from polluting our own styles.
+
+ * All uses of !important must:
+ *   1. Be as limited in scope as possible and only affect Bolt components
+ *   2. Only used in places where necessary to prevent side affects from a merchant's page
+ *   3. Be used as little as possible and only where absolutely necessary.
+ *
+ * We manually maintain where in styles !important is used. This creates explicit intent every time
+ * !important declarations are included in styles.
+ */
+div._1Y_CkbmEy3GXa2KdxO0eod {
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-box-orient: horizontal !important;
+  -webkit-box-direction: normal !important;
+      -ms-flex-direction: row !important;
+          flex-direction: row !important;
+  -webkit-box-align: center !important;
+      -ms-flex-align: center !important;
+          align-items: center !important;
+  -webkit-box-pack: center !important;
+      -ms-flex-pack: center !important;
+          justify-content: center !important;
+  margin: 6px 0px !important;
+  cursor: pointer !important;
+  height: 48px !important;
+  background-color: var(--bolt-primary-action-color) !important;
+  border-radius: 4px !important;
+  width: 100% !important;
+  min-width: 180px !important; }
+  div._1Y_CkbmEy3GXa2KdxO0eod:hover {
+    background-color: var(--bolt-button-hover-color) !important; }
+  div._1Y_CkbmEy3GXa2KdxO0eod img {
+    position: relative !important;
+    height: 12px !important;
+    width: 12px !important;
+    margin: 0 4px 0 0 !important; }
+
+div._3VPklqCwuvhyJJmo5VOeQQ {
+  vertical-align: middle !important;
+  text-align: center !important;
+  font-family: -apple-system, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.41px !important;
+  line-height: 1 !important; }
+</style><style type="text/css">/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2012-2013, Premasagar Rose <http://premasagar.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * Bolt Mixin for Clean Slate CSS
+ * ======
+ * Aggressive CSS mixin to prevent our styles for checkout from being overridden.
+ * The original Clean Slate stylesheet has been pared down to only the styles we need.
+ */
+._33pyIy9odyjt0Y8A5DnJJ8 {
+  /* == SPECIFIC ELEMENTS == */
+  /* Some of these are browser defaults; some are just useful resets */
+  /* == ROOT CONTAINER ELEMENT == */
+  /* This contains default values for child elements to inherit  */ }
+  ._33pyIy9odyjt0Y8A5DnJJ8 div,
+  ._33pyIy9odyjt0Y8A5DnJJ8 img,
+  ._33pyIy9odyjt0Y8A5DnJJ8 button,
+  ._33pyIy9odyjt0Y8A5DnJJ8 label {
+    background-attachment: scroll !important;
+    background-color: transparent !important;
+    /* This rule affects the use of pngfix JavaScript http://dillerdesign.com/experiment/DD_BelatedPNG for IE6, which is used to force the browser to recognise alpha-transparent PNGs files that replace the IE6 lack of PNG transparency. (The rule overrides the VML image that is used to replace the given CSS background-image). If you don't know what that means, then you probably haven't used the pngfix script, and this comment may be ignored :) */
+    background-image: none !important;
+    background-position: 0 0 !important;
+    background-repeat: repeat !important;
+    border-color: black !important;
+    /* `border-color` should match font color. Modern browsers (incl. IE9) allow the use of "currentColor" to match the current font 'color' value <http://www.w3.org/TR/css3-color/#currentcolor>. For older browsers, a default of 'black' is given before this rule. Guideline to support older browsers: if you haven't already declared a border-color for an element, be sure to do so, e.g. when you first declare the border-width. */
+    border-color: currentColor !important;
+    border-radius: 0 !important;
+    border-style: none !important;
+    border-width: medium !important;
+    bottom: auto !important;
+    clear: none !important;
+    clip: auto !important;
+    color: inherit !important;
+    counter-increment: none !important;
+    counter-reset: none !important;
+    cursor: inherit !important;
+    direction: inherit !important;
+    /* As with other inherit values, this needs to be set on the root container element */
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-style: inherit !important;
+    font-variant: normal !important;
+    font-weight: inherit !important;
+    left: auto !important;
+    letter-spacing: normal !important;
+    line-height: inherit !important;
+    /* Could set list-style-type to none */
+    list-style-type: inherit !important;
+    list-style-position: outside !important;
+    list-style-image: none !important;
+    margin: 0 !important;
+    opacity: 1;
+    outline: invert none medium !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    position: static !important;
+    quotes: "" "" !important;
+    right: auto !important;
+    table-layout: auto !important;
+    text-align: inherit !important;
+    text-decoration: inherit !important;
+    text-indent: 0 !important;
+    text-transform: none !important;
+    top: auto !important;
+    unicode-bidi: normal !important;
+    vertical-align: baseline !important;
+    visibility: inherit !important;
+    white-space: normal !important;
+    word-spacing: normal !important;
+    z-index: auto !important;
+    background-origin: padding-box !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    background-size: auto !important;
+    -o-border-image: none !important;
+    border-image: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-box-sizing: content-box !important;
+    box-sizing: content-box !important;
+    -webkit-font-feature-settings: normal !important;
+            font-feature-settings: normal !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    -webkit-hyphens: manual !important;
+    -ms-hyphens: manual !important;
+        hyphens: manual !important;
+    -webkit-perspective: none !important;
+    -ms-perspective: none !important;
+    -o-perspective: none !important;
+    perspective: none !important;
+    -webkit-perspective-origin: 50% 50% !important;
+    -ms-perspective-origin: 50% 50% !important;
+    -o-perspective-origin: 50% 50% !important;
+    perspective-origin: 50% 50% !important;
+    -webkit-backface-visibility: visible !important;
+    backface-visibility: visible !important;
+    text-shadow: none !important;
+    word-break: normal !important; }
+  ._33pyIy9odyjt0Y8A5DnJJ8 img,
+  ._33pyIy9odyjt0Y8A5DnJJ8 button,
+  ._33pyIy9odyjt0Y8A5DnJJ8 label {
+    display: inline !important; }
+  ._33pyIy9odyjt0Y8A5DnJJ8 div {
+    float: none !important;
+    height: auto !important;
+    width: auto !important;
+    max-height: none !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    min-width: 0 !important; }
+  ._33pyIy9odyjt0Y8A5DnJJ8 input[type="submit"],
+  ._33pyIy9odyjt0Y8A5DnJJ8 input[type="button"],
+  ._33pyIy9odyjt0Y8A5DnJJ8 button {
+    cursor: pointer !important; }
+  ._33pyIy9odyjt0Y8A5DnJJ8 button,
+  ._33pyIy9odyjt0Y8A5DnJJ8 input[type="submit"] {
+    text-align: center !important;
+    padding: 2px 6px 3px !important;
+    border-radius: 4px !important;
+    text-decoration: none !important;
+    font-family: arial, helvetica, sans-serif !important;
+    font-size: small !important;
+    background: #ffffff !important;
+    -webkit-appearance: push-button !important;
+    color: #181818 !important;
+    border: 1px #a6a6a6 solid !important;
+    -webkit-box-shadow: 1px 1px 0px #eee !important;
+    -o-box-shadow: 1px 1px 0px #eee !important;
+    box-shadow: 1px 1px 0px #eee !important;
+    outline: medium none invert !important;
+    outline: initial !important; }
+  ._33pyIy9odyjt0Y8A5DnJJ8 button {
+    padding: 1px 6px 2px 6px !important;
+    margin-right: 5px !important; }
+  ._33pyIy9odyjt0Y8A5DnJJ8 button:active,
+  ._33pyIy9odyjt0Y8A5DnJJ8 input[type="submit"]:active {
+    /* Old browsers */
+    background: #3b679e !important;
+    border-color: #5259b0 !important; }
+  ._33pyIy9odyjt0Y8A5DnJJ8 img {
+    border: 0 !important; }
+  [dir="ltr"] ._33pyIy9odyjt0Y8A5DnJJ8 {
+    text-align: left !important; }
+  [dir="rtl"] ._33pyIy9odyjt0Y8A5DnJJ8 {
+    text-align: right !important; }
+  ._33pyIy9odyjt0Y8A5DnJJ8 {
+    font-size: medium !important;
+    line-height: 1 !important;
+    direction: ltr !important;
+    /* for IE, Opera */
+    text-align: left !important;
+    /* recommended W3C Spec */
+    /* Override this with whatever font-family is required */
+    font-family: sans-serif !important;
+    color: black !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    text-decoration: none !important;
+    list-style-type: disc !important; }
+</style><style type="text/css">/**
+ * This is essentially a copy of CheckoutButton.m.scss. These should be
+ * kept in sync as much as possible
+ */
+._3MpmihK3DqTvWH6czEv-S5 .OFIEO5CzCfR92UuE75fSA {
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-box-orient: horizontal !important;
+  -webkit-box-direction: normal !important;
+      -ms-flex-direction: row !important;
+          flex-direction: row !important;
+  -webkit-box-align: center !important;
+      -ms-flex-align: center !important;
+          align-items: center !important;
+  -webkit-box-pack: center !important;
+      -ms-flex-pack: center !important;
+          justify-content: center !important;
+  margin: 6px 0px !important;
+  cursor: pointer !important;
+  height: 48px !important;
+  background-color: #006cff !important;
+  background-color: var(--bolt-primary-action-color) !important;
+  border-radius: 4px !important;
+  width: 100% !important;
+  min-width: 180px !important; }
+  ._3MpmihK3DqTvWH6czEv-S5 .OFIEO5CzCfR92UuE75fSA:hover {
+    background-color: var(--bolt-button-hover-color) !important; }
+  ._3MpmihK3DqTvWH6czEv-S5 .OFIEO5CzCfR92UuE75fSA img {
+    position: relative !important;
+    height: 12px !important;
+    width: 12px !important;
+    margin: 0 4px 0 0 !important; }
+
+._3MpmihK3DqTvWH6czEv-S5 ._3IWsGQ7jpA5HYrgXCSTdib {
+  vertical-align: middle !important;
+  text-align: center !important;
+  font-family: -apple-system, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.41px !important;
+  line-height: 1 !important; }
+</style><style type="text/css">._5n1h3uo1LwI0oNNiBQ107 ._17IR73rL5Ne37HS0UqN_9M {
+  cursor: pointer !important;
+  padding: 12px !important; }
+  ._5n1h3uo1LwI0oNNiBQ107 ._17IR73rL5Ne37HS0UqN_9M:hover, ._5n1h3uo1LwI0oNNiBQ107 ._17IR73rL5Ne37HS0UqN_9M:focus {
+    background-color: #f4f4f4 !important; }
+
+._5n1h3uo1LwI0oNNiBQ107 ._3bzSSRUoSJoGWjQfouH7on {
+  border-width: 5px !important; }
+
+._5n1h3uo1LwI0oNNiBQ107 ._2BctepaB9Uq81akNhfLrXq {
+  border-width: 5px !important; }
+
+._5n1h3uo1LwI0oNNiBQ107 .b_5Bh3mRYHROOsw9_O2BK {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  text-align: center !important;
+  font-family: -apple-system, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: #181818 !important;
+  letter-spacing: 0.41px !important;
+  line-height: 24px !important;
+  margin: 0 0 0 8px !important; }
+
+._5n1h3uo1LwI0oNNiBQ107 ._1b9htw0R8oBt3rzF-h6TB-:hover, ._5n1h3uo1LwI0oNNiBQ107 ._1b9htw0R8oBt3rzF-h6TB-:focus {
+  background-color: inherit !important; }
+
+._5n1h3uo1LwI0oNNiBQ107 ._2f6OoACgaOfroSB78jrUxd {
+  -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+          appearance: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  margin: 0 !important;
+  width: auto !important; }
+
+._5n1h3uo1LwI0oNNiBQ107 ._2f6OoACgaOfroSB78jrUxd::after {
+  border-radius: 50% !important;
+  border-style: solid !important;
+  border-color: #006cff !important;
+  border-color: var(--bolt-primary-action-color) !important;
+  display: inline-block !important;
+  width: 16px !important;
+  height: 16px !important;
+  -webkit-box-sizing: border-box !important;
+          box-sizing: border-box !important;
+  vertical-align: middle !important;
+  border-width: 2px !important;
+  content: "" !important; }
+
+._5n1h3uo1LwI0oNNiBQ107 ._2f6OoACgaOfroSB78jrUxd:checked::after {
+  border-width: 5px !important; }
+</style><style type="text/css">.zwl1eMebg6S8T0PnoZPAs {
+  position: relative; }
+
+._3Q9bd-TM0v3FudPwaxxTFG {
+  height: 48px;
+  border: 1px solid #f4f4f4;
+  border-radius: 4px;
+  font-size: 16px;
+  background: #f4f4f4 url(resources/79/6.svg) no-repeat;
+  background-position: right 10px top 16px;
+  background-size: 8px;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  padding-left: 10px;
+  padding-right: 10px; }
+  ._3Q9bd-TM0v3FudPwaxxTFG.O1vl7L7A1rIaz0LgMxNf5 {
+    border: 1px solid #f04050; }
+  ._3Q9bd-TM0v3FudPwaxxTFG:focus {
+    border: 1px solid #006cff;
+    border: 1px solid var(--bolt-primary-action-color);
+    background-color: #ffffff;
+    outline: none; }
+
+._27JWSft2cYm-vAPr2bw51 {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  color: #de1124;
+  font-size: 12px;
+  /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
+  font-family: var(--bolt-font-family-bold);
+  font-weight: var(--bolt-font-weight-bold); }
+</style><style type="text/css">._12cxCT7Tag8vcB3_UefXtm .z_WcLjr1pa5-_xHchS6i2 {
+  -webkit-box-sizing: border-box !important;
+          box-sizing: border-box !important;
+  width: calc(100% - 24px) !important;
+  margin-top: 4px !important;
+  margin-bottom: 12px !important;
+  margin-left: 12px !important;
+  margin-right: 12px !important; }
+</style><style type="text/css">._1dlyL_UumS0IZ3bOrz9MRZ ._13FT63vrjYC0lwPwnFLcyQ {
+  border: 1px solid transparent !important;
+  border-radius: 4px !important; }
+
+._1dlyL_UumS0IZ3bOrz9MRZ .whKEeHB2GicXARd_sooQO {
+  border-color: #e0e0e0 !important; }
+
+._1dlyL_UumS0IZ3bOrz9MRZ ._2ly7TiuTQ9WhL-IQGByrq {
+  margin: 12px 0 24px !important; }
+
+._1dlyL_UumS0IZ3bOrz9MRZ ._3hCNMwLrWragt84IcVYCXB {
+  opacity: 0 !important;
+  font-size: 12px !important;
+  line-height: 12px !important; }
+</style><style type="text/css">/**
+ * Use of !important
+ * ======
+ * We are using !important in SCSS files that touch the Connect button that is embedded in merchant sites.
+ * This prevents side-effects from merchant styles from polluting our own styles.
+
+ * All uses of !important must:
+ *   1. Be as limited in scope as possible and only affect Bolt components
+ *   2. Only used in places where necessary to prevent side affects from a merchant's page
+ *   3. Be used as little as possible and only where absolutely necessary.
+ *
+ * We manually maintain where in styles !important is used. This creates explicit intent every time
+ * !important declarations are included in styles.
+ */
+div._1NyDa4T3l-dSqgWKUPKCBL {
+  max-width: 284px !important;
+  margin: 0 auto !important;
+  -webkit-box-sizing: border-box !important;
+          box-sizing: border-box !important;
+  padding: 0 20px !important; }
+  div._1NyDa4T3l-dSqgWKUPKCBL img {
+    height: 20px !important;
+    width: 100% !important; }
+</style>
+
+<style>
+    /* Fit checkout button in containter */
+    .bolt-checkout-button {
+        max-width: 100%;
+    }
+    /**************************************************************
+     * Standard checkout Bolt payment radio and button
+     * Can be overridden from Global CSS
+     **************************************************************/
+    .payment-method-boltpay .payment-method-title img.payment-icon {
+        padding: 8px;
+        border: 1px solid #cccccc;
+        width:200px;
+    }
+    .bolt-checkout-button.disabled {
+        opacity: 0.5;
+        cursor: default;
+        pointer-events: none;
+    }
+    /***************************************************************/
+    button[data-role=proceed-to-checkout]{display:none!important;}
+/* Store Credit */
+.cart-container #customerbalance-placer {width: 210px;}
+.cart-container #customerbalance-placer .payment-option-title {display: none;}
+.cart-container #customerbalance-placer #use-customer-balance {width: 284px;}</style>
+
+
+
+    <style data-olark="true" type="text/css">.olark-key,#hbl_code,#olark-data{display: none !important;}</style><meta http-equiv="X-UA-Compatible" content="IE=edge"><style id="widget-css">@import 'https://assets.privy.com/assets/widget-ae1b15974760de1ff7ee9f809e87b6acc5ef98bf3301b618d1ca27d3c137199d.css';</style><style data-olark="true" type="text/css">@media print {#habla_beta_container_do_not_rely_on_div_classes_or_names {display: none !important}}</style><link rel="stylesheet" href="resources/79/7.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Lato:400%7COpen+Sans:700,400,500"><link rel="stylesheet" href="resources/79/8.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/9.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Lato:700,400"><link rel="stylesheet" href="resources/79/10.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/9.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Lato:700,400"><link rel="stylesheet" href="resources/79/11.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/7.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Lato:400%7COpen+Sans:700,400,500"><link rel="stylesheet" href="resources/79/12.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/7.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Open+Sans:700,500,400%7CLato:400"><link rel="stylesheet" href="resources/79/13.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/9.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Lato:700,400"><link rel="stylesheet" href="resources/79/14.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/9.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Lato:700,400"><link rel="stylesheet" href="resources/79/15.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/16.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Open+Sans:400%7CLato:400,500"><link rel="stylesheet" href="resources/79/17.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/18.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Lato:300,400,700,400italic"><link rel="stylesheet" href="resources/79/19.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/20.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Open+Sans:700,400%7CLato:500,400,700"><link rel="stylesheet" href="resources/79/21.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/20.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Open+Sans:700,400%7CLato:500,400,700"><link rel="stylesheet" href="resources/79/22.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><link rel="stylesheet" href="resources/79/18.css" media="all" data-original-href="https://fonts.googleapis.com/css?family=Lato:300,400,700,400italic"><link rel="stylesheet" href="resources/79/23.css" media="all" data-original-href="https://fonts.google.com/specimen/Quicksand"><style type="text/css" data-button-id="10554576">#privy-container #privy-inner-container .privy-button-element-wrapper[data-element-id='10554576'] .privy-button-element:active:after,
+#privy-container #privy-inner-container .privy-button-element-wrapper[data-element-id='10554576'] .privy-button-element:hover:after {
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}</style><style type="text/css" data-form-id="10554575">#privy-container #privy-inner-container .privy-form#privy-form-10554575 input,
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 button.selectpicker {
+  height: 45px;
+  background: #ffffff;
+  border: 1px solid #11309a;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  color: #11309a !important;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 input {
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 button.selectpicker .filter-option {
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 button.selectpicker {
+  border: 1px solid #11309a !important;
+  box-shadow: inset 0 -3px 0px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: inset 0 -3px 0px 0px rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: inset 0 -3px 0px 0px rgba(0, 0, 0, 0.15);
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-half-width-input:first-child {
+  padding-right: 5px;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-half-width-input + .privy-half-width-input {
+  padding-left: 5px;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575.privy-form-horizontal .privy-form-group:not(:last-child) {
+  padding-right: 10px;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575.privy-form-vertical .privy-form-group:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575.privy-form-horizontal .privy-form-group {
+  width: 100%;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 input::-webkit-input-placeholder {
+  color: #0131a0;
+  opacity: 0.8;
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 input:-moz-placeholder {
+  color: #0131a0;
+  opacity: 0.8;
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 input::-moz-placeholder {
+  color: #0131a0;
+  opacity: 0.8;
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 input:-ms-input-placeholder {
+  color: #0131a0;
+  opacity: 0.8;
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 input::-ms-input-placeholder {
+  color: #0131a0;
+  opacity: 1.0;
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group.privy-has-date-label-addon:before {
+  color: #0131a0;
+  opacity: 0.8;
+  font-size: 16px;
+  line-height: 45px;
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group .privy-checkbox-label {
+  font-family: "Open Sans", Helvetica, Arial, Sans Serif;
+  font-size: 16px;
+  color: #11309a;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group .privy-form-checkbox-container input[type="checkbox"] + label,
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group .privy-form-radio-container input[type="radio"] + label {
+  color: #11309a;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group .privy-form-checkbox-container input[type="checkbox"] + label span{
+  background: #ffffff;
+  border: 1px solid #11309a;
+  -webkit-border-radius: 2px;
+     -moz-border-radius: 2px;
+          border-radius: 2px;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group .privy-form-checkbox-container input[type="checkbox"] + label span:before,
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group .privy-form-checkbox-container input[type="checkbox"] + label span:after,
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group .privy-form-radio-container input[type="radio"] + label span:after {
+  background: #0131a0;
+  margin-top: -1px;
+  margin-right: -1px;
+}
+
+#privy-container #privy-inner-container .privy-form#privy-form-10554575 .privy-form-group .privy-form-radio-container input[type="radio"] + label span{
+  background: #ffffff;
+  border: 1px solid #11309a;
+}</style></head>
+    <body data-container="body" class="checkout-cart-index page-layout-1column" aria-busy="false">
+        
+
+<!-- Google Tag Manager (noscript) -->
+
+<!-- End Google Tag Manager (noscript) -->
+
+    
+
+
+    
+    
+<div style="display: none;" id="paypal-express-in-context-checkout-main" data-paypal-click-listener=""></div>
+
+
+<style>
+.bolt-error-modal {
+    z-index: 99999;
+}
+.bolt-error-modal .bolt-modal-title {
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+.bolt-error-modal .bolt-modal-title span {
+    font-weight: bold;
+}
+.bolt-error-modal .modal-footer {
+    border-top: none;
+}
+.bolt-error-modal .modal-inner-wrap {
+    border-radius: 10px;
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+<div class="page-wrapper"><header class="page-header"><div class="header content"><div class="logo-wrapper">
+<span data-action="toggle-nav" class="action nav-toggle"><span>Toggle Nav</span></span>
+    <a class="logo" href="https://funandfunction.com/" title="Fun and Function">
+                <img src="resources/79/24.png" title="Fun and Function" alt="Fun and Function" data-original-src="https://funandfunction.com/static/frontend/FunAndFunction/FunAndFunction/en_US/images/logo.png" width="68" height="68">
+            </a>
+</div>    <div class="sections nav-sections">
+                <div class="section-items nav-sections-items" role="tablist">
+                                            <div class="section-item-title nav-sections-item-title active" data-role="collapsible" role="tab" data-collapsible="true" aria-controls="store.menu" aria-selected="false" aria-expanded="true" tabindex="0">
+                    <a class="nav-sections-item-switch" data-toggle="switch" href="https://funandfunction.com/checkout/cart/#store.menu">Menu</a>
+                </div>
+                <div class="section-item-content nav-sections-item-content" id="store.menu" data-role="content" role="tabpanel" aria-hidden="false">
+<div class="menu-container horizontal-menu">
+    <div class="menu ">
+        <a href="https://funandfunction.com/checkout/cart/#" class="menu-mobile">Navigation</a><span class="menu-mobile-title">Shop By</span><ul>
+            <li class="menu-dropdown-icon  dropdown"><a href="https://funandfunction.com/checkout/cart/#" class=""><span class="megaitemicons"></span> Product Type</a><span class="plus"></span><ul class="animated undefined column1"><li class="megaStaticBlock"><ul><li><div class="mega-menu-wrapper">
+	<ul>
+		<li><a href="https://funandfunction.com/product-type/blankets.html">Blankets</a></li>
+			<li><a href="https://funandfunction.com/product-type/break-boxes.html">Break Boxes</a></li>
+			<li><a href="https://funandfunction.com/product-type/chewies.html">Chewies</a></li>
+			<li><a href="https://funandfunction.com/product-type/clothing.html">Clothing</a></li>
+			<li><a href="https://funandfunction.com/product-type/cushions.html">Cushions</a></li>
+			<li><a href="https://funandfunction.com/product-type/fidgets.html">Fidgets</a></li>
+	</ul>
+	<ul>
+		<li><a href="https://funandfunction.com/product-type/putties.html">Putties</a></li>
+			<li><a href="https://funandfunction.com/product-type/seating.html">Seating</a></li>
+			<li><a href="https://funandfunction.com/product-type/sensory-rooms.html">Sensory Rooms</a></li>
+			<li><a href="https://funandfunction.com/product-type/swings.html">Swings</a></li>
+			<li><a href="https://funandfunction.com/product-type/tunnels-and-tents.html">Tunnels &amp; Tents</a></li>
+			<li><a href="https://funandfunction.com/product-type/weighted.html">Weighted</a></li>
+	</ul>
+	<ul>
+		<li><a href="https://funandfunction.com/product-type/training-and-consulting.html">Training and Consulting</a></li>
+			<li><a href="https://funandfunction.com/sample-gift-card.html">Gift Cards &amp; Certificates</a></li>
+	</ul>
+	<ul class="icons">
+		<li><a href="https://funandfunction.com/therapist-picks.html">Therapist Picks</a></li>
+		<li><a href="https://funandfunction.com/#productfinder">Product Finder</a></li>
+	</ul>
+</div></li></ul></li></ul></li><li class="menu-dropdown-icon  dropdown"><a href="https://funandfunction.com/checkout/cart/#" class=""><span class="megaitemicons"></span> Goals</a><span class="plus"></span><ul class="animated undefined column1"><li class="megaStaticBlock"><ul><li><div class="mega-menu-wrapper">
+<ul>
+<li><a href="https://funandfunction.com/goals/improve-attention-span.html">Attention Span</a></li>
+<li><a href="https://funandfunction.com/goals/auditory-processing.html">Auditory Processing</a></li>
+<li><a href="https://funandfunction.com/goals/calming.html">Calming</a></li>
+<li><a href="https://funandfunction.com/goals/coordination-skills.html">Coordination Skills</a></li>
+</ul>
+<ul>
+<li><a href="https://funandfunction.com/goals/easier-travel.html">Easier Travel</a></li>
+<li><a href="https://funandfunction.com/goals/manage-biting.html">Manage Biting</a></li>
+<li><a href="https://funandfunction.com/goals/mood-regulation.html">Mood Regulation</a></li>
+<li><a href="https://funandfunction.com/goals/motor-skill-development.html">Motor Skill Development</a></li>
+</ul>
+<ul>
+<li><a href="https://funandfunction.com/goals/positive-transitions.html">Positive Transitions</a></li>
+<li><a href="https://funandfunction.com/goals/sensory-regulation.html">Sensory Regulation</a></li>
+<li><a href="https://funandfunction.com/goals/social-skill-building.html">Social Skill Building</a></li>
+</ul>
+<ul class="icons">
+<li><a href="https://funandfunction.com/therapist-picks.html">Therapist Picks</a></li>
+<li><a href="https://funandfunction.com/#productfinder">Product Finder</a></li>
+</ul>
+</div></li></ul></li></ul></li><li class="menu-dropdown-icon  dropdown mega-menu-wrapper"><a href="https://funandfunction.com/checkout/cart/#" class=""><span class="megaitemicons"></span> Diagnosis</a><span class="plus"></span><ul class="animated undefined column1"><li class="megaStaticBlock"><ul><li><div class="mega-menu-wrapper">
+<ul>
+<li><a href="https://funandfunction.com/diagnosis/adhd.html">ADHD</a></li>
+<li><a href="https://funandfunction.com/diagnosis/autism.html">Autism</a></li>
+<li><a href="https://funandfunction.com/diagnosis/central-auditory-processing-disorder.html">Central Auditory Processing Disorder</a></li>
+<li><a href="https://funandfunction.com/diagnosis/cerebral-palsy.html">Cerebral Palsy</a></li>
+</ul>
+<ul>
+<li><a href="https://funandfunction.com/diagnosis/down-syndrome.html">Down Syndrome</a></li>
+<li><a href="https://funandfunction.com/diagnosis/fine-motor-delay.html">Fine Motor Delay</a></li>
+<li><a href="https://funandfunction.com/diagnosis/learning-disabilities.html">Learning Disabilities</a></li>
+</ul>
+<ul>
+<li><a href="https://funandfunction.com/diagnosis/sensory-processing-disorder.html">Sensory Processing Disorder</a></li>
+<li><a href="https://funandfunction.com/diagnosis/oral-motor-delay.html">Oral Motor Delay</a></li>
+<li><a href="https://funandfunction.com/diagnosis/fine-motor-delay.html">Visual Perceptual Delay</a></li>
+</ul>
+<ul></ul>
+<ul class="icons">
+<li><a href="https://funandfunction.com/therapist-picks.html">Therapist Picks</a></li>
+<li><a href="https://funandfunction.com/#productfinder">Product Finder</a></li>
+</ul>
+</div></li></ul></li></ul></li><li class="menu-dropdown-icon  dropdown mega-menu-wrapper"><a href="https://funandfunction.com/checkout/cart/#" class=""><span class="megaitemicons"></span> Environment</a><span class="plus"></span><ul class="animated undefined column1"><li class="megaStaticBlock"><ul><li><div class="mega-menu-wrapper">
+<ul>
+<li><a href="https://funandfunction.com/setting/school.html">School</a></li>
+</ul>
+<ul>
+<li><a href="https://funandfunction.com/setting/therapy.html">Therapy</a></li>
+</ul>
+<ul>
+<li><a href="https://funandfunction.com/setting/workplace.html">Workplace</a></li>
+</ul>
+</div></li></ul></li></ul></li><li class=" "><a href="https://funandfunction.com/sale.html"><span class="megaitemicons"></span> Sale</a></li><li class="menu-dropdown-icon  dropdown menu-mobile-element"><a href="https://funandfunction.com/checkout/cart/#" class=""><span class="megaitemicons"></span> Blog</a><span class="plus"></span><ul class="animated undefined column1"><li class="megaStaticBlock"><ul><li>
+<div class="mega-menu-wrapper">
+
+<!--
+    <ul>
+        <li><h4>For Parents</h4></li>
+        <li><a href="#">Find Local Therapists</a></li>
+        <li><a href="#">Find Local Activities</a></li>
+        <li><a href="#">Free Resources</a></li>
+        <li><a href="#">Inspiring Stories</a></li>
+    </ul>
+    <ul>
+        <li><h4>For Therapists</h4></li>
+        <li><a href="#">List Your Practice</a></li>
+        <li><a href="#">Free Resources</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Research</a></li>
+    </ul>
+    <ul>
+        <li><h4>For Teachers</h4></li>
+        <li><a href="#">Activemind Partnership</a></li>
+        <li><a href="#">Free Resources</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Research</a></li>
+    </ul>
+
+    <ul>
+        <li><h4><a href="https://funandfunction.com/blog">Blog</a></h4></li>
+        <li><a href="https://funandfunction.com/blog/school-routine">8 Tips to Ease into your School Routine</a></li>
+        <li><a href="https://funandfunction.com/blog/sensory-friendly-school-supplies">Checklist of Sensory-friendly School Supplies</a></li>
+        <li><a href="https://funandfunction.com/blog/6-actividades-divertidas-con-tu-scooter">6 Actividades Divertidas Con Tu Scooter</a></li>
+        <li><a href="https://funandfunction.com/blog/scooter-board">6 Fun Activities on your Scooter Board</a></li>
+    </ul>
+     <ul>
+        <li><h4>Recent Posts</h4></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#"> Post</a></li>
+        <li><a href="#">Post</a></li>
+    </ul>
+<ul>
+        <li><h4>Popular Posts</h4></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#">Post</a></li>
+    </ul>
+-->
+
+<ul>
+        <li><h4>Recent Posts</h4></li>
+<li><a href="https://funandfunction.com/blog/amazing-athletes-week/">Amazing Athletes Week</a></li>
+<li><a href="https://funandfunction.com/blog/summer-reading-list/">Summer Reading List</a></li>
+<li><a href="https://funandfunction.com/blog/packing-tips-for-camp%20/">Packing Tips For Camp</a></li>
+        <li><a href="https://funandfunction.com/blog/vacation-friendly-sensory-tools/">Vacation-Friendly Sensory Tools</a></li>
+        <li><a href="https://funandfunction.com/blog/solutions-for-7-types-of-sensory-needs/">Solutions for 7 Types of Sensory Needs</a></li>
+        <li><a href="https://funandfunction.com/blog/the-benefits-of-weighted-blankets/">Benefits of Weighted Blankets</a></li>
+        <li><a href="https://funandfunction.com/blog/7-tips-for-mealtimes-with-picky-eaters/">Tips for Mealtimes with Picky Eaters</a></li>
+        <li><a href="https://funandfunction.com/blog/sensory-hallways-help-refocus-attention-and-learning/">Sensory Hallways for Attention and Learning</a></li>
+        
+
+
+</ul>
+
+<ul>
+        <li><h4>Older Posts</h4></li>
+        <li><a href="https://funandfunction.com/blog/chew-sensory-chewies-calm-de-stress/">How to Use a Chew</a></li>
+        <li><a href="https://funandfunction.com/blog/oral-hygiene-tips-for-kids-adults-sensory-challenges/">Smile! Oral Hygiene Tips</a></li>
+        <li><a href="https://funandfunction.com/blog/vest-on-vest-off-wearing-times-for-weighted-vests/">Wearing Times for Weighted Vests</a></li>
+        <li><a href="https://funandfunction.com/blog/signs-of-sensory-processing-disorder-in-a-3-year-old/">Signs of Sensory Processing Disorder in a 3-year-old  </a></li>
+        <li><a href="https://funandfunction.com/blog/sensory-bedrooms-for-kids-with-autism/">Sensory Bedrooms for Kids with Autism</a></li>
+        <li><a href="https://funandfunction.com/blog/sensory-swings-how-to-install/">How to Install Sensory Swings</a></li>
+<li><a href="https://funandfunction.com/blog/prevent-reduce-toe-walking/">Strategies to Prevent or Reduce Toe-Walking</a></li>
+<li><a href="https://funandfunction.com/blog/sensory-survival-for-teens/">Sensory Survival for Teens</a></li>
+<li><a href="https://funandfunction.com/blog/quick-guide-sensory-processing-disorder-newbies/">Sensory Processing Disorder for Newbies</a></li>
+
+</ul>
+
+<span id="spanBlogButton" style="">
+      <a id="aBlogButton" style="
+background-color: #D44CBB;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-decoration: none;
+      font-size: 14px;
+height: 15px;
+      width: 30px;
+      border-radius: 3px;" href="https://funandfunction.com/blog">Blog</a>
+</span>
+
+</div>
+
+
+</li></ul></li></ul></li><li class=" menu-mobile-element"><a href="https://funandfunction.com//contact"><span class="megaitemicons"></span> Contact Us</a></li><li class=" menu-mobile-element"><a href="https://funandfunction.com/customer/account/"><span class="megaitemicons"></span> Account</a></li>        </ul>
+            </div>
+</div>
+
+</div>
+                                            <div class="section-item-title nav-sections-item-title" data-role="collapsible" role="tab" data-collapsible="true" aria-controls="store.links" aria-selected="false" aria-expanded="false" tabindex="0">
+                    <a class="nav-sections-item-switch" data-toggle="switch" href="https://funandfunction.com/checkout/cart/#store.links">Account</a>
+                </div>
+                <div class="section-item-content nav-sections-item-content" id="store.links" data-role="content" role="tabpanel" aria-hidden="true" style="display: none;"><!-- Account links --></div>
+                                    </div>
+    </div>
+<div class="custom-links"><div class="custom-links-item resources">
+    <a class="link-title" tabindex="0" role="link" data-toggle="dropdown" data-trigger-keypress-button="true" aria-haspopup="true" aria-expanded="false">
+        Blog    </a>
+
+    <div class="custom-links-item-menu" data-target="dropdown" aria-hidden="true">
+        
+<div class="mega-menu-wrapper">
+
+<!--
+    <ul>
+        <li><h4>For Parents</h4></li>
+        <li><a href="#">Find Local Therapists</a></li>
+        <li><a href="#">Find Local Activities</a></li>
+        <li><a href="#">Free Resources</a></li>
+        <li><a href="#">Inspiring Stories</a></li>
+    </ul>
+    <ul>
+        <li><h4>For Therapists</h4></li>
+        <li><a href="#">List Your Practice</a></li>
+        <li><a href="#">Free Resources</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Research</a></li>
+    </ul>
+    <ul>
+        <li><h4>For Teachers</h4></li>
+        <li><a href="#">Activemind Partnership</a></li>
+        <li><a href="#">Free Resources</a></li>
+        <li><a href="#">Case Studies</a></li>
+        <li><a href="#">Research</a></li>
+    </ul>
+
+    <ul>
+        <li><h4><a href="https://funandfunction.com/blog">Blog</a></h4></li>
+        <li><a href="https://funandfunction.com/blog/school-routine">8 Tips to Ease into your School Routine</a></li>
+        <li><a href="https://funandfunction.com/blog/sensory-friendly-school-supplies">Checklist of Sensory-friendly School Supplies</a></li>
+        <li><a href="https://funandfunction.com/blog/6-actividades-divertidas-con-tu-scooter">6 Actividades Divertidas Con Tu Scooter</a></li>
+        <li><a href="https://funandfunction.com/blog/scooter-board">6 Fun Activities on your Scooter Board</a></li>
+    </ul>
+     <ul>
+        <li><h4>Recent Posts</h4></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#"> Post</a></li>
+        <li><a href="#">Post</a></li>
+    </ul>
+<ul>
+        <li><h4>Popular Posts</h4></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#">Post</a></li>
+        <li><a href="#">Post</a></li>
+    </ul>
+-->
+
+<ul>
+        <li><h4>Recent Posts</h4></li>
+<li><a href="https://funandfunction.com/blog/amazing-athletes-week/">Amazing Athletes Week</a></li>
+<li><a href="https://funandfunction.com/blog/summer-reading-list/">Summer Reading List</a></li>
+<li><a href="https://funandfunction.com/blog/packing-tips-for-camp%20/">Packing Tips For Camp</a></li>
+        <li><a href="https://funandfunction.com/blog/vacation-friendly-sensory-tools/">Vacation-Friendly Sensory Tools</a></li>
+        <li><a href="https://funandfunction.com/blog/solutions-for-7-types-of-sensory-needs/">Solutions for 7 Types of Sensory Needs</a></li>
+        <li><a href="https://funandfunction.com/blog/the-benefits-of-weighted-blankets/">Benefits of Weighted Blankets</a></li>
+        <li><a href="https://funandfunction.com/blog/7-tips-for-mealtimes-with-picky-eaters/">Tips for Mealtimes with Picky Eaters</a></li>
+        <li><a href="https://funandfunction.com/blog/sensory-hallways-help-refocus-attention-and-learning/">Sensory Hallways for Attention and Learning</a></li>
+        
+
+
+</ul>
+
+<ul>
+        <li><h4>Older Posts</h4></li>
+        <li><a href="https://funandfunction.com/blog/chew-sensory-chewies-calm-de-stress/">How to Use a Chew</a></li>
+        <li><a href="https://funandfunction.com/blog/oral-hygiene-tips-for-kids-adults-sensory-challenges/">Smile! Oral Hygiene Tips</a></li>
+        <li><a href="https://funandfunction.com/blog/vest-on-vest-off-wearing-times-for-weighted-vests/">Wearing Times for Weighted Vests</a></li>
+        <li><a href="https://funandfunction.com/blog/signs-of-sensory-processing-disorder-in-a-3-year-old/">Signs of Sensory Processing Disorder in a 3-year-old  </a></li>
+        <li><a href="https://funandfunction.com/blog/sensory-bedrooms-for-kids-with-autism/">Sensory Bedrooms for Kids with Autism</a></li>
+        <li><a href="https://funandfunction.com/blog/sensory-swings-how-to-install/">How to Install Sensory Swings</a></li>
+<li><a href="https://funandfunction.com/blog/prevent-reduce-toe-walking/">Strategies to Prevent or Reduce Toe-Walking</a></li>
+<li><a href="https://funandfunction.com/blog/sensory-survival-for-teens/">Sensory Survival for Teens</a></li>
+<li><a href="https://funandfunction.com/blog/quick-guide-sensory-processing-disorder-newbies/">Sensory Processing Disorder for Newbies</a></li>
+
+</ul>
+
+<span id="spanBlogButton" style="">
+      <a id="aBlogButton" style="
+background-color: #D44CBB;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-decoration: none;
+      font-size: 14px;
+height: 15px;
+      width: 30px;
+      border-radius: 3px;" href="https://funandfunction.com/blog">Blog</a>
+</span>
+
+</div>
+
+
+    </div>
+</div>
+<div class="custom-links-item help">
+    <a class="link-title" href="https://funandfunction.com/contact/">Contact Us</a>
+</div>
+</div>
+<div data-block="minicart" class="minicart-wrapper">
+    <a class="action showcart" href="https://funandfunction.com/checkout/cart/" data-bind="scope: 'minicart_content'">
+        <span class="text">Cart</span>
+        <span class="counter qty" data-bind="css: { empty: !!getCartParam('summary_count') == false }, blockLoader: isLoading">
+            <span class="counter-number"><!-- ko text: getCartParam('summary_count') -->2<!-- /ko --></span>
+            <span class="counter-label">
+            <!-- ko if: getCartParam('summary_count') -->
+                <!-- ko text: getCartParam('summary_count') -->2<!-- /ko -->
+                <!-- ko i18n: 'items' --><span>items</span><!-- /ko -->
+            <!-- /ko -->
+            </span>
+        </span>
+    </a>
+            
+        
+    
+<div class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front mage-dropdown-dialog" style="display: none;" tabindex="-1" role="dialog" aria-describedby="ui-id-1"><div class="block block-minicart ui-dialog-content ui-widget-content" data-role="dropdownDialog" id="ui-id-1" style="display: block;">
+            <div id="minicart-content-wrapper" data-bind="scope: 'minicart_content'">
+                <!-- ko template: getTemplate() -->
+<div class="block-title">
+    <strong>
+        <span class="text" data-bind="i18n: 'My Cart'">Cart</span>
+        <span class="qty" data-bind="css: { empty: !!getCartParam('summary_count') == false },
+                       attr: { title: $t('Items in Cart') },
+                       afterRender: RecalcSearchPosition, text: getCartParam('summary_count')" title="Items in Cart">2</span>
+    </strong>
+</div>
+
+<div class="block-content">
+    <button type="button" id="btn-minicart-close" class="action close" data-action="close" data-bind="attr: { title: $t('Close') }" title="Close">
+        <span data-bind="i18n: 'Close'">Close</span>
+    </button>
+
+    <!-- ko if: getCartParam('summary_count') -->
+        <strong class="subtitle" data-bind="i18n: 'Recently added item(s)'">Recently added item(s)</strong>
+        <div data-action="scroll" class="minicart-items-wrapper" style="height: 0px;">
+            <ol id="mini-cart" class="minicart-items" data-bind="foreach: { data: getCartItems(), as: 'item' }" role="tablist">
+                <!-- ko foreach: $parent.getRegion($parent.getItemRenderer(item.product_type)) --><!-- ko template: {name: getTemplate(), data: item, afterRender: function() {$parents[1].initSidebar()}} -->
+<li class="item product product-item" data-role="product-item" data-collapsible="true" role="tab" aria-selected="false" aria-expanded="false" tabindex="0">
+    <div class="product">
+        <!-- ko if: product_has_url -->
+        <a data-bind="attr: {href: product_url, title: product_name}" tabindex="-1" class="product-item-photo" href="https://funandfunction.com/classroom-break-boxes-sensory-tool-kit.html" title="Classroom Break Boxes™: Sensory Tool Kit  ">
+            <!-- ko foreach: $parent.getRegion('itemImage') -->
+            <!-- ko template: {name: getTemplate(), data: item.product_image} -->
+<img class="photo image" data-bind="attr: {src: src, alt: alt}, style: {width: width + 'px', height: height + 'px'}" src="resources/79/25.jpg" alt="Classroom Break Boxes™: Sensory Tool Kit  " style="width: 80px; height: 80px;" data-original-src="https://funandfunction.com/media/catalog/product/cache/c569ebff74c1f8989d53a7db59ab0169/C/F/CF5943P_001.jpg">
+<!-- /ko -->
+            <!-- /ko -->
+        </a>
+        <!-- /ko -->
+        <!-- ko ifnot: product_has_url --><!-- /ko -->
+
+        <div class="product-item-details">
+
+            <div class="product-item-details-top">
+                <strong class="product-item-name">
+                    <!-- ko if: product_has_url -->
+                    <a data-bind="attr: {href: product_url}, html: product_name" href="https://funandfunction.com/classroom-break-boxes-sensory-tool-kit.html">Classroom Break Boxes™: Sensory Tool Kit  </a>
+                    <!-- /ko -->
+                    <!-- ko ifnot: product_has_url --><!-- /ko -->
+                </strong>
+
+                <div class="product-item-pricing">
+                    <!-- ko if: canApplyMsrp --><!-- /ko -->
+                    <!-- ko ifnot: canApplyMsrp -->
+                    <!-- ko foreach: $parent.getRegion('priceSidebar') -->
+                    <!-- ko template: {name: getTemplate(), data: item.product_price, as: 'price'} -->
+<div class="price-container">
+  <span class="price-wrapper" data-bind="html: price">
+
+    <span class="price-excluding-tax" data-label="Excl. Tax">
+            <span class="minicart-price">
+            <span class="price">$499.99</span>        </span>
+
+        </span>
+</span>
+</div>
+<!-- /ko -->
+                    <!-- /ko -->
+                    <!-- /ko -->
+
+                </div>
+            </div>
+
+            <!-- ko if: options.length -->
+            <div class="product options">
+
+                <div class="content">
+                    <strong class="subtitle"><!-- ko i18n: 'Options Details' --><span>Options Details</span><!-- /ko --></strong>
+                    <dl class="product options list">
+                        <!-- ko foreach: { data: options, as: 'option' } -->
+                        <div class="option-wrapper">
+                            <dt class="label"><!-- ko text: option.label -->Type<!-- /ko --></dt>
+                            <dd class="values">
+                                <!-- ko if: Array.isArray(option.value) --><!-- /ko -->
+                                <!-- ko ifnot: Array.isArray(option.value) -->
+                                <span data-bind="html: option.value">Super Kit (20 tools)</span>
+                                <!-- /ko -->
+                            </dd>
+                        </div>
+                        <!-- /ko -->
+                    </dl>
+                </div>
+            </div>
+            <!-- /ko -->
+
+            <div class="details-qty qty">
+                <label class="label" data-bind="i18n: 'Qty'">Quantity</label>
+                <span data-bind="attr: {
+                           id: 'cart-item-'+item_id+'-qty',
+                           'data-cart-item': item_id,
+                           'data-item-qty': qty,
+                           'data-cart-item-id': product_sku
+                           }, value: qty, i18n: qty" type="number" size="4" class="cart-item-qty" id="cart-item-2692189-qty" data-cart-item="2692189" data-item-qty="1" data-cart-item-id="CF6119">1</span>
+                <button data-bind="attr: {
+                           id: 'update-cart-item-'+item_id,
+                           'data-cart-item': item_id,
+                           title: $t('Update')
+                           }" class="update-cart-item" style="display: none" id="update-cart-item-2692189" data-cart-item="2692189" title="Update">
+                    <span data-bind="i18n: 'Update'">Update</span>
+                </button>
+            </div>
+
+            <div class="product actions">
+                <!-- ko if: is_visible_in_site_visibility -->
+                <div class="primary">
+                    <a data-bind="attr: {href: configure_url, title: $t('Edit item')}" class="action edit" href="https://funandfunction.com/checkout/cart/configure/id/2692189/product_id/2808/" title="Edit item">
+                        <span data-bind="i18n: 'Edit'">Edit</span>
+                    </a>
+                </div>
+                <!-- /ko -->
+                <div class="secondary">
+                    <a href="https://funandfunction.com/checkout/cart/#" data-bind="attr: {'data-cart-item': item_id, title: $t('Remove item')}" class="action delete" data-cart-item="2692189" title="Remove">
+                        <span data-bind="i18n: 'Remove'">Remove</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+<!-- /ko --><!-- /ko -->
+            
+                <!-- ko foreach: $parent.getRegion($parent.getItemRenderer(item.product_type)) --><!-- ko template: {name: getTemplate(), data: item, afterRender: function() {$parents[1].initSidebar()}} -->
+<li class="item product product-item" data-role="product-item">
+    <div class="product">
+        <!-- ko if: product_has_url -->
+        <a data-bind="attr: {href: product_url, title: product_name}" tabindex="-1" class="product-item-photo" href="https://funandfunction.com/teen-break-box.html" title="Teen Break Box™">
+            <!-- ko foreach: $parent.getRegion('itemImage') -->
+            <!-- ko template: {name: getTemplate(), data: item.product_image} -->
+<img class="photo image" data-bind="attr: {src: src, alt: alt}, style: {width: width + 'px', height: height + 'px'}" src="resources/79/26.jpg" alt="Teen Break Box™" style="width: 80px; height: 80px;" data-original-src="https://funandfunction.com/media/catalog/product/cache/c569ebff74c1f8989d53a7db59ab0169/C/F/CF7164_001.jpg">
+<!-- /ko -->
+            <!-- /ko -->
+        </a>
+        <!-- /ko -->
+        <!-- ko ifnot: product_has_url --><!-- /ko -->
+
+        <div class="product-item-details">
+
+            <div class="product-item-details-top">
+                <strong class="product-item-name">
+                    <!-- ko if: product_has_url -->
+                    <a data-bind="attr: {href: product_url}, html: product_name" href="https://funandfunction.com/teen-break-box.html">Teen Break Box™</a>
+                    <!-- /ko -->
+                    <!-- ko ifnot: product_has_url --><!-- /ko -->
+                </strong>
+
+                <div class="product-item-pricing">
+                    <!-- ko if: canApplyMsrp --><!-- /ko -->
+                    <!-- ko ifnot: canApplyMsrp -->
+                    <!-- ko foreach: $parent.getRegion('priceSidebar') -->
+                    <!-- ko template: {name: getTemplate(), data: item.product_price, as: 'price'} -->
+<div class="price-container">
+  <span class="price-wrapper" data-bind="html: price">
+
+    <span class="price-excluding-tax" data-label="Excl. Tax">
+            <span class="minicart-price">
+            <span class="price">$395.99</span>        </span>
+
+        </span>
+</span>
+</div>
+<!-- /ko -->
+                    <!-- /ko -->
+                    <!-- /ko -->
+
+                </div>
+            </div>
+
+            <!-- ko if: options.length --><!-- /ko -->
+
+            <div class="details-qty qty">
+                <label class="label" data-bind="i18n: 'Qty'">Quantity</label>
+                <span data-bind="attr: {
+                           id: 'cart-item-'+item_id+'-qty',
+                           'data-cart-item': item_id,
+                           'data-item-qty': qty,
+                           'data-cart-item-id': product_sku
+                           }, value: qty, i18n: qty" type="number" size="4" class="cart-item-qty" id="cart-item-2692188-qty" data-cart-item="2692188" data-item-qty="1" data-cart-item-id="CF7164">1</span>
+                <button data-bind="attr: {
+                           id: 'update-cart-item-'+item_id,
+                           'data-cart-item': item_id,
+                           title: $t('Update')
+                           }" class="update-cart-item" style="display: none" id="update-cart-item-2692188" data-cart-item="2692188" title="Update">
+                    <span data-bind="i18n: 'Update'">Update</span>
+                </button>
+            </div>
+
+            <div class="product actions">
+                <!-- ko if: is_visible_in_site_visibility -->
+                <div class="primary">
+                    <a data-bind="attr: {href: configure_url, title: $t('Edit item')}" class="action edit" href="https://funandfunction.com/checkout/cart/configure/id/2692188/product_id/3039/" title="Edit item">
+                        <span data-bind="i18n: 'Edit'">Edit</span>
+                    </a>
+                </div>
+                <!-- /ko -->
+                <div class="secondary">
+                    <a href="https://funandfunction.com/checkout/cart/#" data-bind="attr: {'data-cart-item': item_id, title: $t('Remove item')}" class="action delete" data-cart-item="2692188" title="Remove">
+                        <span data-bind="i18n: 'Remove'">Remove</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+<!-- /ko --><!-- /ko -->
+            </ol>
+        </div>
+    <!-- /ko -->
+
+    <!-- ko ifnot: getCartParam('summary_count') --><!-- /ko -->
+
+    <!-- ko if: getCartParam('summary_count') -->
+        <div class="items-total">
+            <!-- ko if: maxItemsToDisplay < getCartLineItemsCount() --><!-- /ko -->
+            <!-- ko if: maxItemsToDisplay < getCartLineItemsCount() --><!-- /ko -->
+            <span class="count" data-bind="text: getCartLineItemsCount()">2</span>
+            <!-- ko if: (getCartLineItemsCount() === 1) --><!--/ko-->
+            <!-- ko if: (getCartLineItemsCount() > 1) -->
+            <span data-bind="i18n: 'Items in Cart'">Items in Cart</span>
+            <!--/ko-->
+        </div>
+
+        <!-- ko foreach: getRegion('subtotalContainer') --><!-- ko template: getTemplate() -->
+<!-- ko foreach: {data: elems, as: 'element'} -->
+    <!-- ko if: hasTemplate() --><!-- ko template: getTemplate() --><div class="subtotal">
+    <div class="subtotal-shipping" data-bind="if: getCartSubtotal()"></div>
+    <div class="subtotal-value">
+        <span class="label">
+            <!-- ko i18n: 'Cart Subtotal' --><span>Subtotal</span><!-- /ko -->
+        </span>
+
+        <!-- ko foreach: elems -->
+        <!-- ko template: getTemplate() -->
+
+<div class="amount price-container">
+    <!-- ko if: displaySubtotal() -->
+        <!-- ko if: display_cart_subtotal_excl_tax -->
+            <span class="price-wrapper" data-bind="html: cart().subtotal_excl_tax"><span class="price">$895.98</span></span>
+        <!-- /ko -->
+
+        <!-- ko if: !display_cart_subtotal_excl_tax && display_cart_subtotal_incl_tax --><!-- /ko -->
+
+        <!-- ko if: !display_cart_subtotal_excl_tax && !display_cart_subtotal_incl_tax --><!-- /ko -->
+    <!-- /ko -->
+    <!-- ko ifnot: displaySubtotal() --><!-- /ko -->
+</div>
+<!-- /ko -->
+        <!-- /ko -->
+    </div>
+</div>
+<!-- /ko --><!-- /ko -->
+<!-- /ko -->
+<!-- /ko --><!-- /ko -->
+        <!-- ko foreach: getRegion('extraInfo') --><!-- ko template: getTemplate() -->
+<!-- ko foreach: {data: elems, as: 'element'} --><!-- /ko -->
+<!-- /ko --><!-- /ko -->
+
+    <!-- /ko -->
+
+    <div class="actions-wrapper">
+        <!-- ko if: getCartParam('summary_count') --><div class="actions">
+            <div class="secondary">
+                <a class="action viewcart" data-bind="attr: {href: shoppingCartUrl}" href="https://funandfunction.com/checkout/cart/">
+                    <span data-bind="i18n: 'View and Edit Cart'">View Cart</span>
+                </a>
+            </div>
+        </div><!-- /ko -->
+
+        <!-- ko if: getCartParam('summary_count') -->
+
+            <!-- ko if: getCartParam('possible_onepage_checkout') --><div class="actions">
+                <div class="primary">
+                    <div class="bolt-checkout-button bolt-multi-step-checkout" style="--bolt-primary-action-color:rgba(79, 173, 20, 1); --bolt-primary-action-box-shadow-color:rgba(79, 173, 20, 0.4); --bolt-button-hover-color:rgba(62, 135, 16, 1); --bolt-shipping-selected-color:rgba(79, 173, 20, 0.12); --bolt-control-border-focused-color:rgba(79, 173, 20, 1);"><div class="_1Y_CkbmEy3GXa2KdxO0eod" data-tid="bolt-checkout-button" tabindex="0" role="button"><img src="resources/79/27.svg" role="presentation" alt="" data-original-src="resources/79/27.svg"><div class="_3VPklqCwuvhyJJmo5VOeQQ" data-tid="bolt-checkout-button-text">Checkout</div></div><div style="clear: both;"></div></div><button id="top-cart-btn-checkout" type="button" class="action primary checkout" data-action="close" data-bind="
+                                attr: {
+                                    title: $t('Proceed to Checkout')
+                                },
+                                click: closeMinicart()
+                            , i18n: 'Proceed to Checkout'" title="Checkout" style="display: none;">Checkout</button>
+                    <div data-bind="html: getCartParam('extra_actions')"><div class="paypal checkout paypal-logo paypal-express-in-context-mini-cart-container">
+    <a data-action="paypal-in-context-checkout" href="https://funandfunction.com/checkout/cart/#">
+        <img class="paypal-button-hidden" src="resources/79/28.png" alt="Check out with PayPal" data-original-src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png">
+    </a>
+</div>
+
+<div id="minicart-amazon-pay-button" class="amazon-minicart-container">
+    <div class="amazon-button-container">
+        <div class="amazon-button-container__cell">
+            <div id="PayWithAmazon-shortcutbuttons-0" class="login-with-amazon">
+            <img class=" amazonpay-button-inner-image" style="cursor: pointer; max-height: 30px;" alt="AmazonPay" id="OffAmazonPaymentsWidgets1" src="resources/79/29.png" tabindex="0" data-original-src="https://d2ldlvi1yef00y.cloudfront.net/us/live/en_us/amazonpay/lightgray/small/button_T6.png"></div>
+        </div>
+
+        <div class="amazon-button-container__cell">
+            <div class="field-tooltip toggle" style="display: block;">
+                <span class="field-tooltip-action action-help" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button" tabindex="0">
+                </span>
+                <div class="field-tooltip-content" data-target="dropdown" aria-hidden="true">
+                    Are you an Amazon customer? Pay now with address and payment details stored in your Amazon account.                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- BLOCK minacart.ajax.shortcut --><!-- /BLOCK minacart.ajax.shortcut --></div>
+                </div>
+            </div><!-- /ko -->
+        <!-- /ko -->
+
+    </div>
+
+    <div id="minicart-widgets" class="minicart-widgets">
+        <!-- ko foreach: getRegion('promotion') --><!-- ko template: getTemplate() -->
+<!-- ko foreach: {data: elems, as: 'element'} --><!-- /ko -->
+<!-- /ko --><!-- /ko -->
+    </div>
+</div>
+<!-- ko foreach: getRegion('sign-in-popup') --><!-- /ko -->
+<!-- /ko -->
+            </div>
+                    </div></div></div>
+
+
+<div class="block block-search">
+    <div class="block block-title"><strong>Search</strong></div>
+    <div class="block block-content">
+        <form class="form minisearch" id="search_mini_form" action="https://funandfunction.com/catalogsearch/result/" method="get">
+            <div class="field search">
+                <label class="label" for="search" data-role="minisearch-label">
+                    <span>Search</span>
+                </label>
+                <div class="control">
+                    <input id="search" type="text" name="q" value="" placeholder="I’m looking for…" class="input-text" maxlength="128" role="combobox" aria-haspopup="false" aria-autocomplete="both" autocomplete="off">
+    <div class="mst-searchautocomplete__autocomplete">
+        <div class="mst-searchautocomplete__spinner">
+            <div class="spinner-item spinner-item-1"></div>
+            <div class="spinner-item spinner-item-2"></div>
+            <div class="spinner-item spinner-item-3"></div>
+            <div class="spinner-item spinner-item-4"></div>
+            <div class="spinner-item spinner-item-5"></div>
+            <div class="spinner-item spinner-item-6"></div>
+            <div class="spinner-item spinner-item-7"></div>
+            <div class="spinner-item spinner-item-8"></div>
+        </div>
+
+        <div class="mst-searchautocomplete__close">
+            ×
+        </div>
+    </div>
+
+                    <div id="search_autocomplete" class="search-autocomplete"></div>
+                    <div class="nested">
+    <a class="action advanced" href="https://funandfunction.com/catalogsearch/advanced/" data-action="advanced-search">
+        Advanced Search    </a>
+</div>
+                </div>
+            </div>
+            <div class="actions">
+                <button type="submit" title="Search" class="action search offset-position" style="top: 30px; left: 795.1px; opacity: 1;" disabled="">
+                    <span>Search</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<ul class="header links"><li><a href="https://funandfunction.com/customer/account/">Account</a></li><li class="item link compare" data-bind="scope: 'compareProducts'" data-role="compare-products-link">
+    <a class="action compare no-display" title="Compare Products" data-bind="attr: {'href': compareProducts().listUrl}, css: {'no-display': !compareProducts().count}" href="https://funandfunction.com/catalog/product_compare/index/uenc/aHR0cHM6Ly9mdW5hbmRmdW5jdGlvbi5jb20vY3VzdG9tZXIvc2VjdGlvbi9sb2FkLz9zZWN0aW9ucz0mZm9yY2VfbmV3X3NlY3Rpb25fdGltZXN0YW1wPWZhbHNlJl89MTU2MzgwMjQyNDQ0OA%2C%2C/">
+        Compare Products        <span class="counter qty" data-bind="text: compareProducts().countCaption">0 items</span>
+    </a>
+</li>
+
+        <li class="greet welcome" data-bind="scope: 'customer'">
+            <!-- ko if: customer().fullname  --><!-- /ko -->
+            <!-- ko ifnot: customer().fullname  -->
+            <span class="not-logged-in" data-bind="html:&quot;&quot;"></span>
+                        <!-- /ko -->
+        </li>
+        
+    </ul></div></header>
+<main id="maincontent" class="page-main"><a id="contentarea" tabindex="-1"></a>
+<div class="columns"><div class="column main"><div class="cart-container"><div class="cart-summary"><div class="cart-summary-top" role="tablist"><strong class="summary title">Order Summary</strong>
+<div id="block-shipping" class="block shipping" data-collapsible="true" role="tab" aria-selected="false" aria-expanded="false" tabindex="0">
+    <div id="block-summary" data-bind="scope:'block-summary'" class="content" data-role="content" aria-labelledby="block-shipping-heading">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        
+        
+    </div>
+</div>
+<div id="cart-totals" class="cart-totals" data-bind="scope:'block-totals'">
+    <!-- ko template: getTemplate() -->
+<div class="table-wrapper" data-bind="blockLoader: isLoading">
+    <table class="data table totals">
+        <caption class="table-caption" data-bind="text: $t('Total')">Total</caption>
+        <tbody>
+        <!-- ko foreach: elems() -->
+            <!-- ko template: getTemplate() -->
+<tr class="totals sub">
+    <th class="mark" colspan="1" scope="row" data-bind="text: title + ' (' + getQtyItemsString() + ')'">Subtotal (2 items)</th>
+    <td class="amount" data-th="Subtotal">
+        <span class="price" data-bind="text: getValue()">$895.98</span>
+    </td>
+</tr>
+<!-- /ko -->
+        
+            <!-- ko template: getTemplate() -->
+<tr class="totals">
+    <th colspan="1" style="" class="mark" scope="row">
+        <span class="title"><!-- ko i18n: 'Promotion Savings'--><span>Promotion Savings</span><!-- /ko --></span>
+        <span class="discount coupon" data-bind="text: getCouponLabel()"></span>
+    </th>
+    <td class="amount" data-bind="attr: {'data-th': title}" data-th="Promotion Savings">
+        <span><span class="price" data-bind="text: getValue()">$0.00</span></span>
+    </td>
+</tr>
+<!-- /ko -->
+        
+            <!-- ko template: getTemplate() -->
+<tr class="totals shipping excl">
+    <td class="mark" colspan="1" scope="row"><!-- ko i18n: 'Shipping' --><span>Shipping</span><!-- /ko --></td>
+
+    <td class="amount">
+        <!-- ko if: isCalculated() --><!-- /ko -->
+        <!-- ko ifnot: isCalculated() -->
+        <span>
+            <!-- ko i18n: 'Calculated at checkout' --><span>Calculated at checkout</span><!-- /ko -->
+        </span>
+        <!-- /ko -->
+    </td>
+</tr>
+
+<!-- /ko -->
+        
+            <!-- ko template: getTemplate() -->
+
+<tr class="totals shipping excl">
+    <td class="mark" colspan="1" scope="row"><!-- ko i18n: 'Estimated Sales Tax' --><span>Estimated Sales Tax</span><!-- /ko --></td>
+    <td class="amount">
+        <!-- ko if: isCalculated() --><!-- /ko -->
+        <!-- ko ifnot: isCalculated() -->
+        <span>
+            <!-- ko i18n: 'Calculated at checkout' --><span>Calculated at checkout</span><!-- /ko -->
+        </span>
+        <!-- /ko -->
+    </td>
+</tr>
+
+<!-- /ko -->
+        
+            <!-- ko template: getTemplate() --><!-- ko if: hasPoint() --><!-- /ko --><!-- /ko -->
+        
+            <!-- ko template: getTemplate() --><!-- ko if: hasPoint() -->
+<tr class="totals earn-rewardpoints upd-earned">
+    <th class="mark" scope="row">
+        <span data-bind="text: $t(title)">Rewards Points Earned</span></th>
+    <td class="amount">
+        <span data-bind="html: $t(getValue()), attr: {'data-th': $t(title)}" data-th="Rewards Points Earned"><span class="mw_rewardpoints">1790 points</span></span>
+        <!-- ko ifnot: (isCustomerLoggedIn) -->
+        <a class="link-account-activity" data-bind="click: showAuthenticationPopup, text: '(' + $t(link_text) + ')'">(Login to earn points)</a>
+        <!-- /ko -->
+    </td>
+</tr>
+<!-- /ko --><!-- /ko -->
+        
+            <!-- ko template: getTemplate() --><!-- ko if: hasPoint() --><!-- /ko --><!-- /ko -->
+        
+            <!-- ko template: getTemplate() -->
+<tr class="grand totals" data-bind="afterRender: getSticky">
+    <th class="mark" colspan="1" scope="row">
+        <strong data-bind="i18n: title">Total</strong>
+    </th>
+    <td class="amount" data-th="Order Total">
+        <strong><span class="price" data-bind="text: getValue()">$895.98</span></strong>
+    </td>
+</tr>
+<!-- /ko -->
+        <!-- /ko -->
+        </tbody>
+    </table>
+</div>
+<!-- /ko -->
+    
+    
+</div>
+</div><div class="cart-summary-bottom"><div class="sidebar messages"><div data-placeholder="messages"></div>
+<div data-bind="scope: 'messages'">
+    <!-- ko if: cookieMessages && cookieMessages.length > 0 --><!-- /ko -->
+    <!-- ko if: messages().messages && messages().messages.length > 0 --><!-- /ko -->
+</div>
+
+</div><div class="block discount" id="block-discount">
+
+    <div class="content" data-role="content" aria-labelledby="block-discount-heading" style="display: block;">
+        <form id="discount-coupon-form" action="https://funandfunction.com/checkout/cart/couponPost/" method="post">
+            <div class="fieldset coupon">
+                <input type="hidden" name="remove" id="remove-coupon" value="0">
+                <div class="field">
+                    <label for="coupon_code" class="label"><span>Promo Code</span></label>
+                    <div class="control">
+                        <input type="text" class="input-text" id="coupon_code" name="coupon_code" value="" placeholder="Enter your promotion code">
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                                    </div>
+            </div>
+        </form>
+    </div>
+</div><div class="amgiftcard-apply-code cart-discount">
+    <div class="block discount" id="amgiftcard-block-discount">
+        <div class="content" style="display: block">
+            <div data-amgiftcard-js="amgiftcard-info"></div>
+
+
+            <form id="amgiftcard-form" class="amgiftcard-form" action="https://funandfunction.com/amgiftcard/cart/apply/" method="post" data-amgiftcard-js="amgiftcard-form">
+                <div class="fieldset">
+                    <input type="hidden" name="remove" id="remove-amgiftcard" value="0">
+                    <div class="field">
+                        <label for="coupon_code" class="label">Gift Card</label>
+                        <div class="control">
+                            <input class="input-text required-entry" type="text" id="am_giftcard_code" name="am_giftcard_code" value="" placeholder="Enter gift card" data-validate="{required:true}">
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form id="amgiftcard-form-post" method="post" data-amgiftcard-js="amgiftcard-form-post">
+                                            </form>
+        </div>
+    </div>
+</div>
+    
+<div class="amgiftcard-clear"></div>
+<div id="rewardpoints_box">
+    <h4 class="rewardpoints_box-title"><a style="margin-right: 5px;" href="" target="_blank">
+							<span><img style="vertical-align: middle;" alt="Reward Points Policy" src="resources/79/30.gif" data-original-src="https://funandfunction.com/static/frontend/FunAndFunction/FunAndFunction/en_US/MW_RewardPoints/images/default/reward_icon.gif"></span>
+						</a>Your Rewards Points</h4>
+	<form id="rewardpoints-form" action="https://funandfunction.com/rewardpoints/checkout/rewardPointsPost/" method="post">
+	    <div class="discount discount-codes box">
+	        <div class="discount-form">
+	        	<div>
+	        				         	<a class="action popup-open" href="javascript:">Login to View and Apply</a>
+	            	            </div>
+
+	            <div style="clear:both;"></div>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+
+        <ul class="checkout methods items checkout-methods-items">
+                                    <li class="item"><div class="bolt-checkout-button bolt-multi-step-checkout" style="--bolt-primary-action-color:rgba(79, 173, 20, 1); --bolt-primary-action-box-shadow-color:rgba(79, 173, 20, 0.4); --bolt-button-hover-color:rgba(62, 135, 16, 1); --bolt-shipping-selected-color:rgba(79, 173, 20, 0.12); --bolt-control-border-focused-color:rgba(79, 173, 20, 1);"><div class="_1Y_CkbmEy3GXa2KdxO0eod" data-tid="bolt-checkout-button" tabindex="0" role="button"><img src="resources/79/27.svg" role="presentation" alt="" data-original-src="resources/79/27.svg"><div class="_3VPklqCwuvhyJJmo5VOeQQ" data-tid="bolt-checkout-button-text">Checkout</div></div><div style="clear: both;"></div></div>
+</li>
+                                                <li class="item">    <button type="button" data-role="proceed-to-checkout" title="Checkout" class="action primary checkout">
+        <span>Checkout</span>
+    </button>
+</li>
+                                                                    <li class="item"><div class="paypal checkout paypal-logo paypal-express-in-context-mini-cart-container">
+    <a data-action="paypal-in-context-checkout" href="https://funandfunction.com/checkout/cart/#">
+        <img class="" src="resources/79/28.png" alt="Check out with PayPal" data-original-src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_100x26.png">
+    </a>
+</div>
+
+<div id="minicart-amazon-pay-button" class="amazon-minicart-container">
+    <div class="amazon-button-container">
+        <div class="amazon-button-container__cell">
+            <div id="PayWithAmazon-checkout-cart-shortcut-buttons" class="login-with-amazon">
+            <img class=" amazonpay-button-inner-image" style="cursor:pointer; max-height:30px;" alt="AmazonPay" id="OffAmazonPaymentsWidgets0" src="resources/79/29.png" tabindex="0" data-original-src="https://d2ldlvi1yef00y.cloudfront.net/us/live/en_us/amazonpay/lightgray/small/button_T6.png"></div>
+        </div>
+
+        <div class="amazon-button-container__cell">
+            <div class="field-tooltip toggle" style="display: block;">
+                <span class="field-tooltip-action action-help" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button" tabindex="0">
+                </span>
+                <div class="field-tooltip-content" data-target="dropdown" aria-hidden="true">
+                    Are you an Amazon customer? Pay now with address and payment details stored in your Amazon account.                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</li>
+                                                                    <li class="item">    <button type="button" data-role="proceed-to-checkout" title="Purchase Order" class="action primary checkout purchaseorder">
+        <span>Purchase Order</span>
+    </button>
+</li>
+                        </ul>
+</div></div><form action="https://funandfunction.com/checkout/cart/updatePost/" method="post" id="form-validate" class="form form-cart">
+    <div class="form-cart-top">
+        <div class="page-title-wrapper">
+    <h1 class="page-title">
+        <span class="base" data-ui-id="page-title-wrapper">Shopping Cart</span>    </h1>
+    </div>
+
+
+        <div class="pdf-actions">
+    <a class="pdf" href="https://funandfunction.com/checkout/cart/#"><span>Print</span></a>
+    <a class="email" href="https://funandfunction.com/checkout/cart/#"><span>Email</span></a>
+</div>
+    </div>
+    <div class="form-cart-top-mobile">
+        <h1 class="page-title">
+            <span class="base" data-ui-id="page-title-wrapper">Cart</span>
+        </h1>
+            <button type="button" data-role="proceed-to-checkout" title="Checkout" class="action primary checkout">
+        <span>Checkout</span>
+    </button>
+    </div>
+    <input name="form_key" type="hidden" value="ssWr6uCMKhESmZaU">    <div class="cart table-wrapper">
+                <table id="shopping-cart-table" class="cart items data table">
+            <caption role="heading" aria-level="2" class="table-caption">Shopping Cart Items</caption>
+            <thead>
+            <tr>
+                <th class="col item" scope="col"><span>Item</span></th>
+                <th class="col qty" scope="col"><span>QTY</span></th>
+                <th class="col price" scope="col"><span>Item Price</span></th>
+                <th class="col subtotal" scope="col"><span>Total</span></th>
+            </tr>
+            </thead>
+                            <tbody class="cart item">
+<tr class="item-info">
+    <td data-th="Item" class="col item">
+                <a href="https://funandfunction.com/teen-break-box.html" title="Teen Break Box™" tabindex="-1" class="product-item-photo">
+                        
+<img class="photo image" src="resources/79/31.jpg" alt="Teen Break Box™" data-original-src="https://funandfunction.com/media/catalog/product/cache/3e75d17be04cbebee9a78c36b24b6eea/C/F/CF7164_001.jpg" width="100" height="100">
+                    </a>
+            <div class="product-item-details">
+            <strong class="product-item-name">
+                                    <a href="https://funandfunction.com/teen-break-box.html">Teen Break Box™</a>
+                            </strong>
+            <span class="product-item-sku"><strong>Item Sku: </strong>CF7164</span>
+                                                                                    </div>
+    </td>
+
+    <td class="col qty" data-th="Quantity">
+        <div class="field qty">
+            <label class="label" for="cart-2692188-qty">
+                <span>Quantity</span>
+            </label>
+            <div class="control qty">
+                <input id="cart-2692188-qty" name="cart[2692188][qty]" data-cart-item="2692188" data-cart-item-id="CF7164" data-cart-item-qty="1" data-cart-item-original-price="395.9900" value="1" type="number" size="4" title="Quantity" class="input-text qty" data-validate="{required:true,'validate-greater-than-zero':true}" data-role="cart-item-qty">
+            </div>
+        </div>
+    </td>
+
+            <td class="col price" data-th="Price">
+            
+    <span class="price-excluding-tax" data-label="Excl. Tax">
+                    <span class="cart-price">
+                        <span class="price">$395.99</span>            </span>
+
+            </span>
+                    </td>
+    
+    <td class="col subtotal" data-th="Subtotal" id="row-subtotal-2692188">
+                    
+    <span class="price-excluding-tax" data-label="Excl. Tax">
+                    <span class="cart-price">
+                        <span class="price">$395.99</span>            </span>
+
+            </span>
+                    </td>
+</tr>
+<tr class="item-actions">
+    <td colspan="100">
+        <div class="actions-toolbar">
+                <div id="gift-options-cart-item-2692188" data-bind="scope:'giftOptionsCartItem-2692188'" class="gift-options-cart-item">
+        <!-- ko template: getTemplate() -->
+<!-- ko if: isActive() --><!-- /ko -->
+<!-- /ko -->
+        
+    </div>
+    <a class="action action-edit" href="https://funandfunction.com/checkout/cart/configure/id/2692188/product_id/3039/" title="Edit item parameters">
+        <span>
+            Edit        </span>
+   </a>
+<a href="https://funandfunction.com/checkout/cart/#" title="Remove" class="action action-delete" data-post-ajax="{&quot;action&quot;:&quot;https:\/\/funandfunction.com\/checkout\/cart\/delete\/&quot;,&quot;data&quot;:{&quot;id&quot;:&quot;2692188&quot;,&quot;uenc&quot;:&quot;aHR0cHM6Ly9mdW5hbmRmdW5jdGlvbi5jb20vY2hlY2tvdXQvY2FydC8,&quot;}}">
+    <span>
+        Remove    </span>
+</a>
+        </div>
+    </td>
+</tr>
+</tbody>
+                            <tbody class="cart item">
+<tr class="item-info">
+    <td data-th="Item" class="col item">
+                <a href="https://funandfunction.com/classroom-break-boxes-sensory-tool-kit.html" title="Classroom Break Boxes™: Sensory Tool Kit  " tabindex="-1" class="product-item-photo">
+                        
+<img class="photo image" src="resources/79/32.jpg" alt="Classroom Break Boxes™: Sensory Tool Kit  " data-original-src="https://funandfunction.com/media/catalog/product/cache/3e75d17be04cbebee9a78c36b24b6eea/C/F/CF5943P_001.jpg" width="100" height="100">
+                    </a>
+            <div class="product-item-details">
+            <strong class="product-item-name">
+                                    <a href="https://funandfunction.com/classroom-break-boxes-sensory-tool-kit.html">Classroom Break Boxes™: Sensory Tool Kit  </a>
+                            </strong>
+            <span class="product-item-sku"><strong>Item Sku: </strong>CF6119</span>
+                            <dl class="item-options">
+                                                                    <dt>Type</dt>
+                        <dd>
+                                                            Super Kit (20 tools)                                                    </dd>
+                                    </dl>
+                                                                                    </div>
+    </td>
+
+    <td class="col qty" data-th="Quantity">
+        <div class="field qty">
+            <label class="label" for="cart-2692189-qty">
+                <span>Quantity</span>
+            </label>
+            <div class="control qty">
+                <input id="cart-2692189-qty" name="cart[2692189][qty]" data-cart-item="2692189" data-cart-item-id="CF6119" data-cart-item-qty="1" data-cart-item-original-price="499.9900" value="1" type="number" size="4" title="Quantity" class="input-text qty" data-validate="{required:true,'validate-greater-than-zero':true}" data-role="cart-item-qty">
+            </div>
+        </div>
+    </td>
+
+            <td class="col price" data-th="Price">
+            
+    <span class="price-excluding-tax" data-label="Excl. Tax">
+                    <span class="cart-price">
+                        <span class="price">$499.99</span>            </span>
+
+            </span>
+                    </td>
+    
+    <td class="col subtotal" data-th="Subtotal" id="row-subtotal-2692189">
+                    
+    <span class="price-excluding-tax" data-label="Excl. Tax">
+                    <span class="cart-price">
+                        <span class="price">$499.99</span>            </span>
+
+            </span>
+                    </td>
+</tr>
+<tr class="item-actions">
+    <td colspan="100">
+        <div class="actions-toolbar">
+                <div id="gift-options-cart-item-2692189" data-bind="scope:'giftOptionsCartItem-2692189'" class="gift-options-cart-item">
+        <!-- ko template: getTemplate() -->
+<!-- ko if: isActive() --><!-- /ko -->
+<!-- /ko -->
+        
+    </div>
+    <a class="action action-edit" href="https://funandfunction.com/checkout/cart/configure/id/2692189/product_id/2808/" title="Edit item parameters">
+        <span>
+            Edit        </span>
+   </a>
+<a href="https://funandfunction.com/checkout/cart/#" title="Remove" class="action action-delete" data-post-ajax="{&quot;action&quot;:&quot;https:\/\/funandfunction.com\/checkout\/cart\/delete\/&quot;,&quot;data&quot;:{&quot;id&quot;:&quot;2692189&quot;,&quot;uenc&quot;:&quot;aHR0cHM6Ly9mdW5hbmRmdW5jdGlvbi5jb20vY2hlY2tvdXQvY2FydC8,&quot;}}">
+    <span>
+        Remove    </span>
+</a>
+        </div>
+    </td>
+</tr>
+</tbody>
+                    </table>
+            </div>
+</form>
+
+<style>
+
+    .cart-summary #gift-options-cart {
+        overflow: hidden;
+        padding-bottom: 20px;
+    }
+
+    .cart-summary #gift-options-cart .cart-gift-item {
+        width: 100%;
+    }
+
+    .cart-summary .gift-item-block .content {
+        display: block;
+    }
+
+    .cart-summary .gift-item-block.block .title {
+        height: 48px;
+        padding: 0px 15px;
+        line-height: 48px;
+        margin-top: 10px;
+    }
+
+    .cart-summary .gift-item-block.block .title::after {
+        right: 5px;
+        top: 0px;
+        font-weight: bold;
+        color: #05349a;
+    }
+
+    .cart-summary .gift-item-block.block .title span {
+        line-height: 2.2rem;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 0px;
+        color: #05349a;
+    }
+
+    .checkout-cart-index .cart-container .cart-gift-item .gift-summary .actions-toolbar .secondary {
+        display: block;
+        margin-left: 0px;
+        margin-top: 15px;
+        text-align: left;
+    }
+
+    .checkout-cart-index .cart-container .cart-gift-item .gift-summary .actions-toolbar .secondary button.action {
+        border: solid 2px #d8d8d8;
+        border-radius: 0px;
+        width: 80px;
+        height: auto;
+        display: inline;
+        text-align: left;
+        color: #d8d8d8;
+    }
+
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .gift-item-block.block .gift-options-title,
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .gift-item-block.block .fieldset > .field:not(.choice) > .label {
+        font-size: 14px;
+    }
+
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary .action {
+        height: 35px;
+        width: 48%;
+        padding: 0px;
+        float: left;
+
+    }
+
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary button.action-update {
+        margin-right: 4%;
+    }
+
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .title {
+        font-size: 14px;
+    }
+
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary button.action-edit,
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary button.action-delete {
+        padding: 3px 10px;
+        text-align: center;
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary button.action-edit span,
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary button.action-delete span {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .checkout-cart-index .cart-container .gift-options-cart-page .gift-options .actions-toolbar {
+        width: 75%;
+    }
+
+    .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary {
+        width: 100%;
+        display: inline;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary .action {
+            margin-bottom: 10px;
+        }
+
+        .checkout-cart-index .cart-container .gift-options-cart-page .gift-options .actions-toolbar {
+            width: 100%;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        .checkout-cart-index .cart-container .gift-options-cart-page .cart-gift-item .actions-toolbar .secondary {
+            display: inline;
+        }
+
+        .checkout-cart-index .cart-container .gift-options-cart-page .gift-options .actions-toolbar {
+            width: 100%;
+        }
+    }
+</style>
+
+<div id="gift-options-cart" data-bind="scope:'giftOptionsCart'" class="form form-cart gift-options-cart-page">
+    <!-- ko template: getTemplate() -->
+<!-- ko if: isActive() || hasActiveOptions() -->
+<div class="cart-gift-item">
+    <div class="gift-item-block block" data-collapsible="true" data-bind="css: {_active: formBlockVisibility() || resultBlockVisibility()}">
+        <h4 data-bind="i18n: 'Gifting'">Gifting</h4>
+        <div class="title" data-role="title" data-bind="click: $data.toggleFormBlockVisibility.bind($data)">
+            <span class="ico-checkbox"></span>
+            <span class="ico-checkbox active">x</span>
+            <span data-bind="i18n: 'Add Gift Note'">Add Gift Note</span>
+        </div>
+        <div class="content" data-role="content" data-bind="visible: formBlockVisibility() || resultBlockVisibility()" style="display: none;">
+            <!-- ko ifnot: resultBlockVisibility() -->
+            <div class="gift-options">
+                <!-- ko foreach: getRegion('additionalOptions') --><!-- /ko -->
+                <!-- ko template: formTemplate -->
+<!-- ko if: isActive() -->
+<div class="gift-message">
+    <div class="gift-options-title">
+        <span data-bind="i18n: 'Gift Message (optional)'">Gift Message (optional)</span>
+    </div>
+    <div class="gift-options-content">
+        <fieldset class="fieldset">
+            <div class="field field-to">
+                <label data-bind="attr: {for: 'gift-message-whole-to-' + index }" class="label" for="gift-message-whole-to-giftOptionsCart">
+                    <span data-bind="i18n: 'To:'">To:</span>
+                </label>
+                <div class="control">
+                    <input type="text" class="input-text" data-bind="value: getObservable('recipient'), attr: { id: 'gift-message-whole-to-' + index }" required="true" id="gift-message-whole-to-giftOptionsCart">
+                </div>
+            </div>
+
+            <div class="field field-from">
+                <label data-bind="attr: {for: 'gift-message-whole-from-' + index }" class="label" for="gift-message-whole-from-giftOptionsCart">
+                    <span data-bind="i18n: 'From:'">From:</span>
+                </label>
+                <div class="control">
+                    <input type="text" class="input-text" data-bind="value: getObservable('sender'), attr: { id: 'gift-message-whole-from-' + index }" required="true" id="gift-message-whole-from-giftOptionsCart">
+                </div>
+            </div>
+            <div class="field text">
+                <label for="gift-message-whole-message" class="label">
+                    <span data-bind="i18n: 'Message:'">Message:</span>
+                </label>
+                <div class="control">
+                    <textarea id="gift-message-whole-message" class="input-text" rows="5" cols="10" data-bind="value: getObservable('message') " required="true"></textarea>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<!-- /ko -->
+<div class="actions-toolbar">
+    <div class="secondary">
+        <button type="submit" class="action secondary action-update" data-bind="
+                    attr: {title: $t('Update')},
+                    click: $data.submitOptions.bind($data)" title="Update">
+            <span data-bind="i18n: 'Update'">Update</span>
+        </button>
+        <button class="action action-cancel" data-bind="
+                    attr: {title: $t('Cancel')},
+                    click: $data.hideFormBlock.bind($data)" title="Cancel">
+            <span data-bind="i18n: 'Cancel'">Cancel</span>
+        </button>
+    </div>
+</div>
+<!--/ko-->
+            </div>
+            <!-- /ko -->
+            <div class="gift-summary">
+                <!-- ko if: resultBlockVisibility() --><!-- /ko -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /ko -->
+<!-- /ko -->
+    
+    
+    
+</div>
+</div><input name="form_key" type="hidden" value="ssWr6uCMKhESmZaU"><div id="authenticationPopup" data-bind="scope:'authenticationPopup'" style="display: none;">
+    
+    <!-- ko template: getTemplate() -->
+
+
+<!-- /ko -->
+    
+</div>
+
+
+
+
+</div></div></main><footer class="page-footer"><div class="footer content"><div class="content-wrapper">
+    <div class="footer-connection">
+        <div class="block newsletter">
+    <div class="title"><strong>Newsletter Sign Up</strong></div>
+    <div class="content">
+        <form class="form subscribe" novalidate="novalidate" action="https://funandfunction.com/newsletter/subscriber/new/" method="post" id="newsletter-validate-detail">
+            <div class="field newsletter">
+                <label class="label" for="newsletter"><span>Sign Up for Our Newsletter:</span></label>
+                <div class="control">
+                    <input name="email" type="email" id="newsletter" placeholder="Enter email address" data-validate="{required:true, 'validate-email':true}">
+                </div>
+            </div>
+            <div class="actions">
+                <button class="action subscribe primary" title="Subscribe" type="submit">
+                    <span>Subscribe</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+        <div class="contact-us">
+            <ul>
+                            <li><a href="https://funandfunction.com/contact/" class="link">Contact Us</a></li>
+                            <li><a class="phone" href="tel:1(800)2316329">1 (800) 231-6329</a></li>
+                          </ul>        </div>
+        <div class="social-links">
+<h4>Join Our Community</h4>
+<ul>
+<li><a class="facebook" href="http://www.facebook.com/FunandFunction"></a></li>
+<li><a class="twitter" href="http://twitter.com/funandfunction"></a></li>
+<li><a class="instagram" href="http://instagram.com/funandfunction"></a></li>
+<li><a class="pinterest" href="http://pinterest.com/funandfunction/"></a></li>
+<li><a class="social" href="https://funandfunction.com/blog/"></a></li>
+<li><a class="youtube" href="https://www.youtube.com/user/TheFunandFunction"></a></li>
+</ul>
+</div>    </div>
+    <div class="footer-links">
+<div class="column">
+<ul class="list">
+<li><span>About Us<span></span></span></li>
+<li><a href="https://funandfunction.com/about/">Our Story</a></li>
+<li><a href="https://funandfunction.com/team/">Our Expert Team</a></li>
+<li><a href="https://funandfunction.com/our-advisory-board/">Our Advisory Board</a></li>
+<li><a href="https://funandfunction.com/community-outreach/">Community Outreach</a></li>
+<li><a href="https://funandfunction.com/news/">News &amp; Press</a></li>
+<li><a href="https://funandfunction.com/media-and-awards-page1/">Media &amp; Awards</a></li>
+<li><a href="https://funandfunction.com/sensory-room-videos/">Sensory Room Videos
+</a></li>
+</ul>
+<ul class="list">
+<li><span>Partner With Us</span></li>
+<li><a href="https://funandfunction.com/affiliate_program/">Affiliate Program</a></li>
+<li><a href="https://funandfunction.com/resellers/">Resellers</a></li>
+</ul>
+</div>
+<div class="column">
+<ul class="list">
+<li><span>Purchase Options</span></li>
+<li><a href="https://funandfunction.com/purchase-orders/">Purchase Orders</a></li>
+<li><a href="https://funandfunction.com/orderbysku/">B2B Express Order</a></li>
+<li><a href="https://funandfunction.com/sample-gift-card.html">Gift Cards</a></li>
+<li><a href="https://funandfunction.com/earn-rewards/">Reward Points</a></li>
+<li><a href="https://funandfunction.com/request-catalog/">Request a Catalog</a></li>
+</ul>
+<ul class="list">
+<li><span>Safety</span></li>
+<li><a href="https://funandfunction.com/media/wysiwyg/uploads/2017/02/product-safety-commitment.pdf">Our Commitment</a></li>
+</ul>
+</div>
+<div class="column">
+<ul class="list">
+<li><span>Shipping &amp; Returns</span></li>
+<li><a href="https://funandfunction.com/shipping-delivery/">Shipping Policy</a></li>
+<li><a href="https://funandfunction.com/shipping-delivery/">Return Policy</a></li>
+</ul>
+<ul class="list">
+<li><span>Terms &amp; Conditions</span></li>
+<li><a href="https://funandfunction.com/security-privacy/">Security and Privacy</a></li>
+<li><a href="https://funandfunction.com/terms-use/">Terms of Use</a></li>
+</ul>
+<div class="reviews"></div>
+</div>
+</div></div>
+</div></footer>
+
+<!-- begin olark code -->
+
+<!-- end olark code -->
+<!-- begin olark code -->
+
+
+<!-- olark magento cart saver -->
+
+
+<!-- end olark code -->
+</div>    
+
+<div id="bolt-modal-background" class="_3BgECYp2WfPcYGCzGyjwCs" style="display: none;"><div id="bolt-checkout" class="_3AdnZPBR8NVkleVeYv_Ra_"><div id="bolt-loader" class="_2NW_bqX1OEU1Lszd5cPBAL"><div class="_18acGG4_WjBEukcRKanAPh"><div class="Rszzc01KlcYH9X2TZQZdx"></div><div id="bolt-loader-progress-text" class="_2VvVwTsTfRvxKcsVdrddRs"></div></div></div><iframe id="bolt-checkout-frame" class="_2nCjk5w-M8gAwG4T7MXiS-" src="resources/79/33.htm" name="1563802423766" style="height: 900px !important; width: 100% !important;" data-original-src="https://connect.bolt.com/build/checkout_iframe-25189.html#merchant_key=kaTgIVfQ2ovI.lHXdwU0Mm2xj.64e0221bbc5fb4d00250680ac3c337ee982061ae3515a1a75990abcc52e2444e&amp;referrer=https%3A%2F%2Ffunandfunction.com&amp;height=1018&amp;shoppingsavedCart=unknown&amp;click_time=1563802423765"></iframe></div></div><iframe data-olark="true" aria-hidden="true" style="width: 0px; height: 0px; position: absolute; left: 0px; bottom: 0px; border: medium none;"></iframe>
+
+
+
+<div style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon0.4916660178201496"><img style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon0.7372771238475291" alt="" src="data:;base64," data-original-src="https://bat.bing.com/action/0?ti=5522588&amp;Ver=2&amp;mid=265bd1c9-22fd-bafa-dc8c-a70850b7b0ff&amp;pi=1001431019&amp;lg=en-US&amp;sw=1920&amp;sh=1080&amp;sc=24&amp;tl=Shopping%20Cart&amp;p=https%3A%2F%2Ffunandfunction.com%2Fcheckout%2Fcart%2F&amp;r=https%3A%2F%2Ffunandfunction.com%2Fclassroom-break-boxes-sensory-tool-kit.html&amp;lt=3334&amp;evt=pageLoad&amp;msclkid=N&amp;rn=726267" width="0" height="0"></div><div class="modals-wrapper"><!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<aside role="dialog" class="modal-popup bolt-error-modal
+               modal-slide
+               _inner-scroll" aria-describedby="modal-content-1" data-role="modal" data-type="popup" tabindex="0">
+    <div data-role="focusable-start" tabindex="0"></div>
+    <div class="modal-inner-wrap" data-role="focusable-scope">
+        <header class="modal-header">
+            
+            <button class="action-close" data-role="closeBtn" type="button">
+                <span>Close</span>
+            </button>
+        </header>
+        <div id="modal-content-1" class="modal-content" data-role="content"><div id="bolt-modal" style="">
+    <div class="bolt-modal-content" data-role="content"></div>
+</div></div>
+        
+        <footer class="modal-footer">
+            
+            <button class="bolt-error-close-button" type="button" data-role="action"><span>Close</span></button>
+            
+        </footer>
+        
+    </div>
+    <div data-role="focusable-end" tabindex="0"></div>
+</aside><!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<aside role="dialog" class="modal-popup popup-bolt-message
+               modal-slide
+               _inner-scroll" aria-labelledby="modal-title-2" aria-describedby="modal-content-2" data-role="modal" data-type="popup" tabindex="0">
+    <div data-role="focusable-start" tabindex="0"></div>
+    <div class="modal-inner-wrap" data-role="focusable-scope">
+        <header class="modal-header">
+            
+            <h1 id="modal-title-2" class="modal-title" data-role="title">
+                
+                    Notification
+                
+
+                
+            </h1>
+            
+            <button class="action-close" data-role="closeBtn" type="button">
+                <span>Close</span>
+            </button>
+        </header>
+        <div id="modal-content-2" class="modal-content" data-role="content"><div id="bolt-popup-custom" class="bolt-popup bolt-popup-custom" style="">
+    <div class="popup-wrapper">
+        <div class="popup-content"></div>
+    </div>
+</div></div>
+        
+    </div>
+    <div data-role="focusable-end" tabindex="0"></div>
+</aside><!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+
+<aside role="dialog" class="modal-popup popup-authentication
+               modal-slide
+               _inner-scroll" aria-labelledby="modal-title-22" aria-describedby="modal-content-22" data-role="modal" data-type="popup" tabindex="0">
+    <div data-role="focusable-start" tabindex="0"></div>
+    <div class="modal-inner-wrap" data-role="focusable-scope">
+        <header class="modal-header">
+            
+            <h1 id="modal-title-22" class="modal-title" data-role="title">
+                
+                    Login or Create an Account
+                
+
+                
+            </h1>
+            
+            <button class="action-close" data-role="closeBtn" type="button">
+                <span>Close</span>
+            </button>
+        </header>
+        <div id="modal-content-22" class="modal-content" data-role="content"><div class="block-authentication" data-bind="afterRender: setModalElement, blockLoader: isLoading" style="">
+    <div class="block block-customer-login" data-bind="attr: {'data-label': $t('or')}" data-label="or">
+        <div class="block-title">
+            <strong id="block-customer-login-heading" role="heading" aria-level="2" data-bind="i18n: 'Registered Customers'">Registered Customers</strong>
+        </div>
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() -->
+<div data-role="checkout-messages" class="messages" data-bind="visible: isVisible(), click: removeAll">
+    <!-- ko foreach: messageContainer.getErrorMessages() --><!--/ko-->
+    <!-- ko foreach: messageContainer.getSuccessMessages() --><!--/ko-->
+</div>
+<!-- /ko -->
+        <!--/ko-->
+        <!-- ko foreach: getRegion('before') --><!-- /ko -->
+        <div class="block-content" aria-labelledby="block-customer-login-heading">
+            <form class="form form-login" method="post" data-bind="event: {submit: login }" id="login-form">
+                <div class="fieldset login" data-bind="attr: {'data-hasrequired': $t('* Required Fields')}" data-hasrequired="* Required Fields">
+                    <div class="field email required">
+                        <label class="label" for="customer-email"><span data-bind="i18n: 'Email Address'">Email Address</span></label>
+                        <div class="control">
+                            <input name="username" id="customer-email" type="email" class="input-text" data-bind="attr: {autocomplete: autocomplete, placeholder: $t('Email Address')}" data-validate="{required:true, 'validate-email':true}" autocomplete="off" placeholder="Email Address">
+                        </div>
+                    </div>
+                    <div class="field password required">
+                        <label for="pass" class="label"><span data-bind="i18n: 'Password'">Password</span></label>
+                        <div class="control">
+                            <input name="password" type="password" class="input-text" id="pass" data-bind="attr: {autocomplete: autocomplete, placeholder: $t('Password')}" data-validate="{required:true}" autocomplete="off" placeholder="Password">
+                        </div>
+                    </div>
+                    <!-- ko foreach: getRegion('additional-login-form-fields') -->
+                    <!-- ko template: getTemplate() -->
+<!-- ko foreach: {data: elems, as: 'element'} --><!-- /ko -->
+<!-- /ko -->
+                    
+                    <!-- ko template: getTemplate() -->
+<!-- ko if: (getIsVisible())-->
+<input name="captcha_form_id" type="hidden" data-bind="value: formId,  attr: {'data-scope': dataScope}" value="user_login" data-scope="">
+<!-- /ko -->
+<!-- ko if: (isRequired() && getIsVisible())--><!-- /ko -->
+<!-- /ko -->
+                    <!-- /ko -->
+                    <div class="secondary">
+                        <a class="action" data-bind="attr: {href: forgotPasswordUrl}" href="https://funandfunction.com/customer/account/forgotpassword/">
+                            <span data-bind="i18n: 'Forgot Password?'">Forgot Password?</span>
+                        </a>
+                    </div>
+                    <div class="actions-toolbar">
+                        <input name="context" type="hidden" value="checkout">
+                        <div class="primary">
+                            <a class="action action-register primary" data-bind="attr: {href: registerUrl}" href="https://funandfunction.com/customer/account/create/">
+                                <span data-bind="i18n: 'Create an Account'">Create Account</span>
+                            </a>
+                        </div>
+                        <div class="primary">
+                            <button type="submit" class="action action-login secondary" name="send" id="send2">
+                                <span data-bind="i18n: 'Login'">Login</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="block block-guest-customer" data-bind="attr: {'data-label': $t('or')}" data-label="or">
+        <div class="auth-face"></div>
+        <div class="primary">
+            <div class="bolt-checkout-button bolt-multi-step-checkout" style="--bolt-primary-action-color:rgba(79, 173, 20, 1); --bolt-primary-action-box-shadow-color:rgba(79, 173, 20, 0.4); --bolt-button-hover-color:rgba(62, 135, 16, 1); --bolt-shipping-selected-color:rgba(79, 173, 20, 0.12); --bolt-control-border-focused-color:rgba(79, 173, 20, 1);"><div class="_1Y_CkbmEy3GXa2KdxO0eod" data-tid="bolt-checkout-button" tabindex="0" role="button"><img src="resources/79/27.svg" role="presentation" alt="" data-original-src="resources/79/27.svg"><div class="_3VPklqCwuvhyJJmo5VOeQQ" data-tid="bolt-checkout-button-text">Checkout</div></div><div style="clear: both;"></div></div><a class="action primary guest-link" data-bind="attr: {href: guestCheckoutUrl}" href="https://funandfunction.com/checkout/" style="display: none;">
+                <span data-bind="i18n: 'Guest Checkout'">Guest Checkout</span>
+            </a>
+        </div>
+        <div class="auth-bags"></div>
+    </div>
+
+</div></div>
+        
+    </div>
+    <div data-role="focusable-end" tabindex="0"></div>
+</aside></div><div id="privy-container" style="display: block !important;"><div id="privy-inner-container" style="display: block !important;"><div class="privy privy-popup-container" style="background-color: rgba(0, 0, 0, 0.33); background-image: none; border-radius: 0px; border: medium none; display: none;"><div class="privy-popup-content-wrap" style="margin-bottom: 20px">
+  <div class="privy-popup-inner-content-wrap" style="width: 547px; border-width: 0px; border-color: rgb(0, 0, 0); border-radius: 11px; background-color: rgb(255, 255, 255); transform: none; transform-origin: left top 0px;">
+    <div class="privy-popup-alerts-container" style="display:none;"></div>
+    <div class="privy-dismiss-content" title="Close" style="transform: scale(1); transform-origin: right top 0px;">
+      <img src="resources/79/34.svg" alt="Close" class="privy-x" data-original-src="https://assets.privy.com/assets/x-0a764ccd3422a2f636a50079fcf0d7a99d860578b62094ca213ef05ade38d160.svg">
+    </div>    
+  </div>
+
+      
+
+</div>
+
+<canvas id="privy-confetti-canvas"></canvas></div><div class="privy-dropdown-container privy"></div><div class="privy privy-popup-container privy-thank-you" style="display: none;"></div><div class="privy privy-popup-container privy-thank-you" style="display: none;"></div><div class="privy privy-popup-container" style="display: none;"></div><div class="privy privy-popup-container privy-flyout-container privy-right" style="display: none;"></div><div class="privy privy-popup-container privy-thank-you" style="display: none;"></div><div class="privy privy-popup-container privy-thank-you" style="display: none;"></div><div class="privy privy-popup-container privy-flyout-container privy-right" style="display: none;"></div><div class="privy privy-popup-container privy-thank-you" style="display: none;"></div><div class="privy privy-popup-container privy-flyout-container privy-right" style="display: none;"></div><div class="privy privy-popup-container privy-flyout-container privy-right" style="display: none;"></div><div class="privy privy-popup-container privy-thank-you" style="display: none;"></div></div></div><iframe src="resources/79/35.htm" id="st_gdpr_iframe" title="GDPR Consent Management" style="width: 0px; height: 0px; position: absolute; left: -5000px;" data-original-src="https://c.sharethis.mgr.consensu.org/v1.0/cmp/portal.html"></iframe></body></html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html data-fathom="shopping" xmlns:ng="http://angularjs.org" class="ng-app:checkout ng-scope" id="ng-app" data-ng-app="checkout"><head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; media-src 'self' data:; style-src 'self' data: 'unsafe-inline'; font-src 'self' data:; frame-src 'self' data:"><link rel="original" href="https://www2.trollandtoad.com/secure/checkout/"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}</style>
+  <title>Troll and Toad Checkout</title>
+  <link rel="stylesheet" type="text/css" href="resources/31/1.css" data-original-href="https://www2.trollandtoad.com/secure/checkout/css/style.css">
+  <link rel="stylesheet" type="text/css" href="resources/31/2.css" data-original-href="https://www2.trollandtoad.com/css/lgtBoxCss.css">
+  
+  
+  
+  <style type="text/css"></style>
+  
+  
+  
+      
+  
+
+  <!--[if lte IE 8]>
+  <script type="text/javascript" src="js/json2.js"></script>
+  <script type="text/javascript">
+    document.createElement('ng-include');
+    document.createElement('ng-pluralize');
+    document.createElement('ng-locale');
+    document.createElement('ng-view');
+
+    // Optionally these for CSS
+    document.createElement('ng:include');
+    document.createElement('ng:pluralize');
+    document.createElement('ng:locale');
+    document.createElement('ng:view');
+  </script>
+  <![endif]-->
+<link rel="stylesheet" type="text/css" href="resources/31/2.css" data-original-href="https://www2.trollandtoad.com/css/lgtBoxCss.css"><link rel="stylesheet" type="text/css" media="all" href="resources/31/3.css" data-original-href="https://d10lpsik1i8c69.cloudfront.net/css/reset.css"></head>
+
+<body data-ng-controller="CheckoutController" data-ng-init="init(); displayOverlays();" class="ng-scope">
+  <!-- Google Tag Manager -->
+
+
+<!-- End Google Tag Manager -->
+
+  <div id="header">
+    <a id="logo" href="https://www.trollandtoad.com/"></a>
+    <div id="headerBar"></div>
+  </div>
+
+  
+  <!-- id=body -->
+  <div id="body" class="" data-ng-class="{loading: loading || saving}">
+        <div class="message ng-hide" data-ng-show="loading || saving"><span class="ng-binding"><img src="resources/31/4.gif" data-original-src="https://www2.trollandtoad.com/loading.gif"> Saving...</span></div>
+    <div class="error ng-hide" data-ng-show="false &amp;&amp; (!cart || !cart.Items || !cart.Items.length || cart.Items.length <= 0)">
+      <p>There are no items in your cart, please <a href="" data-ng-click="goBack()">go back</a> and continue shopping.</p>
+    </div>
+    <!-- ngRepeat: error in errors | distinct -->
+    <!-- ngRepeat: warning in warnings | distinct -->
+    <!-- ngRepeat: message in messages | distinct -->
+    <!-- TABLE -->
+    <div class="table">
+      <!-- SHIP ADDRESS / SHIP METHOD / PAYMENT -->
+      <div id="shipPayWrapper" class="caption" data-ng-show="loaded">
+        <!-- SHIP ADDRESS / SHIP METHOD -->
+        <div id="shipWrapper" class="cell">
+          <!-- SHIP ADDRESS -->
+          <div id="shipAddressSection" data-ng-show="loaded" class="">
+            <h3 data-ng-init="">Shipping Address</h3>
+            <div class="subheader">Shipping Address</div>
+            <div id="shippingDiv">
+              <form name="shippingForm" data-ng-show="1" class="ng-pristine ng-valid">
+                <div id="shipAddress">
+
+                  <select id="shippingAddress" class="full ng-pristine ng-valid" data-ng-class="{req: cart.ShippingAddress == null}" data-ng-change="shippingAddressSelected()" data-ng-model="cart.ShippingAddress" data-ng-options="addr as (addr.AddressLine1 + ', ' + addr.City + ' ' + addr.StateProvinceRegion + ' ' + addr.ZipPostalCode) group by addr.Country for addr in options.address"><option value="" class="">-- Select or Enter a Shipping Address --</option><option value="0">null, null null null</option></select>
+                  <!-- address directive -->
+                  <div data-ng-disabled="disabled" class="address ng-isolate-scope" id="shipping_address" data-address="cart.ShippingAddress" data-suggestions="options.suggestions.shippingAddress">                   <input type="text" id="firstname" name="firstname" class="half ng-pristine ng-valid" placeholder="First Name" data-ng-model="address.FirstName">                   <input data-ng-disabled="disabled" type="text" id="lastname" name="lastname" class="half ng-pristine ng-valid" placeholder="Last Name" data-ng-model="address.LastName">                   <input data-ng-disabled="disabled" type="text" id="company" name="company" class="full ng-pristine ng-valid" placeholder="Company Name" data-ng-model="address.Company">                   <input data-ng-disabled="disabled" type="text" id="address1" name="address1" class="full ng-pristine ng-valid" placeholder="Address Line 1" data-ng-model="address.AddressLine1">                   <input data-ng-disabled="disabled" type="text" id="address2" name="address2" class="full ng-pristine ng-valid" placeholder="Address Line 2" data-ng-model="address.AddressLine2">                   <input data-ng-disabled="disabled" type="text" id="city" name="city" class="half ng-pristine ng-valid" placeholder="City" data-ng-model="address.City">                   <input data-ng-disabled="disabled" type="text" id="zip" name="zip" class="half ng-pristine ng-valid" placeholder="ZIP / Postal Code" data-ng-model="address.ZipPostalCode">                   <select data-ng-disabled="disabled" class="half ng-pristine ng-valid" id="country" name="country" data-ng-change="countryChanged()" data-ng-model="address.Country" data-ng-options="country.CountryName as country.CountryName for country in getCountryOptions()"><option value="" class="ng-binding">-- Select Country --</option><option value="0">United States</option><option value="1">Afghanistan</option><option value="2">Albania</option><option value="3">Algeria</option><option value="4">American Samoa</option><option value="5">Andorra</option><option value="6">Angola</option><option value="7">Anguilla</option><option value="8">Antarctica</option><option value="9">Antigua and Barbuda</option><option value="10">Argentina</option><option value="11">Armenia</option><option value="12">Aruba</option><option value="13">Australia</option><option value="14">Austria</option><option value="15">Azerbaijan</option><option value="16">Bahamas</option><option value="17">Bahrain</option><option value="18">Bangladesh</option><option value="19">Barbados</option><option value="20">Belarus</option><option value="21">Belgium</option><option value="22">Belize</option><option value="23">Benin</option><option value="24">Bermuda</option><option value="25">Bhutan</option><option value="26">Bolivia</option><option value="27">Bosnia-Hercegovina</option><option value="28">Botswana</option><option value="29">Bouvet Island</option><option value="30">Brazil</option><option value="31">British Indian Ocean Territory</option><option value="32">Brunei</option><option value="33">Bulgaria</option><option value="34">Burkina Faso</option><option value="35">Burundi</option><option value="36">Cambodia</option><option value="37">Cameroon</option><option value="38">Canada</option><option value="39">Cape Verde Islands</option><option value="40">Cayman Islands</option><option value="41">Central African Republic</option><option value="42">Chad</option><option value="43">Chile</option><option value="44">China</option><option value="45">Christmas Island</option><option value="46">Cocos (Keeling) Islands</option><option value="47">Colombia</option><option value="48">Comoros</option><option value="49">Congo</option><option value="50">Cook Islands</option><option value="51">Costa Rica</option><option value="52">Cote d'Ivoire</option><option value="53">Croatia</option><option value="54">Cuba</option><option value="55">Cyprus</option><option value="56">Czech Republic</option><option value="57">Denmark</option><option value="58">Djibouti</option><option value="59">Dominica</option><option value="60">Dominican Republic</option><option value="61">East Timor</option><option value="62">Ecuador</option><option value="63">Egypt</option><option value="64">El Salvador</option><option value="65">Equatorial Guinea</option><option value="66">Eritrea</option><option value="67">Estonia</option><option value="68">Ethiopia</option><option value="69">Falkland Islands</option><option value="70">Faroe Islands</option><option value="71">Fed. States of Micronesia</option><option value="72">Fiji</option><option value="73">Finland</option><option value="74">France</option><option value="75">France, Metropolitan</option><option value="76">French Guiana</option><option value="77">French Polynesia</option><option value="78">French Southern Territories</option><option value="79">Gabon</option><option value="80">Gambia</option><option value="81">Georgia (Asia)</option><option value="82">Germany</option><option value="83">Ghana</option><option value="84">Gibraltar</option><option value="85">Greece</option><option value="86">Greenland</option><option value="87">Grenada</option><option value="88">Guadeloupe</option><option value="89">Guam</option><option value="90">Guatemala</option><option value="91">Guernsey</option><option value="92">Guinea</option><option value="93">Guinea-Bissau</option><option value="94">Guyana</option><option value="95">Haiti</option><option value="96">Heard and Mc Donald Islands</option><option value="97">Honduras</option><option value="98">Hong Kong</option><option value="99">Hungary</option><option value="100">Iceland</option><option value="101">India</option><option value="102">Indonesia</option><option value="103">Iran</option><option value="104">Iraq</option><option value="105">Ireland</option><option value="106">Israel</option><option value="107">Italy</option><option value="108">Jamaica</option><option value="109">Japan</option><option value="110">Jordan</option><option value="111">Kazakhstan</option><option value="112">Kenya</option><option value="113">Kiribati</option><option value="114">Kuwait</option><option value="115">Kyrgyzstan</option><option value="116">Laos</option><option value="117">Latvia</option><option value="118">Lebanon</option><option value="119">Lesotho</option><option value="120">Liberia</option><option value="121">Libya</option><option value="122">Liechtenstein</option><option value="123">Lithuania</option><option value="124">Luxembourg</option><option value="125">Macao</option><option value="126">Macedonia</option><option value="127">Madagascar</option><option value="128">Malawi</option><option value="129">Malaysia</option><option value="130">Maldives</option><option value="131">Mali</option><option value="132">Malta</option><option value="133">Marshall Islands</option><option value="134">Martinique</option><option value="135">Mauritania</option><option value="136">Mauritius</option><option value="137">Mayotte</option><option value="138">Mexico</option><option value="139">Moldova</option><option value="140">Monaco</option><option value="141">Mongolia</option><option value="142">Montserrat</option><option value="143">Morocco</option><option value="144">Mozambique</option><option value="145">Myanmar</option><option value="146">Namibia</option><option value="147">Nato field</option><option value="148">Nauru</option><option value="149">Nepal</option><option value="150">Netherlands</option><option value="151">Netherlands Antilles</option><option value="152">Neutral Zone</option><option value="153">New Caledonia</option><option value="154">New Zealand</option><option value="155">Nicaragua</option><option value="156">Niger</option><option value="157">Nigeria</option><option value="158">Niue</option><option value="159">Norfolk Island</option><option value="160">North Korea</option><option value="161">Northern Mariana Islands</option><option value="162">Norway</option><option value="163">Omman</option><option value="164">Pakistan</option><option value="165">Palau</option><option value="166">Panama</option><option value="167">Papua New Guinea</option><option value="168">Paraguay</option><option value="169">Peru</option><option value="170">Philippines</option><option value="171">Pitcairn Islands</option><option value="172">Poland</option><option value="173">Portugal</option><option value="174">Qatar</option><option value="175">Reunion</option><option value="176">Romania</option><option value="177">Russia</option><option value="178">Rwanda</option><option value="179">San Marino</option><option value="180">Sao Tome and Principe</option><option value="181">Saudi Arabia</option><option value="182">Senegal</option><option value="183">Serbia</option><option value="184">Seychelles</option><option value="185">Sierra Leone</option><option value="186">Singapore</option><option value="187">Slovak Republic</option><option value="188">Slovenia</option><option value="189">Solomon Islands</option><option value="190">Somalia</option><option value="191">South Africa</option><option value="192">South Georgia</option><option value="193">South Korea</option><option value="194">Spain</option><option value="195">Sri Lanka</option><option value="196">St. Helena</option><option value="197">St. Kitts and Nevis</option><option value="198">St. Lucia</option><option value="199">St. Pierre and Miquelon</option><option value="200">St. Vincent and the Grenadines</option><option value="201">Sudan</option><option value="202">Suriname</option><option value="203">Svalbard and Jan Mayen Islands</option><option value="204">Swaziland</option><option value="205">Sweden</option><option value="206">Switzerland</option><option value="207">Syria</option><option value="208">Taiwan</option><option value="209">Tajikistan</option><option value="210">Tanzania</option><option value="211">Thailand</option><option value="212">Togo</option><option value="213">Tokelau</option><option value="214">Tonga</option><option value="215">Trinidad and Tobago</option><option value="216">Tunisia</option><option value="217">Turkey</option><option value="218">Turkmenistan</option><option value="219">Turks and Caicos Islands</option><option value="220">Tuvalu</option><option value="221">US Minor Outlying Islands</option><option value="222">Uganda</option><option value="223">Ukraine</option><option value="224">United Arab Emirates</option><option value="225">United Kingdom</option><option value="226">Uruguay</option><option value="227">Uzbekistan</option><option value="228">Vanuatu</option><option value="229">Vatican City State</option><option value="230">Venezuela</option><option value="231">Vietnam</option><option value="232">Virgin Islands (British)</option><option value="233">Virgin Islands (U.S.)</option><option value="234">Wallis and Futuna Islands</option><option value="235">Western Sahara</option><option value="236">Western Samoa</option><option value="237">Yemen</option><option value="238">Zaire</option><option value="239">Zambia</option><option value="240">Zimbabwe</option></select>                   <select data-ng-disabled="disabled" class="half ng-pristine ng-valid ng-hide" id="state" name="state" data-ng-model="address.StateProvinceRegion" data-ng-show="hasStateProvinceRegionOptions(address.Country)" data-ng-options="spr.StateAbbrev as spr.StateName for spr in getStateProvinceRegionOptions(address.Country)"><option value="" class="">-- Select State or Province --</option></select>                   <div class="error ng-hide" data-ng-show="hasSuggestions()">                     <span>Sorry, we could not validate your address.  Please enter a new value or select a correction from the list:</span>                     <select name="suggestion" data-ng-model="suggestionSelected" data-ng-options="suggestion as formatSuggestion(suggestion) for suggestion in suggestions" class="ng-pristine ng-valid"><option value="?" selected="selected"></option></select>                   </div>                 </div>
+                  <div data-ng-show="!cimPopupOpen" class="">
+
+                      <input id="saveShippingAddress" type="checkbox" data-ng-model="options.saveShippingAddress" data-ng-checked="options.saveShippingAddress || cart.ShippingAddress.AddressID" data-ng-disabled="cart.ShippingAddress.AddressID" data-ng-show="!cart.ShippingAddress.AddressID" class="ng-pristine ng-valid" checked="checked">
+                      <label for="saveShippingAddress" data-ng-show="!cart.ShippingAddress.AddressID" class="">Save to my Address Book</label>
+                  </div>
+                  <div data-ng-show="!cimPopupOpen" class="">
+                    <input id="setDefaultShippingAddress" type="checkbox" data-ng-show="!cart.ShippingAddress.IsDefault" data-ng-model="options.setDefaultShippingAddress" data-ng-checked="true" class="ng-pristine ng-valid" checked="checked">
+                    <label data-ng-show="!cart.ShippingAddress.IsDefault" for="setDefaultShippingAddress" class="">Set as Default Address</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="navigation_buttons unhid">
+               <button class="button ng-hide" data-ng-show="cart.PaymentMethod.MethodID == 1 &amp;&amp; cart.ShippingAddress != cart.BillingAddress" data-ng-click="useBillingAddressForShipping()">Use Billing Address</button>
+               <button class="button right" data-ng-click="next('shipAddressSection');">Next</button>
+            </div>
+          <div class="overlay hid" style="top: 100%; margin-top: 5px; display: block;"></div></div>
+          <!--/ SHIP ADDRESS -->
+          <!-- SHIP METHOD -->
+          <div id="shipMethodSection" data-ng-show="loaded" class="">
+            <h3 data-ng-init="">Shipping Method</h3>
+            <form data-ng-show="1" name="shippingMethodForm" class="ng-pristine ng-valid">
+                <div style="font-weight: bold; padding: 5px 5px 15px 5px; font-size: 14px; text-align:center; border-bottom: 1px solid #e1e1e1; margin-bottom: 15px;"><a href="https://www.trollandtoad.com/shippingMethods/" target="_blank">Click Here for Shipping Information</a></div>
+                <div class="subheader">Shipping Method</div>
+                <div id="shippingMethodDiv">
+
+                    <div id="shipMethodDiv">
+                    <select data-ng-class="{req: cart.ShippingMethod == null}" data-ng-disabled="loading || saving" class="full ng-pristine ng-valid" id="shipping_method" data-ng-model="cart.ShippingMethod" data-ng-options="sm as (sm.MethodName + ' ($' + sm.MethodRate.toFixed(2) + ')') group by sm.MethodCarrier for sm in options.shipping"><option value="" class="ng-binding">No Shipping Options Available</option></select>
+                    </div>
+
+                </div>
+
+                <div class="subheader ng-hide" data-ng-show="options.shipping2.length" style="margin-top: 15px;">Preorder: Shipping Method</div>
+                <div id="shippingMethodDiv">
+
+                    <div id="shipMethodDiv2" data-ng-show="options.shipping2.length" class="ng-hide">
+                    <select data-ng-class="{req: cart.ShippingMethod2 == null}" data-ng-disabled="loading || saving" class="full ng-pristine ng-valid req" id="shipping_method2" data-ng-model="cart.ShippingMethod2" data-ng-options="sm2 as (sm2.MethodName + ' ($' + sm2.MethodRate.toFixed(2) + ')') group by sm2.MethodCarrier for sm2 in options.shipping2"><option value="" class="ng-binding">No Shipping Options Available</option></select>
+                    </div>
+
+                </div>
+            </form>
+            <div class="navigation_buttons hid">
+              <button class="button left" data-ng-click="back('shipMethodSection'); shipSection=1;">Back</button>
+              <button class="button right" data-ng-click="next('shipMethodSection'); shipSection=2;">Next</button>
+            </div>
+          </div>
+          <!--/ SHIP METHOD -->
+        </div>
+        <!--/ SHIP ADDRESS / SHIP METHOD -->
+        <!-- PAYMENT -->
+        <div id="payWrapper" class="cell">
+          <!-- PAYMENT -->
+          <div id="paySection" data-ng-show="loaded" class="">
+            <h3>Payment</h3>
+            <div id="paymentDiv">
+              <div class="subheader">Payment Method</div>
+            <!-- AUTHORIZE -->
+              <form method="post" action="" id="formAuthorizeNetPopup" name="formAuthorizeNetPopup" target="iframeAuthorizeNet" class="ng-pristine ng-valid">
+                <input type="hidden" value="" name="Token">
+                <input type="hidden" value="" name="PaymentProfileId">
+                <input type="hidden" value="" name="ShippingAddressId">
+              </form>
+
+              <form name="paymentForm" data-ng-show="2" class="ng-pristine ng-valid">
+                <select id="payment_method" data-ng-disabled="loading || saving" class="full ng-pristine ng-valid" data-ng-class="{req: cart.PaymentMethod.MethodID == null}" data-ng-change="paymentMethodSelected(); delayOverlayButtons('paySection'); cimPopupOpen = false;" data-ng-model="cart.PaymentMethod" data-ng-options="pm as pm.MethodName for pm in options.payment"><option value="" class="">-- Select Payment Method --</option><option value="0">Credit Card</option><option value="1">Call In Credit Card</option><option value="2">Send Check or Money Order</option><option value="3" selected="selected">PayPal</option><option value="4">Cash in US Dollars</option></select>
+
+                <div data-ng-show="cart.PaymentMethod.MethodID == 1" class="ng-hide">
+                  <select id="cimPaymentProfileOptions" class="full ng-pristine ng-valid" data-ng-disabled="loading || saving" data-ng-change="billingAddressSelected()" data-ng-model="options.cimPaymentProfile" data-ng-options="profile as (profile.Payment.AccountName + ' ' + profile.Payment.AccountType + ' ' + profile.Payment.AccountNumber | ucwords) for profile in options.cimPaymentProfiles"><option value="" class="">-- Add Credit Card --</option></select>
+                  <div data-ng-disabled="loading || saving" data-ng-show="options.cimPaymentProfile.BillTo &amp;&amp; !cimPopupOpen" class="ng-hide">
+                    <div class="subheader">Billing Address</div>
+                    <div data-ng-disabled="disabled" class="address ng-isolate-scope" id="billingAddress" data-address="cart.BillingAddress" data-suggestions="options.suggestions.billingAddress">                   <input type="text" id="firstname" name="firstname" class="half ng-pristine ng-valid" placeholder="First Name" data-ng-model="address.FirstName">                   <input data-ng-disabled="disabled" type="text" id="lastname" name="lastname" class="half ng-pristine ng-valid" placeholder="Last Name" data-ng-model="address.LastName">                   <input data-ng-disabled="disabled" type="text" id="company" name="company" class="full ng-pristine ng-valid" placeholder="Company Name" data-ng-model="address.Company">                   <input data-ng-disabled="disabled" type="text" id="address1" name="address1" class="full ng-pristine ng-valid" placeholder="Address Line 1" data-ng-model="address.AddressLine1">                   <input data-ng-disabled="disabled" type="text" id="address2" name="address2" class="full ng-pristine ng-valid" placeholder="Address Line 2" data-ng-model="address.AddressLine2">                   <input data-ng-disabled="disabled" type="text" id="city" name="city" class="half ng-pristine ng-valid" placeholder="City" data-ng-model="address.City">                   <input data-ng-disabled="disabled" type="text" id="zip" name="zip" class="half ng-pristine ng-valid" placeholder="ZIP / Postal Code" data-ng-model="address.ZipPostalCode">                   <select data-ng-disabled="disabled" class="half ng-pristine ng-valid" id="country" name="country" data-ng-change="countryChanged()" data-ng-model="address.Country" data-ng-options="country.CountryName as country.CountryName for country in getCountryOptions()"><option value="" class="ng-binding">-- Select Country --</option><option value="0">United States</option><option value="1">Afghanistan</option><option value="2">Albania</option><option value="3">Algeria</option><option value="4">American Samoa</option><option value="5">Andorra</option><option value="6">Angola</option><option value="7">Anguilla</option><option value="8">Antarctica</option><option value="9">Antigua and Barbuda</option><option value="10">Argentina</option><option value="11">Armenia</option><option value="12">Aruba</option><option value="13">Australia</option><option value="14">Austria</option><option value="15">Azerbaijan</option><option value="16">Bahamas</option><option value="17">Bahrain</option><option value="18">Bangladesh</option><option value="19">Barbados</option><option value="20">Belarus</option><option value="21">Belgium</option><option value="22">Belize</option><option value="23">Benin</option><option value="24">Bermuda</option><option value="25">Bhutan</option><option value="26">Bolivia</option><option value="27">Bosnia-Hercegovina</option><option value="28">Botswana</option><option value="29">Bouvet Island</option><option value="30">Brazil</option><option value="31">British Indian Ocean Territory</option><option value="32">Brunei</option><option value="33">Bulgaria</option><option value="34">Burkina Faso</option><option value="35">Burundi</option><option value="36">Cambodia</option><option value="37">Cameroon</option><option value="38">Canada</option><option value="39">Cape Verde Islands</option><option value="40">Cayman Islands</option><option value="41">Central African Republic</option><option value="42">Chad</option><option value="43">Chile</option><option value="44">China</option><option value="45">Christmas Island</option><option value="46">Cocos (Keeling) Islands</option><option value="47">Colombia</option><option value="48">Comoros</option><option value="49">Congo</option><option value="50">Cook Islands</option><option value="51">Costa Rica</option><option value="52">Cote d'Ivoire</option><option value="53">Croatia</option><option value="54">Cuba</option><option value="55">Cyprus</option><option value="56">Czech Republic</option><option value="57">Denmark</option><option value="58">Djibouti</option><option value="59">Dominica</option><option value="60">Dominican Republic</option><option value="61">East Timor</option><option value="62">Ecuador</option><option value="63">Egypt</option><option value="64">El Salvador</option><option value="65">Equatorial Guinea</option><option value="66">Eritrea</option><option value="67">Estonia</option><option value="68">Ethiopia</option><option value="69">Falkland Islands</option><option value="70">Faroe Islands</option><option value="71">Fed. States of Micronesia</option><option value="72">Fiji</option><option value="73">Finland</option><option value="74">France</option><option value="75">France, Metropolitan</option><option value="76">French Guiana</option><option value="77">French Polynesia</option><option value="78">French Southern Territories</option><option value="79">Gabon</option><option value="80">Gambia</option><option value="81">Georgia (Asia)</option><option value="82">Germany</option><option value="83">Ghana</option><option value="84">Gibraltar</option><option value="85">Greece</option><option value="86">Greenland</option><option value="87">Grenada</option><option value="88">Guadeloupe</option><option value="89">Guam</option><option value="90">Guatemala</option><option value="91">Guernsey</option><option value="92">Guinea</option><option value="93">Guinea-Bissau</option><option value="94">Guyana</option><option value="95">Haiti</option><option value="96">Heard and Mc Donald Islands</option><option value="97">Honduras</option><option value="98">Hong Kong</option><option value="99">Hungary</option><option value="100">Iceland</option><option value="101">India</option><option value="102">Indonesia</option><option value="103">Iran</option><option value="104">Iraq</option><option value="105">Ireland</option><option value="106">Israel</option><option value="107">Italy</option><option value="108">Jamaica</option><option value="109">Japan</option><option value="110">Jordan</option><option value="111">Kazakhstan</option><option value="112">Kenya</option><option value="113">Kiribati</option><option value="114">Kuwait</option><option value="115">Kyrgyzstan</option><option value="116">Laos</option><option value="117">Latvia</option><option value="118">Lebanon</option><option value="119">Lesotho</option><option value="120">Liberia</option><option value="121">Libya</option><option value="122">Liechtenstein</option><option value="123">Lithuania</option><option value="124">Luxembourg</option><option value="125">Macao</option><option value="126">Macedonia</option><option value="127">Madagascar</option><option value="128">Malawi</option><option value="129">Malaysia</option><option value="130">Maldives</option><option value="131">Mali</option><option value="132">Malta</option><option value="133">Marshall Islands</option><option value="134">Martinique</option><option value="135">Mauritania</option><option value="136">Mauritius</option><option value="137">Mayotte</option><option value="138">Mexico</option><option value="139">Moldova</option><option value="140">Monaco</option><option value="141">Mongolia</option><option value="142">Montserrat</option><option value="143">Morocco</option><option value="144">Mozambique</option><option value="145">Myanmar</option><option value="146">Namibia</option><option value="147">Nato field</option><option value="148">Nauru</option><option value="149">Nepal</option><option value="150">Netherlands</option><option value="151">Netherlands Antilles</option><option value="152">Neutral Zone</option><option value="153">New Caledonia</option><option value="154">New Zealand</option><option value="155">Nicaragua</option><option value="156">Niger</option><option value="157">Nigeria</option><option value="158">Niue</option><option value="159">Norfolk Island</option><option value="160">North Korea</option><option value="161">Northern Mariana Islands</option><option value="162">Norway</option><option value="163">Omman</option><option value="164">Pakistan</option><option value="165">Palau</option><option value="166">Panama</option><option value="167">Papua New Guinea</option><option value="168">Paraguay</option><option value="169">Peru</option><option value="170">Philippines</option><option value="171">Pitcairn Islands</option><option value="172">Poland</option><option value="173">Portugal</option><option value="174">Qatar</option><option value="175">Reunion</option><option value="176">Romania</option><option value="177">Russia</option><option value="178">Rwanda</option><option value="179">San Marino</option><option value="180">Sao Tome and Principe</option><option value="181">Saudi Arabia</option><option value="182">Senegal</option><option value="183">Serbia</option><option value="184">Seychelles</option><option value="185">Sierra Leone</option><option value="186">Singapore</option><option value="187">Slovak Republic</option><option value="188">Slovenia</option><option value="189">Solomon Islands</option><option value="190">Somalia</option><option value="191">South Africa</option><option value="192">South Georgia</option><option value="193">South Korea</option><option value="194">Spain</option><option value="195">Sri Lanka</option><option value="196">St. Helena</option><option value="197">St. Kitts and Nevis</option><option value="198">St. Lucia</option><option value="199">St. Pierre and Miquelon</option><option value="200">St. Vincent and the Grenadines</option><option value="201">Sudan</option><option value="202">Suriname</option><option value="203">Svalbard and Jan Mayen Islands</option><option value="204">Swaziland</option><option value="205">Sweden</option><option value="206">Switzerland</option><option value="207">Syria</option><option value="208">Taiwan</option><option value="209">Tajikistan</option><option value="210">Tanzania</option><option value="211">Thailand</option><option value="212">Togo</option><option value="213">Tokelau</option><option value="214">Tonga</option><option value="215">Trinidad and Tobago</option><option value="216">Tunisia</option><option value="217">Turkey</option><option value="218">Turkmenistan</option><option value="219">Turks and Caicos Islands</option><option value="220">Tuvalu</option><option value="221">US Minor Outlying Islands</option><option value="222">Uganda</option><option value="223">Ukraine</option><option value="224">United Arab Emirates</option><option value="225">United Kingdom</option><option value="226">Uruguay</option><option value="227">Uzbekistan</option><option value="228">Vanuatu</option><option value="229">Vatican City State</option><option value="230">Venezuela</option><option value="231">Vietnam</option><option value="232">Virgin Islands (British)</option><option value="233">Virgin Islands (U.S.)</option><option value="234">Wallis and Futuna Islands</option><option value="235">Western Sahara</option><option value="236">Western Samoa</option><option value="237">Yemen</option><option value="238">Zaire</option><option value="239">Zambia</option><option value="240">Zimbabwe</option></select>                   <select data-ng-disabled="disabled" class="half ng-pristine ng-valid ng-hide" id="state" name="state" data-ng-model="address.StateProvinceRegion" data-ng-show="hasStateProvinceRegionOptions(address.Country)" data-ng-options="spr.StateAbbrev as spr.StateName for spr in getStateProvinceRegionOptions(address.Country)"><option value="" class="">-- Select State or Province --</option></select>                   <div class="error ng-hide" data-ng-show="hasSuggestions()">                     <span>Sorry, we could not validate your address.  Please enter a new value or select a correction from the list:</span>                     <select name="suggestion" data-ng-model="suggestionSelected" data-ng-options="suggestion as formatSuggestion(suggestion) for suggestion in suggestions" class="ng-pristine ng-valid"><option value="?" selected="selected"></option></select>                   </div>                 </div>
+                  </div>
+
+                  <div id="divAuthorizeNetPopup" data-ng-show="cimPopupOpen" class="ng-hide">
+                    <div class="AuthorizeNetPopupOuter">
+                      <iframe name="iframeAuthorizeNet" id="iframeAuthorizeNet" src="resources/31/5.htm" scrolling="no" data-original-src="https://www2.trollandtoad.com/secure/contentx/empty.html" frameborder="0"></iframe>
+                    </div>
+                  </div>
+                  <div id="divAuthorizeNetPopupScreen" style="display:none;"></div>
+                </div>
+                <!--/ AUTHORIZE -->
+                <!-- PAYMENT TXT -->
+                <div id="paymenttext" data-ng-show="!cimPopupOpen" class="">
+                  <div data-ng-show="cart.PaymentMethod.MethodID == 1 &amp;&amp; cart.SecurityStatus == 'DANGER'" class="subheader importante ng-hide"><br>Important</div>
+                  <div data-ng-show="cart.PaymentMethod.MethodID == 1 &amp;&amp; cart.SecurityStatus == 'DANGER'" class="dangerText importante ng-hide"> <!-- CC -->
+                    <!--We have certain rules to follow when a customer uses a credit card to place an order. The billing address you
+                    provided for this order either doesn't match the billing address on file with your credit card company, or
+                    you're shipping to an address different than the billing address, or you're using a credit card issued by a
+                    foreign bank.-->
+                    To ensure the security of the credit card entered, a security check must be completed after finishing the checkout
+                    process. Possible reasons for this include: <br>
+                    <div class="dangerText importante">
+                      -The provided billing address does not match the one filed with the credit card company.<br>
+                      -The shipping address does not match the provided billing address.<br>
+                      -The credit card is issued by a foreign bank.
+                    </div>
+                  </div>
+                  <div data-ng-show="cart.PaymentMethod.MethodID == 2" class="ng-hide"> <!-- Call-in CC -->
+                    <p>
+                      Thank you for your order. During checkout, you chose to pay by calling in your credit card information.
+                      Please take note that you must call and speak to a live Customer Service Representative within one business
+                      day (Monday-Friday 9:00 am - 5:00 pm Eastern Standard Time).  Our telephone number is
+                      859-280-3235.  Please do not leave your credit card information in a voice
+                      message or email.  As a security measure, if you leave a message with your credit card information we will
+                      delete it and will not process the order.
+                    </p>
+                  </div>
+                  <div data-ng-show="cart.PaymentMethod.MethodID == 3" class="ng-hide"> <!-- Check or Money Order -->
+                    <p>
+                      You have chosen to pay by money order, check, or cashier's check. You are agreeing to mail
+                      us a money order, check or cashier's check in US Dollars($) drawn from a bank <u>within the United States of America</u>.  Failure to follow these instructions exactly will result in the cancellation of the order and the check will be returned and you will be notified.
+                    </p>
+                    <p>
+                      Your payment must arrive at our offices for processing within <strong>7 business days</strong> or the order will be canceled. If we receive payment after this time we will fulfill what we can of the order and issue credit for any items that are out of stock. If all items are out of stock
+                      the check will be returned and you will be notified.
+                    </p>
+                    <p>
+                      Orders will not ship until the check has cleared the bank which may take up to ten (10) business days.
+                    </p>
+                    <p>Mail the check to:</p>
+                    <span class="address">
+                      <p>Troll And Toad Online Check Orders</p>
+                      <p>250 American Greeting Card Rd.</p>
+                      <p>Corbin, KY 40701</p>
+                    </span>
+                    <p class="ng-binding">Include this order number on your money order, check or cashier's check: #83264091</p>
+                  </div>
+                  <div data-ng-show="cart.PaymentMethod.MethodID == 4" class="ng-hide"> <!-- Wire Xfer -->
+                    <p>
+                      You have chosen to pay by bank wire Transfer. You are agreeing to wire us the funds by bank
+                      transfer in US Dollars($) to arrive within 7 business days of placing the order. If we receive payment after this time we will fulfill what we can of the order and issue credit for any items
+                      that are out of stock. If all items are out of stock we will return your payment to you, less
+                      any fees incurred.
+                    </p>
+                    <p class="ng-binding">
+                      Please make sure that all of your account information is correct and remember to include your
+                      name and order number (#83264091) on the notes sent with your bank transfer.
+                    </p>
+                  </div>
+                  <div data-ng-show="cart.PaymentMethod.MethodID == 5" class=""> <!-- PayPal -->
+                    <p>
+                      You have chosen to pay us via PayPal. Please make sure that you have selected a PayPal
+                      <a target="_blank" href="https://www.paypal.com/us/webapps/helpcenter/helphub/article/?solutionId=10607&amp;m=SRE">confirmed address.</a>
+                      After you leave this page, you will be redirected to PayPal.com to complete your payment.
+                    </p>
+                  </div>
+                  <div data-ng-show="cart.PaymentMethod.MethodID == 20" class="ng-hide"> <!-- Cash -->
+                    <p>
+                      You have chosen to pay in cash using US Dollars($). Your payment must arrive within 7 business days of placing your order or the order will be canceled. If we receive payment after this time
+                      we will fulfill what we can of the order and issue credit for any items that are out of stock.
+                      If all items are out of stock we will return your payment to you in the original envelope.
+                    </p>
+                    <p>
+                      <strong>We are not responsible for cash lost in the mail.</strong> Please refrain from sending change through the mail as all envelopes go through machines at the post office and when loose change is in an envelope it tends to rip the envelope and the change falls out. Any payment
+                      we receive that is short will be returned to you immediately in the original envelope. Any amount that we receive over the order total will be added to your account as credit.
+                    </p>
+                    <p>Mail payment to:</p>
+                      <span class="address">
+                        <p>Troll And Toad Online Check Orders</p>
+                        <p>250 American Greeting Card Rd.</p>
+                        <p>Corbin, KY 40701</p>
+                      </span>
+                      <p class="ng-binding">Include this order number on the envelope: #83264091</p>
+                  </div>
+                </div>
+                <!--/ PAYMENT TXT -->
+                <div class="navigation_buttons hid" data-ng-show="!cimPopupOpen">
+                  <button class="button left" data-ng-click="back('paySection');" data-ng-disabled="loading || saving">Back</button>
+                  <div style="text-align: center" data-ng-show="!cimPopupOpen" class="hid">
+                    <button class="button ng-hide" style="margin-right:5px;margin-top:4px" data-ng-show="options.debug" data-ng-click="loadCimPaymentProfiles()"><img src="resources/31/4.gif" data-ng-show="cimLoading" class="ng-hide" data-original-src="https://www2.trollandtoad.com/loading.gif"> Load </button>
+                    <button class="button ng-hide" style="margin-top:4px" data-ng-show="options.cimPaymentProfile &amp;&amp; cart.PaymentMethod.MethodID == 1" data-ng-click="deleteCimPaymentProfile(options.cimPaymentProfile.PaymentProfileID)">Remove Card</button>
+                    <button class="button ng-hide" style="margin-left:5px;margin-top:4px" data-ng-show="options.cimPaymentProfile" data-ng-click="editCimPaymentProfile(options.cimPaymentProfile.PaymentProfileID)">Edit</button>
+                    <!--<button class="button" data-ng-show="options.debug || options.cimPaymentProfile" data-ng-click="editCimPaymentProfile()"> Add Credit Card </button>-->
+                    <!--<button class="button" data-ng-show="cart.BillingAddress != cart.ShippingAddress" data-ng-click="useShippingAddressForBilling()">Use Shipping Address</button>-->
+                  </div>
+                  <button class="button right" data-ng-click="next('paySection');" data-ng-disabled="loading || saving">Next</button>
+                </div>
+              </form>
+            </div>
+          <div class="overlay hid" style="height: 500%; display: block;"></div></div>
+          <!--/ PAYMENT -->
+        </div>
+        <!--/ PAYMENT -->
+      </div>
+      <!--/ SHIP ADDRESS / SHIP METHOD / PAYMENT -->
+      <!-- CART -->
+      <div id="cartWrapper" class="row">
+        <!-- CART -->
+        <div id="cartSection" data-ng-show="loaded" class="">
+          <h3>Your Cart</h3>
+          <div id="cartDiv">
+            <form name="cartForm" data-ng-show="3" class="ng-pristine ng-valid">
+              <div class="cart_option ng-hide" data-ng-show="options.credit.available > 0">
+                  <span>Use Credit:</span>
+                  <input data-ng-disabled="loading || saving" type="text" id="credit_used" data-ng-pattern="/^[0-9]+\.?[0-9]{0,2}$/" data-ng-model="options.credit.used" data-ng-class="{
+                      'ng-valid': options.credit.used <= options.credit.available,
+                      'ng-invalid': options.credit.used > options.credit.available
+                    }" class="ng-pristine ng-valid ng-valid-pattern">
+                  <button class="button add" data-ng-click="save()">Add</button>
+              </div>
+              <div class="cart_option ng-hide" data-ng-show="options.credit.available > 0">
+                <label for="credit_used"><strong data-ng-bind-html="options.credit.available | currency" class="ng-binding">$0.00</strong> available</label>
+              </div>
+              <div class="cart_option">
+                <span>Use Coupon Code:</span>
+                <input maxlength="40" data-ng-disabled="loading || saving" type="text" id="coupon_code" data-ng-model="options.coupon.code" data-ng-change="couponChanged()" data-ng-class="{
+                    'ng-valid': !options.coupon.invalid,
+                    'ng-invalid': options.coupon.invalid
+                  }" class="ng-pristine ng-valid">
+                <button class="button add" data-ng-click="save()">Add</button>
+              </div>
+              <div class="divider"></div>
+                <div style="display: inline-block; font-weight: bold; width: 100%; text-align:center; padding-bottom: 5px;">
+                    <div style="display: inline-block; width: 65%;">Item</div><div style="display: inline-block; width: 21.75%;">Quantity</div><div style="display: inline-block; width: 6.5%;">Price</div><div style="display: inline-block; width: 6.5%;">Total</div>
+                </div>
+
+              <!-- ngRepeat: cart in carts --><div class="cart ng-scope ng-isolate-scope" style="margin-bottom: 10px;;margin-bottom: 10px;" data-ng-init="cart.Changed = 0;" data-cart="cart" data-disabled="loading || saving" data-ng-repeat="cart in carts" data-ng-show="cart.Items.length > 0">          <table class="cart_items">          <tbody>            <!-- ngRepeat: item in getItems() track by $index --><tr id="item_8796959_row" class="cart_item ng-scope odd" data-ng-class-odd="'odd'" data-ng-class-even="'even'" data-ng-repeat="item in getItems() track by $index">              <td class="cart_item_name">                <a href="https://www.trollandtoad.com/p1473258.html" target="_blank" class="ng-binding">Cyber Dragon Nachster - DUPO-EN036 - Ultra Rare 1st Edition</a>                <span class="cart_item_preorder ng-binding ng-hide" data-ng-show="item.DateAvailable > currentDate"><br>Item Available July 18, 2019</span>              </td>              <td class="cart_item_qty">                <div class="deleteContainer" data-ng-click="item.Quantity = 0; itemslider(item.ProductDetailID); cart.Changed = 1;">x</div>                <input data-ng-disabled="disabled" required="" class="full ng-pristine ng-valid ng-valid-pattern ng-valid-required" type="text" name="item_8796959_qty" id="item_8796959_qty" data-ng-pattern="/^[0-9]+$/" data-ng-model="item.Quantity" data-ng-change="cart.Changed = 1;" style="display:inline-block;width:80%;" data-ng-class="{                    'ng-valid': item.Quantity &amp;&amp; item.Quantity <= item.MaxQuantity,                    'ng-invalid': !item.Quantity || item.Quantity > item.MaxQuantity                  }"><label for="item_8796959_qty" class="error ng-hide" data-ng-click="item.Quantity = item.MaxQuantity" data-ng-show="item.Quantity > item.MaxQuantity"><nobr class="ng-binding">19 In Stock</nobr></label>              </td>              <td class="cart_item_price ng-binding" for="item_8796959_qty">$5.97</td>              <td class="cart_item_price cart_item_total ng-binding" for="item_8796959_qty">$5.97</td>            </tr><!-- end ngRepeat: item in getItems() track by $index -->          </tbody>          </table>        </div><!-- end ngRepeat: cart in carts -->
+                <div class="divider"></div>
+                <span class="cart_total">Sub Total: <span class="cart_total_amount ng-binding" data-ng-bind-html="getSubTotal() | currency">$5.97</span></span>
+                <span class="cart_total">Shipping Total: <span class="cart_total_amount ng-binding" data-ng-bind-html="getShippingTotal() | currency">$0.00</span></span>
+                <span class="cart_total ng-hide" data-ng-show="getCouponDiscount() > 0">Coupon Discount: <span class="cart_total_amount cart_discount ng-binding" data-ng-bind-html="getCouponDiscount() | currency">$0.00</span></span>
+                <span class="cart_total ng-hide" data-ng-show="getCreditDiscount() > 0">Credit Discount: <span class="cart_total_amount cart_discount ng-binding" data-ng-bind-html="getCreditDiscount() | currency">$0.00</span></span>
+                <span class="cart_total ng-binding">Tax Total: <span class="cart_total_amount ng-binding" data-ng-bind-html="getTaxTotal() | currency">$0.00</span></span>
+                <!-- ngRepeat: tax in additionalTaxes.taxes -->
+                <div class="divider"></div>
+                <span class="cart_total">Order Total: <span class="cart_total_amount ng-binding" data-ng-bind-html="getTotal() | currency">$5.97</span></span>
+
+
+
+		    <div style="margin-top:10px" class="buttons ng-hide" data-ng-show="cart.Changed">
+		        <button class="button big" data-ng-click="save(refillShippingMethod);" data-ng-show="!loading &amp;&amp; !saving">
+                  <span><img src="resources/31/6.png" data-original-src="https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/icons/cart_go.png"> Update Cart</span>
+                </button>
+              </div>
+            </form>
+            <div class="divider"></div>
+            <form name="placeOrder" data-ng-show="4" class="ng-pristine ng-valid">
+              <label for="order_comment" class="checkout_option_label"><strong>Order Comments or Special Instructions</strong><br>
+                <textarea class="full ng-pristine ng-valid" id="order_comment" name="order_comment" data-ng-model="cart.Notes.OrderComment"></textarea><br>
+              </label>
+              <label for="securityAgreement" class="checkout_option_label full ng-hide" data-ng-show="cart.SecurityStatus == 'DANGER' &amp;&amp; cart.PaymentMethod.MethodID == 1">
+                <input type="checkbox" id="securityAgreement" data-ng-model="securityAgreement" class="ng-pristine ng-valid">
+                I understand that I will need to go through a security check to verify my billing information. After the security check is completed, I will never need to go through another security check again for this billing address as long as this billing address does not change.
+              </label>
+              <label for="manuRestrictAgreement" class="checkout_option_label full ng-binding ng-hide" data-ng-show="hasRestrictedItem()">
+                <input type="checkbox" id="manuRestrictAgreement" data-ng-model="manuRestrictAgreement" class="ng-pristine ng-valid">
+                
+              </label>
+              <label for="customsAgreement" class="checkout_option_label threeQuarter ng-hide" data-ng-show="hasCustoms()">
+                <input type="checkbox" id="customsAgreement" data-ng-model="customsAgreement" class="ng-pristine ng-valid">
+                I understand that customs in my country may charge duties based on the full value of this order.
+              </label>
+              <label for="preorderAgreement" class="checkout_option_label full ng-hide" data-ng-show="hasPreorder()">
+                <input type="checkbox" id="preorderAgreement" data-ng-model="preorderAgreement" class="ng-pristine ng-valid">
+                I understand that my order containing pre-order items will not be shipped until ALL items have been released.
+              </label>
+              <label for="termAgreement" class="checkout_option_label half">
+                <input type="checkbox" id="termAgreement" data-ng-model="termAgreement" class="ng-pristine ng-valid">
+                I have read and agree to the <a class="lgtBoxLink" data-lgt-content="/ajax_scripts/footerFiles/toc.php">Terms and Conditions</a>.
+              </label>
+              <br>
+              <div class="buttons hid">
+                <button class="button left" data-ng-click="back('cartSection');">Back</button>
+                <button class="button big" data-ng-show="canCheckout()" data-ng-click="checkout()" data-ng-disabled="loading || saving">
+                  <span data-ng-show="loading || saving" class="ng-binding ng-hide"><img src="resources/31/4.gif" data-original-src="https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/loading.gif"> Saving...</span>
+                  <span data-ng-show="!loading &amp;&amp; !saving" class=""><img src="resources/31/6.png" data-original-src="https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/icons/cart_go.png"> Checkout</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        <div class="overlay hid" style="display: block;"></div></div>
+        <!--/ CART -->
+      </div>
+      <!--/ CART -->
+    </div>
+    <!--/ TABLE -->
+  </div>
+  <!--/ id=body -->
+
+
+  <!-- overlay buttons -->
+  <div id="shipAddressNext" class="overlayButton" data-ng-click="next('shipAddressSection')" style="display:none">NEXT</div>
+  <div id="shipMethodBack" class="overlayButton" data-ng-click="back('shipMethodSection')" style="display:none">EDIT</div>
+  <div id="shipMethodNext" class="overlayButton" data-ng-click="next('shipMethodSection')" style="display:none">NEXT</div>
+  <div id="payBack" class="overlayButton" data-ng-click="back('paySection')" style="display:none">EDIT</div>
+  <div id="payNext" class="overlayButton" data-ng-click="next('paySection')" style="display:none">NEXT</div>
+  <div id="cartBack" class="overlayButton" data-ng-click="back('cartSection')" style="display:none">EDIT</div>
+
+  <!--/ overlay button -->
+
+  <div class="g-recaptcha" data-sitekey="6LdWqp0UAAAAAICqARFsrD5qMaXuGBrYNoCDT0bu" data-callback="onCaptcha" data-badge="bottomleft" data-size="invisible"><div class="grecaptcha-badge" data-style="bottomleft" style="width: 256px; height: 60px; display: block; transition: left 0.3s ease 0s; position: fixed; bottom: 14px; left: -186px; box-shadow: gray 0px 0px 5px;"><div class="grecaptcha-logo"><iframe src="resources/31/7.htm" role="presentation" name="a-dumtcmvlwpf9" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox allow-storage-access-by-user-activation" data-original-src="https://www.google.com/recaptcha/api2/anchor?ar=1&amp;k=6LdWqp0UAAAAAICqARFsrD5qMaXuGBrYNoCDT0bu&amp;co=aHR0cHM6Ly93d3cyLnRyb2xsYW5kdG9hZC5jb206NDQz&amp;hl=en&amp;v=v1562567553145&amp;size=invisible&amp;badge=bottomleft&amp;cb=5znvlm5w4d13" width="256" height="60" frameborder="0"></iframe></div><div class="grecaptcha-error"></div><textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid rgb(193, 193, 193); margin: 10px 25px; padding: 0px; resize: none; display: none;"></textarea></div></div>
+
+  <!-- LightBox js for bottom links -->
+  
+
+  <!-- id=footer -->
+  <div id="footer">
+    <div id="footer_left">
+      
+      <style type="text/css">
+div.AuthorizeNetSeal{text-align:center;margin:0;padding:0;width:90px;font:normal 9px arial,helvetica,san-serif;line-height:10px;}
+div.AuthorizeNetSeal a{text-decoration:none;color:black;}
+div.AuthorizeNetSeal a:visited{color:black;}
+div.AuthorizeNetSeal a:active{color:black;}
+div.AuthorizeNetSeal a:hover{text-decoration:underline;color:black;}
+div.AuthorizeNetSeal a img{border:0px;margin:0px;text-decoration:none;}
+</style>
+<a href="https://verify.authorize.net/anetseal/?pid=81b99d41-2253-448c-a94f-4709cf45da5a&amp;rurl=https%3A//www2.trollandtoad.com/secure/checkout/" target="_blank">
+<img src="resources/31/8.gif" alt="Authorize.Net Merchant - Click to Verify" data-original-src="https://verify.authorize.net/anetseal/images/secure90x72.gif" width="90" height="72" border="0">
+</a>
+
+      <a href="http://www.authorize.net/" id="AuthorizeNetText" target="_blank">Online Payments</a>
+      <br><br>
+      <a href="http://bluegrass.bbb.org/codbrep.html?c2c=y&amp;id=24000726" target="_blank">
+        <img src="resources/31/9.gif" data-original-src="https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/BetterBusinessBureau3.gif">
+      </a>
+    </div>
+    <div id="footer_center">
+      <ul>
+        <!-- Fix link refs -->
+        <li><a href="https://www.trollandtoad.com/privacy" target="_blank">Privacy/Security Policies</a></li>
+        <li><a class="lgtBoxLink" data-lgt-content="/ajax_scripts/footerFiles/conditionsofuse.php">Conditions of Use</a></li>
+        <li><a class="lgtBoxLink" data-lgt-content="/ajax_scripts/footerFiles/toc.php">Terms and Conditions</a></li>
+      </ul>
+    </div>
+    <div id="footer_right">
+      <img src="resources/31/10.gif" data-original-src="https://52f4e29a8321344e30ae-0f55c9129972ac85d6b1f4e703468e6b.ssl.cf2.rackcdn.com/wizmark.gif">
+    </div>
+    <div>© 1994 - 2019 Webbed Sphere Inc.</div>
+  </div>
+  <!--/ id=footer -->
+
+
+<div class="lgtBoxOverlay" style=""><div class="lgtBoxHolder" style="top: 440px; left: 0px;" align="center"><div class="closeLgtBox"></div><div class="lgtContentHolder"></div><div class="lgtBoxCloseBtn">Close</div><div class="lgtBoxZoomIn"></div><div class="lgtBoxZoomOut"></div></div></div>
+
+
+
+
+
+
+
+
+
+<div style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon0.20852937421749929"><img style="width:0px; height:0px; display:none; visibility:hidden;" id="batBeacon0.5471160991103848" alt="" src="data:;base64," data-original-src="https://bat.bing.com/action/0?ti=5660625&amp;Ver=2&amp;mid=790a0ea7-5ad9-0c04-2930-89f9b478f700&amp;pi=1001431019&amp;lg=en-US&amp;sw=1100&amp;sh=900&amp;sc=24&amp;tl=Troll%20and%20Toad%20Checkout&amp;p=https%3A%2F%2Fwww2.trollandtoad.com%2Fsecure%2Fcheckout%2F&amp;r=https%3A%2F%2Fwww.trollandtoad.com%2Fredirect&amp;lt=1794&amp;evt=pageLoad&amp;msclkid=N&amp;rn=21257" width="0" height="0"></div><div style="visibility: hidden; position: absolute; width: 100%; top: -10000px; left: 0px; right: 0px; transition: visibility 0s linear 0.3s, opacity 0.3s linear 0s; opacity: 0;"><div style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 2000000000; background-color: rgb(255, 255, 255); opacity: 0.5;"></div><div style="margin: 0px auto; top: 0px; left: 0px; right: 0px; position: absolute; border: 1px solid rgb(204, 204, 204); z-index: 2000000000; background-color: rgb(255, 255, 255); overflow: hidden;"><iframe title="recaptcha challenge" src="resources/31/11.htm" style="width: 100%; height: 100%;" name="c-dumtcmvlwpf9" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox allow-storage-access-by-user-activation" data-original-src="https://www.google.com/recaptcha/api2/bframe?hl=en&amp;v=v1562567553145&amp;k=6LdWqp0UAAAAAICqARFsrD5qMaXuGBrYNoCDT0bu&amp;cb=vcvbdmnvwo7q" frameborder="0"></iframe></div></div><iframe id="lo-cs-frame" src="resources/31/12.htm" aria-hidden="true" title="Lucky Orange" style="display: none !important;" data-original-src="about:blank"></iframe><div id="LoAvailableBtn" style="padding: 10px; height: auto; position: fixed; bottom: 0px; right: 20px; z-index: 9999; background-color: rgba(255, 255, 255, 0.97); color: rgb(0, 0, 0); direction: ltr; font-weight: bold; font-family: Arial, Helvetica, sans-serif; font-size: 12px; line-height: 140%; box-shadow: rgb(0, 0, 0) 0px 0px 5px; border-color: rgb(255, 255, 255) rgb(255, 255, 255) currentcolor; border-style: solid solid none; border-width: 2px 2px medium; border-image: none 100% / 1 / 0 stretch; border-top-left-radius: 10px; border-top-right-radius: 10px; cursor: pointer; display: none; margin-bottom: 0px; opacity: 0;">Live Help is Online.</div><div id="LoChatMinimizedButton" style="padding:10px; height:auto; position:fixed;bottom:0px; right:20px;  z-index:9999; background-color: rgba(255,255,255,0.97); color: #000000; direction: ltr; font-weight:bold; font-family: Arial, Helvetica, sans-serif; font-size:12px; line-height:140%;;  -box-shadow: 0px 0px 5px #000; box-shadow: 0px 0px 5px #000; -webkit-box-shadow: 0px 0px 5px #000; border:2px solid #fff;  border-bottom:none; -webkit-border-top-left-radius: 10px; -webkit-border-top-right-radius: 10px; -moz-border-radius-topleft: 10px; -moz-border-radius-topright: 10px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom:none; ;cursor: pointer; ;max-width: 250; display: none;;margin-bottom:0px">Chatting<div style="display: none; background-color: red; border-radius: 50%; box-shadow: black 0px 0px 5px; color: white; height: 25px; line-height: 25px; position: absolute; text-align: center; width: 25px; right: 57px; bottom: 23px;" class="lo-badge">0</div></div><div id="lo_chat_box" style="transition: cubic-bezier(0, 1, 0.5, 1) .35s; border:2px solid white; width:350px; max-width:350px; border-bottom:none; display:none; bottom:-1000px; opacity:0;  position:fixed; bottom:-1000px; ; margin-bottom: 0px ;right:20px;  z-index:999999;   background-color: #ffffff; background-color: rgba(255,255,255,0.97); color: #000000; direction: ltr; font-family: Arial, Helvetica, sans-serif; font-size:13px; line-height:130%; color: #000000; -box-shadow: 0px 0px 5px rgba(0,0,0,0.5); box-shadow: 0px 0px 5px  rgba(0,0,0,0.5); -webkit-box-shadow: 0px 0px 5px  rgba(0,0,0,0.5);;-webkit-border-top-left-radius: 10px; -webkit-border-top-right-radius: 10px; -moz-border-radius-topleft: 10px; -moz-border-radius-topright: 10px; border-top-left-radius: 10px; border-top-right-radius: 10px; "><div tabindex="0" id="lo_chat_top" style="color:#000000; background-color: #DADADA; background-color: rgba(234,234,234,0.97); cursor:pointer; font-weight:bold; font-family: Arial, Helvetica, sans-serif; font-size:13px; line-height:13px; -webkit-border-top-left-radius: 10px; -webkit-border-top-right-radius: 10px; -moz-border-radius-topleft: 10px; -moz-border-radius-topright: 10px; border-top-left-radius: 10px; border-top-right-radius: 10px; "><div style="float:right; margin-top:10px; margin-right:10px; position:absolute; right:0;" id="lo_chat_min_box"><div style="cursor: pointer; float:right; margin-left:10px; opacity:0.6; font-size:1empx; font-weight:bold;" tabindex="0" id="lo_chat_end">×</div><div style="cursor: pointer; float:right; opacity:0.6; font-size:1empx; font-weight:bold;" id="lo_chat_min">–</div><div style="clear:both"></div></div><div id="lo_operator">undefined</div><div style="clear:both"></div><div style="height:0px; width:100%; border-top:1px solid #ffffff;border-bottom:1px solid #EAEAEA"></div></div><div id="lo_chat_log" style="height:225px; max-height: 30vh; font-size:13px; margin-top:10px; line-height: 120%; padding:10px; overflow-y:auto; margin-bottom:10px;font-family:inherit;font-size:inherit;"></div><form action=""><div id="lo_chat_input" style="position:relative; width: 100%; "><div style="height:0px; margin-bottom:0px; margin-top:0px; width:100%; border-top:1px solid #ffffff;border-bottom:1px solid #EAEAEA"></div><div style="padding:10px;"><label for="lo_chat_textarea" style="display:none">Chat Input Box</label><textarea id="lo_chat_textarea" disabled="disabled" rows="2" style="color: black; background-color: rgb(255, 255, 255); border-radius: 5px; padding: 7px; height: auto; width: 100%; font-family: sans-serif; text-transform: none; resize: none;" dir="null" data-last-scroll-height="0"></textarea></div><div id="lo_chat_sound_holder" style="position:absolute; right:0px; top:-25px; width:100%;"><div style="cursor: pointer; float:right; opacity:0.6; padding-right:10px; height:16px;" id="lo_chat_sound"><img alt="Click to mute chat sounds" src="resources/31/13.png" data-original-src="https://d10lpsik1i8c69.cloudfront.net/graphics/sound-on.png"></div><div id="lo_chat_status" style="padding-left:10px; font-size:11px; color:#DADADA"></div><div style="clear:both;"></div></div></div></form><div id="lo_chat_submit_btn" style="display:none; padding:10px; padding-top:0px;"><button type="button" style="width:100%; box-sizing: border-box; font-size: 12px;  letter-spacing:initial; text-transform:none; line-height: 1.3333333;  color: #fff;  background-color: #FFFFFF;  display: inline-block;  padding: 6px 12px;   font-weight: bold;  line-height: 1.42857143;  text-align: center;  white-space: nowrap;  vertical-align: middle;  -ms-touch-action:manipulation;  touch-action: manipulation;  cursor: pointer; outline:none; -webkit-user-select: none;  -moz-user-select: none;  -ms-user-select: none; user-select: none;  background-image: none;  background: #FFFFFF;  background-image: -webkit-linear-gradient(top, #FFFFFF, #AAAAAA);  background-image: -moz-linear-gradient(top, #FFFFFF, #AAAAAA);  background-image: -ms-linear-gradient(top, #FFFFFF, #AAAAAA);  background-image: -o-linear-gradient(top, #FFFFFF, #AAAAAA);  background-image: linear-gradient(to bottom, #FFFFFF, #AAAAAA); -webkit-border-radius: 5;  -moz-border-radius: 5;  border-color: #FFFFFF; border-radius: 5px;  font-family: Arial; text-shadow:0px 1px 1px #FFFFFF;  color: #000000; border-width:1px; font-weight:bold; ; padding: 10px 15px 10px 15px;  text-decoration: none; min-height: 40px;  text-align: center;">Chat</button></div><div id="lo_poweredBy" style="text-align:right; margin-bottom:10px;  font-size:10px; width:100%; line-height:16px; color: #CACACA;">Powered by <img src="resources/31/14.png" title="Lucky Orange Chat Logo" alt="Lucky Orange Chat Logo" style="cursor: pointer; height: 12px; width:auto; margin-right:10px; display: inline-block;" data-original-src="https://d10lpsik1i8c69.cloudfront.net/graphics/logo-dark.png" border="0" align="absmiddle"></div></div></body></html>

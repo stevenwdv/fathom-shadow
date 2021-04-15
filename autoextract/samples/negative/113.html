@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#" class="js" lang="en-US"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; media-src 'self' data:; style-src 'self' data: 'unsafe-inline'; font-src 'self' data:; frame-src 'self' data:"><meta http-equiv="Memento-Datetime" content="Tue, 27 Aug 2019 12:39:09 GMT"><link rel="original" href="https://creativecommons.org/choose/">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+
+<title>Choose a License</title>
+<link rel="alternate" type="application/rss+xml" title="Creative Commons » Feed" href="https://creativecommons.org/feed/">
+<link rel="alternate" type="application/rss+xml" title="Creative Commons » Comments Feed" href="https://creativecommons.org/comments/feed/">
+<link rel="stylesheet" id="twentysixteen-jetpack-css" href="resources/113/1.css" type="text/css" media="all" data-original-href="https://creativecommons.org/wp-content/plugins/jetpack/modules/theme-tools/compat/twentysixteen.css?ver=4.0.3">
+<link rel="stylesheet" id="cc-donate-css" href="resources/113/2.css" type="text/css" media="all" data-original-href="https://creativecommons.org/wp-content/plugins/cc-donate/css/cc-donate.css?ver=4.5.2">
+<link rel="stylesheet" id="parent-style-css" href="resources/113/3.css" type="text/css" media="all" data-original-href="https://creativecommons.org/wp-content/themes/twentysixteen/style.css?ver=4.5.2">
+<link rel="stylesheet" id="cc-fontello-css" href="resources/113/4.css" type="text/css" media="all" data-original-href="https://ccstatic.org/ccwww2016/fonts/fontello/css/cc-fontello.css">
+<link rel="stylesheet" id="cc-style-css" href="resources/113/5.css" type="text/css" media="all" data-original-href="https://creativecommons.org/wp-content/themes/cc/css/app.css?ver=20160608">
+<link rel="stylesheet" id="cc-style-css" href="data:text/css;base64," type="text/css" media="all" data-original-href="https://ccstatic.org/ccwww2016/css/static.css">
+<link rel="stylesheet" id="twentysixteen-style-css" href="data:text/css;base64," type="text/css" media="all" data-original-href="https://creativecommons.org/wp-content/themes/cc/style.css?ver=4.5.2">
+<!--[if lt IE 10]>
+    <link rel='stylesheet' id='twentysixteen-ie-css'  href='https://creativecommons.org/wp-content/themes/twentysixteen/css/ie.css?ver=20160412' type='text/css' media='all' />
+    <![endif]-->
+<!--[if lt IE 9]>
+    <link rel='stylesheet' id='twentysixteen-ie8-css'  href='https://creativecommons.org/wp-content/themes/twentysixteen/css/ie8.css?ver=20160412' type='text/css' media='all' />
+    <![endif]-->
+<!--[if lt IE 8]>
+    <link rel='stylesheet' id='twentysixteen-ie7-css'  href='https://creativecommons.org/wp-content/themes/twentysixteen/css/ie7.css?ver=20160412' type='text/css' media='all' />
+    <![endif]-->
+
+
+<!--[if lt IE 9]>
+    <script type='text/javascript' src='https://creativecommons.org/wp-content/themes/twentysixteen/js/html5.js?ver=3.7.3'></script>
+    <![endif]-->
+<link rel="icon" href="resources/113/6.png" sizes="192x192" data-original-href="https://creativecommons.org/wp-content/uploads/2016/05/cc-site-icon-300x300.png">
+<link rel="apple-touch-icon-precomposed" href="https://creativecommons.org/wp-content/uploads/2016/05/cc-site-icon-300x300.png">
+<meta name="msapplication-TileImage" content="https://creativecommons.org/wp-content/uploads/2016/05/cc-site-icon-300x300.png">
+<link rel="stylesheet" href="resources/113/7.css" data-original-href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+<link rel="stylesheet" type="text/css" href="resources/113/8.css" data-original-href="https://creativecommons.org/includes/zero.css">
+<link rel="stylesheet" type="text/css" href="resources/113/9.css" data-original-href="https://creativecommons.org/wp-content/themes/creativecommons.org/engine.css">
+
+
+<style type="text/css">
+
+/* z-order stuff for IE8... */
+#freedoms {
+    z-index: 4;
+}
+#license {
+    z-index: 3;
+}
+#metadata {
+    z-index: 2;
+}
+#internets {
+    z-index: 1;
+}
+
+
+/* everything else: */
+
+
+
+select, input, textarea {
+    background-color: white;
+    color: #222;
+    padding: 1px;
+}
+
+input[type=radio] {
+    /* fix for webkit browsers on osx */
+    width: 20px;
+    height: 15px;
+
+    /* because ie8 defaults to white for some reason */
+    background-color: transparent;
+}
+
+<!-- #metadata .help_button { -->
+<!--     margin-top: 5px!important; -->
+<!-- } -->
+
+.help_button {
+    //position: absolute; /* prevents help button from influence box packing */
+    //display: none;
+    //margin-top: 5px;
+background-image: url("/wp-content/themes/creativecommons.org/images/hint_button.png");
+width: 25px;
+height: 25px;
+display: block;
+margin: 0 auto;
+}
+
+.help_button_inline {
+margin-left: 25px;
+}
+
+.help_button:ho2ver {
+    background-image: url("/wp-content/themes/creativecommons.org/images/hint_button_ho2ver.png");
+    cursor: pointer;
+}
+
+.require_js #content[dir="ltr"] .ui_box>.help_button, .require_js #content[dir="ltr"]  #internets .help_button {
+    display: inline-block;
+    left: 20px;
+}
+
+.require_js #content[dir="rtl"] .ui_box>.help_button, .require_js #content[dir="rtl"]  #internets .help_button {
+    display: inline-block;
+    right: 20px;
+}
+
+.require_js #content[dir="ltr"] .help_highlight:ho2ver>.help_button {
+    display: inline-block;
+    margin-top: 10px;
+    left: 20px;
+}
+
+.require_js #content[dir="rtl"] .help_highlight:ho2ver>.help_button {
+    display: inline-block;
+    margin-top: 10px;
+    right: 20px;
+}
+
+<!-- #metadata .help_highlight { -->
+<!--     position: relative; -->
+
+<!--     margin-left: -25px; -->
+<!--     margin-right: -25px; -->
+<!--     margin-top: -4px; -->
+<!--     margin-bottom: 8px; -->
+
+<!--     padding-left: 3px; -->
+<!--     padding-right: 3px; -->
+<!--     padding-top: 4px; -->
+<!--     padding-bottom: 4px; -->
+
+<!--     border-radius: 8px; -->
+<!-- } -->
+
+.require_js #metadata .help_highlight_remove:ho2ver {
+    margin-left: -26px;
+    margin-right: -26px;
+    margin-top: -5px;
+    margin-bottom: 7px;
+
+}
+
+.require_js #metadata .help_highlight:ho2ver .help_button {
+    position: relative;
+    display: inline-block;
+    top: 0px;
+    left: 13px;
+}
+
+#metadata .metatable {
+    display: table;
+    border-collapse: collapse;
+// width: 383px;
+margin-bottom: 1em;
+}
+#metadata .metatable input {
+    display: inline-block;
+    width: 270px;
+    // height: 17px;
+    //margin-top: 3px;
+    //margin-bottom: 3px;
+    //margin-right: 16px;
+    //margin-left: 0px;
+}
+#metadata .metatable select {
+    display: inline-block;
+    width: 100%;
+    //height: 21px;
+    //margin-top: 3px;
+    //margin-bottom: 3px;
+    //margin-right: 16px;
+    //margin-left: 0px;
+}
+#metadata .metatable>span:first-of-type {
+    display: table-cell !important;
+    text-align: right;
+    width: 280px;
+    padding: 0px;
+    padding-left: 37px;
+    vertical-align: middle;
+    min-height: 27px;
+}
+#metadata .metatable>span:last-of-type {
+    display: table-cell !important;
+    text-align: left;
+    width: 203px;
+    padding: 0px;
+    vertical-align: middle;
+}
+#metadata .metatable>span>label {
+    width: 143px;
+    padding: 0px;
+    color: black;
+}
+
+<!-- .help_highlight { -->
+<!--     border-radius: 8px; -->
+<!--     margin-left: -24px; -->
+<!--     padding-left: 24px; -->
+<!--     margin-right: -24px; -->
+<!--     padding-right: 24px; -->
+<!-- } -->
+
+.require_js .help_highlight:ho2ver {
+    border: 1px solid #aaa;
+    margin-left: -25px;
+    margin-right: -25px;
+    margin-top: -1px;
+    margin-bottom: -1px;
+}
+
+#popup_screen {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    z-index: 10000;
+    background-color: #4c6404;
+    background-color: rgba(22, 34, 15, .9);
+
+    display: none; /* set to 'table' instead of block to show */
+    margin: auto;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    width: 100%;
+    height: 100%;
+
+    cursor: pointer;
+}
+
+#popup_alignment {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#popup_body {
+    background-color: rgba(255, 255, 255, .8);
+    border: 1px solid black;
+    border-radius: 8px;
+    max-width: 500px;
+    padding: 2em;
+    margin: auto;
+    text-align: center;
+    max-height: 90vh;
+    overflow: auto;
+    cursor: default;
+}
+
+#popup_title {
+    margin-bottom: 1em;
+}
+
+#popup_message {
+    text-align: justify;
+}
+
+#popup_close {
+    position: screen;
+    bottom: 0px;
+    font-size: 20px;
+    display: block;
+    margin-top: 2em;
+    text-align: center;
+}
+#popup_close a {
+    background-color: rgba(255, 255, 255, .8);
+    border-radius: 8px;
+    margin-right: 1em;
+    padding: .5em;
+}
+
+#instructional_fluff, #copyright_fluff, #publishing_fluff,
+#show_jurisdictions_section, #hide_jurisdictions_section {
+    text-align: center;
+    font-size: 16px;
+    max-width: 800px;
+    margin: auto;
+    word-spacing: 1px;
+}
+
+#instructional_fluff,
+#copyright_fluff {
+    margin-bottom: .2em;
+}
+
+#copyright_fluff span:first-of-type {
+    padding-right: 1.6em;
+}
+
+#show_jurisdictions_section,
+#hide_jurisdictions_section {
+    margin-bottom: .5em;
+}
+#hide_jurisdictions_section {
+    display: none;
+}
+
+#other_stuff {
+    width: 800px;
+    margin: auto;
+    margin-top: 2em;
+}
+
+.ui_row {
+    display: block;
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    min-width: 840px;
+}
+
+h4 {
+    line-height: 1.6em;
+}
+
+.subtitle {
+      margin-bottom: 1em;
+      text-align: center;
+}
+
+      
+#freedoms h4 {
+      margin-left: 2em;
+      text-align: center;
+}
+#freedoms select {
+    margin-top: 6px;
+    margin-left: 5em;
+    margin-bottom: 20px;
+}
+
+#freedoms ul, #internets ul {
+    margin-left: 5em;
+    list-style: none;
+      display: table;
+      margin: 0em auto;
+      
+}
+#freedoms li, #internets li {
+    display: table-cell;
+      // width: 128px;
+     padding: 1em;
+}
+#freedoms li:only-of-type {
+    width: 256px!important;
+}
+
+#freedoms label {
+    float: none;
+}
+
+#jurisdiction_section {
+    display: none;
+}
+
+#field_jurisdiction {
+    margin-left: 2em;
+    margin-bottom: 2em;
+}
+
+#license {
+    position: relative;
+    text-align: center;
+}
+
+#license #badge {
+    display: block;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.fc_info_box {
+    //position: absolute;
+    display: table;
+    //width: 345px;
+//bottom: 30px;
+margin-bottom: 1em;
+}
+
+#content[dir="ltr"] .fc_info_box {
+    //right: 30px;
+}
+#content[dir="rtl"] .fc_info_box {
+    //left: 30px;
+}
+
+.fc_info_box>div {
+    display: table-cell;
+    text-align: center;
+}
+
+.fc_logo_link {
+    display: inline-block;
+    margin-top: -15px;
+    margin-bottom: -15px;
+    outline: none!important;
+}
+
+#content[dir="ltr"] .fc_logo_link {
+    margin-left: 10px;
+    margin-right: -18px;
+}
+
+#content[dir="rtl"] .fc_logo_link {
+    margin-right: 10px;
+    margin-left: -18px;
+}
+
+#fc_dubious_box .fc_logo_link {
+    display: block;
+    width: 76px;
+    height: 76px;
+    cursor: pointer;
+    background-image: url('/wp-content/themes/creativecommons.org/images/fc_dubious.png');
+}
+
+.require_js #fc_dubious_box .fc_logo_link:ho2ver {
+    background-image: url('/wp-content/themes/creativecommons.org/images/fc_dubious_ho2ver.png');
+}
+
+#fc_approved_box .fc_logo_link {
+    display: block;
+    width: 76px;
+    height: 76px;
+    cursor: pointer;
+    background-image: url('/wp-content/themes/creativecommons.org/images/fc_approved_tiny.png');
+}
+
+.whatis {
+    font-size: 16px;
+    font-weight: bold;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+    vertical-align: middle;
+    width: 100%;
+}
+
+#license_title {
+    //position: absolute;
+    display: block;
+    top: 68px;
+    left: 30px;
+    right: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    word-spacing: 2px;
+    z-index: 50;
+}
+
+.license_icons {
+    display: table;
+    width: 100%;
+    max-width: 334px;
+    margin: auto;
+    margin-top: 38px;
+    margin-bottom: 43px;
+}
+
+.license_icons>div {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+.license_icons>div>a {
+    display: inline-block;
+    width: 70px;
+    height: 70px;
+    outline: none;
+}
+
+#cc_icon {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_cc.png');
+}
+#by_icon {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_by.png');
+}
+#sa_icon {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_sa.png');
+}
+#nd_icon {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_nd.png');
+}
+#nc_icon {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_nc.png');
+}
+.euro #nc_icon {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_nc_eu.png')!important;
+}
+.yen #nc_icon {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_nc_jp.png')!important;
+}
+
+#cc_icon:ho2ver {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_cc_ho2ver.png');
+}
+#by_icon:ho2ver {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_by_ho2ver.png');
+}
+#sa_icon:ho2ver {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_sa_ho2ver.png');
+}
+#nd_icon:ho2ver {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_nd_ho2ver.png');
+}
+#nc_icon:ho2ver {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_nc_ho2ver.png');
+}
+.euro #nc_icon:ho2ver {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_nc_eu_ho2ver.png')!important;
+}
+.yen #nc_icon:ho2ver {
+    background-image: url('/wp-content/themes/creativecommons.org/images/chooser_nc_jp_ho2ver.png')!important;
+}
+
+
+.license_icons>img {
+    display: inline-block;
+}
+
+.ui_box {
+    //display: inline-block;
+    //background-color: #f5f5f5;
+    //width: 334px;
+    //min-height: 348px;
+    padding: 32px;
+    padding-bottom: 1px;
+    margin: 10px 7px;
+    border: 1px solid #393839;
+    border-radius: 4px;
+    vertical-align: text-top;
+    text-align: left;
+    position: relative; /* required for the arrows to work right */
+}
+
+.ui_box h2 {
+    text-align: center;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+#metadataentry {
+margin-top: 1em;
+width: 600px;
+margin: 0 auto;
+}
+
+#metadata input,
+#format_selection,
+#metadata_format {
+    display: block;
+    width: 170px;
+    //float: right;
+    margin-left: 1em;
+}
+
+#internets {
+    text-align: center;
+    position: relative;
+}
+.results-preview {
+    display: table;
+    width: 334px;
+    height: 150px;
+vertical-align: middle;
+margin: 0 auto;
+}
+.results-preview div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#copy_caption {
+    //position: absolute;
+    bottom: 13em;
+    left: 0px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+}
+#xmp_download_box,
+#infotocopy,
+#codetocopy {
+    display: block;
+    //position: absolute;
+    bottom: 2em;
+    left: 20px;
+    width: 350px;
+    height: 9em;
+resize: none;
+margin: 1em auto;
+
+}
+
+#codetocopy {
+bottom: 3em!important;
+}
+
+#iconsize_box {
+    display: block;
+    //position: absolute;
+    bottom: -.75em;
+    left: 16px;
+    width: 350px;
+text-align: center;
+margin: 0 auto;
+}
+#iconsize_box label {
+    float: none;
+}
+
+#xmp_download_box {
+    display: table!important;
+    vertical-align: middle;
+    border : 1px solid #444;
+    border-radius: 8px;
+}
+#xmp_download_box div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+
+/* all arrows */
+<!-- #freedoms:before, -->
+<!-- #license:before, -->
+<!-- #metadata:before { -->
+<!--     display: block; -->
+<!--     content: ""; -->
+<!--     border: 0px; -->
+<!--     position: absolute; -->
+<!--     z-index: 10; -->
+<!-- } -->
+
+<!-- /* left arrows */ -->
+<!-- #content[dir="ltr"] #freedoms:before, -->
+<!-- #content[dir="ltr"] #metadata:before { -->
+<!--     background-image: url("/wp-content/themes/creativecommons.org/images/left_arrow.png"); -->
+<!--     width: 53px; -->
+<!--     height: 98px; -->
+<!--     top: 50%; -->
+<!--     right: 0px; -->
+<!--     margin-right: -53px; -->
+<!--     margin-top: -49px; -->
+<!-- } -->
+
+<!-- /* right arrows */ -->
+<!-- #content[dir="rtl"] #freedoms:before, -->
+<!-- #content[dir="rtl"] #metadata:before { -->
+<!--     background-image: url("/wp-content/themes/creativecommons.org/images/right_arrow.png"); -->
+<!--     width: 53px; -->
+<!--     height: 98px; -->
+<!--     top: 50%; -->
+<!--     left: 0px; -->
+<!--     margin-left: -53px; -->
+<!--     margin-top: -49px; -->
+<!-- } -->
+
+<!-- /* down arrow */ -->
+<!-- #license:before { -->
+<!--     background-image: url("/wp-content/themes/creativecommons.org/images/down_arrow.png"); -->
+<!--     width: 98px; -->
+<!--     height: 53px; -->
+<!--     bottom: 0px; -->
+<!--     left: 50%; -->
+<!--     margin-bottom: -53px; -->
+<!--     margin-left: -49px; -->
+<!-- } -->
+
+@media only screen and (max-width: 399px) {
+    /* Draw .ui_boxes in single column mode, remove margins and box sides */
+
+    <!-- /* down arrow */ -->
+    <!-- #freedoms:before,  -->
+    <!-- #license:before, -->
+    <!-- #metadata:before { -->
+    <!--     background-image: url("/wp-content/themes/creativecommons.org/images/down_arrow.png")!important; -->
+    <!--     width: 98px!important; -->
+    <!--     height: 53px!important; -->
+    <!--     top: inherit!important; -->
+    <!--     bottom: 0px!important; -->
+    <!--     left: 50%!important; -->
+    <!--     margin-bottom: -53px!important; -->
+    <!--     margin-left: -49px!important; -->
+    <!-- } -->
+
+    .container,
+    .sixteen.columns,
+    .ui_row,
+    #other_stuff,
+    #chooser_form {
+        min-width: 100%!important;
+        width: 100%!important;
+        margin: 0px!important;
+    }
+    .ui_row {;
+        text-align: center;
+    }
+    .ui_box {
+        width: 100%!important;
+        height: inherit!important;
+        border-radius: 0px;
+        border-left: 0px;
+        border-right: 0px;
+        display: block;
+        margin: 0px;;
+        margin-bottom: 2em;
+    }
+    #license {
+        padding-bottom: 3em;
+    }
+    #metadata {
+        padding-bottom: 1em;
+    }
+    #metadata input,
+    #format_selection,
+    #metadata_format {
+        width: 100%;
+        margin: auto;
+        float: none!important;
+    }
+    #field_jurisdiction {
+        margin: auto!important;
+        width: 100%!important;
+    }
+    .results-preview {
+        width: 100%;
+    }
+    #xmp_download_box,
+    #infotocopy,
+    #codetocopy {
+        left: 0px;
+        margin: auto;
+        width: 95%;
+    }
+    #copyright_fluff,
+    #instructional_fluff {
+        width: inherit!important;
+    }
+    #copyright_fluff span,
+    #instructional_fluff span {
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 817px) and (min-width: 400px) {
+    /* Draw .ui_boxes in single column mode, and adjust margins */
+
+    /* down arrow */
+    #freedoms:before, 
+    #license:before,
+    #metadata:before {
+        background-image: url("/wp-content/themes/creativecommons.org/images/down_arrow.png")!important;
+        width: 98px!important;
+        height: 53px!important;
+        top: inherit!important;
+        bottom: 0px!important;
+        left: 50%!important;
+        margin-bottom: -53px!important;
+        margin-left: -49px!important;
+    }
+    .container,
+    .sixteen.columns,
+    .ui_row,
+    #other_stuff,
+    #chooser_form {
+        min-width: 400px!important;
+        width: inherit!important;
+        margin: auto;
+    }
+    .ui_row {;
+        text-align: center;
+    }
+    .ui_box {
+        display: block;
+        margin: auto;
+        margin-bottom: 2em;
+    }
+    #copyright_fluff,
+    #instructional_fluff {
+        width: inherit!important;
+    }
+    #copyright_fluff span,
+    #instructional_fluff span {
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 839px) and (min-width: 818px) {
+    /* Ensure entire quad is visible, minus outter margins. */
+    .container,
+    .sixteen.columns,
+    #chooser_form {
+        width: 818px!important;
+        margin: auto!important;
+    }
+    .ui_row {
+        min-width: 818px!important;
+    }
+    #freedoms, #metadata {
+        margin-left: 0px;
+    }
+    #license, #internets {
+        margin-right: 0px;
+    }
+}
+
+@media only screen and (max-width: 960px) and (min-width: 840px) {
+    /* Override page margins, so that the entire quad is visible correctly.*/
+    .container,
+    .sixteen.columns,
+    #chooser_form {
+        width: 840px!important;
+        margin: auto!important;
+    }
+}
+
+
+
+
+
+</style>
+
+
+</head>
+<body class="page page-static page-parent page-template-default wp-custom-logo group-blog require_js layout-desktop-md">
+<div id="page" class="site">
+<div class="site-inner">
+<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+<div class="site-header-wrapper">
+<header id="masthead" class="site-header sticky-nav-main sticky attached" role="banner">
+ <div class="site-header-main">
+<div class="site-branding">
+<a class="cc-site-logo-link" href="https://creativecommons.org/" rel="home">
+<img class="cc-site-logo" src="resources/113/10.svg" data-original-src="https://creativecommons.org/wp-content/themes/cc/images/cc.logo.white.svg" width="303" height="72">
+</a>
+</div>
+<button id="menu-toggle" class="menu-toggle"><i class="cc-icon-menu"></i> <span>Menu</span></button>
+<div id="site-header-menu" class="site-header-menu">
+<nav id="mobile-navigation" class="mobile-navigation" role="navigation" aria-label="Mobile Menu">
+<div class="menu-mobile-menu-container"><ul id="menu-mobile-menu" class="mobile-menu">
+<li id="menu-item-48798" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48798"><a href="https://creativecommons.org/share-your-work/">Share your work</a></li>
+<li id="menu-item-48799" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48799"><a href="https://creativecommons.org/use-remix/">Use &amp; remix</a></li>
+<li id="menu-item-48800" class="menu-item menu-item-type-post_type menu-item-object-page page_item page-item-7466 menu-item-48800"><a href="https://creativecommons.org/about/">What we do</a></li>
+<li id="menu-item-48801" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48801"><a href="https://creativecommons.org/blog/">Blog</a></li>
+<li id="menu-item-48802" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48802"><a href="https://creativecommons.org/about/global-affiliate-network/">Global Affiliate Network</a></li>
+<li id="menu-item-48803" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48803"><a href="https://creativecommons.org/use-remix/search-the-commons/">Search the Commons</a></li>
+</ul></div>
+</nav>
+<nav id="site-navigation" class="main-navigation" role="navigation" aria-label="Primary Menu">
+<div class="menu-primary-menu-container"><ul id="menu-primary-menu" class="primary-menu">
+<li id="menu-item-48791" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48791"><a href="https://creativecommons.org/share-your-work/">Share your work</a></li>
+<li id="menu-item-48792" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48792"><a href="https://creativecommons.org/use-remix/">Use &amp; remix</a></li>
+<li id="menu-item-48570" class="menu-item menu-item-type-post_type menu-item-object-page page_item page-item-7466 menu-item-48570"><a href="https://creativecommons.org/about/">What we do</a></li>
+<li id="menu-item-48793" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48793"><a href="https://creativecommons.org/blog/">Blog</a></li>
+</ul></div>
+</nav>
+<nav id="secondary-navigation" class="secondary-navigation" role="navigation" aria-label="Secondary Menu">
+<div class="menu-secondary-menu-container"><ul id="menu-secondary-menu" class="secondary-menu"><li id="menu-item-48804" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48804"><a href="https://creativecommons.org/about/global-affiliate-network/">Global Affiliate Network</a></li>
+<li id="menu-item-48805" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48805"><a href="https://creativecommons.org/use-remix/search-the-commons/">Search the Commons</a></li>
+<li id="menu-item-48806" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48806"><a href="https://creativecommons.org/about/contact/">Contact</a></li>
+</ul></div>
+</nav>
+<nav id="social-navigation" class="social-navigation" role="navigation" aria-label="Social Links Menu">
+<div class="menu-social-links-container"><ul id="menu-social-links" class="social-links-menu">
+<li id="menu-item-48807" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-48807"><a href="https://www.facebook.com/creativecommons"><span class="screen-reader-text">Facebook</span></a></li>
+<li id="menu-item-48808" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-48808"><a href="https://twitter.com/creativecommons"><span class="screen-reader-text">Twitter</span></a></li>
+<li id="menu-item-48809" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-48809"><a href="mailto:info@creativecommons.org"><span class="screen-reader-text">Mail</span></a></li>
+</ul></div>
+</nav>
+</div>
+</div>
+</header><header class="site-header spacer" role="banner">
+ <div class="site-header-main">
+<div class="site-branding">
+<a class="cc-site-logo-link" href="https://creativecommons.org/" rel="home">
+<img class="cc-site-logo" src="resources/113/10.svg" data-original-src="https://creativecommons.org/wp-content/themes/cc/images/cc.logo.white.svg" width="303" height="72">
+</a>
+</div>
+<button id="menu-toggle" class="menu-toggle"><i class="cc-icon-menu"></i> <span>Menu</span></button>
+<div id="site-header-menu" class="site-header-menu">
+<nav id="mobile-navigation" class="mobile-navigation" role="navigation" aria-label="Mobile Menu">
+<div class="menu-mobile-menu-container"><ul id="menu-mobile-menu" class="mobile-menu">
+<li id="menu-item-48798" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48798"><a href="https://creativecommons.org/share-your-work/">Share your work</a></li>
+<li id="menu-item-48799" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48799"><a href="https://creativecommons.org/use-remix/">Use &amp; remix</a></li>
+<li id="menu-item-48800" class="menu-item menu-item-type-post_type menu-item-object-page page_item page-item-7466 menu-item-48800"><a href="https://creativecommons.org/about/">What we do</a></li>
+<li id="menu-item-48801" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48801"><a href="https://creativecommons.org/blog/">Blog</a></li>
+<li id="menu-item-48802" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48802"><a href="https://creativecommons.org/about/global-affiliate-network/">Global Affiliate Network</a></li>
+<li id="menu-item-48803" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48803"><a href="https://creativecommons.org/use-remix/search-the-commons/">Search the Commons</a></li>
+</ul></div>
+</nav>
+<nav id="site-navigation" class="main-navigation" role="navigation" aria-label="Primary Menu">
+<div class="menu-primary-menu-container"><ul id="menu-primary-menu" class="primary-menu">
+<li id="menu-item-48791" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48791"><a href="https://creativecommons.org/share-your-work/">Share your work</a></li>
+<li id="menu-item-48792" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48792"><a href="https://creativecommons.org/use-remix/">Use &amp; remix</a></li>
+<li id="menu-item-48570" class="menu-item menu-item-type-post_type menu-item-object-page page_item page-item-7466 menu-item-48570"><a href="https://creativecommons.org/about/">What we do</a></li>
+<li id="menu-item-48793" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48793"><a href="https://creativecommons.org/blog/">Blog</a></li>
+</ul></div>
+</nav>
+<nav id="secondary-navigation" class="secondary-navigation" role="navigation" aria-label="Secondary Menu">
+<div class="menu-secondary-menu-container"><ul id="menu-secondary-menu" class="secondary-menu"><li id="menu-item-48804" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48804"><a href="https://creativecommons.org/about/global-affiliate-network/">Global Affiliate Network</a></li>
+<li id="menu-item-48805" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48805"><a href="https://creativecommons.org/use-remix/search-the-commons/">Search the Commons</a></li>
+<li id="menu-item-48806" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48806"><a href="https://creativecommons.org/about/contact/">Contact</a></li>
+</ul></div>
+</nav>
+<nav id="social-navigation" class="social-navigation" role="navigation" aria-label="Social Links Menu">
+<div class="menu-social-links-container"><ul id="menu-social-links" class="social-links-menu">
+<li id="menu-item-48807" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-48807"><a href="https://www.facebook.com/creativecommons"><span class="screen-reader-text">Facebook</span></a></li>
+<li id="menu-item-48808" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-48808"><a href="https://twitter.com/creativecommons"><span class="screen-reader-text">Twitter</span></a></li>
+<li id="menu-item-48809" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-48809"><a href="mailto:info@creativecommons.org"><span class="screen-reader-text">Mail</span></a></li>
+</ul></div>
+</nav>
+</div>
+</div>
+</header>
+</div>
+<div id="content" class="site-content">
+
+<aside id="header-below" class="widget-area">
+<section id="text-3" class="widget-1 widget-first widget-last widget-odd widget widget_text">
+<div class="textwidget">
+<div id="donation-bar-wrapper" class="donation-bar-wrapper">
+<div id="donation-bar-inner" class="donation-bar-inner">
+<p class="donate-text">Help us build a vibrant, collaborative global commons</p>
+<div class="donate-action">
+<a href="https://us.netdonor.net/page/6650/donate/1?ea.tracking.id=chooser" class="button donate arrow">Donate<span class="hide-on-mobile"> Now</span></a>
+</div>
+</div>
+</div></div>
+</section>
+</aside>
+
+<div id="primary" class="content-area">
+<div id="wrapper-main" class="wrapper-main">
+<main id="main" class="site-main" role="main">
+<article class="static-page page type-page status-publish hentry">
+<div dir="ltr" style="text-align: left" id="main" role="main">
+<h1 dir="ltr" style="text-align: left"></h1>
+<div class="sixteen columns">
+<div dir="ltr" style="text-align: left" id="content">
+<div style="border: 1px solid darkred; border-radius: 5px; padding: 12px; margin: 12px auto;">
+Creative Commons has updated its
+<a href="https://creativecommons.org/terms/">Master&nbsp;Terms&nbsp;of&nbsp;Service</a> and
+<a href="https://creativecommons.org/privacy/">Master&nbsp;Privacy&nbsp;Policy</a>,
+effective November 7, 2017.
+<em><strong>Before continuing on our websites or using our services, please review.</strong></em>
+</div>
+<span id="template_htmlrdfa" style="display:none;"></span>
+<span id="template_nondigital" style="display:none;">This work is licensed under the Creative Commons LICENSE_NAME License. To view a copy of this license, visit LICENSE_URL.</span>
+<div id="instructional_fluff">
+<span>New to Creative Commons?</span>
+<span>[ <a target="_blank" href="https://wiki.creativecommons.org/Before_Licensing">Considerations before licensing</a> ]</span>
+<span>[ <a target="_blank" href="https://creativecommons.org/licenses"> How the licenses work </a> ]</span>
+</div>
+<div id="copyright_fluff">
+<span><strong>Explore the Creative Commons licenses.</strong></span>
+<span>[ <a href="https://creativecommons.org/publicdomain/">Want public domain instead?</a> ]</span>
+</div>
+<div id="show_jurisdictions_section">
+[ <a href="https://creativecommons.org/choose/#">Looking for earlier license versions, including ports?</a> ]
+</div>
+<div id="hide_jurisdictions_section">
+[ <a href="https://creativecommons.org/choose/#">Use latest license version</a> ]
+</div>
+<form action="https://creativecommons.org/choose/" method="get" id="chooser_form">
+<input type="text" id="version" name="version" style="display:none">
+
+<div class="row" oluirow="">
+<div id="freedoms" class="col-md-5 ui_box">
+<h2>License Features</h2>
+<div class="subtitle">Your choices on this panel will update the other panels on this page.</div>
+<div class="help_highlight">
+<h4>Allow adaptations of your work to be shared?</h4>
+<div class="help_button"></div>
+<ul>
+<li>
+<input type="radio" checked="checked" name="field_derivatives" value="y" id="question_3-5">
+<label for="question_3-5">Yes</label>
+</li>
+<li>
+<input type="radio" name="field_derivatives" value="n" id="question_3-7">
+<label for="question_3-7">No</label>
+</li>
+<li>
+<input type="radio" name="field_derivatives" value="sa" id="question_3-6">
+<label for="question_3-6">
+Yes, as long as others share alike
+</label>
+</li>
+</ul>
+</div>
+<div class="help_highlight">
+<h4>Allow commercial uses of your work?</h4>
+<div class="help_button"></div>
+<ul>
+<li>
+<input type="radio" checked="checked" name="field_commercial" value="y" id="question_2-3">
+<label for="question_2-3">Yes</label>
+</li>
+<li>
+<input type="radio" name="field_commercial" value="n" id="question_2-4">
+<label for="question_2-4">No</label>
+</li>
+</ul>
+</div>
+<div id="jurisdiction_section" class="help_highlight">
+<div class="help_button"></div>
+<h4>License Jurisdiction:</h4>
+<select id="field_jurisdiction" name="field_jurisdiction">
+<option value="" selected="selected">
+International
+</option>
+<option value="ar">Argentina</option>
+<option value="au">Australia</option>
+<option value="at">Austria</option>
+<option value="be">Belgium</option>
+<option value="br">Brazil</option>
+<option value="bg">Bulgaria</option>
+<option value="ca">Canada</option>
+<option value="cl">Chile</option>
+<option value="cn">China Mainland</option>
+<option value="co">Colombia</option>
+<option value="cr">Costa Rica</option>
+<option value="hr">Croatia</option>
+<option value="cz">Czech Republic</option>
+<option value="dk">Denmark</option>
+<option value="ec">Ecuador</option>
+<option value="eg">Egypt</option>
+<option value="ee">Estonia</option>
+<option value="fi">Finland</option>
+<option value="fr">France</option>
+<option value="de">Germany</option>
+<option value="gr">Greece</option>
+<option value="gt">Guatemala</option>
+<option value="hk">Hong Kong</option>
+<option value="hu">Hungary</option>
+<option value="igo">IGO</option>
+<option value="in">India</option>
+<option value="ie">Ireland</option>
+<option value="il">Israel</option>
+<option value="it">Italy</option>
+<option value="jp">Japan</option>
+<option value="lu">Luxembourg</option>
+<option value="mk">Macedonia</option>
+<option value="my">Malaysia</option>
+<option value="mt">Malta</option>
+<option value="mx">Mexico</option>
+<option value="nl">Netherlands</option>
+<option value="nz">New Zealand</option>
+<option value="no">Norway</option>
+<option value="pe">Peru</option>
+<option value="ph">Philippines</option>
+<option value="pl">Poland</option>
+<option value="pt">Portugal</option>
+<option value="pr">Puerto Rico</option>
+<option value="ro">Romania</option>
+<option value="rs">Serbia</option>
+<option value="sg">Singapore</option>
+<option value="si">Slovenia</option>
+<option value="za">South Africa</option>
+<option value="kr">South Korea</option>
+<option value="es">Spain</option>
+<option value="se">Sweden</option>
+<option value="ch">Switzerland</option>
+<option value="tw">Taiwan</option>
+<option value="th">Thailand</option>
+<option value="uk">UK: England &amp; Wales</option>
+<option value="scotland">UK: Scotland</option>
+<option value="ug">Uganda</option>
+<option value="us">United States</option>
+<option value="ve">Venezuela</option>
+<option value="vn">Vietnam</option>
+</select>
+</div>
+</div>
+
+<div id="license" class="col-md-5 ui_box">
+<div class="help_button mirror"></div>
+<h2>Selected License</h2>
+<div id="license_title">
+<a target="_blank" id="license_title_link" href="http://creativecommons.org/licenses/by/4.0/">Attribution 4.0 International</a>
+</div>
+<div class="license_icons">
+<div id="cc_slot"><a target="_blank" id="cc_icon" href="https://creativecommons.org/licenses/"></a></div>
+<div id="by_slot"><a target="_self" id="by_icon" href="javascript:"></a></div>
+<div id="nc_slot" style="display:none"><a target="_self" id="nc_icon" href="javascript:"></a></div>
+<div id="sa_slot" style="display:none"><a target="_self" id="sa_icon" href="javascript:"></a></div>
+<div id="nd_slot" style="display:none"><a target="_self" id="nd_icon" href="javascript:"></a></div>
+</div>
+<div id="fc_approved_box" class="fc_info_box" style="display: table;">
+<div class="whatis">
+<a target="_blank" href="https://creativecommons.org/freeworks">This is a Free Culture License!</a>
+</div>
+<div>
+<a target="_blank" class="fc_logo_link" href="https://creativecommons.org/freeworks"></a>
+</div>
+</div>
+<div id="fc_dubious_box" class="fc_info_box" style="display: none;">
+<div class="whatis">
+<a target="_blank" href="https://creativecommons.org/freeworks">This is not a Free Culture License.
+</a>
+</div>
+<div>
+<a target="_blank" class="fc_logo_link" href="https://creativecommons.org/freeworks"></a>
+</div>
+</div>
+</div>
+</div>
+<div class="row" oluirow="">
+<div id="metadata" class="col-md-5 ui_box">
+
+<h2>Help others attribute you!</h2>
+<div class="subtitle">
+<a id="show-metadata" href="#metadata">This part is optional, but filling it out will add machine-readable metadata to the suggested HTML!</a>
+</div>
+<div id="collapse-metadata" style="display: none;">
+<div id="metadataentry">
+<div class="help_highlight">
+<div class="metatable">
+<span><label for="field_worktitle">Title of work</label></span>
+<span><input type="text" name="field_worktitle" id="field_worktitle" value=""></span>
+<div class="help_button help_button_inline"></div>
+</div>
+</div>
+<div class="help_highlight">
+<div class="metatable">
+<span><label for="field_attribute_to_name">Attribute work to name</label></span>
+<span><input type="text" name="field_attribute_to_name" id="field_attribute_to_name" value=""></span>
+<div class="help_button help_button_inline"></div>
+</div>
+</div>
+<div class="help_highlight">
+<div class="metatable">
+<span><label for="field_attribute_to_url">Attribute work to URL</label></span>
+<span><input type="url" name="field_attribute_to_url" id="field_attribute_to_url" value=""></span>
+<div class="help_button help_button_inline"></div>
+</div>
+</div>
+<div class="help_highlight">
+<div class="metatable">
+<span><label for="field_sourceurl">Source work URL</label></span>
+<span><input type="url" name="field_sourceurl" id="field_sourceurl" value=""></span>
+<div class="help_button help_button_inline"></div>
+</div>
+</div>
+<div class="help_highlight">
+<div class="metatable">
+<span><label for="field_morepermissionsurl">More permissions URL</label></span>
+<span><input type="url" name="field_morepermissionsurl" id="field_morepermissionsurl" value=""></span>
+<div class="help_button help_button_inline"></div>
+</div>
+</div>
+<div class="help_highlight">
+<div class="metatable">
+<span><label for="format_selection">
+Format of work
+</label></span>
+<span><select id="format_selection" name="field_format">
+<option value="" selected="selected">
+Other / Multiple formats</option>
+<option value="Sound">
+Audio</option>
+<option value="MovingImage">
+Video</option>
+<option value="StillImage">
+Image</option>
+<option value="Text">
+Text</option>
+<option value="Dataset">
+Dataset</option>
+<option value="InteractiveResource">
+Interactive</option>
+</select></span>
+<div class="help_button help_button_inline"></div>
+</div>
+</div>
+<div class="help_highlight">
+<div class="metatable">
+<span><label for="metadata_format">
+License mark
+</label></span>
+<span><select id="metadata_format" name="field_metadata_standard">
+<option value="html+rdfa" selected="selected">HTML+RDFa</option>
+<option value="xmp">XMP</option>
+<option value="offline">Offline</option>
+</select></span>
+<div class="help_button help_button_inline"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="internets" class="col-md-5 ui_box">
+<div id="for_htmlrdfa">
+<div class="help_button mirror"></div>
+<h2>Have a web page?</h2>
+<div class="results-preview"><div><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="resources/113/11.png" data-original-src="https://i.creativecommons.org/l/by/4.0/88x31.png"></a><br>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</div></div>
+<div id="copy_caption">Copy this code to let your visitors know!</div>
+<textarea id="codetocopy" readonly="readonly">&lt;a rel="license" href="http://creativecommons.org/licenses/by/4.0/"&gt;&lt;img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /&gt;&lt;/a&gt;&lt;br /&gt;This work is licensed under a &lt;a rel="license" href="http://creativecommons.org/licenses/by/4.0/"&gt;Creative Commons Attribution 4.0 International License&lt;/a&gt;.</textarea>
+<div id="iconsize_box">
+<ul>
+<li>
+<input type="radio" checked="checked" name="field_iconsize" value="normal" id="extracredit_1-1">
+<label for="extracredit_1-1">Normal Icon</label>
+</li>
+<li>
+<input type="radio" name="field_iconsize" value="small" id="extracredit_1-2">
+<label for="extracredit_1-2">Compact Icon</label>
+</li>
+</ul>
+</div>
+</div>
+<div id="for_xmp" style="display:none">
+<h2>XMP Embeded Metadata</h2>
+<div class="results-preview"><div>
+<p>
+CC metadata can be embedded into images and many other file formats! <a target="_blank" href="https://wiki.creativecommons.org/XMP">See the wiki for more info</a>.
+</p>
+</div></div>
+<div id="xmp_download_box"><div>
+<a id="xmp_download_link" href="https://creativecommons.org/choose/metadata.xmp?field_commercial=y&amp;field_derivatives=y">Download metadata.xmp</a> for <br> <span id="xmp_license_name">Attribution 4.0 International</span>
+</div></div>
+</div>
+<div id="for_offline" style="display:none">
+<h2>Non-digital works?</h2>
+<div class="results-preview"><div>
+<p><a target="_blank" href="https://creativecommons.org/about/downloads/">Downloadable license graphics.</a></p>
+<p><a target="_blank" href="https://wiki.creativecommons.org/Marking/Creators#Marking_Specific_Media">How to mark video and other media formats.</a></p>
+<p>To mark a document not on the web, add the following text to your work:</p>
+</div></div>
+<textarea id="infotocopy" readonly="readonly">This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.</textarea>
+</div>
+</div>
+</div>
+
+</form>
+<div id="publishing_fluff">
+Learn <a href="https://wiki.creativecommons.org/Publish">how to share your work with existing communities</a> that have enabled Creative Commons licensing.
+</div>
+<div id="other_stuff">
+<div id="chooserDonate">
+<div>
+<a href="https://us.netdonor.net/page/6650/donate/1"><img src="resources/113/12.png" alt="Donate" title="Donate" data-original-src="https://creativecommons.org/images/support/2010/cc-support.png" border="0"></a></div>
+<p>
+Creative Commons is a non-profit organization.<br> We need your support to continue providing these tools.<br> <a href="https://donate.creativecommons.org/">Donate today!</a>
+</p>
+</div>
+<div class="licensebox" style="background:#FAFAD6;">
+<span dir="ltr" style="text-align: left">
+This page is available in the following languages:
+</span>
+<br>
+<a title="Bahasa Indonesia" href="https://creativecommons.org/choose/?lang=id" hreflang="id" xml:lang="id">Bahasa Indonesia</a>
+<a title="Bahasa Malaysia" href="https://creativecommons.org/choose/?lang=ms" hreflang="ms" xml:lang="ms">Bahasa Malaysia</a>
+<a title="Castellano (España)" href="https://creativecommons.org/choose/?lang=es_ES" hreflang="es_ES" xml:lang="es_ES">Castellano (España)</a>
+<a title="Català" href="https://creativecommons.org/choose/?lang=ca" hreflang="ca" xml:lang="ca">Català</a>
+<a title="Dansk" href="https://creativecommons.org/choose/?lang=da" hreflang="da" xml:lang="da">Dansk</a>
+<a title="Deutsch" href="https://creativecommons.org/choose/?lang=de" hreflang="de" xml:lang="de">Deutsch</a>
+<a title="English" href="https://creativecommons.org/choose/?lang=en" hreflang="en" xml:lang="en">English</a>
+<a title="Español" href="https://creativecommons.org/choose/?lang=es" hreflang="es" xml:lang="es">Español</a>
+<a title="Esperanto" href="https://creativecommons.org/choose/?lang=eo" hreflang="eo" xml:lang="eo">Esperanto</a>
+<a title="Euskara" href="https://creativecommons.org/choose/?lang=eu" hreflang="eu" xml:lang="eu">Euskara</a>
+<a title="français" href="https://creativecommons.org/choose/?lang=fr" hreflang="fr" xml:lang="fr">français</a>
+<a title="Galego" href="https://creativecommons.org/choose/?lang=gl" hreflang="gl" xml:lang="gl">Galego</a>
+<a title="hrvatski" href="https://creativecommons.org/choose/?lang=hr" hreflang="hr" xml:lang="hr">hrvatski</a>
+<a title="Italiano" href="https://creativecommons.org/choose/?lang=it" hreflang="it" xml:lang="it">Italiano</a>
+<a title="Latviski" href="https://creativecommons.org/choose/?lang=lv" hreflang="lv" xml:lang="lv">Latviski</a>
+<a title="Lietuvių" href="https://creativecommons.org/choose/?lang=lt" hreflang="lt" xml:lang="lt">Lietuvių</a>
+<a title="Magyar" href="https://creativecommons.org/choose/?lang=hu" hreflang="hu" xml:lang="hu">Magyar</a>
+<a title="Nederlands" href="https://creativecommons.org/choose/?lang=nl" hreflang="nl" xml:lang="nl">Nederlands</a>
+<a title="norsk" href="https://creativecommons.org/choose/?lang=no" hreflang="no" xml:lang="no">norsk</a>
+<a title="polski" href="https://creativecommons.org/choose/?lang=pl" hreflang="pl" xml:lang="pl">polski</a>
+<a title="Português" href="https://creativecommons.org/choose/?lang=pt" hreflang="pt" xml:lang="pt">Português</a>
+<a title="Português (BR)" href="https://creativecommons.org/choose/?lang=pt_BR" hreflang="pt_BR" xml:lang="pt_BR">Português (BR)</a>
+<a title="română" href="https://creativecommons.org/choose/?lang=ro" hreflang="ro" xml:lang="ro">română</a>
+<a title="Slovenščina" href="https://creativecommons.org/choose/?lang=sl" hreflang="sl" xml:lang="sl">Slovenščina</a>
+<a title="suomeksi" href="https://creativecommons.org/choose/?lang=fi" hreflang="fi" xml:lang="fi">suomeksi</a>
+<a title="svenska" href="https://creativecommons.org/choose/?lang=sv" hreflang="sv" xml:lang="sv">svenska</a>
+<a title="Türkçe" href="https://creativecommons.org/choose/?lang=tr" hreflang="tr" xml:lang="tr">Türkçe</a>
+<a title="Íslenska" href="https://creativecommons.org/choose/?lang=is" hreflang="is" xml:lang="is">Íslenska</a>
+<a title="čeština" href="https://creativecommons.org/choose/?lang=cs" hreflang="cs" xml:lang="cs">čeština</a>
+<a title="Ελληνικά" href="https://creativecommons.org/choose/?lang=el" hreflang="el" xml:lang="el">Ελληνικά</a>
+<a title="Беларуская" href="https://creativecommons.org/choose/?lang=be" hreflang="be" xml:lang="be">Беларуская</a>
+<a title="русский" href="https://creativecommons.org/choose/?lang=ru" hreflang="ru" xml:lang="ru">русский</a>
+<a title="українська" href="https://creativecommons.org/choose/?lang=uk" hreflang="uk" xml:lang="uk">українська</a>
+<a title="العربية" href="https://creativecommons.org/choose/?lang=ar" hreflang="ar" xml:lang="ar">العربية</a>
+<a title="پارسی" href="https://creativecommons.org/choose/?lang=fa" hreflang="fa" xml:lang="fa">پارسی</a>
+<a title="বাংলা" href="https://creativecommons.org/choose/?lang=bn" hreflang="bn" xml:lang="bn">বাংলা</a>
+<a title="中文" href="https://creativecommons.org/choose/?lang=zh" hreflang="zh" xml:lang="zh">中文</a>
+<a title="日本語" href="https://creativecommons.org/choose/?lang=ja" hreflang="ja" xml:lang="ja">日本語</a>
+<a title="華語 (台灣)" href="https://creativecommons.org/choose/?lang=zh_TW" hreflang="zh_TW" xml:lang="zh_TW">華語 (台灣)</a>
+<a title="한국어" href="https://creativecommons.org/choose/?lang=ko" hreflang="ko" xml:lang="ko">한국어</a>
+</div>
+</div>
+<div id="popup_screen"><div id="popup_alignment">
+<div id="popup_body">
+<h2 id="popup_title">popup title</h2>
+<div id="popup_message">Lorem ipsum dolor sit amet...</div>
+</div>
+<div id="popup_close_default" style="display:none">
+<a>
+close popup
+</a>
+</div>
+<div id="popup_close">
+</div>
+</div>
+
+<div id="help_lookup" style="display:none">
+<div id="help_jurisdiction">
+<div class="title">About earlier versions</div>
+<div class="msg">
+<p>The most recent license version is 4.0, which can be used internationally. If you are searching for a port of the license for a particular jurisdiction, however, you may still use them.</p>
+<p>If your jurisdiction is not on this list, or if you want to use the latest version of the licenses instead of a ported license, you can return to the 4.0 license chooser.</p>
+</div>
+<div class="close_buttons">
+<a>
+use latest
+</a>
+<a>
+use earlier license ports
+</a>
+</div>
+</div>
+<div id="help_change_jurisdictions">
+<div class="title">About earlier versions</div>
+<div class="msg">
+<p>The most recent license version is 4.0, which can be used internationally. Earlier versions of licenses, including 3.0 international and ports localized to particular jurisdictions, can be still be used by clicking the "show earlier licenses" link below.</p>
+</div>
+<div class="close_buttons">
+<a>
+use latest
+</a>
+<a>
+show earlier licenses
+</a>
+</div>
+</div>
+
+<div id="help_modifications">
+<div class="title">Allow adaptations of your work to be shared?</div>
+<div class="msg">
+<h4>Yes</h4>
+<p>The licensor permits others to copy, distribute, display, and perform the work, as well as make and distribute derivative works based on it.</p>
+<h4>Yes, as long as others share alike</h4>
+<p>The licensor permits others to create and distribute derivative works, but only under the same or a <a target="_blank" href="https://creativecommons.org/compatiblelicenses">compatible</a> license.</p>
+<h4>No</h4>
+<p>The licensor permits others to copy, distribute, display, and perform the work, but not distribute derivative works based on it.</p>
+</div>
+</div>
+<div id="help_commercial">
+<div class="title">Allow commercial uses of your work?</div>
+<div class="msg">
+<h4>Yes</h4>
+<p>The licensor permits others to copy, distribute, display, and perform the work, including for commercial purposes.</p>
+<h4>No</h4>
+<p>The licensor permits others to copy, distribute, display, and perform the work for non-commercial purposes only.</p>
+</div>
+</div>
+
+<div id="help_selected_license">
+<div class="title">Selected License</div>
+<div class="msg">
+<p>The "Selected License" panel displays information about the license
+that was described in the "License Features" panel. Changing the values in the
+"License Features" panel will update the information displayed here.</p>
+<h4>Approved for Free Cultural Works</h4>
+<p>
+If the selected license provides the freedoms required of a free culture license,
+then the "Approved for Free Cultural Works" icon appears on this panel. This
+feature is intended to assist you in making a more informed decision.
+NonCommercial and NoDerivatives licenses include additional restrictions
+which, by definition, prevent them from being considered free culture licenses.
+</p>
+<p>
+While our non-free culture licenses are useful in particular circumstances, unintended
+consequences may result from their use (such as license incompatibility).
+For example, a work that is under the license "Attribution-NonCommercial-ShareAlike"
+may not be combined with a work licensed "Attribution-ShareAlike" because putting
+the resulting work under either license violates the other by either
+adding or removing the NonCommercial restriction.
+</p>
+<p>
+A real world example of license incompatibility: Works with the NonCommercial
+or the NoDerivatives restriction may not be posted to Wikipedia.
+</p>
+<p>Freedomdefined.org is a great source of information about free culture.
+The <a href="https://freedomdefined.org/Definition">free culture definition</a>
+and <a href="https://freedomdefined.org/Permissible_restrictions">permissible restrictions</a>
+pages are wonderful starting points for further learning.</p>
+</div>
+</div>
+
+<div id="help_metadata">
+<div class="title">Help others attribute you!</div>
+<div class="msg">
+<p>
+This information is embedded in a machine-readable format. This allows search engines to index additional information about your work and allows people coming to the license deed from your page to see information about how to attribute your work.
+</p>
+<p>
+<a target="_blank" href="https://wiki.creativecommons.org/Metadata">More information</a> on Creative Commons metadata is available.
+</p></div>
+</div>
+<div id="help_work_title">
+<div class="title">Title of work</div>
+<div class="msg">The title of the work you are licensing.</div>
+</div>
+<div id="help_attrib_name">
+<div class="title">Attribute work to name</div>
+<div class="msg">The name of the person who should receive attribution for the work. Most often, this is the author.
+</div>
+</div>
+<div id="help_attrib_url">
+<div class="title">Attribute work to URL</div>
+<div class="msg">The URL to which the work should be attributed. For example, the work's page on the author's site.</div>
+</div>
+<div id="help_src_url">
+<div class="title">Source work URL</div>
+<div class="msg">The URL of the work upon which this work is based or derived.</div>
+</div>
+<div id="help_permissions_url">
+<div class="title">More permissions URL</div>
+<div class="msg">A URL where a user can find information about obtaining rights that are not already permitted by the CC license.</div>
+</div>
+<div id="help_work_format">
+<div class="title">Format of work</div>
+<div class="msg">This describes what kind of work is being licensed. For example, a photograph would have the "Image" format. If unsure, choose "Other / Multiple formats".</div>
+</div>
+<div id="help_license_mark">
+<div class="title">License mark</div>
+<div class="msg">
+<p>The "License Mark" select box determines the content of the bottom right panel. That panel provides a means of marking your work in a consistent and standardized way.</p>
+<h4>HTML + RDFa</h4>
+<p>HTML is provided that you can copy into your webpage. The HTML is annotated with machine-readable <a target="_blank" href="https://wiki.creativecommons.org/Metadata">metadata</a>. This allows search engines to find similarly licensed works, and for tools to automatically recognize information about the work (such as who authored it).</p>
+<h4>XMP</h4>
+<p>An <a target="_blank" href="https://wiki.creativecommons.org/XMP">XMP</a> file can be embedded in a variety of file formats, such as PDFs.</p>
+<h4>Offline</h4>
+<p>Provides a simple plain text notice that can be used to mark offline works</p>
+</div>
+</div>
+
+<div id="help_license_mark_html">
+<div class="title">Have a web page?</div>
+<div class="msg">
+<p>
+The HTML provided in this panel may be pasted into your website to display which license applies to your work, as well as attribution information. The HTML combines information provided in the "License Features" panel and the "Help others attribute you!" panel. The HTML also contains <a target="_blank" href="https://wiki.creativecommons.org/RDFa">RDFa</a> metadata, which allows search engines to accurately determine which license your work is under, and how you want to be attributed.
+</p>
+<p>
+This panel also contains a preview of what the HTML will look like when included in your website. The radio buttons at the bottom of the panel may be used to change the size and appearance of the license icon in the HTML.
+</p>
+</div>
+</div>
+<div id="help_by_aspect">
+<div class="title">Attribution</div>
+<div class="msg">You must attribute the
+work in the manner specified by the author or licensor.</div>
+</div>
+<div id="help_sa_aspect">
+<div class="title">Share Alike</div>
+<div class="msg">The licensor permits others to distribute derivative works only under the same license or one compatible with the one that governs the licensor's work.</div>
+</div>
+<div id="help_nd_aspect">
+<div class="title">No Derivative Works</div>
+<div class="msg">The licensor permits others to copy, distribute and transmit only unaltered copies of the work — not derivative works based on it.</div>
+</div>
+<div id="help_nc_aspect">
+<div class="title">Noncommercial</div>
+<div class="msg">The licensor permits others to copy, distribute and transmit the work. In return, licensees may not use the work for commercial purposes — unless they get the licensor's permission.</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+</div> 
+</div></div></article>
+</main>
+</div>
+</div>
+</div>
+<div class="site-footer-wrapper">
+<footer id="colophon" class="site-footer sticky-nav-main" role="contentinfo">
+<div class="cc-footer">
+<div class="column cc-footer-main">
+<div class="cc-footer-logo">
+<a href="https://creativecommons.org/" class="custom-logo-link" rel="home" itemprop="url"><img src="resources/113/13.png" class="custom-logo" alt="cc.logo.white" itemprop="logo" srcset="resources/113/13.png 980w, resources/113/14.png 300w, resources/113/15.png 768w, resources/113/16.png 140w, resources/113/17.png 50w, resources/113/18.png 270w, resources/113/19.png 245w" sizes="(max-width: 709px) 85vw, (max-width: 909px) 67vw, (max-width: 1362px) 62vw, 840px" data-original-src="https://creativecommons.org/wp-content/uploads/2016/06/cc.logo_.white_.png" data-original-srcset="https://creativecommons.org/wp-content/uploads/2016/06/cc.logo_.white_.png 980w, https://creativecommons.org/wp-content/uploads/2016/06/cc.logo_.white_-300x73.png 300w, https://creativecommons.org/wp-content/uploads/2016/06/cc.logo_.white_-768x188.png 768w, https://creativecommons.org/wp-content/uploads/2016/06/cc.logo_.white_-140x34.png 140w, https://creativecommons.org/wp-content/uploads/2016/06/cc.logo_.white_-50x12.png 50w, https://creativecommons.org/wp-content/uploads/2016/06/cc.logo_.white_-270x66.png 270w, https://creativecommons.org/wp-content/uploads/2016/06/cc.logo_.white_-245x60.png 245w" width="980" height="240"></a>
+</div>
+<div class="cc-footer-links">
+<div class="menu-footer-links-container">
+<ul id="menu-footer-links" class="menu">
+<li id="menu-item-48794" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48794"><a href="https://creativecommons.org/about/contact/">Contact</a></li>
+<li id="menu-item-48795" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48795"><a href="https://creativecommons.org/privacy/">Privacy</a></li>
+<li id="menu-item-48796" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48796"><a href="https://creativecommons.org/policies/">Policies</a></li>
+<li id="menu-item-48797" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-48797"><a href="https://creativecommons.org/terms/">Terms</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="column cc-footer-contact">
+<h6><a href="https://creativecommons.org/about/contact">We'd love to hear from you!</a></h6>
+<address>
+Creative Commons<br>
+PO Box 1866, Mountain View, CA 94042
+</address>
+<ul>
+<li><a href="mailto:info@creativecommons.org" class="mail">info@creativecommons.org</a></li>
+<li><a href="https://creativecommons.org/faq">Frequently Asked Questions</a></li>
+</ul>
+</div>
+<div class="column cc-footer-license">
+<div class="license-icons">
+<a rel="license" href="https://creativecommons.org/licenses/by/4.0/" title="Creative Commons Attribution 4.0 International license">
+<i class="cc-icon-cc"></i>
+<i class="cc-icon-cc-by"></i>
+</a>
+</div>
+<aside>
+<div xmlns:cc="https://creativecommons.org/ns#" about="https://creativecommons.org">
+<p>Except where otherwise <a class="subfoot" href="https://creativecommons.org/policies#license">noted</a>, content on this site is licensed under a <a class="subfoot" href="https://creativecommons.org/licenses/by/4.0/" rel="license">Creative Commons Attribution 4.0 International license</a>. <a class="subfoot" href="https://creativecommons.org/website-icons" target="blank">Icons</a> by The Noun Project.</p>
+</div>
+</aside>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</div>
+<div style="display:none">
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>
