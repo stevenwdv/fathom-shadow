@@ -1,8 +1,8 @@
 import os
 
 from click.testing import CliRunner
-
-from ..commands.train import exclude_indices, train, find_optimal_cutoff, single_cutoff, possible_cutoffs
+import operator
+from ..commands.train import exclude_indices, train, find_optimal_cutoff, single_cutoff, possible_cutoffs, accuracy_per_tag
 from ..utils import tensor
 
 
@@ -36,7 +36,33 @@ def test_auto_vectorization_smoke(tmp_path):
 
 
 def test_possible_cutoffs():
-    # Adequate sample number, extra possible cutoffs not required.
+    # single cutoff
+    y_pred = tensor([1.2512])
+    expected = [0.78]
+    possibles = possible_cutoffs(y_pred)
+    assert len(possibles) == 1
+    assert possibles == expected
+
+    # Reduces to single cutoff
+    y_pred = tensor([1.2512, 1.2516])
+    expected = [0.78]
+    possibles = possible_cutoffs(y_pred)
+    assert len(possibles) == 1
+    assert all([a == b for a, b in zip(possibles, expected)])
+
+    y_pred = tensor([1.2512, 1.2516, 1.255])
+    expected = [0.78]
+    possibles = possible_cutoffs(y_pred)
+    assert len(possibles) == 1
+    assert all([a == b for a, b in zip(possibles, expected)])
+
+    y_pred = tensor([1.2512, 1.2516, 1.2518, 1.2525, 1.2560])
+    expected = [0.78]
+    possibles = possible_cutoffs(y_pred)
+    assert len(possibles) == 1
+    assert all([a == b for a, b in zip(possibles, expected)])
+
+    # Partial reduction in number of cutoffs
     y_pred = tensor([-2.1605, -0.5696, 0.4886, 0.8633, -1.3479,
                      -0.5813, -0.5696, 0.5696, -0.5950, -0.5696])
     expected = [0.15, 0.28, 0.36, 0.49, 0.63, 0.67]
@@ -44,75 +70,109 @@ def test_possible_cutoffs():
     assert len(possibles) == 6
     assert all([a == b for a, b in zip(possibles, expected)])
 
-    # Results in 1 calculated cutoff, need to add extra possible values.
-    y_pred = tensor([1.2512, 1.2516])
-    expected = [0.58, 0.64, 0.68, 0.69, 0.70,
-                0.78, 0.81, 0.84, 0.85]
-    possibles = possible_cutoffs(y_pred)
-    assert len(possibles) == 9
-    assert all([a == b for a, b in zip(possibles, expected)])
-
-    # Results inn 3 calculated cutoffs, need to add extra possible values.
+    # No reduction in number of cutoffs
     y_pred = tensor([-2, -2.25, -1.95, 1.251])
-    expected = [0.01, 0.03, 0.05, 0.06, 0.07,
-                0.11, 0.12, 0.13, 0.16, 0.17,
-                0.19, 0.2, 0.25, 0.31, 0.35,
-                0.37, 0.45, 0.48, 0.52]
+    expected = [0.11, 0.12, 0.45]
     possibles = possible_cutoffs(y_pred)
-    assert len(possibles) == 19
+    assert len(possibles) == 3
     assert all([a == b for a, b in zip(possibles, expected)])
 
 
-def test_find_optimal_cutoff():
+def test_find_optimal_cutoff_single_cutoff_with_highest_accuracy():
+    # This test is doing the steps completed by find_optimal_cutoff separately to
+    # determine the expected value.  The functions used are covered by other tests.
     y_pred = tensor([-2.1605, -0.5696, 0.4886, 0.8633, -1.3479, -0.5813, -0.5696, 0.5696, -0.5950, -0.5696])
-    y_pred_confidence = y_pred.sigmoid().numpy().flatten()
-    # [0.1033541  0.3613291  0.6197766  0.70334965 0.20621389 0.35863352, 0.3613291  0.63867086 0.35548845 0.3613291 ]
     y = tensor([0., 0., 1., 1., 0., 0., 0., 1., 0., 0.])
 
+    # Determining the expected_cutoff
+    possibles = possible_cutoffs(y_pred)  # this list will contain the optimal cutoff
+
+    # Get the accuracy for each possible cutoff
+    # Note this is a different method of tracking the best cutoff than in find_optimal_cutoff.
+    cutoff_accuracy = {}
+    for possible in possibles:
+        accuracy, _, _ = accuracy_per_tag(y, y_pred, possible, num_prunes=0)
+        cutoff_accuracy[possible] = accuracy
+
+    # Get the key/value that has the highest accuracy.
+    expected_cutoff = max(cutoff_accuracy.items(), key=operator.itemgetter(1))[0]
+    max_accuracy = max(cutoff_accuracy.items(), key=operator.itemgetter(1))[1]
+
+    # Verify that there is only 1 cutoff with this max accuacy.
+    accuracy_occurrences = 0
+    for accuracy in cutoff_accuracy.values():
+        if max_accuracy == accuracy:
+            accuracy_occurrences += 1
+    assert accuracy_occurrences == 1
+
+    # Now that we have the expected accuracy check the value returned from
+    # find_optimal_cutoff against it (this is the real test)
     optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes=0)
+    assert optimal_cutoff == expected_cutoff
+    # and a final double check
     assert optimal_cutoff == 0.49
 
 
-def test_find_optimal_cutoff_multiple_cutoffs():
+def test_find_optimal_cutoff_multiple_cutoffs_with_highest_accuracy():
+    # This test is doing the steps completed by find_optimal_cutoff separately to
+    # determine the expected value.  The functions used are covered by other tests.
     y_pred = tensor([-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.25, 2, 2.5])
-    y_pred_confidence = y_pred.sigmoid().numpy().flatten()
-    # [0.11920292 0.18242553 0.26894143 0.37754068 0.5  0.62245935, 0.7310586  0.7772999  0.880797   0.9241418 ]
     y = tensor([0., 1., 0., 1., 0., 1., 0., 1., 0., 1.])
 
+    # Determining the expected_cutoff
+    possibles = possible_cutoffs(y_pred)  # this list will contain the optimal cutoff
+    assert len(possibles) == 9
+
+    # get the accuracy for each possible cutoff
+    # Note this is a different method of tracking the best cutoff than in find_optimal_cutoff.
+    cutoff_accuracy = {}
+    for possible in possibles:
+        accuracy, _, _ = accuracy_per_tag(y, y_pred, possible, num_prunes=0)
+        cutoff_accuracy[possible] = accuracy
+
+    # Get the cutoffs with the max accuracy, there should be more than 1
+    # (to verify the case where more than one cutoff has the best accuracy).
+    max_accuracy = max(cutoff_accuracy.items(), key=operator.itemgetter(1))[1]
+    best_cutoffs = []
+    for cutoff, accuracy in cutoff_accuracy.items():
+        if max_accuracy == accuracy:
+            best_cutoffs.append(cutoff)
+
+    # Verifying that there are more than 1 cutoff with the best accuracy (the basis for this test case)
+    assert len(best_cutoffs) > 1
+
+    # From the list of best cutoffs get the single value (single_cutoff is tested elsewhere)
+    expected_cutoff = single_cutoff(best_cutoffs)
+
+    # Now that we have the expected accuracy check the value returned from
+    # find_optimal_cutoff against it (this is the real test)
     optimal_cutoff = find_optimal_cutoff(y, y_pred, num_prunes=0)
+    assert optimal_cutoff == expected_cutoff
+    # and a final double check
     assert optimal_cutoff == 0.56
 
 
 def test_single_cutoff():
-    cutoffs = [0.20, 0.30, 0.40]
-    cutoff = single_cutoff(cutoffs)
-    assert cutoff == 0.30
+    # single
+    cutoffs = [0]
+    assert single_cutoff(cutoffs) == 0
 
-    cutoffs = [0.20, 0.39, 0.40]
-    cutoff = single_cutoff(cutoffs)
-    assert cutoff == 0.39
+    # last element
+    cutoffs = [0, 1]
+    assert single_cutoff(cutoffs) == 1
 
-    cutoffs = [0.29, 0.31]
-    cutoff = single_cutoff(cutoffs)
-    assert cutoff == 0.29
+    cutoffs = [0, 1, 10]
+    assert single_cutoff(cutoffs) == 10
 
-    cutoffs = [0.1, 0.11, 0.15, 0.6]
-    cutoff = single_cutoff(cutoffs)
-    assert cutoff == 0.15
+    # middle element
+    cutoffs = [0, 1, 2]
+    assert single_cutoff(cutoffs) == 1
 
-    cutoffs = [0.5]
-    cutoff = single_cutoff(cutoffs)
-    assert cutoff == 0.5
+    cutoffs = [0, 1, 2, 3]
+    assert single_cutoff(cutoffs) == 2
 
-    cutoffs = [0.1, 0.4, 0.41, 0.42]
-    cutoff = single_cutoff(cutoffs)
-    assert cutoff == 0.4
+    cutoffs = [0, 1, 2, 3, 4]
+    assert single_cutoff(cutoffs) == 2
 
-    cutoffs = [0.15, 0.18, 0.41, 0.42]
-    cutoff = single_cutoff(cutoffs)
-    assert cutoff == 0.18
-
-    cutoffs = [0.15, 0.32, 0.56, 0.75, 0.76, 0.77, 0.78, 0.8, 0.9]
-    cutoff = single_cutoff(cutoffs)
-    assert cutoff == 0.56
-
+    cutoffs = [0, 1, 2, 3, 4, 5]
+    assert single_cutoff(cutoffs) == 3

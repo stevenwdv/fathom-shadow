@@ -12,7 +12,6 @@ from torch import tensor
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
 import numpy as np
-import scipy.stats as stats
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
 from ..utils import classifier, path_or_none, speed_readout, tensors_from
@@ -75,42 +74,20 @@ def possible_cutoffs(y_pred):
         flattened = y_pred.sigmoid().numpy().flatten()
         cutoffs = np.sort(flattened)
         if len(cutoffs) > 1:
-            cutoffs = np.unique([round((current + next) / 2, CUTOFF_DECIMAL_PLACES) for current, next in pairwise(cutoffs)])
+            new_cutoffs = [(current + next) / 2 for current, next in pairwise(cutoffs)]
+        else:
+            new_cutoffs = cutoffs
 
-        # verify that we have adequate possible cutoffs.
-        min_num_possible_cutoffs = 5
-        if len(cutoffs) < min_num_possible_cutoffs:
-            new_cutoffs = []
-            for cutoff in cutoffs:
-                lower, upper = 0, 1
-                mu, sigma = cutoff, 0.1
-                trunc_norm = stats.truncnorm((lower - mu) / sigma, (upper - mu) / sigma, loc=mu, scale=sigma)
-                # Cast the net a little wider than the min number of values needed to account
-                # for reduction after rounding.
-                new_cutoffs.append(trunc_norm.rvs(size=2 * min_num_possible_cutoffs, random_state=10))
-            cutoffs = np.unique(np.sort(np.append(cutoffs, np.unique(np.round(new_cutoffs, 2)))))
-        return cutoffs
+        return np.unique([round(cutoff.astype(np.float64), CUTOFF_DECIMAL_PLACES)
+                          for cutoff in new_cutoffs]).tolist()
 
 
 def single_cutoff(cutoffs):
-    """Since the list of optimal cutoffs is usually short (2-3 values) using the mean or median or
-    the midpoint of the list will result in the same optimal cutoff value being selected.
-    In the case where there is a larger, skewed list of values using the mean softens the
-    effect of the excessively skewed list.
-    """
+    """Returns the cutoff value at the index of where the mean would be inserted
+    into the pre-sorted list."""
     cutoffs_mean = statistics.mean(cutoffs)
     pos = bisect_left(cutoffs, cutoffs_mean)
-
-    if pos == 0:
-        return cutoffs[0]
-    if pos == len(cutoffs):
-        return cutoffs[-1]
-    before = cutoffs[pos - 1]
-    after = cutoffs[pos]
-    if after - cutoffs_mean < cutoffs_mean - before:
-        return after
-    else:
-        return before
+    return cutoffs[pos]
 
 
 def find_optimal_cutoff(y, y_pred, num_prunes):
