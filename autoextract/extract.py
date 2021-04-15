@@ -12,12 +12,14 @@ from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn.metrics import accuracy_score
 
 
-def main(positive_dir, negative_dir):
-    random.seed(42)
+def load_data(positive_dir, negative_dir):
+    """Load the samples from disk.
 
-    # Make sure we have the same number of positive and negative samples in
-    # training and testing. Otherwise, choose randomly, and shuffle the result
-    # so we don't throw off the first epoch. (Shuffling happens after epochs.)
+    Make sure we have the same number of positive and negative samples in
+    training and testing. Otherwise, choose randomly, and shuffle the result so
+    we don't throw off the first epoch. (Shuffling happens after epochs.)
+
+    """
     positive_corpus = [(text_from_sample(filename), 1) for filename in samples_from_dir(positive_dir)]
     negative_corpus = [(text_from_sample(filename), 0) for filename in samples_from_dir(negative_dir)]
     shuffle(positive_corpus)
@@ -34,6 +36,11 @@ def main(positive_dir, negative_dir):
     x_train, y_train = zip(*training)
     x_test, y_test = zip(*testing)
 
+    return x_train, y_train, x_test, y_test
+
+
+def vectorize_data(x_train, x_test):
+    """Extract features and convert samples into vectors of floats."""
     # These settings seem to nicely weight heavily words that are uncommon
     # across docs and demote (though not eliminate) stopwords:
     vectorizer = TfidfVectorizer(max_df=.8)  # Decrease max_df to be more aggressive about declaring things stopwords.
@@ -57,11 +64,28 @@ def main(positive_dir, negative_dir):
 
     # price regex as signal? But I don't want to write signal.
 
-    classifier = PassiveAggressiveClassifier(early_stopping=True, class_weight='balanced', validation_fraction=.2)
-    classifier.fit(x_train, y_train)
-    pred = classifier.predict(x_test)
+    return x_train, x_test
+
+
+def model_data(x_train, y_train, x_test, y_test):
+    """Train and return a predictive model of the data."""
+    model = PassiveAggressiveClassifier(early_stopping=True, class_weight='balanced', validation_fraction=.2)
+    model.fit(x_train, y_train)
+    return model
+
+
+def main(positive_dir, negative_dir):
+    random.seed(42)
+
+    x_train, y_train, x_test, y_test = load_data(positive_dir, negative_dir)
+    x_train, x_test = vectorize_data(x_train, x_test)
+    print(f'Dimensions: {x_train.shape[1]}')
+    model = model_data(x_train, y_train, x_test, y_test)
+    pred = model.predict(x_test)
     accuracy = accuracy_score(y_test, pred)
     print(f'Accuracy: {accuracy}')
+
+    # NEXT: Try different classifiers, and teach it some basic HTML features. Also, get it more convergent; graph loss to see what's going on.
 
 
 def partition(sliceable, proportion):
