@@ -10,7 +10,7 @@ from numpy import unique
 from pyquery import PyQuery as pq
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.linear_model import PassiveAggressiveClassifier, SGDClassifier
+from sklearn.linear_model import LogisticRegression, PassiveAggressiveClassifier, SGDClassifier
 from sklearn.metrics import accuracy_score, hinge_loss, log_loss
 from tensorboardX import SummaryWriter
 
@@ -78,7 +78,7 @@ def model_data(x_train, y_train, iterations, validation_fraction=0.2):
 #     model = SGDClassifier(class_weight='balanced', validation_fraction=validation_fraction, early_stopping=True, verbose=100, random_state=43, max_iter=50, n_iter_no_change=10)
 #     # n_iter_no_change 5 gave .8
 #     #                  10 gave .83
-    model = SGDClassifier(class_weight='balanced', validation_fraction=validation_fraction, early_stopping=True, verbose=0, random_state=48, max_iter=100, n_iter_no_change=5, learning_rate='adaptive', eta0=1)
+    model = LogisticRegression(class_weight='balanced', verbose=0, random_state=48, max_iter=100)
     # Testing accuracies:
     # eta0=.01:
     # n_iter_no_change 5 gave .816
