@@ -75,11 +75,36 @@ def model_data(x_train, y_train, iterations, validation_fraction=0.2):
     #model = PassiveAggressiveClassifier()
     # early_stopping=True, class_weight='balanced', validation_fraction=.2
     #loss_fn = hinge_loss
-    model = SGDClassifier(loss='log', eta0=.01, learning_rate='constant', penalty=None)
-    loss_fn = log_loss
+#     model = SGDClassifier(class_weight='balanced', validation_fraction=validation_fraction, early_stopping=True, verbose=100, random_state=43, max_iter=50, n_iter_no_change=10)
+#     # n_iter_no_change 5 gave .8
+#     #                  10 gave .83
+    model = SGDClassifier(class_weight='balanced', validation_fraction=validation_fraction, early_stopping=True, verbose=0, random_state=48, max_iter=100, n_iter_no_change=5, learning_rate='adaptive', eta0=1)
+    # Testing accuracies:
+    # eta0=.01:
+    # n_iter_no_change 5 gave .816
+    #                  10 gave .816 but asked for a higher max_iter
+    #                  10 with higher max_iter gave .816
+    # Changing random_state to 48 gives .73 :-P
+
+    # eta0=.1 (Trying bigger to knock us out of local minima:
+    # n_iter_no_change 5 gave .816 at random=43; .75 at random=42; .816 at random=48
+    #                  10 gave .816 at random=43; .766 at random=42; .8 at random=48
+
+    # NEXT: Go by loss, not test accuracy.
+
+    # Training/testing accuracies:
+    # eta0=1 (Trying bigger to knock us out of local minima:
+    # n_iter_no_change 5 gave 95.4/80.0 at random=43; 95.8/73.3 at random=42; 93.8/83.3 at random=48
+    #                  10 gave
+    
+    # Different random_states give training accuracies of 95.4, 97.0, 95.8, 94.2
+    model.fit(x_train, y_train)
+    return model
+
+    loss_fn = hinge_loss
     x_validation, x_train = partition(x_train, validation_fraction)
     y_validation, y_train = partition(y_train, validation_fraction)
-    writer = SummaryWriter(comment='sgd log, eta0=.001')
+    writer = SummaryWriter(comment='sgd svm fit() earlystopping')
 
     classes = unique(y_train)
     # TODO: Balance classes.
@@ -125,7 +150,8 @@ def main(positive_dir, negative_dir):
     model = model_data(x_train, y_train, 1500)
     pred = model.predict(x_test)
     accuracy = accuracy_score(y_test, pred)
-    print(f'Accuracy: {accuracy}')
+    print(f'Training accuracy: {accuracy_score(y_train, model.predict(x_train))}')
+    print(f'Test accuracy: {accuracy}')
 
     # NEXT: Try different classifiers, and teach it some basic HTML features. Also, get it more convergent; graph loss to see what's going on.
 
