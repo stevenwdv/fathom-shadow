@@ -4,12 +4,15 @@ import random
 from random import shuffle
 from sys import argv
 
+from click import progressbar
 from fathom_web.utils import samples_from_dir
+from numpy import unique
 from pyquery import PyQuery as pq
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.linear_model import PassiveAggressiveClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression, PassiveAggressiveClassifier, SGDClassifier
+from sklearn.metrics import accuracy_score, hinge_loss, log_loss
+from tensorboardX import SummaryWriter
 
 
 def load_data(positive_dir, negative_dir):
@@ -21,7 +24,7 @@ def load_data(positive_dir, negative_dir):
 
     """
     positive_corpus = [(text_from_sample(filename), 1) for filename in samples_from_dir(positive_dir)]
-    negative_corpus = [(text_from_sample(filename), 0) for filename in samples_from_dir(negative_dir)]
+    negative_corpus = [(text_from_sample(filename), -1) for filename in samples_from_dir(negative_dir)]
     shuffle(positive_corpus)
     shuffle(negative_corpus)
     TRAINING_PROPORTION = .8
@@ -46,15 +49,15 @@ def vectorize_data(x_train, x_test):
     vectorizer = TfidfVectorizer(max_df=.8)  # Decrease max_df to be more aggressive about declaring things stopwords.
     # Learn the words in the corpus. Other words seen in the future will be
     # ignored. Automatically reasons out stopwords by default.
-    tfidf_matrix = vectorizer.fit_transform(x_train)
+    #tfidf_matrix = vectorizer.fit_transform(x_train)
     #print(tfidf_matrix.toarray())
     # TODO: Add stemming. Otherwise evaluate the tokenizer.
-    print('Stopwords:', vectorizer.stop_words_)
     #print(vectorizer.vocabulary_)
     # TODO: Consider using a hashing vectorizer in production to save
     # RAM/storage with large vocabs.
 
     x_train = vectorizer.fit_transform(x_train)
+    print('Stopwords:', vectorizer.stop_words_)
     x_test = vectorizer.transform(x_test)
 
     # Chi^2 seems like a weird thing to use for non-categoricals.
@@ -67,9 +70,9 @@ def vectorize_data(x_train, x_test):
     return x_train, x_test
 
 
-def model_data(x_train, y_train, x_test, y_test):
+def model_data(x_train, y_train, iterations, validation_fraction=0.2):
     """Train and return a predictive model of the data."""
-    model = PassiveAggressiveClassifier(early_stopping=True, class_weight='balanced', validation_fraction=.2)
+    model = LogisticRegression(class_weight='balanced', verbose=0, max_iter=100)
     model.fit(x_train, y_train)
     return model
 
@@ -80,17 +83,22 @@ def main(positive_dir, negative_dir):
     x_train, y_train, x_test, y_test = load_data(positive_dir, negative_dir)
     x_train, x_test = vectorize_data(x_train, x_test)
     print(f'Dimensions: {x_train.shape[1]}')
-    model = model_data(x_train, y_train, x_test, y_test)
+    model = model_data(x_train, y_train, 1500)
     pred = model.predict(x_test)
     accuracy = accuracy_score(y_test, pred)
-    print(f'Accuracy: {accuracy}')
+    print(f'Training accuracy: {accuracy_score(y_train, model.predict(x_train))}')
+    print(f'Test accuracy: {accuracy}')
 
-    # NEXT: Try different classifiers, and teach it some basic HTML features. Also, get it more convergent; graph loss to see what's going on.
+    # NEXT: Teach it some basic HTML features.
 
 
 def partition(sliceable, proportion):
     """Divide sliceable into 2 pieces, and return them as a tuple."""
-    boundary = round(proportion * len(sliceable))
+    try:
+        length = len(sliceable)
+    except TypeError:  # It was a matrix.
+        length = len(sliceable.getnnz(1))
+    boundary = round(proportion * length)
     return sliceable[:boundary], sliceable[boundary:]
 
 
