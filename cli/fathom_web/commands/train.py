@@ -1,7 +1,7 @@
 from pathlib import Path
 from more_itertools import pairwise
 from pprint import pformat
-import statistics
+from statistics import mean
 from bisect import bisect_left
 
 import click
@@ -16,8 +16,6 @@ import numpy as np
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
 from ..utils import classifier, path_or_none, speed_readout, tensors_from
 from ..vectorizer import make_or_find_vectors
-
-CUTOFF_DECIMAL_PLACES = 2
 
 
 def learn(learning_rate, iterations, x, y, num_prunes, num_samples, positives, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
@@ -78,14 +76,14 @@ def possible_cutoffs(y_pred):
         else:
             new_cutoffs = cutoffs
 
-        return np.unique([round(cutoff.astype(np.float64), CUTOFF_DECIMAL_PLACES)
+        return np.unique([round(cutoff.astype(np.float64), ndigits=2)
                           for cutoff in new_cutoffs]).tolist()
 
 
 def single_cutoff(cutoffs):
     """Returns the cutoff value at the index of where the mean would be inserted
     into the pre-sorted list."""
-    cutoffs_mean = statistics.mean(cutoffs)
+    cutoffs_mean = mean(cutoffs)
     pos = bisect_left(cutoffs, cutoffs_mean)
     return cutoffs[pos]
 
