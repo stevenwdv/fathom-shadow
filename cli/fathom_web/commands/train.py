@@ -1,19 +1,24 @@
 from pathlib import Path
+from more_itertools import pairwise
 from pprint import pformat
+from statistics import mean
+from bisect import bisect_left
 
 import click
 from click import argument, BadOptionUsage, command, option, progressbar
 from tensorboardX import SummaryWriter
+import torch
 from torch import tensor
 from torch.nn import BCEWithLogitsLoss
 from torch.optim import Adam
+import numpy as np
 
 from ..accuracy import accuracy_per_tag, per_tag_metrics, pretty_accuracy, print_per_tag_report
 from ..utils import classifier, path_or_none, speed_readout, tensors_from
 from ..vectorizer import make_or_find_vectors
 
 
-def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
+def learn(learning_rate, iterations, x, y, num_prunes, num_samples, positives, validation=None, stop_early=False, run_comment='', pos_weight=None, layers=[]):
     # Define a neural network using high-level modules.
     writer = SummaryWriter(comment=run_comment)
     model = classifier(len(x[0]), len(y[0]), layers)
@@ -46,7 +51,7 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, val
                         previous_validation_loss = validation_loss
                         previous_model = model.state_dict()
                 writer.add_scalar('validation_loss', validation_loss, t)
-            accuracy, _, _ = accuracy_per_tag(y, y_pred, confidence_threshold, num_prunes)
+            accuracy, _, _ = accuracy_per_tag(y, y_pred, cutoff=0.5, num_prunes=num_prunes)
             writer.add_scalar('training_accuracy_per_tag', accuracy, t)
             optimizer.zero_grad()  # Zero the gradients.
             loss.backward()  # Compute gradients.
@@ -58,6 +63,48 @@ def learn(learning_rate, iterations, x, y, confidence_threshold, num_prunes, val
     writer.add_histogram('confidence', confidences(model, x), t)
     writer.close()
     return model
+
+
+def possible_cutoffs(y_pred):
+    """Using y_pred get the sigmoid values, round the values and get the unique list.
+    This will reduce the number of cutoffs to be evaluated."""
+    with torch.no_grad():
+        flattened = y_pred.sigmoid().numpy().flatten()
+        cutoffs = np.sort(flattened)
+        if len(cutoffs) > 1:
+            new_cutoffs = [(current + next) / 2 for current, next in pairwise(cutoffs)]
+        else:
+            new_cutoffs = cutoffs
+
+        return np.unique([round(cutoff.astype(np.float64), ndigits=2)
+                          for cutoff in new_cutoffs]).tolist()
+
+
+def single_cutoff(cutoffs):
+    """Returns the cutoff value at the index of where the mean would be inserted
+    into the pre-sorted list."""
+    cutoffs_mean = mean(cutoffs)
+    pos = bisect_left(cutoffs, cutoffs_mean)
+    return cutoffs[pos]
+
+
+def find_optimal_cutoff(y, y_pred, num_prunes):
+    """Evaluates possible cutoff values using accuracy as the metric.
+    If more than 1 cutoff gives the highest accuracy the midpoint
+    between the min and max cutoff is used."""
+    max_accuracy = 0
+    optimal_cutoffs = []
+
+    possibles = possible_cutoffs(y_pred)
+    for test_cutoff in possibles:
+        accuracy, _, _ = accuracy_per_tag(y, y_pred, test_cutoff, num_prunes)
+        if accuracy == max_accuracy:
+            optimal_cutoffs.append(test_cutoff)
+        elif accuracy > max_accuracy:
+            optimal_cutoffs = [test_cutoff]
+            max_accuracy = accuracy
+
+    return single_cutoff(optimal_cutoffs)
 
 
 def confidences(model, x):
@@ -167,10 +214,6 @@ def exclude_features(exclude, vector_data):
         default=False,
         is_flag=True,
         help='Hide per-tag diagnostics that may help with ruleset debugging.')
-@option('--confidence-threshold', '-t',
-        default=0.5,
-        show_default=True,
-        help='Threshold at which a sample is considered positive. Higher values decrease false positives and increase false negatives.')
 @option('layers', '--layer', '-y',
         type=int,
         multiple=True,
@@ -179,7 +222,7 @@ def exclude_features(exclude, vector_data):
         type=str,
         multiple=True,
         help='Exclude a rule while training. This helps with before-and-after tests to see if a rule is effective.')
-def train(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, tabs, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, confidence_threshold, layers, exclude):
+def train(training_set, validation_set, ruleset, trainee, training_cache, validation_cache, delay, tabs, show_browser, stop_early, learning_rate, iterations, pos_weight, comment, quiet, layers, exclude):
     """Compute optimal numerical parameters for a Fathom ruleset.
 
     The usual invocation is something like this::
@@ -253,20 +296,25 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
         l=learning_rate,
         i=iterations,
         c=(',' + comment) if comment else '')
+
     model = learn(learning_rate,
                   iterations,
                   x,
                   y,
-                  confidence_threshold,
                   num_prunes,
+                  num_samples,
+                  num_yes,
                   validation=validation_arg,
                   stop_early=stop_early,
                   run_comment=full_comment,
                   pos_weight=pos_weight,
                   layers=layers)
 
+    optimal_cutoff = find_optimal_cutoff(y, model(x), num_prunes)
+
     print(pretty_coeffs(model, training_data['header']['featureNames']))
-    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), confidence_threshold, num_prunes)
+    print(f'\nOptimal cutoff: {optimal_cutoff:.2f}')
+    accuracy, false_positives, false_negatives = accuracy_per_tag(y, model(x), optimal_cutoff, num_prunes)
     print(pretty_accuracy('Training',
                           accuracy,
                           num_samples,
@@ -274,7 +322,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
                           false_negatives,
                           num_yes))
     if validation_set:
-        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), confidence_threshold, validation_prunes)
+        accuracy, false_positives, false_negatives = accuracy_per_tag(validation_outs, model(validation_ins), optimal_cutoff, validation_prunes)
         print(pretty_accuracy('Validation',
                               accuracy,
                               len(validation_ins),
@@ -291,7 +339,7 @@ def train(training_set, validation_set, ruleset, trainee, training_cache, valida
 
     if not quiet:
         print('\nTraining per-tag results:')
-        print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in training_pages])
+        print_per_tag_report([per_tag_metrics(page, model, optimal_cutoff) for page in training_pages])
         if validation_set:
             print('\nValidation per-tag results:')
-            print_per_tag_report([per_tag_metrics(page, model, confidence_threshold) for page in validation_pages])
+            print_per_tag_report([per_tag_metrics(page, model, optimal_cutoff) for page in validation_pages])
