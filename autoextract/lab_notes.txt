@@ -1,0 +1,13 @@
+Default SVM settings converged on 81.6 testing accuracy.
+Calling fit() instead of our own partial_fit() loop (with no early stopping on either) gave us 80% each time.
+Turning on early stopping with default params gave us 80%, then 81.6%, then 88.3%.
+
+Maybe the stochastic methods like SVM don't converge the same each time because it's just a lot of params.
+Experiments with LinearRegression classifier (using LBFGS) corroborates this. I think it's still somewhat stochastic, but it converges the same every time for random_states 43, 42, and 48. Training accuracy 96.7, testing 81.7. So it's still somewhat of an overfit but no worse than the various SGD solvers using early stopping.
+Bayes. Beware that it's a good classifier (dimensionality independent!) but a crappy estimator, so don't believe its confidence estimates. It ended up giving 100% training accuracy but only 71.7% testing. It didn't care what numbers the y values were: {-1, 1} or {1, 2}. Not sure I'm appropriately preprocessing X for bayes. Would it rather they be fractions?
+    Wow, using CountVectorizer instead of TF/IDF makes it worse: 93.8% training, 60% testing. Same with or without a max_df ceiling. Even worse with MultinomialNB and CategoricalNB (both 77%/58.3%). BernoulliNB was bad too. CategoricalNB crashed.
+RandomForestClassifier(n_estimators=100) did 100%/80% consistently with the CountVectorizer. Same with TF/IDF.
+MLP(random_state=48, max_iter=400, verbose=1) converged around t=146 and did 100%/81.7% with no early stopping. With early stopping, it's hard to get it dialed in. Sometimes it's 97.9%/80%, sometimes 95.4%/73.3%.
+
+Talked to evgeny and motin in #maml about sklearn and Fathom and stuff. evgeny recommended the ONNX format for exporting models trained in PyTorch to be executed by various libs in JS.
+alissy says they statically linked with TF for DeepSpeech. "I think it's complicated enough not to qualify for providing features in gecko. except if you are okay loading a shared object" TFLite can be a couple of KB "if you build it right".
