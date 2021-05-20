@@ -105,7 +105,7 @@ def partition(sliceable, proportion):
 def text_from_sample(filename):
     """Return the innerText (or thereabouts) from an HTML file."""
     with open(filename, encoding='utf-8') as file:
-        return pq(file.read()).text()
+        return pq(file.read()).remove('script').remove('style').text()
 
 
 if __name__ == '__main__':
