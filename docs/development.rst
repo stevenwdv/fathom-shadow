@@ -66,12 +66,12 @@ We had perf problems using Fathom for the FF Companion: running it on every page
 * It took a month or more to write the Shopping ruleset. This one I didn't have to write at all; it was trained in 5 seconds.
 * I didn't engineer a single feature for this. Not so much as a price regex. It's a general classifier. It did similarly well against our hand-rolled Smoot Article recognizer, which is especially interesting since Articles have wider subject matter than shopping pages.
 * There's tons of signal still left on the floor:
-  * Stemming. Tried it but didn't have an obvious impact. Odd. Try again.
-  * All the markup. I stripped out everything but body text. Teach it to use tag names, CSS classes, IDs, and URL segments.
+    * Stemming. Tried it but didn't have an obvious impact. Odd. Try again.
+    * All the markup. I stripped out everything but body text. Teach it to use tag names, CSS classes, IDs, and URL segments.
 
 What's a more open question is whether this can be adapted from whole-page categorization to element recognition, like Fathoms 1-3, which is the more major case.
 
 * Continue with this bag-of-words approach on a pruned down set of candidate tags, statistically informed? Either algorithmically come up with a minimal querySelector arg, or use a compressed model to predict which tags we ought to examine, like an attention system in computer vision.
 * Perhaps add some hand-rolled but still generic signals, like innertext length, markup bits, or consideration of surrounding elements (parents, grandparents, siblings, etc.).
 
-If this could work, would be a game-changer. Just as Fathoms 1-3 let us do something we couldn't do before at all, Fathom 4 would let you do it in a couple afternoons of low-skilled work rather than a couple weeks to months of skilled.
+If this could work, it would be a game-changer. Just as Fathoms 1-3 let us do something we couldn't do before at all, Fathom 4 would let you do it in a couple afternoons of low-skilled work rather than a couple weeks to months of skilled.
