@@ -5,9 +5,11 @@ MJS := $(shell find . -name '*.mjs' | grep -v '^./node_modules/.*')
 
 # It's faster to invoke Babel once and compile everything than to invoke it
 # separately on even 2 individual files that changed.
-%.js: %.mjs .npm_installed .babelrc; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir . --relative
+%.js: %.mjs .babelrc; @node_modules/.bin/babel *.mjs **/*.mjs --out-dir . --relative
 
-js: $(JS)
+js: .npm_installed js-only
+
+js-only: $(JS)
 
 lint: .npm_installed
 	@node_modules/.bin/eslint --ext mjs .
