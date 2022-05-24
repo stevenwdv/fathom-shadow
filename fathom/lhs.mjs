@@ -2,6 +2,7 @@
 
 import {clusters, distance} from './clusters';
 import {maxes, getDefault, max, NiceSet, setDefault, sum, min} from './utilsForFrontend';
+import {querySelectorAllDeep} from 'query-selector-shadow-dom';
 
 
 /**
@@ -181,7 +182,7 @@ class DomLhs extends Lhs {
     fnodes(ruleset) {
         return this._domNodesToFilteredFnodes(
             ruleset,
-            ruleset.doc.querySelectorAll(this.selector));
+            querySelectorAllDeep(this.selector, ruleset.doc));
     }
 
     /**

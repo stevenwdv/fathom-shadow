@@ -1,4 +1,4 @@
-import {flatten, isDomElement, isWhitespace, min, toDomElement} from './utilsForFrontend';
+import {flatten, getParentNode, isDomElement, isWhitespace, min, toDomElement} from './utilsForFrontend';
 
 
 /**
@@ -95,7 +95,7 @@ export function distance(fnodeA,
 
     // Ascend to common parent, stacking them up for later reference:
     while (!aAncestor.contains(elementB)) {  // Note: an element does contain() itself.
-        aAncestor = aAncestor.parentNode;
+        aAncestor = getParentNode(aAncestor);
         aAncestors.push(aAncestor); //aAncestors = [a, b]. aAncestor = b // if a is outer: no loop here; aAncestors = [a]. aAncestor = a.
     }
 
@@ -112,7 +112,7 @@ export function distance(fnodeA,
     // Make an ancestor stack for the right node too so we can walk
     // efficiently down to it:
     do {
-        bAncestor = bAncestor.parentNode;  // Assumes we've early-returned above if A === B. This walks upward from the outer node and up out of the tree. It STARTS OUT with aAncestor === bAncestor!
+        bAncestor = getParentNode(bAncestor);  // Assumes we've early-returned above if A === B. This walks upward from the outer node and up out of the tree. It STARTS OUT with aAncestor === bAncestor!
         bAncestors.push(bAncestor);
     } while (bAncestor !== aAncestor);
 

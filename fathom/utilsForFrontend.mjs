@@ -115,6 +115,17 @@ export function length(iterable) {
 }
 
 /**
+ * Get child nodes, bypassing `ShadowRoot`s
+ * @param {Node} node
+ * @return {ArrayLike<ChildNode>}
+ */
+export function getChildNodes(node) {
+    return node instanceof Element && node.shadowRoot
+           ? [...node.shadowRoot.childNodes].concat([...node.childNodes])
+           : node.childNodes;
+}
+
+/**
  * Iterate, depth first, over a DOM node. Return the original node first.
  *
  * @arg shouldTraverse {function} Given a node, say whether we should
@@ -122,7 +133,7 @@ export function length(iterable) {
  */
 export function *walk(element, shouldTraverse = element => true) {
     yield element;
-    for (let child of element.childNodes) {
+    for (let child of getChildNodes(element)) {
         if (shouldTraverse(child)) {
             for (let w of walk(child, shouldTraverse)) {
                 yield w;
@@ -429,6 +440,19 @@ export function attributesMatch(element, predicate, attrs = []) {
     return false;
 }
 
+/**
+ * Get parent node, ignoring `ShadowRoot`s
+ * @param {Node} node
+ * @return {(ParentNode|Element|null)}
+ */
+export function getParentNode(node) {
+    return node instanceof ShadowRoot
+           ? node.host
+           : node.parentNode instanceof ShadowRoot
+             ? node.parentNode.host
+             : node.parentNode;
+}
+
 /* istanbul ignore next */
 /**
  * Yield an element and each of its ancestors.
@@ -436,7 +460,7 @@ export function attributesMatch(element, predicate, attrs = []) {
 export function *ancestors(element) {
     yield element;
     let parent;
-    while ((parent = element.parentNode) !== null && parent.nodeType === parent.ELEMENT_NODE) {
+    while ((parent = getParentNode(element)) !== null && parent.nodeType === parent.ELEMENT_NODE) {
         yield parent;
         element = parent;
     }
