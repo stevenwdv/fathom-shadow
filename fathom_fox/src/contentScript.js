@@ -124,27 +124,19 @@ function startTag(element) {
 }
 
 /**
- * Return an array of unweighted scores for each element of a type, plus an
- * indication of whether it is a target element. This is useful to feed to an
- * external ML system. The return value looks like this:
- *
- *    {filename: '3.html',
- *     isTarget: true,
- *     features: [[1.2, 4], [5.7, 3]]}
- *
- * We assume, for the moment, that the type of node you're interested in is the
- * same as the trainee ID.
+ * Return an array of unweighted scores for each element of a type in the document.
+ * This function is used by 'vectorizeTab' to vectorize elements in the root
+ * document and documents in iframes.
  */
-function vectorizeTab(traineeId) {
+function vectorizeDocument(traineeId, doc) {
     const trainee = trainees.get(traineeId);
-    const boundRuleset = trainee.rulesetMaker('dummy').against(window.document);
+    const boundRuleset = trainee.rulesetMaker('dummy').against(doc);
     const vectorType = trainee.vectorType || traineeId
 
     let time = performance.now()
     const fnodes = boundRuleset.get(type(vectorType));
     time = performance.now() - time;
 
-    const path = window.location.pathname;
     const isTarget = trainee.isTarget || (fnode => fnode.element.dataset.fathom === traineeId);
     const perNodeStuff = fnodes.map(function featureVectorForFnode(fnode) {
         const scoreMap = fnode.scoresSoFarFor(vectorType);
@@ -157,7 +149,7 @@ function vectorizeTab(traineeId) {
     });
 
     // Log any target nodes we prematurely pruned with too-tight dom() calls:
-    const targets = new NiceSet(window.document.querySelectorAll('[data-fathom=' + vectorType + ']').values());
+    const targets = new NiceSet(doc.querySelectorAll('[data-fathom=' + vectorType + ']').values());
     const candidates = new Set(fnodes.map(fnode => fnode.element));
     const missed = targets.minus(candidates);
     perNodeStuff.push(
@@ -170,9 +162,57 @@ function vectorizeTab(traineeId) {
                    };
                },
                missed))
-    return {filename: path.substr(path.lastIndexOf('/') + 1),
-            nodes: perNodeStuff,
+    return {nodes: perNodeStuff,
             time};
+}
+
+/**
+ * Return an array of unweighted scores for each element of a type, plus an
+ * indication of whether it is a target element. This is useful to feed to an
+ * external ML system. The return value looks like this:
+ *
+ *    {filename: '3.html',
+ *     isTarget: true,
+ *     features: [[1.2, 4], [5.7, 3]]}
+ *
+ * We assume, for the moment, that the type of node you're interested in is the
+ * same as the trainee ID.
+ */
+function vectorizeTab(traineeId) {
+    // Vectorize every same-origin frame instead of only the top-level document.
+    // This makes fathom penetrate same-origin document easier while using
+    // `querySelector`. An alternative approach is replacing `querySelector` with
+    // something like `querySelector("iframe").contentDocument.querySelector(selector)`,
+    // but that will require more work.
+    // Note that with the current approach, elements can't see other elements
+    // outside its iframe.
+    function getFrames(doc) {
+      let docs = [doc];
+      const iframes = doc.querySelectorAll('iframe');
+      for (const iframe of iframes) {
+        if (iframe.contentDocument) {
+          docs.push(...getFrames(iframe.contentDocument));
+        }
+      }
+      return docs;
+    }
+    let documents = [];
+    documents.push(...getFrames(window.document));
+
+    let nodes = [];
+    let time = 0;
+    let idx = 0;
+
+    for (const doc of documents) {
+      const vector = vectorizeDocument(traineeId, doc);
+      nodes.push(...vector.nodes);
+      time += vector.time;
+    }
+
+    let path = window.location.pathname;
+    return {filename: window.location.pathname.substr(path.lastIndexOf('/') + 1),
+            nodes,
+            time: time};
 }
 
 /**
